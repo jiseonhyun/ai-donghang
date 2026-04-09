@@ -4016,7 +4016,7 @@ function showView(view){
     _activate('dojoView');resetDojoViews();showDojoList();
     // 팝업 트리거
     setTimeout(function(){
-      var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
+      var surveyDone = localStorage.getItem('aiDonghang_surveyDone') || localStorage.getItem('aiDonghang_onboarded');
       if(!surveyDone){
         // 첫 방문 → 설문 바로 표시 (동동이 없이)
         obOpen('survey');
@@ -5374,7 +5374,7 @@ function goToBuilder(){
   showView('builder');
   setTimeout(function(){
     var onboarded = localStorage.getItem('aiDonghang_onboarded');
-    var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
+    var surveyDone = localStorage.getItem('aiDonghang_surveyDone') || localStorage.getItem('aiDonghang_onboarded');
     if(!surveyDone){
       obOpen('survey');
     }
@@ -6458,7 +6458,7 @@ function showAuthSuccess(name,isNew){
       showView('dojo');
       setTimeout(function(){
         var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
-        if(!surveyDone) obOpen('survey');
+        if(!surveyDone && !localStorage.getItem('aiDonghang_onboarded')) obOpen('survey');
       }, 600);
     }, 400);
   }

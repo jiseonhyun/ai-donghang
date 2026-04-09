@@ -1599,6 +1599,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <a class="nav-link" href="#" onclick="showView('dojo')">🏆 도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('builder')">만들기</a>
     <a class="nav-link" href="#" onclick="showView('learn')">AI 알아보기</a>
+    <a class="nav-link" href="#" onclick="showView('community')">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio')">내 작품함</a>
     <a class="nav-link" href="#" onclick="showView('faq')">고객센터</a>
   </div>
@@ -3351,7 +3352,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <div style="max-width:1100px;margin:0 auto;padding:32px 40px 100px;">
 
   <!-- Claude API 키 설정 -->
-  <div style="background:#fff;border:2px solid var(--ac);border-radius:16px;padding:24px;margin-bottom:28px;">
+  <div style="background:#fff;border:2px solid var(--ac);border-radius:16px;padding:24px;margin-bottom:16px;">
     <div style="font-size:16px;font-weight:700;color:var(--ac);margin-bottom:4px;">🔑 Claude API 키 설정</div>
     <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">AI 글쓰기 결과 생성에 사용됩니다. <a href="https://console.anthropic.com" target="_blank" style="color:var(--ac);">Anthropic Console</a>에서 발급하세요.</div>
     <div style="display:flex;gap:10px;align-items:center;">
@@ -3369,6 +3370,27 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     </div>
     <div id="apiKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
   </div>
+
+  <!-- Replicate API 키 설정 (이미지 생성) -->
+  <div style="background:#fff;border:2px solid #7c3aed;border-radius:16px;padding:24px;margin-bottom:28px;">
+    <div style="font-size:16px;font-weight:700;color:#7c3aed;margin-bottom:4px;">🎨 Replicate API 키 설정 (이미지 생성)</div>
+    <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">이미지 도장깨기 결과 생성에 사용됩니다. <a href="https://replicate.com/account/api-tokens" target="_blank" style="color:#7c3aed;">Replicate</a>에서 발급하세요.</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input type="password" id="replicateApiKeyInput" placeholder="r8_..." 
+        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;"
+        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='var(--bd)'"/>
+      <button onclick="saveReplicateApiKey()" 
+        style="padding:12px 20px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">
+        저장
+      </button>
+      <button onclick="clearReplicateApiKey()"
+        style="padding:12px 16px;background:var(--wm);color:var(--i3);border:1px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;">
+        초기화
+      </button>
+    </div>
+    <div id="replicateKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
+  </div>
+
 
   <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:24px;">📊 대시보드</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
@@ -3697,37 +3719,40 @@ var DOJO_CONFIG = [
 
   // ── 이미지 (id 6~11) ──
   {
-    id:6, cat:'image', icon:'🏡', name:'고향 마을 그림', recommend:true,
-    sub:'기억 속 고향을 그림으로 되살려요', tag:'동행 플랜', tagClass:'paid',
-    tool:'Adobe Firefly', toolUrl:'https://firefly.adobe.com', toolIcon:'🔥',
-    difficulty:'⭐⭐', time:'7분',
-    intro:'고향 마을의 풍경을 AI가 수채화로 그려줘요. 영어 프롬프트를 복사해서 붙여넣기만 하면 돼요.',
-    mission:'고향 마을 수채화 그림 완성하기',
-    promptDesc:'Firefly에게 고향 그림을 부탁하는 프롬프트예요 (영어)',
-    promptEx:'Korean rural village in autumn, red persimmons on trees, dirt road, warm watercolor style, nostalgic, peaceful atmosphere',
-    shareText:'나 AI로 고향 그림 만들었어! Firefly로 추억 속 고향을 그렸어요 🏡\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    id:6, cat:'image', icon:'🏞️', name:'풍경 그림', recommend:true,
+    builderCourse:'풍경·자연 그림',
+    sub:'아름다운 자연 풍경을 그림으로 담아요', tag:'무료', tagClass:'free',
+    tool:'뤼튼', toolUrl:'https://wrtn.ai', toolIcon:'🤖',
+    difficulty:'⭐', time:'5분',
+    intro:'산, 들, 강, 바다 등 좋아하는 풍경을 AI가 수채화로 그려줘요. 한국어로 이야기해주세요.',
+    mission:'자연 풍경 그림 완성하기',
+    promptDesc:'뤼튼에게 풍경 그림을 부탁하는 프롬프트예요',
+    promptEx:'봄날 벚꽃이 흐드러진 산길을 수채화로 그려줘. 따뜻하고 포근한 느낌으로.',
+    shareText:'나 AI로 풍경 그림 만들었어! 🏞️\nAI 동행에서 나도 해봤어 → aidonghang.kr'
   },
   {
-    id:7, cat:'image', icon:'📸', name:'오래된 사진 복원', recommend:false,
-    sub:'흑백·낡은 사진을 선명하게 살려요', tag:'동행 플랜', tagClass:'paid',
-    tool:'Remini', toolUrl:'https://remini.ai', toolIcon:'📸',
-    difficulty:'⭐⭐', time:'5분',
-    intro:'오래된 가족 사진을 선명하고 생생하게 복원해요. 흑백을 컬러로도 바꿀 수 있어요.',
-    mission:'오래된 가족 사진 복원하기',
-    promptDesc:'Remini는 사진을 올리면 AI가 자동으로 복원해줘요',
-    promptEx:'사진 복원은 프롬프트 없이 사진만 올리면 돼요!\n아래 순서대로 해보세요.',
-    shareText:'나 AI로 오래된 사진 복원했어! Remini로 추억을 되살렸어요 📸\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    id:7, cat:'image', icon:'🎴', name:'카드·엽서 만들기', recommend:false,
+    builderCourse:'카드·엽서 만들기',
+    sub:'소중한 분께 보낼 카드를 만들어요', tag:'동행 플랜', tagClass:'paid',
+    tool:'뤼튼', toolUrl:'https://wrtn.ai', toolIcon:'🤖',
+    difficulty:'⭐⭐', time:'7분',
+    intro:'생일, 어버이날, 명절에 세상에 하나뿐인 카드를 만들어요. 한국어로 이야기해주세요.',
+    mission:'기념일 카드 완성하기',
+    promptDesc:'뤼튼에게 카드 그림을 부탁하는 프롬프트예요',
+    promptEx:'손녀 생일 카드. 따뜻하고 화사한 꽃 그림. 귀엽고 사랑스럽게.',
+    shareText:'나 AI로 카드 만들었어! 🎴\nAI 동행에서 나도 해봤어 → aidonghang.kr'
   },
   {
-    id:8, cat:'image', icon:'🌸', name:'봄꽃 일러스트', recommend:false,
-    sub:'좋아하는 꽃을 예쁘게 그려요', tag:'동행 플랜', tagClass:'paid',
-    tool:'Adobe Firefly', toolUrl:'https://firefly.adobe.com', toolIcon:'🔥',
+    id:8, cat:'image', icon:'🏡', name:'고향 마을 그림', recommend:false,
+    builderCourse:'고향·마을 풍경',
+    sub:'그리운 고향을 그림으로 되살려요', tag:'동행 플랜', tagClass:'paid',
+    tool:'뤼튼', toolUrl:'https://wrtn.ai', toolIcon:'🤖',
     difficulty:'⭐⭐', time:'7분',
-    intro:'진달래, 벚꽃, 국화 등 좋아하는 꽃을 AI 일러스트로 만들어봐요.',
-    mission:'좋아하는 꽃 일러스트 완성하기',
-    promptDesc:'Firefly에게 꽃 그림을 부탁하는 프롬프트예요 (영어)',
-    promptEx:'Beautiful Korean azalea flowers in spring, pink blossoms, soft watercolor illustration, delicate petals, light background',
-    shareText:'나 AI로 꽃 그림 만들었어! Firefly로 예쁜 일러스트를 완성했어요 🌸\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    intro:'기억 속 고향 마을을 AI가 수채화로 그려줘요. 어떤 장면인지 한국어로 말해주세요.',
+    mission:'고향 마을 수채화 완성하기',
+    promptDesc:'뤼튼에게 고향 그림을 부탁하는 프롬프트예요',
+    promptEx:'경상도 가을 시골 마을. 빨간 감이 달린 감나무, 초가집, 흙길, 아침 안개를 수채화로 그려줘.',
+    shareText:'나 AI로 고향 그림 만들었어! 🏡\nAI 동행에서 나도 해봤어 → aidonghang.kr'
   },
   {
     id:9, cat:'image', icon:'👨‍👩‍👧‍👦', name:'가족 카드 만들기', recommend:false,
@@ -3967,10 +3992,10 @@ var COURSE_CONFIG = {
   '일기 쓰기':{emoji:'🌿',exText:'오전에 공원 산책. 오리 가족 봤어. 점심은 된장찌개. 딸한테 전화 왔고.',ph:'오늘 만난 사람, 먹은 것, 본 것, 느낀 것... 메모처럼 적어보세요',styles:[{id:'style',label:'일기 스타일은?',chips:['감성적이고 솔직하게','간결하고 담백하게','감사 일기처럼','시적으로 아름답게'],def:0},{id:'length',label:'분량은?',chips:['짧게 (200자)','보통 (500자)','길게 (800자)'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 오늘 하루 일기를 써주세요.\n\n[오늘 있었던 일]\n'+s+'\n\n스타일: '+(a.style||'감성적이고 솔직하게')+'\n분량: '+(a.length||'보통 (500자)')+'\n\n날씨와 계절감도 자연스럽게 넣어주세요.'+PROMPT_SUFFIX;}},
   '공문·안내문':{emoji:'📋',exText:'경로당 12월 모임. 장소가 2층으로 바뀌었어. 점심 제공하고 회비 1만원.',ph:'언제, 어디서, 무슨 내용인지 편하게 적어보세요',styles:[{id:'doctype',label:'어떤 종류인가요?',chips:['모임·행사 공지문','감사패·표창 문구','축사·기념사','초대장'],def:0},{id:'tone',label:'문체는?',chips:['공식적으로 격식있게','친근하고 따뜻하게','간결하고 명확하게'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 '+(a.doctype||'안내문')+'을 써주세요.\n\n[꼭 들어가야 할 내용]\n'+s+'\n\n문체: '+(a.tone||'친근하고 따뜻하게')+'\n\n읽는 사람이 한 번에 이해할 수 있도록 명확하게 써주세요.'+PROMPT_SUFFIX;}},
   '시·수필 쓰기':{emoji:'✨',exText:'가을 아침 안개 낀 뒷산. 혼자 앉아서 커피. 나이 들었다는 게 이제는 나쁘지 않아.',ph:'떠오르는 장면, 냄새, 감정의 조각... 툭툭 적어도 돼요',styles:[{id:'genre',label:'장르는?',chips:['짧은 시 (2~4연)','긴 시 (5연 이상)','짧은 수필 (300자)','감성 수필 (600자)'],def:0},{id:'mood',label:'분위기는?',chips:['따뜻하고 서정적으로','쓸쓸하지만 아름답게','밝고 희망차게','철학적이고 깊게'],def:0}],fn:function(s,a){return '아래 이미지와 감정을 바탕으로 '+(a.genre||'시')+'를 써주세요.\n\n[담고 싶은 장면과 감정]\n'+s+'\n\n분위기: '+(a.mood||'따뜻하고 서정적으로')+'\n\n한국 전통 서정시의 감성을 살려주세요.'+PROMPT_SUFFIX;}},
-  '풍경·자연 그림':{emoji:'🏞️',exText:'경상도 시골 마을. 가을 단풍. 초가집 옆에 감나무. 아침 안개.',ph:'어떤 장소, 계절, 날씨, 분위기인지 떠오르는 대로 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['수채화','유화','동양화 (수묵화)','따뜻한 일러스트','인상파 스타일'],def:0},{id:'season',label:'계절은?',chips:['봄 (벚꽃·진달래)','여름 (푸른 녹음)','가을 (단풍·황금들판)','겨울 (눈·서리)'],def:2},{id:'mood',label:'분위기는?',chips:['따뜻하고 포근하게','쓸쓸하고 서정적으로','밝고 생동감 있게','평화롭고 조용하게'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 이미지 생성 프롬프트를 영어로 만들어주세요.\n\n[원하는 풍경]\n'+s+'\n\n스타일: '+(a.artStyle||'수채화')+'\n계절: '+(a.season||'가을')+'\n분위기: '+(a.mood||'따뜻하고 포근하게')+'\n\nAdobe Firefly, DALL·E에 바로 사용할 수 있는 상세한 영어 프롬프트로 작성해주세요.'+PROMPT_SUFFIX;}},
-  '꽃·식물 일러스트':{emoji:'🌸',exText:'진달래. 봄 산기슭. 연분홍색. 조금 쓸쓸하지만 아름다운 느낌.',ph:'어떤 꽃, 색깔, 분위기인지 적어보세요',styles:[{id:'flower',label:'어떤 꽃인가요?',chips:['진달래·철쭉','벚꽃','국화','장미','무궁화','연꽃'],def:0},{id:'artStyle',label:'그림 스타일은?',chips:['수채화','펜화·세밀화','보태니컬 아트','귀여운 일러스트'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 꽃·식물 일러스트 이미지 프롬프트를 영어로 만들어주세요.\n\n[원하는 꽃과 분위기]\n'+s+'\n\n꽃 종류: '+(a.flower||'진달래')+'\n스타일: '+(a.artStyle||'수채화')+'\n\n이미지 AI에 바로 사용할 수 있는 영어 프롬프트로 작성해주세요.'+PROMPT_SUFFIX;}},
-  '가족·인물 초상화':{emoji:'👨‍👩‍👧‍👦',exText:'온 가족이 다 같이 있는 그림. 명절에 모인 모습.',ph:'누구를 그릴지, 어떤 상황, 어떤 분위기인지 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['따뜻한 일러스트','유화 초상화','수채화','동화 그림 스타일'],def:0},{id:'mood',label:'분위기는?',chips:['환하게 웃는 모습','따뜻하고 평화로운','자연스럽고 편안하게'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 인물 그림 이미지 프롬프트를 영어로 만들어주세요.\n\n[원하는 그림]\n'+s+'\n\n스타일: '+(a.artStyle||'따뜻한 일러스트')+'\n분위기: '+(a.mood||'따뜻하고 평화로운')+'\n\n이미지 AI에 바로 사용할 수 있는 영어 프롬프트로 작성해주세요.'+PROMPT_SUFFIX;}},
-  '고향·마을 풍경':{emoji:'🏡',exText:'경북 안동 시골. 초가집 담벼락. 가을에 감이 빨갛게 익어 있었어.',ph:'고향의 어떤 장면, 어떤 느낌인지 기억나는 대로 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['수채화','동양화 (수묵화)','따뜻한 일러스트','빛바랜 사진 느낌'],def:0},{id:'season',label:'계절은?',chips:['봄','여름','가을','겨울'],def:2}],fn:function(s,a){return '아래 기억을 바탕으로 고향 마을 풍경 이미지 프롬프트를 영어로 만들어주세요.\n\n[기억 속 고향 풍경]\n'+s+'\n\n스타일: '+(a.artStyle||'수채화')+'\n계절: '+(a.season||'가을')+'\n\n향수와 그리움이 느껴지는 이미지 AI 프롬프트로 작성해주세요.'+PROMPT_SUFFIX;}},
+  '풍경·자연 그림':{emoji:'🏞️',exText:'경상도 시골 마을. 가을 단풍. 초가집 옆에 감나무. 아침 안개.',ph:'어떤 장소, 계절, 날씨, 분위기인지 떠오르는 대로 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['수채화','유화','동양화 (수묵화)','따뜻한 일러스트','인상파 스타일'],def:0},{id:'season',label:'계절은?',chips:['봄 (벚꽃·진달래)','여름 (푸른 녹음)','가을 (단풍·황금들판)','겨울 (눈·서리)'],def:2},{id:'mood',label:'분위기는?',chips:['따뜻하고 포근하게','쓸쓸하고 서정적으로','밝고 생동감 있게','평화롭고 조용하게'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 이미지 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 풍경]\n'+s+'\n\n그림 스타일: '+(a.artStyle||'수채화')+'\n계절: '+(a.season||'가을')+'\n분위기: '+(a.mood||'따뜻하고 포근하게')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "가을 시골 마을을 수채화로 그려줘. 감나무와 초가집이 있고 따뜻한 느낌으로."'+PROMPT_SUFFIX;}},
+  '꽃·식물 일러스트':{emoji:'🌸',exText:'진달래. 봄 산기슭. 연분홍색. 조금 쓸쓸하지만 아름다운 느낌.',ph:'어떤 꽃, 색깔, 분위기인지 적어보세요',styles:[{id:'flower',label:'어떤 꽃인가요?',chips:['진달래·철쭉','벚꽃','국화','장미','무궁화','연꽃'],def:0},{id:'artStyle',label:'그림 스타일은?',chips:['수채화','펜화·세밀화','보태니컬 아트','귀여운 일러스트'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 꽃 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 꽃과 분위기]\n'+s+'\n\n꽃 종류: '+(a.flower||'진달래')+'\n스타일: '+(a.artStyle||'수채화')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "봄날 진달래꽃을 수채화로 그려줘. 연분홍빛 꽃잎이 바람에 흩날리는 모습으로."'+PROMPT_SUFFIX;}},
+  '가족·인물 초상화':{emoji:'👨‍👩‍👧‍👦',exText:'온 가족이 다 같이 있는 그림. 명절에 모인 모습.',ph:'누구를 그릴지, 어떤 상황, 어떤 분위기인지 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['따뜻한 일러스트','유화 초상화','수채화','동화 그림 스타일'],def:0},{id:'mood',label:'분위기는?',chips:['환하게 웃는 모습','따뜻하고 평화로운','자연스럽고 편안하게'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 인물 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 그림]\n'+s+'\n\n스타일: '+(a.artStyle||'따뜻한 일러스트')+'\n분위기: '+(a.mood||'따뜻하고 평화로운')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "명절에 온 가족이 둘러앉아 웃는 모습을 따뜻한 일러스트로 그려줘."'+PROMPT_SUFFIX;}},
+  '고향·마을 풍경':{emoji:'🏡',exText:'경북 안동 시골. 초가집 담벼락. 가을에 감이 빨갛게 익어 있었어.',ph:'고향의 어떤 장면, 어떤 느낌인지 기억나는 대로 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['수채화','동양화 (수묵화)','따뜻한 일러스트','빛바랜 사진 느낌'],def:0},{id:'season',label:'계절은?',chips:['봄','여름','가을','겨울'],def:2}],fn:function(s,a){return '아래 기억을 바탕으로 고향 마을 그림 요청 문장을 한국어로 만들어주세요.\n\n[기억 속 고향 풍경]\n'+s+'\n\n스타일: '+(a.artStyle||'수채화')+'\n계절: '+(a.season||'가을')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "경상도 가을 시골 마을을 수채화로 그려줘. 빨간 감나무, 흙길, 아침 안개가 있는 정겨운 풍경으로."'+PROMPT_SUFFIX;}},
   '사진 보정·복원':{emoji:'🖼️',exText:'오래된 흑백 가족사진. 1970년대 사진인데 흐릿하고 손상됐어.',ph:'사진이 어떤 상태인지, 어떻게 바꾸고 싶은지 적어보세요',styles:[{id:'task',label:'어떤 작업인가요?',chips:['흑백→컬러 변환','흐린 사진 선명하게','손상·훼손 복원','밝기·색감 보정'],def:0},{id:'tool',label:'어떤 앱을 쓸 건가요?',chips:['Remini (스마트폰)','Adobe Firefly','ChatGPT DALL·E'],def:0}],fn:function(s,a){return '아래 사진 정보를 바탕으로 AI 사진 보정 방법을 알려주세요.\n\n[사진 상태와 원하는 결과]\n'+s+'\n\n작업: '+(a.task||'흑백→컬러 변환')+'\n사용 앱: '+(a.tool||'Remini')+'\n\n해당 앱에서 바로 사용할 수 있는 방법과 프롬프트를 알려주세요.'+PROMPT_SUFFIX;}},
   '카드·엽서 만들기':{emoji:'🎴',exText:'손녀 생일. 대학에 들어갔어. 항상 건강하고 하고 싶은 거 다 이루었으면.',ph:'받는 사람, 어떤 날, 전하고 싶은 마음을 편하게 적어보세요',styles:[{id:'occasion',label:'어떤 날인가요?',chips:['생일','결혼기념일','입학·졸업','명절','어버이날'],def:0},{id:'design',label:'카드 느낌은?',chips:['따뜻하고 감성적으로','화사하고 밝게','심플하고 세련되게','귀엽고 사랑스럽게'],def:0}],fn:function(s,a){return '아래 마음을 담은 카드 메시지를 만들어주세요.\n\n[전하고 싶은 마음]\n'+s+'\n\n날: '+(a.occasion||'생일')+'\n느낌: '+(a.design||'따뜻하고 감성적으로')+'\n\n진심이 전해지는 따뜻한 메시지로 완성해주세요.'+PROMPT_SUFFIX;}},
   '트로트 만들기':{emoji:'🎤',exText:'어머니 생각. 새벽에 일어나서 밥 지으시던 모습. 부엌 불빛. 그 냄새가 그리워.',ph:'노래에 담고 싶은 사람, 장소, 기억, 감정을 적어보세요',styles:[{id:'feel',label:'노래 느낌은?',chips:['신나고 흥겨운','구성지고 애잔한','웅장하고 감동적인','밝고 경쾌한'],def:1},{id:'structure',label:'가사 구성은?',chips:['1절만 (짧게)','1절+후렴','1절+후렴+2절'],def:1}],fn:function(s,a){return '아래 이야기를 담아 트로트 가사를 써주세요.\n\n[담고 싶은 이야기]\n'+s+'\n\n노래 느낌: '+(a.feel||'구성지고 애잔한')+'\n구성: '+(a.structure||'1절+후렴')+'\n\n가사를 다 쓴 뒤, Suno AI에서 사용할 수 있는 음악 스타일 태그도 영어로 알려주세요.'+PROMPT_SUFFIX;}},
@@ -4037,7 +4062,7 @@ function showView(view){
   else if(view==='community'){_activate('communityView');renderCommunity();}
   else if(view==='about'){_activate('aboutView');}
   else if(view==='b2g'){_activate('b2gView');}
-  else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);}
+  else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);}
 }
 function setNavLoggedIn(name){
   if(g('navLinksGuest'))g('navLinksGuest').style.display='none';
@@ -4524,11 +4549,11 @@ function skipToCurrent(catKey){
 
 // ══ 커뮤니티 ══
 var communityWorks=[
-  {id:1,nickname:'봄날의 할머니',age:'70대',cat:'writing',tool:'뤼튼',content:'냇가에서 물고기를 잡던 그 여름이 아직도 생생하다. 발끝에 닿는 차가운 물, 친구들의 웃음소리. AI에게 부탁했더니 내 기억보다 더 아름답게 써줬다.',cheers:24,comments:['정말 감동적이에요!','저도 비슷한 기억이 있어요 😊'],time:'방금 전',cheered:false},
-  {id:2,nickname:'트로트 아저씨',age:'60대',cat:'music',tool:'Suno AI',content:'아내 환갑에 직접 만든 트로트를 불러줬어요. "당신과 함께한 30년, 꽃길만 걷자"라는 가사를 AI가 완성해줬어요. 아내가 눈물 흘렸어요.',cheers:47,comments:['너무 감동이에요!','저도 만들어보고 싶어요!'],time:'1시간 전',cheered:false},
-  {id:3,nickname:'익명',age:'밝히지 않을게요',cat:'image',tool:'Adobe Firefly',content:'어릴 때 살던 고향 마을을 수채화로 그려달라고 했어요. 빨간 감이 달린 나무, 흙길, 파란 하늘... AI가 제 마음속 그림을 그려줬어요.',cheers:31,comments:['고향 그림 정말 예쁘겠어요 💕'],time:'3시간 전',cheered:false},
-  {id:4,nickname:'건강 도우미 할아버지',age:'70대',cat:'daily',tool:'ChatGPT',content:'무릎이 아파서 ChatGPT에게 물어봤어요. 어떤 운동이 좋은지 친절하게 알려줬어요. 병원 가기 전에 미리 알고 가니까 의사 선생님이랑 대화가 잘 됐어요.',cheers:18,comments:['저도 활용해봐야겠어요!'],time:'어제',cheered:false},
-  {id:5,nickname:'시인 언니',age:'80대 이상',cat:'writing',tool:'Claude',content:'봄이 와도 그리운 사람이 있어요. 그 마음을 시로 쓰고 싶었는데 말이 잘 안 됐어요. AI에게 부탁했더니 내가 말하고 싶었던 것보다 훨씬 아름답게 써줬어요.',cheers:52,comments:['정말 감동이에요 눈물 나요','저도 써보고 싶어요'],time:'이틀 전',cheered:false},
+  {id:1,nickname:'봄날의 할머니',age:'70대',cat:'writing',content:'2025년 1월의 일기\n\n오늘 아침 냇가에 나갔다. 겨울 햇살이 물 위에서 반짝였다. 어린 시절, 이 냇가에서 친구들과 물고기를 잡던 기억이 떠올랐다. 발끝에 닿던 그 차가운 감촉, 친구들의 웃음소리. 나이가 들었어도 그 여름은 여전히 마음속에 살아있다.',cheers:24,comments:['정말 감동적이에요!','저도 비슷한 기억이 있어요 😊'],time:'방금 전',cheered:false},
+  {id:2,nickname:'트로트 아저씨',age:'60대',cat:'music',content:'🎵 아내에게 — 환갑 기념 트로트\n\n[1절]\n당신 만나 삼십 년, 세월이 꽃처럼 흘렀소\n비 오는 날도 눈 오는 날도 당신 손 꼭 잡았소\n\n[후렴]\n꽃길만 걷자 우리 함께\n당신과 나, 이 길 끝까지\n흰머리가 늘어나도 내 마음은 처음 그대로\n당신과 함께라면 매일이 봄이오',cheers:47,comments:['너무 감동이에요!','저도 만들어보고 싶어요!'],time:'1시간 전',cheered:false},
+  {id:3,nickname:'익명',age:'밝히지 않을게요',cat:'writing',content:'어머니께\n\n어머니, 잘 지내고 계시죠?\n요즘 부쩍 어머니 생각이 많이 납니다.\n새벽마다 일어나 밥 짓던 그 뒷모습,\n부엌에서 풍기던 된장찌개 냄새.\n그때는 당연한 줄만 알았는데\n이제야 그 마음이 얼마나 큰지 알 것 같습니다.\n늘 건강하세요. 사랑합니다.',cheers:63,comments:['눈물이 나요 😢','저도 어머니께 편지 써야겠어요'],time:'3시간 전',cheered:false},
+  {id:4,nickname:'서울 박 선생',age:'70대',cat:'writing',content:'손녀에게 쓰는 자서전\n\n지선아, 할아버지가 어렸을 때 이야기를 해줄게.\n1960년대 경상도 시골 마을. 학교 가려면 산 하나를 넘어야 했어. 봄에는 진달래가 가득 피어 길이 분홍빛이 됐지. 배고프면 산딸기를 따 먹으며 걸었어. 그 시절이 힘들었지만, 지금 생각하면 참 아름다웠다.',cheers:38,comments:['할아버지 이야기 너무 따뜻해요!','손녀분이 보물을 받겠네요 💚'],time:'어제',cheered:false},
+  {id:5,nickname:'시인 언니',age:'80대 이상',cat:'writing',content:'봄 편지\n\n봄이 와도 그리운 사람이 있습니다\n개나리 노랗게 피어도\n그 사람 생각에 눈물이 앞섭니다\n\n바람이 불어 꽃잎이 지면\n전화 한 통 드리고 싶어\n수화기 들다가 또 내려놓습니다\n\n그래도 봄은 봄입니다\n그리움도 사랑의 다른 이름이니까요',cheers:52,comments:['정말 감동이에요 눈물 나요','저도 써보고 싶어요','시가 너무 아름다워요 🌸'],time:'이틀 전',cheered:false},
 ];
 var commFilter='all';
 var uploadAge='',uploadCat='';
@@ -4606,22 +4631,26 @@ function openUploadWork(){
   // 유료 플랜 → 업로드 모달 열기
   var m=g('uploadWorkModal');
   if(!m) return;
-  // 방금 만든 작품 자동 입력
-  var aiResult = g('aiResultText') ? g('aiResultText').textContent.trim() : '';
-  var lastPortfolio = portfolio && portfolio.length > 0 ? portfolio[0] : null;
-  var autoContent = aiResult || (lastPortfolio ? lastPortfolio.text || lastPortfolio.result || '' : '');
+  // 방금 만든 작품 자동 입력 (_aiShareContent 우선, 그 다음 aiResultText)
+  var forcedContent = window._aiShareContent || '';
+  var forcedCourse  = window._aiShareCourse  || courseName || '';
+  window._aiShareContent = null; window._aiShareCourse = null;  // 사용 후 초기화
+
+  var aiResult = forcedContent || (g('aiResultText') ? g('aiResultText').textContent.trim() : '');
+  var autoContent = aiResult; // portfolio fallback 제거 (다른 작품 오입력 방지)
   var contentEl = g('uploadContent');
-  if(contentEl && autoContent){
-    contentEl.value = autoContent;
+  if(contentEl){
+    contentEl.value = autoContent || '';
     var badge = g('uploadAutoFillBadge');
-    if(badge) badge.style.display = 'block';
+    if(badge) badge.style.display = autoContent ? 'block' : 'none';
   }
-  // 작품 종류 자동 선택 (courseName 기반)
-  var catMap = {'일기 쓰기':'writing','편지 쓰기':'writing','자서전 쓰기':'writing','트로트 만들기':'music','발라드 만들기':'music','동요 만들기':'music','고향 마을 그림':'image','봄꽃 일러스트':'image','계절 풍경 그림':'image','엽서 만들기':'image','가족 카드 만들기':'image','오래된 사진 복원':'image'};
-  var autoCat = catMap[courseName] || localStorage.getItem('aiDonghang_lastCat') || '';
+  // 작품 종류 자동 선택 (현재 강의 기반)
+  var catMap = {'일기 쓰기':'writing','편지 쓰기':'writing','자서전 쓰기':'writing','공문·안내문':'writing','시·수필 쓰기':'writing','트로트 만들기':'music','발라드 만들기':'music','동요 만들기':'music','기념일 축하 노래':'music','민요풍 노래':'music','찬송·신앙 노래':'music','고향 마을 그림':'image','봄꽃 일러스트':'image','계절 풍경 그림':'image','엽서 만들기':'image','가족 카드 만들기':'image','오래된 사진 복원':'image','풍경·자연 그림':'image','꽃·식물 일러스트':'image','가족·인물 초상화':'image','슬라이드쇼 영상':'daily','자서전 영상':'daily','가족 영상 편지':'daily'};
+  var autoCat = catMap[forcedCourse] || catMap[courseName] || localStorage.getItem('aiDonghang_lastCat') || '';
   if(autoCat){
+    document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});
     var catBtn = document.querySelector('#catChips [data-cat="'+autoCat+'"]');
-    if(catBtn){ document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');}); catBtn.classList.add('selected'); uploadCat = autoCat; }
+    if(catBtn){ catBtn.classList.add('selected'); uploadCat = autoCat; }
   }
   m.style.display='flex'; m.style.alignItems='center'; m.style.justifyContent='center'; m.style.padding='20px';
 }
@@ -5115,6 +5144,11 @@ function renderDojoPath(){
         var lmap={0:'일기 쓰기',1:'편지 쓰기',2:'자서전 쓰기'};
         var showL=(d.id===0)||(d.id===1&&!!dojoProgress[0])||(d.id===2&&!!dojoProgress[1]);
         if(showL) nodeLabel='<div class="dojo-node-label" style="color:'+th.main+';font-weight:700;font-size:13px;margin-top:2px;">'+(isDone?'✓ ':'')+lmap[d.id]+'</div>';
+      }
+      if(d.cat==='image' && d.id>=6 && d.id<=8){
+        var lmapImg={6:'풍경 그림',7:'카드·엽서',8:'고향 그림'};
+        var showLImg=(d.id===6)||(d.id===7&&!!dojoProgress[6])||(d.id===8&&!!dojoProgress[7]);
+        if(showLImg) nodeLabel='<div class="dojo-node-label" style="color:'+th.main+';font-weight:700;font-size:13px;margin-top:2px;">'+(isDone?'✓ ':'')+lmapImg[d.id]+'</div>';
       }
       html += '<div class="dojo-node-row '+pos+'">'
         +'<div style="display:flex;flex-direction:column;align-items:center;">'
@@ -6693,12 +6727,36 @@ function showDongPopup(type){
       return d.cat === lastCat && dojoProgress[d.id];
     }).length;
 
+    // 카테고리별 맞춤 메시지
+    var catMsgs = {
+      writing: {
+        zero:  '글쓰기 도장깨기를 시작해봐요!<br>일기 한 편부터 같이 써봐요 ✍️',
+        doing: '글쓰기 '+catDone+'개 완성! 정말 대단해요 🥹<br>오늘도 한 편 더 써볼까요?',
+        cta:   '이어서 글쓰기 →'
+      },
+      image: {
+        zero:  '이제 그림 도전이에요! 🎨<br>고향 마을 풍경부터 같이 그려봐요',
+        doing: '이미지 '+catDone+'개 완성! 멋진 그림 솜씨예요 🎨<br>오늘도 하나 더 만들어볼까요?',
+        cta:   '이어서 그림 만들기 →'
+      },
+      music: {
+        zero:  '음악 도전 시작이에요! 🎵<br>나만의 트로트 한 곡 만들어봐요',
+        doing: '노래 '+catDone+'개 완성! 음악 실력이 대단해요 🎵<br>오늘도 한 곡 더 만들까요?',
+        cta:   '이어서 음악 만들기 →'
+      },
+      daily: {
+        zero:  '일상 도전을 시작해봐요! 📱<br>AI와 함께 더 즐거운 하루 만들어봐요',
+        doing: '일상 '+catDone+'개 완성! 잘 하고 계세요 😊<br>오늘도 하나 더 해볼까요?',
+        cta:   '이어서 계속하기 →'
+      }
+    };
+    var cm = catMsgs[lastCat] || catMsgs.writing;
     if(doneCount === 0){
-      subEl.innerHTML = '천천히 하셔도 돼요. 빨리 할 필요 없어요.<br>오늘 딱 하나만 같이 해봐요 🥹';
+      subEl.innerHTML = cm.zero;
       ctaEl.textContent = '동동이랑 같이 시작하기 →';
     } else {
-      subEl.innerHTML = catDone + '개 해내셨어요! 정말 대단해요 🥹<br>오늘도 하나 더 같이 해볼까요?';
-      ctaEl.textContent = '이어서 도장 깨기 →';
+      subEl.innerHTML = cm.doing;
+      ctaEl.textContent = cm.cta;
     }
     _dongPopupAction = function(){
       closeDongPopup();
@@ -6757,18 +6815,24 @@ async function generateWithAI(){
     showToast('이야기를 먼저 써주세요 🙂'); return;
   }
 
+  // 이미지 카테고리 판단
+  var isImageCourse = (COURSE_CAT[courseName] === 'image');
+
   _aiGenerating = true;
   var badge = g('aiGenerateBtn');
   if(badge){ badge.textContent = '⏳ 생성 중...'; badge.disabled = true; }
 
-  // 로딩 화면 표시
   showAIResultView();
   hideAIScreens();
   var ls = g('aiLoadingScreen');
   if(ls) ls.style.display = 'block';
 
-  // 로딩 메시지 순환
-  var loadingMsgs = [
+  // 로딩 메시지
+  var loadingMsgs = isImageCourse ? [
+    ['그림 그리는 중이에요...', 'AI가 열심히 그리고 있어요. 잠깐만요! 🎨'],
+    ['거의 완성됐어요...', '색을 입히고 있어요. 조금만 더요! ✨'],
+    ['마무리 중이에요...', '소중한 그림을 완성하고 있어요 🥹']
+  ] : [
     ['열심히 쓰고 있어요...', '동동이가 AI에게 부탁했어요. 잠깐만요! 🙂'],
     ['거의 다 됐어요...', '글을 다듬고 있어요. 조금만 더요! ✨'],
     ['마무리 중이에요...', '소중한 분께 전할 글을 정성껏 쓰고 있어요 🥹']
@@ -6782,60 +6846,70 @@ async function generateWithAI(){
   }, 3500);
 
   try {
-    var systemPrompt = '당신은 어르신들을 위한 따뜻한 글쓰기 도우미입니다. 지시에 따라 진심 어린 글을 작성해주세요. 글은 한국어로, 이해하기 쉬운 표현을 사용하세요.';
+    if(isImageCourse){
+      // ── 이미지 생성: Replicate FLUX Schnell ──
+      if(!window._replicateApiKey){
+        throw new Error('Replicate API 키가 없어요. 관리자 페이지에서 설정해주세요 🔑');
+      }
+      var imageUrl = await generateImageWithReplicate(prompt);
+      clearInterval(msgTimer);
+      if(!imageUrl) throw new Error('이미지 URL을 받지 못했어요');
 
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': window._claudeApiKey || '',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+      _aiLastResult = imageUrl;
+      hideAIScreens();
 
-    clearInterval(msgTimer);
+      // 이미지 결과 화면 표시
+      var rs = g('aiResultScreen');
+      if(rs) rs.style.display = 'block';
 
-    if(!response.ok){
-      throw new Error('API 오류 (' + response.status + ')');
+      // 이미지 표시 (텍스트 영역 대신)
+      var rt = g('aiResultText');
+      if(rt){
+        rt.innerHTML = '<img src="'+imageUrl+'" alt="AI 생성 이미지" style="width:100%;border-radius:10px;display:block;" />';
+        rt.style.padding = '0';
+      }
+      var cc = g('aiResultCharCount');
+      if(cc) cc.textContent = '이미지';
+      var rc = g('aiResultCourse');
+      if(rc) rc.textContent = courseName;
+
+      setTimeout(function(){ showCompletionModal(courseName, imageUrl); }, 800);
+
+    } else {
+      // ── 글쓰기 생성: Claude API ──
+      var systemPrompt = '당신은 어르신들을 위한 따뜻한 글쓰기 도우미입니다. 지시에 따라 진심 어린 글을 작성해주세요. 글은 한국어로, 이해하기 쉬운 표현을 사용하세요.';
+      var response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': window._claudeApiKey || '',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      clearInterval(msgTimer);
+      if(!response.ok) throw new Error('API 오류 (' + response.status + ')');
+      var data = await response.json();
+      var result = (data.content || []).map(function(b){ return b.text || ''; }).join('');
+      if(!result) throw new Error('결과를 받지 못했어요');
+      _aiLastResult = result;
+      hideAIScreens();
+      var rs2 = g('aiResultScreen');
+      if(rs2) rs2.style.display = 'block';
+      var rt2 = g('aiResultText');
+      if(rt2){ rt2.textContent = result; rt2.style.padding = '20px'; }
+      var cc2 = g('aiResultCharCount');
+      if(cc2) cc2.textContent = result.length + '자';
+      var rc2 = g('aiResultCourse');
+      if(rc2) rc2.textContent = courseName;
+      setTimeout(function(){ showCompletionModal(courseName, result); }, 800);
     }
-
-    var data = await response.json();
-    var result = (data.content || []).map(function(b){ return b.text || ''; }).join('');
-
-    if(!result){
-      throw new Error('결과를 받지 못했어요');
-    }
-
-    _aiLastResult = result;
-
-    // 결과 화면 표시
-    hideAIScreens();
-    var rs = g('aiResultScreen');
-    if(rs) rs.style.display = 'block';
-
-    // 결과 텍스트
-    var rt = g('aiResultText');
-    if(rt) rt.textContent = result;
-
-    // 글자수
-    var cc = g('aiResultCharCount');
-    if(cc) cc.textContent = result.length + '자';
-
-    // 코스명
-    var rc = g('aiResultCourse');
-    if(rc) rc.textContent = courseName;
-
-    // 자동 저장 + 동동이 팝업 (0.8초 딜레이)
-    setTimeout(function(){
-      showCompletionModal(courseName, result);
-    }, 800);
 
   } catch(err) {
     clearInterval(msgTimer);
@@ -6846,9 +6920,10 @@ async function generateWithAI(){
     if(em){
       var msg = '잠깐 문제가 생겼어요. 다시 시도해 주세요!';
       if(err.message){
-        if(err.message.includes('API 오류 (401)')) msg = 'API 키를 확인해 주세요 (401)';
-        else if(err.message.includes('API 오류 (403)')) msg = '접근이 거부됐어요. API 키나 권한을 확인해 주세요';
-        else if(err.message.includes('API 오류 (529)') || err.message.includes('API 오류 (5')) msg = 'AI 서버가 잠시 바빠요. 잠깐 후 다시 눌러주세요 🙂';
+        if(err.message.includes('Replicate API 키')) msg = err.message;
+        else if(err.message.includes('401')) msg = 'API 키를 확인해 주세요';
+        else if(err.message.includes('403')) msg = '접근이 거부됐어요. API 키를 확인해 주세요';
+        else if(err.message.includes('529') || err.message.includes('5')) msg = 'AI 서버가 잠시 바빠요. 잠깐 후 다시 눌러주세요 🙂';
         else if(err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) msg = '인터넷 연결을 확인해 주세요';
         else msg = err.message;
       }
@@ -6857,7 +6932,7 @@ async function generateWithAI(){
   } finally {
     _aiGenerating = false;
     var btn = g('aiGenerateBtn');
-    if(btn){ btn.textContent = '✨ AI로 바로 결과 받기'; btn.disabled = false; }
+    if(btn){ btn.textContent = isImageCourse ? '🎨 AI로 그림 만들기' : '✨ AI로 바로 결과 받기'; btn.disabled = false; }
   }
 }
 
@@ -6978,17 +7053,13 @@ function saveAIResult(){
 }
 
 function shareAIToCommunity(){
-  var result = g('aiResultText') ? g('aiResultText').textContent : '';
-  var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
+  var result = g('aiResultText') ? g('aiResultText').textContent.trim() : '';
+  var course = courseName || (g('aiResultCourse') ? g('aiResultCourse').textContent.trim() : '');
   if(!result){ showToast('공유할 결과물이 없어요'); return; }
-  // 커뮤니티에 포스팅
-  if(typeof postToCommunity === 'function'){
-    postToCommunity(course, result);
-  } else {
-    // fallback: 커뮤니티 페이지로 이동
-    showView('community');
-    showToast('🏆 커뮤니티에 공유됐어요!');
-  }
+  // 현재 AI 결과를 전역 변수로 저장 후 업로드 모달 열기
+  window._aiShareContent = result;
+  window._aiShareCourse = course;
+  openUploadWork();
 }
 
 // 작품함에서 커뮤니티 공유
@@ -7035,6 +7106,80 @@ function communitySharePfItem(idx){
     if(catBtn){ catBtn.classList.add('selected'); uploadCat = autoCat; }
   }
   openUploadWork();
+}
+
+// ── Replicate API 키 관리 ──
+window._replicateApiKey = localStorage.getItem('aiDonghang_replicateKey') || '';
+
+function saveReplicateApiKey(){
+  var input = document.getElementById('replicateApiKeyInput');
+  var status = document.getElementById('replicateKeyStatus');
+  if(!input) return;
+  var key = input.value.trim();
+  if(!key){ if(status){status.textContent='❌ 키를 입력해주세요';status.style.color='red';} return; }
+  if(!key.startsWith('r8_')){ if(status){status.textContent='⚠️ 올바른 형식이 아니에요 (r8_로 시작해야 해요)';status.style.color='orange';} return; }
+  localStorage.setItem('aiDonghang_replicateKey', key);
+  window._replicateApiKey = key;
+  input.value = key.slice(0,8)+'...';
+  if(status){status.textContent='✅ 저장됐어요! 이제 이미지 생성이 작동해요.';status.style.color='#7c3aed';}
+}
+
+function clearReplicateApiKey(){
+  localStorage.removeItem('aiDonghang_replicateKey');
+  window._replicateApiKey = '';
+  var input = document.getElementById('replicateApiKeyInput');
+  var status = document.getElementById('replicateKeyStatus');
+  if(input) input.value='';
+  if(status){status.textContent='API 키가 삭제됐어요.';status.style.color='var(--i3)';}
+}
+
+function loadReplicateKeyToAdmin(){
+  var input = document.getElementById('replicateApiKeyInput');
+  var status = document.getElementById('replicateKeyStatus');
+  var key = window._replicateApiKey || '';
+  if(input) input.value = key ? key.slice(0,8)+'...' : '';
+  if(status && key){ status.textContent='✅ API 키가 설정되어 있어요.'; status.style.color='#7c3aed'; }
+}
+
+// ── Replicate 이미지 생성 (FLUX Schnell) ──
+async function generateImageWithReplicate(prompt){
+  var key = window._replicateApiKey;
+  if(!key){ showToast('관리자 페이지에서 Replicate API 키를 먼저 설정해주세요 🔑'); return null; }
+
+  var response = await fetch('https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + key,
+      'Content-Type': 'application/json',
+      'Prefer': 'wait'
+    },
+    body: JSON.stringify({
+      input: { prompt: prompt, num_outputs: 1, output_format: 'webp', output_quality: 80 }
+    })
+  });
+
+  if(!response.ok){
+    var err = await response.json().catch(function(){return {};});
+    throw new Error('Replicate 오류 (' + response.status + '): ' + (err.detail || ''));
+  }
+
+  var data = await response.json();
+  // Prefer:wait 이면 바로 output에 URL 배열
+  var urls = data.output;
+  if(urls && urls.length > 0) return urls[0];
+
+  // polling fallback
+  var predId = data.id;
+  for(var i=0; i<20; i++){
+    await new Promise(function(r){setTimeout(r, 2000);});
+    var poll = await fetch('https://api.replicate.com/v1/predictions/'+predId, {
+      headers:{'Authorization':'Bearer '+key}
+    });
+    var pd = await poll.json();
+    if(pd.status==='succeeded') return pd.output[0];
+    if(pd.status==='failed') throw new Error('이미지 생성 실패: '+pd.error);
+  }
+  throw new Error('이미지 생성 시간 초과');
 }
 </script>
 

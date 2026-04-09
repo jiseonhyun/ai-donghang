@@ -2445,7 +2445,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:10px;">잠깐, 문제가 생겼어요</div>
     <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:28px;" id="aiErrorMsg">네트워크 연결을 확인하고 다시 시도해 주세요</div>
     <button onclick="generateWithAI()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">다시 시도하기</button>
-    <button onclick="showView('admin')" style="width:100%;padding:14px;background:var(--al);color:var(--ac);border:1.5px solid var(--ab);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:10px;">🔑 API 키 설정하러 가기</button>
     <button onclick="copyPromptSilent();window.open('https://wrtn.ai','_blank');" style="width:100%;padding:14px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">뤼튼에서 직접 해보기</button>
   </div>
 
@@ -6885,11 +6884,8 @@ async function generateWithAI(){
 
   try {
     if(isImageCourse){
-      // ── 이미지 생성: Replicate FLUX Schnell ──
-      if(!window._replicateApiKey){
-        throw new Error('Replicate API 키가 없어요. 관리자 페이지에서 설정해주세요 🔑');
-      }
-      var imageUrl = await generateImageWithReplicate(prompt);
+      // ── 이미지 생성: Pollinations.ai (무료, API키 불필요) ──
+      var imageUrl = await generateImageWithPollinations(prompt);
       clearInterval(msgTimer);
       if(!imageUrl) throw new Error('이미지 URL을 받지 못했어요');
 
@@ -7331,6 +7327,27 @@ async function updateCheersInSupabase(dbId, newCount){
   try{
     await db.from('community_works').update({cheers: newCount}).eq('id', dbId);
   } catch(e){ console.log('[Supabase] cheers update:', e.message); }
+}
+
+// ── Pollinations.ai 이미지 생성 (무료, API키 불필요, CORS 없음) ──
+async function generateImageWithPollinations(prompt){
+  // 한국어 프롬프트를 그대로 전달 (Pollinations가 번역 포함)
+  // 시니어 감성에 맞게 스타일 추가
+  var fullPrompt = prompt + ', watercolor style, soft colors, warm and nostalgic, high quality';
+  var encoded = encodeURIComponent(fullPrompt);
+  var seed = Math.floor(Math.random() * 999999);
+  var url = 'https://image.pollinations.ai/prompt/' + encoded
+    + '?width=1024&height=1024&seed=' + seed + '&nologo=true&enhance=true';
+
+  // 이미지 로드 확인
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    img.onload = function(){ resolve(url); };
+    img.onerror = function(){ reject(new Error('이미지 생성에 실패했어요. 다시 시도해주세요.')); };
+    img.src = url;
+    // 30초 타임아웃
+    setTimeout(function(){ reject(new Error('이미지 생성 시간이 오래 걸리고 있어요. 다시 시도해주세요.')); }, 30000);
+  });
 }
 </script>
 

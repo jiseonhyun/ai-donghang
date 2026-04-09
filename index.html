@@ -4059,7 +4059,7 @@ function showView(view){
   else if(view==='mypage'){_activate('mypageView');renderMypage();}
   else if(view==='faq'){_activate('faqView');}
   else if(view==='learn'){_activate('learnView');}
-  else if(view==='community'){_activate('communityView');renderCommunity();}
+  else if(view==='community'){_activate('communityView');renderCommunity();loadCommunityFromSupabase();}
   else if(view==='about'){_activate('aboutView');}
   else if(view==='b2g'){_activate('b2gView');}
   else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);}
@@ -4657,12 +4657,33 @@ function openUploadWork(){
 function closeUploadWork(){var m=g('uploadWorkModal');if(m)m.style.display='none';}
 function selectAge(btn){document.querySelectorAll('#ageChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadAge=btn.getAttribute('data-age');}
 function selectCat(btn){document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadCat=btn.getAttribute('data-cat');}
-function submitWork(){
+async function submitWork(){
   var content=g('uploadContent')?g('uploadContent').value.trim():'';
   var authorName = userProfile && userProfile.name ? userProfile.name : '익명';
   if(!content){showToast('작품 내용을 입력해주세요 😊');return;}
   if(!uploadCat){showToast('어떤 작품인지 선택해주세요 😊');return;}
-  communityWorks.unshift({id:Date.now(),nickname:authorName,age:uploadAge||'밝히지 않을게요',cat:uploadCat,content:content,cheers:0,comments:[],time:'방금 전',cheered:false});
+
+  var localId = Date.now();
+  var newWork = {id:localId, nickname:authorName, age:uploadAge||'밝히지 않을게요', cat:uploadCat, content:content, cheers:0, comments:[], time:'방금 전', cheered:false};
+  communityWorks.unshift(newWork);
+
+  // Supabase 저장
+  try{
+    if(db){
+      var ins = await db.from('community_works').insert([{
+        user_id: userProfile&&userProfile.id ? userProfile.id : null,
+        nickname: authorName,
+        age: uploadAge||'밝히지 않을게요',
+        cat: uploadCat,
+        content: content,
+        cheers: 0
+      }]).select('id').single();
+      if(ins.data && ins.data.id){
+        newWork.db_id = ins.data.id; // DB id 매핑
+      }
+    }
+  } catch(e){ console.log('[Supabase] community save:', e.message); }
+
   closeUploadWork();launchConfetti();showToast('작품이 올라갔어요! 🎉');
   showView('community');
   if(g('uploadContent'))g('uploadContent').value='';
@@ -5640,6 +5661,7 @@ function _finishMission(idx, simpleMode){
   var d=DOJO_CONFIG[idx];
   dojoProgress[idx]=true;
   localStorage.setItem('aiDonghang_dojo',JSON.stringify(dojoProgress));
+  saveDojoProgressToSupabase();
 
   // 아카이브 기록
   var archiveLog=JSON.parse(localStorage.getItem('aiDonghang_archive')||'[]');
@@ -6188,6 +6210,7 @@ function showCompletionModal(course,text){
   if(dojoMatch && !dojoProgress[dojoMatch.id]){
     dojoProgress[dojoMatch.id] = true;
     localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+    saveDojoProgressToSupabase();
     console.log('[도장] '+course+' 완료 → id:'+dojoMatch.id);
   }
 
@@ -6313,8 +6336,19 @@ async function saveToPortfolio(cName,prompt,result){
   var item={id:Date.now(),course:cName,emoji:(COURSE_CONFIG[cName]||{}).emoji||'📝',prompt:prompt,result:result,date:new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'})};
   portfolio.unshift(item);if(portfolio.length>50)portfolio=portfolio.slice(0,50);
   localStorage.setItem('aiDonghang_portfolio',JSON.stringify(portfolio));
-  try{var uid=userProfile?userProfile.id:null;if(uid)await db.from('works').insert([{user_id:uid,course:cName,final_prompt:prompt,is_saved:true}]);}
-  catch(e){console.log('DB:',e);}
+  // Supabase 저장
+  try{
+    var uid=userProfile&&userProfile.id?userProfile.id:null;
+    if(uid && db){
+      await db.from('works').insert([{
+        user_id:uid, course:cName,
+        final_prompt:prompt,
+        result: (result||'').slice(0,5000),
+        date_label: item.date,
+        is_saved:true
+      }]);
+    }
+  } catch(e){ console.log('DB save work:', e); }
 }
 function renderPortfolioList(){
   // 비로그인 사용자: 가입 유도 화면
@@ -6410,9 +6444,9 @@ async function authPhone(){
   if(!rawName){showToast('성함을 입력해주세요');return;}
   if(!phone||phone.length<12){showToast('전화번호를 올바르게 입력해주세요\n예) 010-1234-5678');return;}
   try{
-    var r=await db.from('users').select('*').eq('phone',phone).maybeSingle();
+    var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
     if(r.data){userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);return;}
-    var ins=await db.from('users').insert([{name:rawName,phone:phone,plan:'free'}]).select();
+    var ins=await db.from('Users').insert([{name:rawName,phone:phone,plan:'free'}]).select();
     if(ins.error)throw ins.error;
     userProfile={id:ins.data[0].id,name:rawName,phone:phone,plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(rawName,true);
   }catch(e){userProfile={name:rawName,phone:phone,plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(rawName,true);}
@@ -6421,7 +6455,7 @@ async function authLoginPhone(){
   var phone=(g('loginPhone').value||'').trim();
   if(!phone||phone.length<12){showToast('전화번호를 올바르게 입력해주세요');return;}
   try{
-    var r=await db.from('users').select('*').eq('phone',phone).maybeSingle();
+    var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
     if(!r.data){showToast('가입된 전화번호가 없어요.\n회원가입을 먼저 해주세요!');return;}
     userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);
   }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
@@ -6485,6 +6519,10 @@ function showAuthSuccess(name,isNew){
     localStorage.removeItem('aiDonghang_pendingAction');localStorage.removeItem('aiDonghang_pendingWork');
     try{var work=JSON.parse(pendingWork);completionWork=work;saveToPortfolio(work.course,work.text,work.text);setTimeout(function(){showCompletionModal(work.course,work.text);},400);}catch(e){}
     return;
+  }
+  // 로그인 시 서버 데이터 동기화
+  if(userProfile && userProfile.id){
+    loadUserDataFromSupabase(userProfile.id);
   }
   // 신규 회원가입 → 도장깨기로 이동 후 설문 (1회만)
   if(isNew){
@@ -7180,6 +7218,119 @@ async function generateImageWithReplicate(prompt){
     if(pd.status==='failed') throw new Error('이미지 생성 실패: '+pd.error);
   }
   throw new Error('이미지 생성 시간 초과');
+}
+
+// ── Supabase 데이터 동기화 ──
+
+// 로그인 후 서버에서 데이터 불러오기
+async function loadUserDataFromSupabase(userId){
+  if(!db || !userId) return;
+  try{
+    // 작품함 불러오기
+    var wRes = await db.from('works')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_saved', true)
+      .order('created_at', {ascending: false})
+      .limit(50);
+    if(wRes.data && wRes.data.length > 0){
+      var serverWorks = wRes.data.map(function(w){
+        return {
+          id: w.id || Date.now(),
+          course: w.course || '',
+          emoji: (COURSE_CONFIG[w.course]||{}).emoji || '📝',
+          prompt: w.final_prompt || '',
+          result: w.result || w.final_prompt || '',
+          date: w.date_label || ''
+        };
+      });
+      // 서버 데이터가 로컬보다 많으면 서버 우선
+      if(serverWorks.length >= portfolio.length){
+        portfolio = serverWorks;
+        localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio));
+        console.log('[Supabase] 작품함 불러옴:', portfolio.length+'개');
+      }
+    }
+    // 도장 진행상황 불러오기
+    var pRes = await db.from('user_progress')
+      .select('dojo_progress')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if(pRes.data && pRes.data.dojo_progress){
+      var serverProgress = pRes.data.dojo_progress;
+      // 서버 + 로컬 병합 (둘 다 완료한 건 유지)
+      Object.keys(serverProgress).forEach(function(k){
+        if(serverProgress[k]) dojoProgress[k] = true;
+      });
+      localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+      console.log('[Supabase] 도장 진행 불러옴');
+    }
+  } catch(e){ console.log('[Supabase] 로드 오류:', e.message); }
+}
+
+// 도장 진행상황 서버에 저장
+async function saveDojoProgressToSupabase(){
+  if(!db || !userProfile || !userProfile.id) return;
+  try{
+    await db.from('user_progress').upsert([{
+      user_id: userProfile.id,
+      dojo_progress: dojoProgress,
+      updated_at: new Date().toISOString()
+    }], { onConflict: 'user_id' });
+  } catch(e){ console.log('[Supabase] 도장 저장 오류:', e.message); }
+}
+
+// ── 커뮤니티 Supabase 로드 ──
+async function loadCommunityFromSupabase(){
+  if(!db) return;
+  try{
+    var res = await db.from('community_works')
+      .select('*')
+      .order('created_at', {ascending:false})
+      .limit(100);
+    if(res.data && res.data.length > 0){
+      var serverWorks = res.data.map(function(w){
+        return {
+          id: w.id,
+          db_id: w.id,
+          nickname: w.nickname || '익명',
+          age: w.age || '밝히지 않을게요',
+          cat: w.cat || 'writing',
+          content: w.content || '',
+          cheers: w.cheers || 0,
+          comments: [],
+          time: formatTimeAgo(w.created_at),
+          cheered: false
+        };
+      });
+      // 서버 데이터로 교체 (예시 데이터 제외하고)
+      // ID가 숫자(예시)인 것과 실제 UUID 구분
+      var exampleIds = [1,2,3,4,5];
+      var localOnly = communityWorks.filter(function(w){ return exampleIds.indexOf(w.id) >= 0; });
+      communityWorks = serverWorks.concat(localOnly.filter(function(w){
+        return !serverWorks.find(function(s){ return s.content === w.content; });
+      }));
+      renderCommunity();
+      console.log('[Supabase] 커뮤니티 불러옴:', serverWorks.length+'개');
+    }
+  } catch(e){ console.log('[Supabase] community load:', e.message); }
+}
+
+function formatTimeAgo(isoStr){
+  if(!isoStr) return '';
+  var diff = (Date.now() - new Date(isoStr).getTime()) / 1000;
+  if(diff < 60) return '방금 전';
+  if(diff < 3600) return Math.floor(diff/60)+'분 전';
+  if(diff < 86400) return Math.floor(diff/3600)+'시간 전';
+  return Math.floor(diff/86400)+'일 전';
+}
+
+// 응원 수 Supabase 업데이트
+async function updateCheersInSupabase(dbId, newCount){
+  if(!db || !dbId) return;
+  try{
+    await db.from('community_works').update({cheers: newCount}).eq('id', dbId);
+  } catch(e){ console.log('[Supabase] cheers update:', e.message); }
 }
 </script>
 

@@ -1553,6 +1553,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .footer-links{flex-wrap:wrap;gap:8px;}
 }
 </style>
+  <!-- 카카오 SDK -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- NAV -->
@@ -3514,6 +3516,12 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 // Claude.ai 환경에서는 자동 처리됨
 // API 키 로드 (localStorage 우선)
 window._claudeApiKey = localStorage.getItem('aiDonghang_claudeKey') || '';
+// 카카오 SDK 초기화
+(function(){
+  if(typeof Kakao !== 'undefined' && !Kakao.isInitialized()){
+    Kakao.init('5c95d732ad7d1f1905583749ef4788ef');
+  }
+})();
 // ── 상태 ──
 var userProfile = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
 var portfolio = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
@@ -6202,7 +6210,48 @@ async function authLoginPhone(){
     userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);
   }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
 }
-function authKakao(){userProfile={name:'카카오 사용자',phone:'',plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess('카카오 사용자',true);}
+function authKakao(){
+  if(typeof Kakao === 'undefined' || !Kakao.isInitialized()){
+    showToast('카카오 연결에 실패했어요. 잠시 후 다시 시도해주세요.'); return;
+  }
+  Kakao.Auth.login({
+    success: function(authObj){
+      // 사용자 정보 가져오기
+      Kakao.API.request({
+        url: '/v2/user/me',
+        success: function(res){
+          var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
+            || (res.properties && res.properties.nickname)
+            || '카카오 사용자';
+          var isNew = !localStorage.getItem('aiDonghang_profile') ||
+                      !JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name;
+          userProfile = {
+            name: kakaoName,
+            phone: '',
+            plan: 'free',
+            kakaoId: res.id,
+            loginType: 'kakao'
+          };
+          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+          showAuthSuccess(kakaoName, isNew);
+        },
+        fail: function(err){
+          // 닉네임 못 받아도 로그인은 성공으로 처리
+          userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
+          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+          showAuthSuccess('카카오 사용자', true);
+        }
+      });
+    },
+    fail: function(err){
+      if(err && err.error === 'access_denied'){
+        showToast('카카오 로그인을 취소하셨어요.');
+      } else {
+        showToast('카카오 로그인에 실패했어요. 잠시 후 다시 시도해주세요.');
+      }
+    }
+  });
+}
 function formatPhone(input){var v=input.value.replace(/\D/g,'');if(v.length<=3)input.value=v;else if(v.length<=7)input.value=v.slice(0,3)+'-'+v.slice(3);else input.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);}
 function switchAuthTab(tab){var s=(tab==='signup');g('tabSignup').className='auth-tab-btn'+(s?' active':'');g('tabLogin').className='auth-tab-btn'+(!s?' active':'');g('authSignup').style.display=s?'block':'none';g('authLogin').style.display=!s?'block':'none';g('authSuccess').style.display='none';if(g('authBackBtn'))g('authBackBtn').style.display='flex';}
 function showAuthSuccess(name,isNew){

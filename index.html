@@ -1552,6 +1552,31 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .footer{padding:20px 16px;flex-direction:column;align-items:flex-start;gap:10px;}
   .footer-links{flex-wrap:wrap;gap:8px;}
 }
+
+/* 업로드 모달 칩 */
+.upload-chip{
+  padding:9px 16px;
+  border:1.5px solid var(--bd);
+  border-radius:100px;
+  background:#fff;
+  color:var(--i2);
+  font-size:14px;
+  font-weight:600;
+  font-family:inherit;
+  cursor:pointer;
+  transition:all .15s;
+}
+.upload-chip:hover{
+  border-color:var(--ab);
+  background:var(--al);
+  color:var(--ac);
+}
+.upload-chip.selected{
+  background:var(--ac);
+  color:#fff;
+  border-color:var(--ac);
+  box-shadow:0 2px 8px rgba(42,95,82,.25);
+}
 </style>
   <!-- 카카오 SDK -->
   <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
@@ -2888,12 +2913,36 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- 업로드 모달 -->
 <div class="modal-backdrop" id="uploadWorkModal" style="display:none;">
   <div style="background:#fff;border-radius:24px;padding:30px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;">
+    <!-- 헤더 -->
     <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:18px;">📤 작품 올리기</div>
-    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">닉네임 (선택)</div><input id="uploadNickname" type="text" placeholder="예: 봄날의 할머니, 익명" style="width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;outline:none;"></div>
-    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">나이대 (선택)</div><div style="display:flex;gap:7px;flex-wrap:wrap;" id="ageChips"><button class="age-chip" onclick="selectAge(this)" data-age="60대">60대</button><button class="age-chip" onclick="selectAge(this)" data-age="70대">70대</button><button class="age-chip" onclick="selectAge(this)" data-age="80대 이상">80대 이상</button><button class="age-chip" onclick="selectAge(this)" data-age="밝히지 않을게요">밝히지 않을게요</button></div></div>
-    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">어떤 작품인가요?</div><div style="display:flex;gap:7px;flex-wrap:wrap;" id="catChips"><button class="age-chip" onclick="selectCat(this)" data-cat="writing">✍️ 글쓰기</button><button class="age-chip" onclick="selectCat(this)" data-cat="image">🎨 이미지</button><button class="age-chip" onclick="selectCat(this)" data-cat="music">🎵 음악</button><button class="age-chip" onclick="selectCat(this)" data-cat="daily">📱 일상</button></div></div>
-    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">작품 내용</div><textarea id="uploadContent" placeholder="AI가 만들어준 글, 이미지 설명, 노래 가사 등을 붙여넣어주세요" style="width:100%;min-height:100px;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;line-height:1.7;"></textarea></div>
-    <div style="margin-bottom:18px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">어떤 AI 툴로 만들었어요?</div><input id="uploadTool" type="text" placeholder="예: 뤼튼, ChatGPT, Suno AI" style="width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;outline:none;"></div>
+    <!-- 나이대 -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:8px;">나이대 <span style="font-weight:400;color:var(--i3);">(선택)</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="ageChips">
+        <button class="upload-chip" onclick="selectAge(this)" data-age="60대">60대</button>
+        <button class="upload-chip" onclick="selectAge(this)" data-age="70대">70대</button>
+        <button class="upload-chip" onclick="selectAge(this)" data-age="80대 이상">80대 이상</button>
+        <button class="upload-chip" onclick="selectAge(this)" data-age="밝히지 않을게요">밝히지 않을게요</button>
+      </div>
+    </div>
+    <!-- 작품 종류 -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:8px;">어떤 작품인가요?</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="catChips">
+        <button class="upload-chip" onclick="selectCat(this)" data-cat="writing">✍️ 글쓰기</button>
+        <button class="upload-chip" onclick="selectCat(this)" data-cat="image">🎨 이미지</button>
+        <button class="upload-chip" onclick="selectCat(this)" data-cat="music">🎵 음악</button>
+        <button class="upload-chip" onclick="selectCat(this)" data-cat="daily">📱 일상</button>
+      </div>
+    </div>
+    <!-- 작품 내용 (자동 입력) -->
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-size:14px;font-weight:700;color:var(--i2);">작품 내용</div>
+        <div style="font-size:12px;color:var(--ac);font-weight:600;" id="uploadAutoFillBadge" style="display:none;">✅ 방금 만든 작품 자동입력</div>
+      </div>
+      <textarea id="uploadContent" placeholder="작품 내용을 입력해주세요" style="width:100%;min-height:110px;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;line-height:1.7;"></textarea>
+    </div>
     <div style="display:flex;gap:10px;"><button onclick="submitWork()" style="flex:2;padding:15px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;box-shadow:0 4px 0 var(--ad);">올리기 🎉</button><button onclick="closeUploadWork()" style="flex:1;padding:15px;background:#fff;color:var(--i3);border:1.5px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">취소</button></div>
   </div>
 </div>
@@ -3497,6 +3546,24 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <button onclick="g('saveLoginModal').classList.remove('show')" style="width:100%;padding:13px;background:none;border:none;font-size:15px;color:var(--i3);cursor:pointer;font-family:inherit;min-height:48px;">나중에 할게요</button>
   </div>
 </div>
+
+<!-- ── 구독 유도 팝업 (로그인 사용자) ── -->
+<div class="modal-backdrop" id="upgradeNudgeModal">
+  <div class="save-login-modal">
+    <div style="font-size:60px;margin-bottom:16px;">✨</div>
+    <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:9px;">커뮤니티에 작품을 올려요!</div>
+    <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:22px;">동행 플랜으로 업그레이드하면<br>내 작품을 커뮤니티에 공유하고<br><b style="color:var(--ac);">다른 분들의 응원</b>을 받을 수 있어요 🥹</div>
+    <div style="background:var(--al);border-radius:12px;padding:14px 16px;margin-bottom:20px;text-align:left;">
+      <div style="font-weight:700;color:var(--ac);margin-bottom:8px;font-size:14px;">✅ 동행 플랜 혜택</div>
+      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">🏆 커뮤니티 작품 공유 무제한</div>
+      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">📁 작품함 무제한 저장</div>
+      <div style="font-size:14px;color:var(--i2);">💌 카카오톡 전송 무제한</div>
+    </div>
+    <button onclick="showView('pricing');g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;box-shadow:0 4px 0 var(--ad);">월 9,900원으로 시작하기 →</button>
+    <button onclick="g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:13px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">나중에 하기</button>
+  </div>
+</div>
+
 
 <!-- 도움말 -->
 <div id="helpFloat" onclick="showView('faq')" title="도움말 · 사용법 보기">
@@ -4525,26 +4592,54 @@ function submitComment(id){
 }
 function scrollToWork(id){var el=g('work-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
 function openUploadWork(){
-  if(!requireLogin())return;
-  var m=g('uploadWorkModal');if(m){m.style.display='flex';m.style.alignItems='center';m.style.justifyContent='center';m.style.padding='20px';}
+  // 비로그인 → 가입 유도
+  if(!userProfile || !userProfile.name){
+    requireLogin();
+    return;
+  }
+  // 무료 플랜 → 구독 유도
+  if(userProfile.plan === 'free' || !userProfile.plan){
+    var nm = g('upgradeNudgeModal');
+    if(nm) nm.classList.add('show');
+    return;
+  }
+  // 유료 플랜 → 업로드 모달 열기
+  var m=g('uploadWorkModal');
+  if(!m) return;
+  // 방금 만든 작품 자동 입력
+  var aiResult = g('aiResultText') ? g('aiResultText').textContent.trim() : '';
+  var lastPortfolio = portfolio && portfolio.length > 0 ? portfolio[0] : null;
+  var autoContent = aiResult || (lastPortfolio ? lastPortfolio.text || lastPortfolio.result || '' : '');
+  var contentEl = g('uploadContent');
+  if(contentEl && autoContent){
+    contentEl.value = autoContent;
+    var badge = g('uploadAutoFillBadge');
+    if(badge) badge.style.display = 'block';
+  }
+  // 작품 종류 자동 선택 (courseName 기반)
+  var catMap = {'일기 쓰기':'writing','편지 쓰기':'writing','자서전 쓰기':'writing','트로트 만들기':'music','발라드 만들기':'music','동요 만들기':'music','고향 마을 그림':'image','봄꽃 일러스트':'image','계절 풍경 그림':'image','엽서 만들기':'image','가족 카드 만들기':'image','오래된 사진 복원':'image'};
+  var autoCat = catMap[courseName] || localStorage.getItem('aiDonghang_lastCat') || '';
+  if(autoCat){
+    var catBtn = document.querySelector('#catChips [data-cat="'+autoCat+'"]');
+    if(catBtn){ document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');}); catBtn.classList.add('selected'); uploadCat = autoCat; }
+  }
+  m.style.display='flex'; m.style.alignItems='center'; m.style.justifyContent='center'; m.style.padding='20px';
 }
 function closeUploadWork(){var m=g('uploadWorkModal');if(m)m.style.display='none';}
-function selectAge(btn){document.querySelectorAll('#ageChips .age-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadAge=btn.getAttribute('data-age');}
-function selectCat(btn){document.querySelectorAll('#catChips .age-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadCat=btn.getAttribute('data-cat');}
+function selectAge(btn){document.querySelectorAll('#ageChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadAge=btn.getAttribute('data-age');}
+function selectCat(btn){document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadCat=btn.getAttribute('data-cat');}
 function submitWork(){
   var content=g('uploadContent')?g('uploadContent').value.trim():'';
-  var nickname=g('uploadNickname')?g('uploadNickname').value.trim():'익명';
-  var tool=g('uploadTool')?g('uploadTool').value.trim():'';
+  var authorName = userProfile && userProfile.name ? userProfile.name : '익명';
   if(!content){showToast('작품 내용을 입력해주세요 😊');return;}
-  if(!uploadCat){showToast('어떤 작품인지 선택해주세요');return;}
-  communityWorks.unshift({id:Date.now(),nickname:nickname||'익명',age:uploadAge||'밝히지 않을게요',cat:uploadCat,tool:tool||'AI',content:content,cheers:0,comments:[],time:'방금 전',cheered:false});
+  if(!uploadCat){showToast('어떤 작품인지 선택해주세요 😊');return;}
+  communityWorks.unshift({id:Date.now(),nickname:authorName,age:uploadAge||'밝히지 않을게요',cat:uploadCat,content:content,cheers:0,comments:[],time:'방금 전',cheered:false});
   closeUploadWork();launchConfetti();showToast('작품이 올라갔어요! 🎉');
   showView('community');
   if(g('uploadContent'))g('uploadContent').value='';
-  if(g('uploadNickname'))g('uploadNickname').value='';
-  if(g('uploadTool'))g('uploadTool').value='';
+  var badge=g('uploadAutoFillBadge'); if(badge) badge.style.display='none';
   uploadAge='';uploadCat='';
-  document.querySelectorAll('#ageChips .age-chip,#catChips .age-chip').forEach(function(b){b.classList.remove('selected');});
+  document.querySelectorAll('#ageChips .upload-chip,#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});
 }
 
 // ══ 동동이 하단 팝업 ══
@@ -4779,6 +4874,8 @@ function renderDailyMission(){
 
 // ── 로그인 필요 공통 처리 ──
 function requireLogin(reason, pendingFn){
+  // 이미 로그인한 경우 → 팝업 없이 통과
+  if(userProfile && userProfile.name) return false;
   var modal = g('saveLoginModal');
   if(!modal) return false;
   // 모달 메시지를 상황에 맞게 변경

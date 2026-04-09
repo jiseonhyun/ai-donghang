@@ -2402,8 +2402,12 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       카카오톡 전송
     </button>
     <div style="display:flex;gap:10px;margin-bottom:10px;">
-      <button onclick="regenerateAI()" style="flex:1;padding:13px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 다시 생성</button>
-      <button onclick="copyAIResult()" style="flex:1;padding:13px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">📋 복사</button>
+      <button onclick="saveAIResult()" style="flex:1;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">📁 작품함 저장</button>
+      <button onclick="shareAIToCommunity()" style="flex:1;padding:13px;background:var(--gl);color:var(--gd);border:1.5px solid var(--gb);border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">🏆 커뮤니티 자랑</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <button onclick="regenerateAI()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 다시 생성</button>
+      <button onclick="copyAIResult()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">📋 복사</button>
     </div>
     <button onclick="backToPromptStep();" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">← 처음부터 다시 만들기</button>
 
@@ -3506,7 +3510,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <button onclick="showView('builder')" id="bnav-builder" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">만들기</span></button>
   <button onclick="showView('learn')" id="bnav-learn" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">AI알아보기</span></button>
   <button onclick="showView('portfolio')" id="bnav-portfolio" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">내 작품함</span></button>
-  <button onclick="showView('faq')" id="bnav-faq" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="1" fill="var(--i3)"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">고객센터</span></button>
+  <button onclick="showView('community')" id="bnav-community" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">커뮤니티</span></button>
 </nav>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -3943,14 +3947,14 @@ function showView(view){
   if(view==='home'){_activate('homeView');}
   else if(view==='dojo'){
     _activate('dojoView');resetDojoViews();showDojoList();
-    // 팝업 트리거 (goToDojo를 거치지 않는 경우도 처리)
+    // 팝업 트리거
     setTimeout(function(){
       var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
       if(!surveyDone){
-        // 설문 미완료 → 동동이 팝업 먼저 (팝업 CTA에서 설문 열림)
-        showDongPopup('first');
+        // 첫 방문 → 설문 바로 표시 (동동이 없이)
+        obOpen('survey');
       } else {
-        // 설문 완료 → 재방문 동동이 팝업
+        // 재방문 → 동동이 팝업
         showDongPopup('return');
       }
     }, 600);
@@ -6819,6 +6823,32 @@ function loadApiKeyToAdmin(){
   if(status && key){
     status.textContent = '✅ API 키가 설정되어 있어요.';
     status.style.color = 'var(--ac)';
+  }
+}
+
+// ── AI 결과 저장 + 커뮤니티 공유 ──
+function saveAIResult(){
+  var result = g('aiResultText') ? g('aiResultText').textContent : '';
+  var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
+  if(!result){ showToast('저장할 결과물이 없어요'); return; }
+  saveToPortfolio(course, result, result);
+  // 배지 표시
+  var badge = g('aiResultBadge');
+  if(badge) badge.style.display = 'flex';
+  showToast('📁 작품함에 저장됐어요!');
+}
+
+function shareAIToCommunity(){
+  var result = g('aiResultText') ? g('aiResultText').textContent : '';
+  var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
+  if(!result){ showToast('공유할 결과물이 없어요'); return; }
+  // 커뮤니티에 포스팅
+  if(typeof postToCommunity === 'function'){
+    postToCommunity(course, result);
+  } else {
+    // fallback: 커뮤니티 페이지로 이동
+    showView('community');
+    showToast('🏆 커뮤니티에 공유됐어요!');
   }
 }
 </script>

@@ -1552,34 +1552,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .footer{padding:20px 16px;flex-direction:column;align-items:flex-start;gap:10px;}
   .footer-links{flex-wrap:wrap;gap:8px;}
 }
-
-/* 업로드 모달 칩 */
-.upload-chip{
-  padding:9px 16px;
-  border:1.5px solid var(--bd);
-  border-radius:100px;
-  background:#fff;
-  color:var(--i2);
-  font-size:14px;
-  font-weight:600;
-  font-family:inherit;
-  cursor:pointer;
-  transition:all .15s;
-}
-.upload-chip:hover{
-  border-color:var(--ab);
-  background:var(--al);
-  color:var(--ac);
-}
-.upload-chip.selected{
-  background:var(--ac);
-  color:#fff;
-  border-color:var(--ac);
-  box-shadow:0 2px 8px rgba(42,95,82,.25);
-}
 </style>
-  <!-- 카카오 SDK -->
-  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- NAV -->
@@ -2427,12 +2400,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       카카오톡 전송
     </button>
     <div style="display:flex;gap:10px;margin-bottom:10px;">
-      <button onclick="saveAIResult()" style="flex:1;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">📁 작품함 저장</button>
-      <button onclick="shareAIToCommunity()" style="flex:1;padding:13px;background:var(--gl);color:var(--gd);border:1.5px solid var(--gb);border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">🏆 커뮤니티 자랑</button>
-    </div>
-    <div style="display:flex;gap:10px;margin-bottom:10px;">
-      <button onclick="regenerateAI()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 다시 생성</button>
-      <button onclick="copyAIResult()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">📋 복사</button>
+      <button onclick="regenerateAI()" style="flex:1;padding:13px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 다시 생성</button>
+      <button onclick="copyAIResult()" style="flex:1;padding:13px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">📋 복사</button>
     </div>
     <button onclick="backToPromptStep();" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">← 처음부터 다시 만들기</button>
 
@@ -2913,36 +2882,12 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- 업로드 모달 -->
 <div class="modal-backdrop" id="uploadWorkModal" style="display:none;">
   <div style="background:#fff;border-radius:24px;padding:30px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;">
-    <!-- 헤더 -->
     <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:18px;">📤 작품 올리기</div>
-    <!-- 나이대 -->
-    <div style="margin-bottom:14px;">
-      <div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:8px;">나이대 <span style="font-weight:400;color:var(--i3);">(선택)</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="ageChips">
-        <button class="upload-chip" onclick="selectAge(this)" data-age="60대">60대</button>
-        <button class="upload-chip" onclick="selectAge(this)" data-age="70대">70대</button>
-        <button class="upload-chip" onclick="selectAge(this)" data-age="80대 이상">80대 이상</button>
-        <button class="upload-chip" onclick="selectAge(this)" data-age="밝히지 않을게요">밝히지 않을게요</button>
-      </div>
-    </div>
-    <!-- 작품 종류 -->
-    <div style="margin-bottom:14px;">
-      <div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:8px;">어떤 작품인가요?</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="catChips">
-        <button class="upload-chip" onclick="selectCat(this)" data-cat="writing">✍️ 글쓰기</button>
-        <button class="upload-chip" onclick="selectCat(this)" data-cat="image">🎨 이미지</button>
-        <button class="upload-chip" onclick="selectCat(this)" data-cat="music">🎵 음악</button>
-        <button class="upload-chip" onclick="selectCat(this)" data-cat="daily">📱 일상</button>
-      </div>
-    </div>
-    <!-- 작품 내용 (자동 입력) -->
-    <div style="margin-bottom:18px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-        <div style="font-size:14px;font-weight:700;color:var(--i2);">작품 내용</div>
-        <div style="font-size:12px;color:var(--ac);font-weight:600;" id="uploadAutoFillBadge" style="display:none;">✅ 방금 만든 작품 자동입력</div>
-      </div>
-      <textarea id="uploadContent" placeholder="작품 내용을 입력해주세요" style="width:100%;min-height:110px;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;line-height:1.7;"></textarea>
-    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">닉네임 (선택)</div><input id="uploadNickname" type="text" placeholder="예: 봄날의 할머니, 익명" style="width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;outline:none;"></div>
+    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">나이대 (선택)</div><div style="display:flex;gap:7px;flex-wrap:wrap;" id="ageChips"><button class="age-chip" onclick="selectAge(this)" data-age="60대">60대</button><button class="age-chip" onclick="selectAge(this)" data-age="70대">70대</button><button class="age-chip" onclick="selectAge(this)" data-age="80대 이상">80대 이상</button><button class="age-chip" onclick="selectAge(this)" data-age="밝히지 않을게요">밝히지 않을게요</button></div></div>
+    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">어떤 작품인가요?</div><div style="display:flex;gap:7px;flex-wrap:wrap;" id="catChips"><button class="age-chip" onclick="selectCat(this)" data-cat="writing">✍️ 글쓰기</button><button class="age-chip" onclick="selectCat(this)" data-cat="image">🎨 이미지</button><button class="age-chip" onclick="selectCat(this)" data-cat="music">🎵 음악</button><button class="age-chip" onclick="selectCat(this)" data-cat="daily">📱 일상</button></div></div>
+    <div style="margin-bottom:12px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">작품 내용</div><textarea id="uploadContent" placeholder="AI가 만들어준 글, 이미지 설명, 노래 가사 등을 붙여넣어주세요" style="width:100%;min-height:100px;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;line-height:1.7;"></textarea></div>
+    <div style="margin-bottom:18px;"><div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:5px;">어떤 AI 툴로 만들었어요?</div><input id="uploadTool" type="text" placeholder="예: 뤼튼, ChatGPT, Suno AI" style="width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;outline:none;"></div>
     <div style="display:flex;gap:10px;"><button onclick="submitWork()" style="flex:2;padding:15px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;box-shadow:0 4px 0 var(--ad);">올리기 🎉</button><button onclick="closeUploadWork()" style="flex:1;padding:15px;background:#fff;color:var(--i3);border:1.5px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">취소</button></div>
   </div>
 </div>
@@ -3547,24 +3492,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 
-<!-- ── 구독 유도 팝업 (로그인 사용자) ── -->
-<div class="modal-backdrop" id="upgradeNudgeModal">
-  <div class="save-login-modal">
-    <div style="font-size:60px;margin-bottom:16px;">✨</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:9px;">커뮤니티에 작품을 올려요!</div>
-    <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:22px;">동행 플랜으로 업그레이드하면<br>내 작품을 커뮤니티에 공유하고<br><b style="color:var(--ac);">다른 분들의 응원</b>을 받을 수 있어요 🥹</div>
-    <div style="background:var(--al);border-radius:12px;padding:14px 16px;margin-bottom:20px;text-align:left;">
-      <div style="font-weight:700;color:var(--ac);margin-bottom:8px;font-size:14px;">✅ 동행 플랜 혜택</div>
-      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">🏆 커뮤니티 작품 공유 무제한</div>
-      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">📁 작품함 무제한 저장</div>
-      <div style="font-size:14px;color:var(--i2);">💌 카카오톡 전송 무제한</div>
-    </div>
-    <button onclick="showView('pricing');g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;box-shadow:0 4px 0 var(--ad);">월 9,900원으로 시작하기 →</button>
-    <button onclick="g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:13px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">나중에 하기</button>
-  </div>
-</div>
-
-
 <!-- 도움말 -->
 <div id="helpFloat" onclick="showView('faq')" title="도움말 · 사용법 보기">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="white"/></svg>
@@ -3577,7 +3504,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <button onclick="showView('builder')" id="bnav-builder" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">만들기</span></button>
   <button onclick="showView('learn')" id="bnav-learn" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">AI알아보기</span></button>
   <button onclick="showView('portfolio')" id="bnav-portfolio" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">내 작품함</span></button>
-  <button onclick="showView('community')" id="bnav-community" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">커뮤니티</span></button>
+  <button onclick="showView('faq')" id="bnav-faq" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="1" fill="var(--i3)"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">고객센터</span></button>
 </nav>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -3587,17 +3514,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 // Claude.ai 환경에서는 자동 처리됨
 // API 키 로드 (localStorage 우선)
 window._claudeApiKey = localStorage.getItem('aiDonghang_claudeKey') || '';
-// 카카오 SDK 초기화 (lazy - 버튼 클릭 시 실행)
-var KAKAO_KEY = '5c95d732ad7d1f1905583749ef4788ef';
-function initKakaoSdk(){
-  if(typeof Kakao !== 'undefined'){
-    if(!Kakao.isInitialized()) Kakao.init(KAKAO_KEY);
-    return true;
-  }
-  return false;
-}
-// 페이지 로드 후 초기화 시도
-window.addEventListener('load', function(){ initKakaoSdk(); });
 // ── 상태 ──
 var userProfile = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
 var portfolio = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
@@ -4014,14 +3930,12 @@ function showView(view){
   if(view==='home'){_activate('homeView');}
   else if(view==='dojo'){
     _activate('dojoView');resetDojoViews();showDojoList();
-    // 팝업 트리거
+    // 팝업 트리거 (goToDojo를 거치지 않는 경우도 처리)
     setTimeout(function(){
       var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
       if(!surveyDone){
-        // 첫 방문 → 설문 바로 표시 (동동이 없이)
         obOpen('survey');
       } else {
-        // 재방문 → 동동이 팝업
         showDongPopup('return');
       }
     }, 600);
@@ -4592,59 +4506,30 @@ function submitComment(id){
 }
 function scrollToWork(id){var el=g('work-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
 function openUploadWork(){
-  // 비로그인 → 가입 유도
-  if(!userProfile || !userProfile.name){
-    requireLogin();
-    return;
-  }
-  // 무료 플랜 → 구독 유도
-  if(userProfile.plan === 'free' || !userProfile.plan){
-    var nm = g('upgradeNudgeModal');
-    if(nm) nm.classList.add('show');
-    return;
-  }
-  // 유료 플랜 → 업로드 모달 열기
-  var m=g('uploadWorkModal');
-  if(!m) return;
-  // 방금 만든 작품 자동 입력
-  var aiResult = g('aiResultText') ? g('aiResultText').textContent.trim() : '';
-  var lastPortfolio = portfolio && portfolio.length > 0 ? portfolio[0] : null;
-  var autoContent = aiResult || (lastPortfolio ? lastPortfolio.text || lastPortfolio.result || '' : '');
-  var contentEl = g('uploadContent');
-  if(contentEl && autoContent){
-    contentEl.value = autoContent;
-    var badge = g('uploadAutoFillBadge');
-    if(badge) badge.style.display = 'block';
-  }
-  // 작품 종류 자동 선택 (courseName 기반)
-  var catMap = {'일기 쓰기':'writing','편지 쓰기':'writing','자서전 쓰기':'writing','트로트 만들기':'music','발라드 만들기':'music','동요 만들기':'music','고향 마을 그림':'image','봄꽃 일러스트':'image','계절 풍경 그림':'image','엽서 만들기':'image','가족 카드 만들기':'image','오래된 사진 복원':'image'};
-  var autoCat = catMap[courseName] || localStorage.getItem('aiDonghang_lastCat') || '';
-  if(autoCat){
-    var catBtn = document.querySelector('#catChips [data-cat="'+autoCat+'"]');
-    if(catBtn){ document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');}); catBtn.classList.add('selected'); uploadCat = autoCat; }
-  }
-  m.style.display='flex'; m.style.alignItems='center'; m.style.justifyContent='center'; m.style.padding='20px';
+  if(!requireLogin())return;
+  var m=g('uploadWorkModal');if(m){m.style.display='flex';m.style.alignItems='center';m.style.justifyContent='center';m.style.padding='20px';}
 }
 function closeUploadWork(){var m=g('uploadWorkModal');if(m)m.style.display='none';}
-function selectAge(btn){document.querySelectorAll('#ageChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadAge=btn.getAttribute('data-age');}
-function selectCat(btn){document.querySelectorAll('#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadCat=btn.getAttribute('data-cat');}
+function selectAge(btn){document.querySelectorAll('#ageChips .age-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadAge=btn.getAttribute('data-age');}
+function selectCat(btn){document.querySelectorAll('#catChips .age-chip').forEach(function(b){b.classList.remove('selected');});btn.classList.add('selected');uploadCat=btn.getAttribute('data-cat');}
 function submitWork(){
   var content=g('uploadContent')?g('uploadContent').value.trim():'';
-  var authorName = userProfile && userProfile.name ? userProfile.name : '익명';
+  var nickname=g('uploadNickname')?g('uploadNickname').value.trim():'익명';
+  var tool=g('uploadTool')?g('uploadTool').value.trim():'';
   if(!content){showToast('작품 내용을 입력해주세요 😊');return;}
-  if(!uploadCat){showToast('어떤 작품인지 선택해주세요 😊');return;}
-  communityWorks.unshift({id:Date.now(),nickname:authorName,age:uploadAge||'밝히지 않을게요',cat:uploadCat,content:content,cheers:0,comments:[],time:'방금 전',cheered:false});
+  if(!uploadCat){showToast('어떤 작품인지 선택해주세요');return;}
+  communityWorks.unshift({id:Date.now(),nickname:nickname||'익명',age:uploadAge||'밝히지 않을게요',cat:uploadCat,tool:tool||'AI',content:content,cheers:0,comments:[],time:'방금 전',cheered:false});
   closeUploadWork();launchConfetti();showToast('작품이 올라갔어요! 🎉');
   showView('community');
   if(g('uploadContent'))g('uploadContent').value='';
-  var badge=g('uploadAutoFillBadge'); if(badge) badge.style.display='none';
+  if(g('uploadNickname'))g('uploadNickname').value='';
+  if(g('uploadTool'))g('uploadTool').value='';
   uploadAge='';uploadCat='';
-  document.querySelectorAll('#ageChips .upload-chip,#catChips .upload-chip').forEach(function(b){b.classList.remove('selected');});
+  document.querySelectorAll('#ageChips .age-chip,#catChips .age-chip').forEach(function(b){b.classList.remove('selected');});
 }
 
 // ══ 동동이 하단 팝업 ══
 var _dongPopupType = 'first'; // 'first' | 'return'
-var _dongPopupAction = null;
 
 
 
@@ -4655,11 +4540,23 @@ function closeDongPopup(){
 }
 
 function dongPopupAction(){
-  // _dongPopupAction이 설정되어 있으면 그걸 실행 (showDongPopup에서 설정)
-  if(typeof _dongPopupAction === 'function'){
-    _dongPopupAction();
+  closeDongPopup();
+  if(_dongPopupType === 'first'){
+    // 첫 방문 → 온보딩 설문 (관심사 선택 팝업)
+    localStorage.setItem('aiDonghang_dojoSeen','1');
+    var onb = g('dojoOnboardOverlay');
+    if(onb) onb.classList.remove('hide');
   } else {
-    closeDongPopup();
+    // 재방문 → 이어서 도장깨기 (첫 번째 미완료 미션)
+    var allMissions = DOJO_CONFIG;
+    var nextMission = allMissions.find(function(d){
+      return isMissionUnlocked(d.id) && !dojoProgress[d.id];
+    });
+    if(nextMission){
+      openDojo(nextMission.id);
+    } else {
+      showToast('모든 도장을 깨셨어요! 🏆 정말 대단해요!');
+    }
   }
 }
 
@@ -4874,8 +4771,6 @@ function renderDailyMission(){
 
 // ── 로그인 필요 공통 처리 ──
 function requireLogin(reason, pendingFn){
-  // 이미 로그인한 경우 → 팝업 없이 통과
-  if(userProfile && userProfile.name) return false;
   var modal = g('saveLoginModal');
   if(!modal) return false;
   // 모달 메시지를 상황에 맞게 변경
@@ -6133,61 +6028,18 @@ function showCompletionModal(course,text){
   // 자동 저장
   saveToPortfolio(course, text, text);
 
-  // 강의별 맞춤 메시지
-  var courseMsg = {
-    '일기 쓰기': [
-      {main:'오늘 하루가 이렇게 예쁜 글이 됐어요 😊', sub:'나중에 꺼내보면 정말 소중한 기억이 될 거예요!'},
-      {main:'일기 한 편 완성! 내일도 같이 써봐요 💚', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
-    ],
-    '편지 쓰기': [
-      {main:'이 편지를 받는 분이 정말 행복하실 것 같아요 💌', sub:'지금 바로 카카오톡으로 전달해보세요!'},
-      {main:'마음이 담긴 편지가 완성됐어요 🥹', sub:'소중한 분께 바로 보내드려요!'}
-    ],
-    '자서전 쓰기': [
-      {main:'살아오신 이야기가 이렇게 아름다운 글이 됐어요 🥹', sub:'가족들이 정말 소중히 간직할 거예요!'},
-      {main:'이 이야기, 가족들에게 꼭 전해주세요 💚', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
-    ],
-    '고향 마을 그림': [
-      {main:'그리운 고향이 그림으로 되살아났어요 🏡', sub:'가족들에게 보내주시면 정말 좋아할 거예요!'},
-    ],
-    '오래된 사진 복원': [
-      {main:'소중한 추억이 선명하게 살아났어요 📸', sub:'작품함에 저장됐어요. 가족과 나눠보세요!'},
-    ],
-    '봄꽃 일러스트': [
-      {main:'봄처럼 예쁜 그림이 완성됐어요 🌸', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
-    ],
-    '가족 카드 만들기': [
-      {main:'가족이 받으면 정말 기뻐할 카드예요 🎉', sub:'지금 바로 카카오톡으로 전달해보세요!'},
-    ],
-    '계절 풍경 그림': [
-      {main:'아름다운 계절이 그림 속에 담겼어요 🍂', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
-    ],
-    '엽서 만들기': [
-      {main:'세상에 하나뿐인 엽서가 완성됐어요 ✉️', sub:'소중한 분께 보내드려요!'},
-    ],
-    '트로트 만들기': [
-      {main:'신나는 트로트 완성! 흥이 넘치네요 🎵', sub:'가족들이랑 같이 들어보세요!'},
-    ],
-    '발라드 만들기': [
-      {main:'마음을 울리는 발라드가 완성됐어요 🎶', sub:'소중한 분께 지금 전달해보세요!'},
-    ],
-    '동요 만들기': [
-      {main:'손자손녀가 정말 좋아할 노래예요 🎵', sub:'지금 바로 들려주세요!'},
-    ]
-  };
-
-  // 기본 메시지 (강의명 매칭 안 될 때)
-  var defaultMsgs = [
-    {main:'해내셨어요! 진심으로 대단해요 😊', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
-    {main:'정말 잘 하셨어요! 계속 이어가봐요 💚', sub:'소중한 작품이에요. 가족에게 지금 바로 전달해보세요!'}
+  // 따뜻한 메시지 분기
+  var msgs = [
+    {main:'이 글, 가족들이 나중에 소중히 간직할 거예요 🥹', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
+    {main:'해내셨어요! 진심으로 대단해요 😊', sub:'나중에 필요할 때 언제든지 작품함에서 찾아보세요!'},
+    {main:'살아오신 이야기가 이렇게 아름다운 글이 됐어요 💚', sub:'소중한 작품이에요. 가족에게 지금 바로 전달해보세요!'},
+    {main:'완성됐어요! 어머니가 읽으시면 정말 기뻐하실 것 같아요 🥹', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
   ];
-
-  var pool = courseMsg[course] || defaultMsgs;
-  var pick = pool[Math.floor(Math.random() * pool.length)];
+  var idx = Math.floor(Math.random() * msgs.length);
   var m = g('completionDongMsg');
   var s = g('completionDongSub');
-  if(m) m.textContent = pick.main;
-  if(s) s.textContent = pick.sub;
+  if(m) m.textContent = msgs[idx].main;
+  if(s) s.textContent = msgs[idx].sub;
 
   // 0.8초 후 팝업 표시 (결과 화면 먼저 보이게)
   setTimeout(function(){
@@ -6350,49 +6202,7 @@ async function authLoginPhone(){
     userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);
   }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
 }
-function authKakao(){
-  // SDK 없으면 로드 재시도
-  if(!initKakaoSdk()){
-    showToast('카카오 연결 중이에요. 잠시 후 다시 눌러주세요 🙂'); return;
-  }
-  Kakao.Auth.login({
-    success: function(authObj){
-      // 사용자 정보 가져오기
-      Kakao.API.request({
-        url: '/v2/user/me',
-        success: function(res){
-          var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
-            || (res.properties && res.properties.nickname)
-            || '카카오 사용자';
-          var isNew = !localStorage.getItem('aiDonghang_profile') ||
-                      !JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name;
-          userProfile = {
-            name: kakaoName,
-            phone: '',
-            plan: 'free',
-            kakaoId: res.id,
-            loginType: 'kakao'
-          };
-          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-          showAuthSuccess(kakaoName, isNew);
-        },
-        fail: function(err){
-          // 닉네임 못 받아도 로그인은 성공으로 처리
-          userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
-          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-          showAuthSuccess('카카오 사용자', true);
-        }
-      });
-    },
-    fail: function(err){
-      if(err && err.error === 'access_denied'){
-        showToast('카카오 로그인을 취소하셨어요.');
-      } else {
-        showToast('카카오 로그인에 실패했어요. 잠시 후 다시 시도해주세요.');
-      }
-    }
-  });
-}
+function authKakao(){userProfile={name:'카카오 사용자',phone:'',plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess('카카오 사용자',true);}
 function formatPhone(input){var v=input.value.replace(/\D/g,'');if(v.length<=3)input.value=v;else if(v.length<=7)input.value=v.slice(0,3)+'-'+v.slice(3);else input.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);}
 function switchAuthTab(tab){var s=(tab==='signup');g('tabSignup').className='auth-tab-btn'+(s?' active':'');g('tabLogin').className='auth-tab-btn'+(!s?' active':'');g('authSignup').style.display=s?'block':'none';g('authLogin').style.display=!s?'block':'none';g('authSuccess').style.display='none';if(g('authBackBtn'))g('authBackBtn').style.display='flex';}
 function showAuthSuccess(name,isNew){
@@ -6604,7 +6414,6 @@ function showDongPopup(type){
   var doneCount = Object.keys(dojoProgress).filter(function(k){return dojoProgress[k];}).length;
 
   if(type === 'first'){
-    _dongPopupType = 'first';
     msgEl.innerHTML = '처음 오셨군요! 반가워요 😊';
     subEl.innerHTML = '저는 동동이예요. AI 도구를 함께 써볼 거예요!<br>딱 <b style="color:var(--ac);">3분</b>이면 첫 도장을 받을 수 있어요 🏆';
     ctaEl.textContent = '동동이와 함께 시작하기 →';
@@ -6616,7 +6425,6 @@ function showDongPopup(type){
       }, 350);
     };
   } else {
-    _dongPopupType = 'return';
     var firstMsgs = [
       '처음 오셨군요! 반가워요 😊',
       '혼자 하시는 거 아니에요. 제가 옆에서 계속 있을게요 🥹'
@@ -6920,32 +6728,6 @@ function loadApiKeyToAdmin(){
   if(status && key){
     status.textContent = '✅ API 키가 설정되어 있어요.';
     status.style.color = 'var(--ac)';
-  }
-}
-
-// ── AI 결과 저장 + 커뮤니티 공유 ──
-function saveAIResult(){
-  var result = g('aiResultText') ? g('aiResultText').textContent : '';
-  var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
-  if(!result){ showToast('저장할 결과물이 없어요'); return; }
-  saveToPortfolio(course, result, result);
-  // 배지 표시
-  var badge = g('aiResultBadge');
-  if(badge) badge.style.display = 'flex';
-  showToast('📁 작품함에 저장됐어요!');
-}
-
-function shareAIToCommunity(){
-  var result = g('aiResultText') ? g('aiResultText').textContent : '';
-  var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
-  if(!result){ showToast('공유할 결과물이 없어요'); return; }
-  // 커뮤니티에 포스팅
-  if(typeof postToCommunity === 'function'){
-    postToCommunity(course, result);
-  } else {
-    // fallback: 커뮤니티 페이지로 이동
-    showView('community');
-    showToast('🏆 커뮤니티에 공유됐어요!');
   }
 }
 </script>

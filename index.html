@@ -3516,12 +3516,17 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 // Claude.ai 환경에서는 자동 처리됨
 // API 키 로드 (localStorage 우선)
 window._claudeApiKey = localStorage.getItem('aiDonghang_claudeKey') || '';
-// 카카오 SDK 초기화
-(function(){
-  if(typeof Kakao !== 'undefined' && !Kakao.isInitialized()){
-    Kakao.init('5c95d732ad7d1f1905583749ef4788ef');
+// 카카오 SDK 초기화 (lazy - 버튼 클릭 시 실행)
+var KAKAO_KEY = '5c95d732ad7d1f1905583749ef4788ef';
+function initKakaoSdk(){
+  if(typeof Kakao !== 'undefined'){
+    if(!Kakao.isInitialized()) Kakao.init(KAKAO_KEY);
+    return true;
   }
-})();
+  return false;
+}
+// 페이지 로드 후 초기화 시도
+window.addEventListener('load', function(){ initKakaoSdk(); });
 // ── 상태 ──
 var userProfile = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
 var portfolio = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
@@ -3942,8 +3947,10 @@ function showView(view){
     setTimeout(function(){
       var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
       if(!surveyDone){
-        obOpen('survey');
+        // 설문 미완료 → 동동이 팝업 먼저 (팝업 CTA에서 설문 열림)
+        showDongPopup('first');
       } else {
+        // 설문 완료 → 재방문 동동이 팝업
         showDongPopup('return');
       }
     }, 600);
@@ -4538,6 +4545,7 @@ function submitWork(){
 
 // ══ 동동이 하단 팝업 ══
 var _dongPopupType = 'first'; // 'first' | 'return'
+var _dongPopupAction = null;
 
 
 
@@ -4548,23 +4556,11 @@ function closeDongPopup(){
 }
 
 function dongPopupAction(){
-  closeDongPopup();
-  if(_dongPopupType === 'first'){
-    // 첫 방문 → 온보딩 설문 (관심사 선택 팝업)
-    localStorage.setItem('aiDonghang_dojoSeen','1');
-    var onb = g('dojoOnboardOverlay');
-    if(onb) onb.classList.remove('hide');
+  // _dongPopupAction이 설정되어 있으면 그걸 실행 (showDongPopup에서 설정)
+  if(typeof _dongPopupAction === 'function'){
+    _dongPopupAction();
   } else {
-    // 재방문 → 이어서 도장깨기 (첫 번째 미완료 미션)
-    var allMissions = DOJO_CONFIG;
-    var nextMission = allMissions.find(function(d){
-      return isMissionUnlocked(d.id) && !dojoProgress[d.id];
-    });
-    if(nextMission){
-      openDojo(nextMission.id);
-    } else {
-      showToast('모든 도장을 깨셨어요! 🏆 정말 대단해요!');
-    }
+    closeDongPopup();
   }
 }
 
@@ -6036,18 +6032,61 @@ function showCompletionModal(course,text){
   // 자동 저장
   saveToPortfolio(course, text, text);
 
-  // 따뜻한 메시지 분기
-  var msgs = [
-    {main:'이 글, 가족들이 나중에 소중히 간직할 거예요 🥹', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
-    {main:'해내셨어요! 진심으로 대단해요 😊', sub:'나중에 필요할 때 언제든지 작품함에서 찾아보세요!'},
-    {main:'살아오신 이야기가 이렇게 아름다운 글이 됐어요 💚', sub:'소중한 작품이에요. 가족에게 지금 바로 전달해보세요!'},
-    {main:'완성됐어요! 어머니가 읽으시면 정말 기뻐하실 것 같아요 🥹', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
+  // 강의별 맞춤 메시지
+  var courseMsg = {
+    '일기 쓰기': [
+      {main:'오늘 하루가 이렇게 예쁜 글이 됐어요 😊', sub:'나중에 꺼내보면 정말 소중한 기억이 될 거예요!'},
+      {main:'일기 한 편 완성! 내일도 같이 써봐요 💚', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
+    ],
+    '편지 쓰기': [
+      {main:'이 편지를 받는 분이 정말 행복하실 것 같아요 💌', sub:'지금 바로 카카오톡으로 전달해보세요!'},
+      {main:'마음이 담긴 편지가 완성됐어요 🥹', sub:'소중한 분께 바로 보내드려요!'}
+    ],
+    '자서전 쓰기': [
+      {main:'살아오신 이야기가 이렇게 아름다운 글이 됐어요 🥹', sub:'가족들이 정말 소중히 간직할 거예요!'},
+      {main:'이 이야기, 가족들에게 꼭 전해주세요 💚', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'}
+    ],
+    '고향 마을 그림': [
+      {main:'그리운 고향이 그림으로 되살아났어요 🏡', sub:'가족들에게 보내주시면 정말 좋아할 거예요!'},
+    ],
+    '오래된 사진 복원': [
+      {main:'소중한 추억이 선명하게 살아났어요 📸', sub:'작품함에 저장됐어요. 가족과 나눠보세요!'},
+    ],
+    '봄꽃 일러스트': [
+      {main:'봄처럼 예쁜 그림이 완성됐어요 🌸', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
+    ],
+    '가족 카드 만들기': [
+      {main:'가족이 받으면 정말 기뻐할 카드예요 🎉', sub:'지금 바로 카카오톡으로 전달해보세요!'},
+    ],
+    '계절 풍경 그림': [
+      {main:'아름다운 계절이 그림 속에 담겼어요 🍂', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
+    ],
+    '엽서 만들기': [
+      {main:'세상에 하나뿐인 엽서가 완성됐어요 ✉️', sub:'소중한 분께 보내드려요!'},
+    ],
+    '트로트 만들기': [
+      {main:'신나는 트로트 완성! 흥이 넘치네요 🎵', sub:'가족들이랑 같이 들어보세요!'},
+    ],
+    '발라드 만들기': [
+      {main:'마음을 울리는 발라드가 완성됐어요 🎶', sub:'소중한 분께 지금 전달해보세요!'},
+    ],
+    '동요 만들기': [
+      {main:'손자손녀가 정말 좋아할 노래예요 🎵', sub:'지금 바로 들려주세요!'},
+    ]
+  };
+
+  // 기본 메시지 (강의명 매칭 안 될 때)
+  var defaultMsgs = [
+    {main:'해내셨어요! 진심으로 대단해요 😊', sub:'작품함에 저장됐어요. 언제든지 다시 볼 수 있어요!'},
+    {main:'정말 잘 하셨어요! 계속 이어가봐요 💚', sub:'소중한 작품이에요. 가족에게 지금 바로 전달해보세요!'}
   ];
-  var idx = Math.floor(Math.random() * msgs.length);
+
+  var pool = courseMsg[course] || defaultMsgs;
+  var pick = pool[Math.floor(Math.random() * pool.length)];
   var m = g('completionDongMsg');
   var s = g('completionDongSub');
-  if(m) m.textContent = msgs[idx].main;
-  if(s) s.textContent = msgs[idx].sub;
+  if(m) m.textContent = pick.main;
+  if(s) s.textContent = pick.sub;
 
   // 0.8초 후 팝업 표시 (결과 화면 먼저 보이게)
   setTimeout(function(){
@@ -6211,8 +6250,9 @@ async function authLoginPhone(){
   }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
 }
 function authKakao(){
-  if(typeof Kakao === 'undefined' || !Kakao.isInitialized()){
-    showToast('카카오 연결에 실패했어요. 잠시 후 다시 시도해주세요.'); return;
+  // SDK 없으면 로드 재시도
+  if(!initKakaoSdk()){
+    showToast('카카오 연결 중이에요. 잠시 후 다시 눌러주세요 🙂'); return;
   }
   Kakao.Auth.login({
     success: function(authObj){
@@ -6463,6 +6503,7 @@ function showDongPopup(type){
   var doneCount = Object.keys(dojoProgress).filter(function(k){return dojoProgress[k];}).length;
 
   if(type === 'first'){
+    _dongPopupType = 'first';
     msgEl.innerHTML = '처음 오셨군요! 반가워요 😊';
     subEl.innerHTML = '저는 동동이예요. AI 도구를 함께 써볼 거예요!<br>딱 <b style="color:var(--ac);">3분</b>이면 첫 도장을 받을 수 있어요 🏆';
     ctaEl.textContent = '동동이와 함께 시작하기 →';
@@ -6474,6 +6515,7 @@ function showDongPopup(type){
       }, 350);
     };
   } else {
+    _dongPopupType = 'return';
     var firstMsgs = [
       '처음 오셨군요! 반가워요 😊',
       '혼자 하시는 거 아니에요. 제가 옆에서 계속 있을게요 🥹'

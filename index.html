@@ -6948,7 +6948,7 @@ function showDongPopup(type){
     if(subEl) subEl.innerHTML = '버튼 몇 번이면<br>멋진 작품이 만들어져요 ✨';
     if(ctaEl) ctaEl.textContent = '지금 만들러 가기 →';
     _dongPopupAction = function(){ closeDongPopup(); };
-    overlay.style.display = 'flex';
+    overlay.style.cssText = 'display:flex;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;flex-direction:column;gap:16px;';
     overlay.style.alignItems = 'flex-end';
     overlay.style.justifyContent = 'center';
     overlay.onclick = function(e){ if(e.target===overlay) closeDongPopup(); };
@@ -8483,7 +8483,7 @@ function loadFalApiKeyToInput(){
 
 
 <!-- ══ 보물상자 해금 애니메이션 ══ -->
-<div id="chestAnimOverlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+<div id="chestAnimOverlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;flex-direction:column;gap:16px;">
   <canvas id="chestCanvas" width="320" height="300" style="display:block;"></canvas>
   <div id="chestUnlockBadge" style="background:linear-gradient(135deg,#f5c842,#e8a020);color:#3a2800;font-size:17px;font-weight:800;padding:10px 26px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 20px rgba(245,200,66,0.6);transform:scale(0);opacity:0;transition:none;font-family:'Noto Sans KR',sans-serif;"></div>
 </div>

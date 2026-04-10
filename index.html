@@ -1112,7 +1112,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 /* 완료: 카테고리 색상 + 두꺼운 하단 그림자 */
 .dojo-node-circle.st-done{width:64px;height:64px;box-shadow:0 8px 0 rgba(0,0,0,.18);border:4px solid rgba(255,255,255,.3);}
-.dojo-node-circle.st-done .dn-check{position:absolute;bottom:-4px;right:-4px;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.dojo-node-circle.st-done .dn-check{position:absolute;bottom:-5px;right:-5px;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,.15);}
 
 /* 현재: 큼직 + 골드 + 바운스 */
 .dojo-node-circle.st-current{width:72px;height:72px;background:linear-gradient(145deg,#58cc02,#46a302);box-shadow:0 0 0 5px #fff,0 0 0 8px #58cc02,0 10px 0 8px #2b7a00;animation:node-bounce 1.2s ease-in-out infinite;}
@@ -2286,6 +2286,23 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <div class="ws-desc" id="ws1-desc">투박하게 써도 괜찮아요. 단어 몇 개만 적어도 충분해요!</div>
       <div class="ws-reassure">🙂 아무것도 안 적어도 괜찮아요. 그냥 버튼만 눌러도 AI가 알아서 써줘요!</div>
       <div class="ws-example"><div class="ws-example-label">✏️ 이렇게 쓰시면 돼요</div><div class="ws-example-text" id="ws1-example">예시가 여기에 표시됩니다</div></div>
+      <!-- 사진 업로드 영역 (requiresUpload 강의에서만 표시) -->
+      <div id="photoUploadSection" style="display:none;margin-bottom:14px;">
+        <div style="border:2.5px dashed var(--ab);border-radius:14px;padding:20px;text-align:center;background:var(--al);cursor:pointer;transition:all .15s;" id="photoDropZone" onclick="document.getElementById('photoFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--ac)'" ondragleave="this.style.borderColor='var(--ab)'" ondrop="handlePhotoDrop(event)">
+          <div id="photoPreviewWrap" style="display:none;position:relative;">
+            <img id="photoPreview" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;" />
+            <button onclick="event.stopPropagation();removePhoto()" style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+          </div>
+          <div id="photoUploadPlaceholder">
+            <div style="font-size:36px;margin-bottom:8px;">📷</div>
+            <div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:4px;">사진을 올려주세요</div>
+            <div style="font-size:13px;color:var(--i3);">클릭하거나 사진을 끌어다 놓으세요</div>
+            <div style="font-size:12px;color:var(--i3);margin-top:4px;">JPG, PNG 가능 · 최대 5MB</div>
+          </div>
+        </div>
+        <input type="file" id="photoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoSelect(event)" />
+      </div>
+
       <textarea class="ws-textarea" id="storyInput" placeholder="" oninput="onStoryInput()"></textarea>
       <div class="ws-footer">
         <span class="ws-charcount" id="charCount">0자</span>
@@ -3508,24 +3525,28 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div id="apiKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
   </div>
 
-  <!-- Replicate API 키 설정 (이미지 생성) -->
-  <div style="background:#fff;border:2px solid #7c3aed;border-radius:16px;padding:24px;margin-bottom:28px;">
-    <div style="font-size:16px;font-weight:700;color:#7c3aed;margin-bottom:4px;">🎨 Replicate API 키 설정 (이미지 생성)</div>
-    <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">이미지 도장깨기 결과 생성에 사용됩니다. <a href="https://replicate.com/account/api-tokens" target="_blank" style="color:#7c3aed;">Replicate</a>에서 발급하세요.</div>
+  <!-- fal.ai API 키 설정 (이미지 생성) -->
+  <div style="background:#fff;border:2px solid #8B5CF6;border-radius:16px;padding:24px;margin-bottom:28px;">
+    <div style="font-size:16px;font-weight:700;color:#8B5CF6;margin-bottom:4px;">🎨 fal.ai API 키 설정 (이미지 생성)</div>
+    <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">
+      사진 보정·복원, 지브리 스타일 변환에 사용됩니다.<br>
+      <a href="https://fal.ai/dashboard/keys" target="_blank" style="color:#8B5CF6;font-weight:600;">fal.ai/dashboard/keys</a>에서 발급하세요.
+      <span style="background:#EDE9FE;color:#7C3AED;font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:6px;">이미지당 ~$0.03</span>
+    </div>
     <div style="display:flex;gap:10px;align-items:center;">
-      <input type="password" id="replicateApiKeyInput" placeholder="r8_..." 
+      <input type="password" id="falApiKeyInput" placeholder="fal-..." 
         style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;"
-        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='var(--bd)'"/>
-      <button onclick="saveReplicateApiKey()" 
-        style="padding:12px 20px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">
+        onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='var(--bd)'"/>
+      <button onclick="saveFalApiKey()" 
+        style="padding:12px 20px;background:#8B5CF6;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">
         저장
       </button>
-      <button onclick="clearReplicateApiKey()"
+      <button onclick="clearFalApiKey()"
         style="padding:12px 16px;background:var(--wm);color:var(--i3);border:1px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;">
         초기화
       </button>
     </div>
-    <div id="replicateKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
+    <div id="falApiKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
   </div>
 
 
@@ -3909,26 +3930,30 @@ var DOJO_CONFIG = [
     shareText:'나 AI로 가족 카드 만들었어! 뤼튼으로 특별한 카드를 완성했어요 👨‍👩‍👧‍👦\nAI 동행에서 나도 해봤어 → aidonghang.kr'
   },
   {
-    id:10, cat:'image', icon:'🍂', name:'계절 풍경 그림', recommend:false,
-    sub:'봄·여름·가을·겨울 풍경을 그려요', tag:'동행 플랜', tagClass:'paid',
-    tool:'DALL-E (ChatGPT)', toolUrl:'https://chat.openai.com', toolIcon:'🖼️',
-    difficulty:'⭐⭐', time:'7분',
-    intro:'ChatGPT에 "이런 그림 그려줘"라고 하면 DALL-E가 바로 그려줘요. 한국어로 말해도 돼요.',
-    mission:'계절 풍경 그림 완성하기',
-    promptDesc:'ChatGPT에게 풍경 그림을 부탁하는 한국어 프롬프트예요',
-    promptEx:'가을 단풍이 물든 한국 시골 마을 풍경을 수채화 스타일로 그려줘. 빨간 단풍나무, 오솔길, 따뜻한 햇살.',
-    shareText:'나 AI로 계절 그림 만들었어! ChatGPT로 아름다운 풍경을 완성했어요 🍂\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    id:10, cat:'image', icon:'🖼️', name:'사진 보정·복원', recommend:true,
+    builderCourse:'사진 보정·복원',
+    sub:'오래된 사진을 선명하게, 흑백을 컬러로', tag:'동행 플랜', tagClass:'paid',
+    tool:'AI 동행', toolUrl:'', toolIcon:'✨',
+    difficulty:'⭐', time:'3분',
+    requiresUpload: true,
+    intro:'흑백사진을 컬러로, 흐릿한 사진을 선명하게 바꿔드려요. 사진을 올려주시면 AI가 바로 보정해요.',
+    mission:'소중한 사진 보정하기',
+    promptDesc:'어떻게 바꾸고 싶은지 선택만 해주세요',
+    promptEx:'',
+    shareText:'나 AI로 옛날 사진 복원했어! 흑백이 컬러로 바뀌었어요 🖼️\nAI 동행에서 나도 해봐 → aidonghang.kr'
   },
   {
-    id:11, cat:'image', icon:'🎴', name:'엽서 만들기', recommend:false,
-    sub:'직접 만든 엽서를 가족에게 보내요', tag:'동행 플랜', tagClass:'paid',
-    tool:'Adobe Firefly', toolUrl:'https://firefly.adobe.com', toolIcon:'🔥',
-    difficulty:'⭐⭐', time:'10분',
-    intro:'여행지, 고향, 꽃 등으로 세상에 하나뿐인 엽서를 만들어요. 카카오톡으로 전송 가능해요.',
-    mission:'나만의 엽서 완성하기',
-    promptDesc:'Firefly에게 엽서 이미지를 부탁하는 프롬프트예요',
-    promptEx:'Beautiful Korean postcard design, traditional landscape with mountains and river, cherry blossoms, elegant composition, vintage style',
-    shareText:'나 AI로 엽서 만들었어! Firefly로 특별한 엽서를 완성했어요 🎴\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    id:11, cat:'image', icon:'🌸', name:'지브리 스타일 변환', recommend:true,
+    builderCourse:'지브리 스타일 변환',
+    sub:'내 사진을 지브리 애니메이션으로 변환', tag:'동행+', tagClass:'plus',
+    tool:'AI 동행', toolUrl:'', toolIcon:'✨',
+    difficulty:'⭐', time:'3분',
+    requiresUpload: true,
+    intro:'내 사진이나 좋아하는 풍경 사진을 올려주시면 지브리 애니메이션 스타일로 바꿔드려요!',
+    mission:'지브리 스타일 사진 만들기',
+    promptDesc:'사진을 올리고 스타일만 선택하면 끝!',
+    promptEx:'',
+    shareText:'나 AI로 지브리 스타일 사진 만들었어! 너무 예쁘게 나왔어 🌸\nAI 동행에서 나도 해봐 → aidonghang.kr'
   },
 
   // ── 음악 (id 12~17) ──
@@ -4139,7 +4164,35 @@ var COURSE_CONFIG = {
   '꽃·식물 일러스트':{emoji:'🌸',exText:'진달래. 봄 산기슭. 연분홍색. 조금 쓸쓸하지만 아름다운 느낌.',ph:'어떤 꽃, 색깔, 분위기인지 적어보세요',styles:[{id:'flower',label:'어떤 꽃인가요?',chips:['진달래·철쭉','벚꽃','국화','장미','무궁화','연꽃'],def:0},{id:'artStyle',label:'그림 스타일은?',chips:['수채화','펜화·세밀화','보태니컬 아트','귀여운 일러스트'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 꽃 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 꽃과 분위기]\n'+s+'\n\n꽃 종류: '+(a.flower||'진달래')+'\n스타일: '+(a.artStyle||'수채화')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "봄날 진달래꽃을 수채화로 그려줘. 연분홍빛 꽃잎이 바람에 흩날리는 모습으로."'+PROMPT_SUFFIX;}},
   '가족·인물 초상화':{emoji:'👨‍👩‍👧‍👦',exText:'온 가족이 다 같이 있는 그림. 명절에 모인 모습.',ph:'누구를 그릴지, 어떤 상황, 어떤 분위기인지 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['따뜻한 일러스트','유화 초상화','수채화','동화 그림 스타일'],def:0},{id:'mood',label:'분위기는?',chips:['환하게 웃는 모습','따뜻하고 평화로운','자연스럽고 편안하게'],def:0}],fn:function(s,a){return '아래 묘사를 바탕으로 인물 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 그림]\n'+s+'\n\n스타일: '+(a.artStyle||'따뜻한 일러스트')+'\n분위기: '+(a.mood||'따뜻하고 평화로운')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "명절에 온 가족이 둘러앉아 웃는 모습을 따뜻한 일러스트로 그려줘."'+PROMPT_SUFFIX;}},
   '고향·마을 풍경':{emoji:'🏡',exText:'경북 안동 시골. 초가집 담벼락. 가을에 감이 빨갛게 익어 있었어.',ph:'고향의 어떤 장면, 어떤 느낌인지 기억나는 대로 적어보세요',styles:[{id:'artStyle',label:'그림 스타일은?',chips:['수채화','동양화 (수묵화)','따뜻한 일러스트','빛바랜 사진 느낌'],def:0},{id:'season',label:'계절은?',chips:['봄','여름','가을','겨울'],def:2}],fn:function(s,a){return '아래 기억을 바탕으로 고향 마을 그림 요청 문장을 한국어로 만들어주세요.\n\n[기억 속 고향 풍경]\n'+s+'\n\n스타일: '+(a.artStyle||'수채화')+'\n계절: '+(a.season||'가을')+'\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "경상도 가을 시골 마을을 수채화로 그려줘. 빨간 감나무, 흙길, 아침 안개가 있는 정겨운 풍경으로."'+PROMPT_SUFFIX;}},
-  '사진 보정·복원':{emoji:'🖼️',exText:'오래된 흑백 가족사진. 1970년대 사진인데 흐릿하고 손상됐어.',ph:'사진이 어떤 상태인지, 어떻게 바꾸고 싶은지 적어보세요',styles:[{id:'task',label:'어떤 작업인가요?',chips:['흑백→컬러 변환','흐린 사진 선명하게','손상·훼손 복원','밝기·색감 보정'],def:0},{id:'tool',label:'어떤 앱을 쓸 건가요?',chips:['Remini (스마트폰)','Adobe Firefly','ChatGPT DALL·E'],def:0}],fn:function(s,a){return '아래 사진 정보를 바탕으로 AI 사진 보정 방법을 알려주세요.\n\n[사진 상태와 원하는 결과]\n'+s+'\n\n작업: '+(a.task||'흑백→컬러 변환')+'\n사용 앱: '+(a.tool||'Remini')+'\n\n해당 앱에서 바로 사용할 수 있는 방법과 프롬프트를 알려주세요.'+PROMPT_SUFFIX;}},
+  '사진 보정·복원':{emoji:'🖼️',exText:'흑백 가족사진을 컬러로 바꾸고 싶어요.',ph:'사진에 대해 간단히 설명해주세요 (예: 흑백 가족사진, 오래된 풍경 사진)',
+    styles:[
+      {id:'task',label:'어떻게 바꾸고 싶으세요?',chips:['흑백→컬러 변환','흐린 사진 선명하게','손상·훼손 복원','밝기·색감 보정'],def:0},
+      {id:'era',label:'언제 찍은 사진인가요?',chips:['1950~70년대','1980~90년대','2000년대 이후','연대 모름'],def:3}
+    ],
+    fn:function(s,a){
+      var task=a.task||'흑백→컬러 변환';
+      var taskMap={'흑백→컬러 변환':'colorize this black and white photo, natural realistic colors',
+        '흐린 사진 선명하게':'sharpen and enhance this blurry photo, restore fine details',
+        '손상·훼손 복원':'restore damaged and scratched photo, repair tears and stains',
+        '밝기·색감 보정':'enhance brightness and color balance, make it vivid and clear'};
+      return (taskMap[task]||'enhance and restore photo') + ', high quality, photorealistic, ' + s.slice(0,80);
+    }
+  },
+  '지브리 스타일 변환':{emoji:'🌸',exText:'가족과 함께 찍은 사진',ph:'어떤 사진인지 간단히 알려주세요 (예: 가족사진, 풍경사진, 혼자 찍은 사진)',
+    styles:[
+      {id:'scene',label:'어떤 느낌으로 바꿀까요?',chips:['하울의 움직이는 성 스타일','이웃집 토토로 스타일','센과 치히로 스타일','마녀 배달부 키키 스타일'],def:0},
+      {id:'mood',label:'분위기는요?',chips:['따뜻하고 포근하게','신비롭고 환상적으로','밝고 생동감 있게','서정적이고 감성적으로'],def:0}
+    ],
+    fn:function(s,a){
+      var scene=a.scene||'지브리 스타일';
+      var mood=a.mood||'따뜻하고 포근하게';
+      var moodMap={'따뜻하고 포근하게':'warm cozy atmosphere',
+        '신비롭고 환상적으로':'mysterious magical atmosphere',
+        '밝고 생동감 있게':'bright vibrant joyful',
+        '서정적이고 감성적으로':'lyrical emotional nostalgic'};
+      return 'Studio Ghibli anime style, ' + scene.replace(' 스타일','') + ', ' + (moodMap[mood]||'warm') + ', watercolor background, soft colors, ' + s.slice(0,80) + ', high quality illustration';
+    }
+  },
   '카드·엽서 만들기':{emoji:'🎴',exText:'손녀 생일. 대학에 들어갔어. 항상 건강하고 하고 싶은 거 다 이루었으면.',ph:'받는 사람, 어떤 날, 전하고 싶은 마음을 편하게 적어보세요',styles:[{id:'occasion',label:'어떤 날인가요?',chips:['생일','결혼기념일','입학·졸업','명절','어버이날'],def:0},{id:'design',label:'카드 느낌은?',chips:['따뜻하고 감성적으로','화사하고 밝게','심플하고 세련되게','귀엽고 사랑스럽게'],def:0}],fn:function(s,a){return '아래 마음을 담은 카드 메시지를 만들어주세요.\n\n[전하고 싶은 마음]\n'+s+'\n\n날: '+(a.occasion||'생일')+'\n느낌: '+(a.design||'따뜻하고 감성적으로')+'\n\n진심이 전해지는 따뜻한 메시지로 완성해주세요.'+PROMPT_SUFFIX;}},
   '트로트 만들기':{emoji:'🎤',exText:'어머니 생각. 새벽에 일어나서 밥 지으시던 모습. 부엌 불빛. 그 냄새가 그리워.',ph:'노래에 담고 싶은 사람, 장소, 기억, 감정을 적어보세요',styles:[{id:'feel',label:'노래 느낌은?',chips:['신나고 흥겨운','구성지고 애잔한','웅장하고 감동적인','밝고 경쾌한'],def:1},{id:'structure',label:'가사 구성은?',chips:['1절만 (짧게)','1절+후렴','1절+후렴+2절'],def:1}],fn:function(s,a){return '아래 이야기를 담아 트로트 가사를 써주세요.\n\n[담고 싶은 이야기]\n'+s+'\n\n노래 느낌: '+(a.feel||'구성지고 애잔한')+'\n구성: '+(a.structure||'1절+후렴')+'\n\n가사를 다 쓴 뒤, Suno AI에서 사용할 수 있는 음악 스타일 태그도 영어로 알려주세요.'+PROMPT_SUFFIX;}},
   '발라드 만들기':{emoji:'🎵',exText:'30년 함께 산 남편. 말은 잘 못해도 항상 곁에 있어줬어.',ph:'노래에 담고 싶은 사람, 마음, 기억을 편하게 적어보세요',styles:[{id:'feel',label:'노래 분위기는?',chips:['잔잔하고 서정적인','감동적이고 울컥하는','따뜻하고 희망차게'],def:0},{id:'structure',label:'가사 구성은?',chips:['1절만','1절+후렴','1절+후렴+2절'],def:1}],fn:function(s,a){return '아래 마음을 담아 발라드 가사를 써주세요.\n\n[담고 싶은 이야기]\n'+s+'\n\n분위기: '+(a.feel||'잔잔하고 서정적인')+'\n구성: '+(a.structure||'1절+후렴')+'\n\n가사 완성 후 Suno AI 스타일 태그도 영어로 알려주세요.'+PROMPT_SUFFIX;}},
@@ -4161,7 +4214,8 @@ var AI_TOOLS = {
 
 var COURSE_CAT = {
   '블로그 글쓰기':'writing','자서전 쓰기':'writing','편지 쓰기':'writing','일기 쓰기':'writing','공문·안내문':'writing','시·수필 쓰기':'writing',
-  '풍경·자연 그림':'image','꽃·식물 일러스트':'image','가족·인물 초상화':'image','고향·마을 풍경':'image','사진 보정·복원':'image','카드·엽서 만들기':'image',
+  '풍경·자연 그림':'image','꽃·식물 일러스트':'image','가족·인물 초상화':'image','고향·마을 풍경':'image','사진 보정·복원':'image',
+  '지브리 스타일 변환':'image','카드·엽서 만들기':'image',
   '트로트 만들기':'music','발라드 만들기':'music','동요 만들기':'music','기념일 축하 노래':'music','민요풍 노래':'music','찬송·신앙 노래':'music',
   '슬라이드쇼 영상':'video','자서전 영상':'video','가족 영상 편지':'video'
 };
@@ -5287,14 +5341,14 @@ function renderDojoPath(){
       var stClass, circleStyle='';
       if(isDone){
         stClass = 'st-done';
-        circleStyle = 'background:'+th.main+';color:'+th.main+';';
+        circleStyle = 'background:'+th.main+';box-shadow:0 0 0 4px #fff,0 0 0 7px '+th.main+',0 8px 0 7px '+th.dark+';';
       } else if(isNext){
         stClass = 'st-current';
         circleStyle = 'background:linear-gradient(145deg,'+th.main+','+th.accent+');box-shadow:0 0 0 5px #fff,0 0 0 8px '+th.main+',0 10px 0 8px '+th.dark+';';
       } else if(unlocked){
-        // 같은 카테고리, 미완료지만 카테고리 열림 → 클릭 가능 스타일
+        // 미완료지만 열린 카테고리 → 클릭 가능, 반투명 그라데이션
         stClass = 'st-current';
-        circleStyle = 'background:linear-gradient(145deg,'+th.main+','+th.accent+');opacity:0.75;box-shadow:0 0 0 4px #fff,0 0 0 7px '+th.main+';';
+        circleStyle = 'background:linear-gradient(145deg,'+th.main+','+th.accent+');opacity:0.6;box-shadow:0 0 0 3px #fff,0 0 0 6px '+th.main+',0 6px 0 6px '+th.dark+';';
       } else {
         stClass = 'st-ready';
       }
@@ -5304,7 +5358,10 @@ function renderDojoPath(){
       // 시작 버블, 체크
       var rowExtra = '';
       var bubble = (!isDone && unlocked) ? '<div class="dojo-start-bubble" style="color:'+th.main+';border-color:'+th.main+';">시작</div>' : '';
-      var check = isDone ? '<div class="dn-check" style="border-color:'+th.main+';color:'+th.main+';">✓</div>' : '';
+      var check = isDone
+  ? '<div class="dn-check" style="border-color:'+th.main+';color:'+th.main+';width:30px;height:30px;font-size:16px;font-weight:900;">✓</div>'
+    +'<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:'+th.main+';color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:100px;white-space:nowrap;border:2px solid #fff;">완성!</div>'
+  : '';
 
       // writing id 0~2: 조건부 라벨
       var nodeLabel = '';
@@ -5906,9 +5963,15 @@ function _finishMission(idx, simpleMode){
   if(ssb) ssb.style.display = (!userProfile||!userProfile.name) ? 'block' : 'none';
 
   // 3개 달성 모달
-  if(writingCount===3) setTimeout(function(){showMilestoneModal('writing3');},1500);
-  if(imageCount===3) setTimeout(function(){showMilestoneModal('image3');},1500);
-  if(musicCount===3) setTimeout(function(){showMilestoneModal('music3');},1500);
+  if(writingCount===3) setTimeout(function(){
+    window.playChestAnimation('🎨','이미지',function(){ showMilestoneModal('writing3'); });
+  },800);
+  if(imageCount===3) setTimeout(function(){
+    window.playChestAnimation('🎵','음악',function(){ showMilestoneModal('image3'); });
+  },800);
+  if(musicCount===3) setTimeout(function(){
+    window.playChestAnimation('📱','일상',function(){ showMilestoneModal('music3'); });
+  },800);
   if(total===12) setTimeout(function(){showMilestoneModal('master');},1500);
 }
 
@@ -7044,15 +7107,31 @@ async function generateWithAI(){
   if(ls) ls.style.display = 'block';
 
   // 로딩 메시지
-  var loadingMsgs = isImageCourse ? [
-    ['그림 그리는 중이에요...', 'AI가 열심히 그리고 있어요. 잠깐만요! 🎨'],
-    ['거의 완성됐어요...', '색을 입히고 있어요. 조금만 더요! ✨'],
-    ['마무리 중이에요...', '소중한 그림을 완성하고 있어요 🥹']
-  ] : [
-    ['열심히 쓰고 있어요...', '동동이가 AI에게 부탁했어요. 잠깐만요! 🙂'],
-    ['거의 다 됐어요...', '글을 다듬고 있어요. 조금만 더요! ✨'],
-    ['마무리 중이에요...', '소중한 분께 전할 글을 정성껏 쓰고 있어요 🥹']
-  ];
+  // 카테고리별 동동이 로딩 메시지
+  var _cat = COURSE_CAT[courseName] || 'writing';
+  var _loadingBycat = {
+    writing: [
+      ['글을 쓰고 있어요...', '동동이가 AI에게 부탁했어요. 잠깐만요! ✍️'],
+      ['단어를 고르는 중이에요...', '더 따뜻한 표현을 찾고 있어요. 조금만요 🙂'],
+      ['마무리 중이에요...', '소중한 분께 전할 글을 정성껏 완성하고 있어요 🥹']
+    ],
+    image: [
+      ['붓을 들었어요...', 'AI가 한 획 한 획 그리고 있어요. 잠깐만요! 🎨'],
+      ['색을 입히는 중이에요...', '아름다운 색감을 고르고 있어요. 조금만 더요 ✨'],
+      ['마무리 중이에요...', '세상에 하나뿐인 그림을 완성하고 있어요 🖼️']
+    ],
+    music: [
+      ['가사를 쓰고 있어요...', 'AI가 멜로디를 떠올리며 가사를 쓰고 있어요 🎵'],
+      ['리듬을 맞추는 중이에요...', '마음을 울리는 노래를 만들고 있어요. 조금만요 🎶'],
+      ['마무리 중이에요...', '소중한 분에게 불러드릴 노래를 완성 중이에요 🎤']
+    ],
+    video: [
+      ['이야기를 구성하는 중이에요...', 'AI가 영상 구성을 짜고 있어요. 잠깐만요! 🎬'],
+      ['장면을 배치하는 중이에요...', '감동적인 영상을 만들고 있어요. 조금만요 🎞️'],
+      ['마무리 중이에요...', '소중한 추억을 영상으로 담고 있어요 💝']
+    ]
+  };
+  var loadingMsgs = _loadingBycat[_cat] || _loadingBycat.writing;
   var msgIdx = 0;
   var msgTimer = setInterval(function(){
     msgIdx = (msgIdx + 1) % loadingMsgs.length;
@@ -7063,14 +7142,26 @@ async function generateWithAI(){
 
   try {
     if(isImageCourse){
-      // ── 이미지 생성: Pollinations (무료, CORS 지원) ──
-      // storyInput 또는 _savedUserStory에서 사용자 입력 가져오기
+      // ── 이미지 생성 ──
       var storyEl = g('storyInput');
       var userStory = (window._savedUserStory || (storyEl ? storyEl.value.trim() : '') || '').trim();
-      if(!userStory) userStory = '한국 풍경을 수채화로 그려줘'; // 기본값
+      if(!userStory) userStory = '아름다운 그림';
       var imgPrompt = buildImagePromptForPollinations(userStory, styleAnswers, courseName);
-      console.log('[이미지] 프롬프트:', imgPrompt);
-      var imageUrl = await generateImageWithPollinations(imgPrompt);
+      var imageUrl;
+
+      // 사진 업로드 있으면 fal.ai image-to-image (준비 중 안내)
+      if(_uploadedPhotoBase64){
+        if(!window._falApiKey){
+          // fal.ai 키 없으면 안내 모달
+          showToast('사진 변환은 fal.ai API 키가 필요해요. 관리자 페이지에서 설정해주세요 🔑');
+          // 일단 Pollinations로 진행 (사진 없이)
+          imageUrl = await generateImageWithPollinations(imgPrompt);
+        } else {
+          imageUrl = await generateImageWithFal(_uploadedPhotoBase64, _uploadedPhotoMime, imgPrompt);
+        }
+      } else {
+        imageUrl = await generateImageWithPollinations(imgPrompt);
+      }
       clearInterval(msgTimer);
       if(!imageUrl) throw new Error('이미지 URL을 받지 못했어요');
 
@@ -7081,11 +7172,12 @@ async function generateWithAI(){
       var rs = g('aiResultScreen');
       if(rs) rs.style.display = 'block';
 
-      // 이미지 표시 (텍스트 영역 대신)
+      // 이미지 표시
       var rt = g('aiResultText');
       if(rt){
         rt.innerHTML = '<img src="'+imageUrl+'" alt="AI 생성 이미지" style="width:100%;border-radius:10px;display:block;" />';
         rt.style.padding = '0';
+        rt.dataset.imageUrl = imageUrl; // 나중에 저장 시 참조
       }
       var cc = g('aiResultCharCount');
       if(cc) cc.textContent = '이미지';
@@ -7317,21 +7409,29 @@ function loadApiKeyToAdmin(){
 
 // ── AI 결과 저장 + 커뮤니티 공유 ──
 function saveAIResult(){
-  var result = g('aiResultText') ? g('aiResultText').textContent : '';
   var course = g('aiResultCourse') ? g('aiResultCourse').textContent : courseName;
+  // 이미지 결과인지 확인
+  var rt = g('aiResultText');
+  var imgEl = rt ? rt.querySelector('img') : null;
+  var result = imgEl ? imgEl.src : (rt ? rt.textContent : '');
+  // fallback: _aiLastResult
+  if(!result || result.trim()==='') result = _aiLastResult || '';
   if(!result){ showToast('저장할 결과물이 없어요'); return; }
   saveToPortfolio(course, result, result);
-  // 배지 표시
   var badge = g('aiResultBadge');
   if(badge) badge.style.display = 'flex';
   showToast('📁 작품함에 저장됐어요!');
 }
 
 function shareAIToCommunity(){
-  var result = g('aiResultText') ? g('aiResultText').textContent.trim() : '';
   var course = courseName || (g('aiResultCourse') ? g('aiResultCourse').textContent.trim() : '');
+  // 이미지 결과인지 확인
+  var rt = g('aiResultText');
+  var imgEl = rt ? rt.querySelector('img') : null;
+  var result = imgEl ? imgEl.src : (rt ? rt.textContent.trim() : '');
+  // fallback: _aiLastResult
+  if(!result || result.trim()==='') result = _aiLastResult || '';
   if(!result){ showToast('공유할 결과물이 없어요'); return; }
-  // 현재 AI 결과를 전역 변수로 저장 후 업로드 모달 열기
   window._aiShareContent = result;
   window._aiShareCourse = course;
   openUploadWork();
@@ -7572,22 +7672,38 @@ async function updateCheersInSupabase(dbId, newCount){
 
 // ── Pollinations.ai 이미지 생성 (무료, API키 불필요, CORS 없음) ──
 async function generateImageWithPollinations(prompt){
-  // 한국어 프롬프트를 그대로 전달 (Pollinations가 번역 포함)
-  // 시니어 감성에 맞게 스타일 추가
-  var fullPrompt = prompt + ', watercolor style, soft colors, warm and nostalgic, high quality';
-  var encoded = encodeURIComponent(fullPrompt);
+  // 스타일 추가 (너무 길면 잘라서 안전하게)
+  var safePrompt = prompt.slice(0, 400);
+  var encoded = encodeURIComponent(safePrompt);
   var seed = Math.floor(Math.random() * 999999);
+  // model=flux: 고품질, safe=true: 안전 필터 적용
   var url = 'https://image.pollinations.ai/prompt/' + encoded
-    + '?width=1024&height=1024&seed=' + seed + '&nologo=true&enhance=true';
+    + '?width=1024&height=1024&seed=' + seed + '&nologo=true&model=flux&safe=true';
 
-  // 이미지 로드 확인
   return new Promise(function(resolve, reject){
     var img = new Image();
-    img.onload = function(){ resolve(url); };
-    img.onerror = function(){ reject(new Error('이미지 생성에 실패했어요. 다시 시도해주세요.')); };
+    var done = false;
+    img.onload = function(){
+      if(done) return;
+      done = true;
+      // 이미지 크기 체크 (차단된 경우 매우 작은 이미지 반환)
+      if(img.naturalWidth < 50){
+        reject(new Error('이 주제는 그림으로 만들기 어려워요. 풍경이나 꽃 그림으로 바꿔보세요 🌸'));
+      } else {
+        resolve(url);
+      }
+    };
+    img.onerror = function(){
+      if(done) return;
+      done = true;
+      reject(new Error('그림 생성에 실패했어요. 다른 내용으로 다시 시도해주세요 🙂'));
+    };
     img.src = url;
-    // 30초 타임아웃
-    setTimeout(function(){ reject(new Error('이미지 생성 시간이 오래 걸리고 있어요. 다시 시도해주세요.')); }, 30000);
+    setTimeout(function(){
+      if(done) return;
+      done = true;
+      reject(new Error('그림 생성이 오래 걸려요. 다시 시도해주세요 🙂'));
+    }, 35000);
   });
 }
 
@@ -7612,18 +7728,27 @@ function buildImagePromptForPollinations(userStory, answers, courseName){
     '빛바랜 사진 느낌':'vintage faded photo'
   };
 
-  // 강의별 기본 스타일
+  // 강의별 기본 스타일 (인물 강의는 일러스트 스타일로 안전 필터 우회)
   var courseDefaults = {
-    '풍경·자연 그림':'Korean landscape, watercolor style',
-    '카드·엽서 만들기':'Korean greeting card illustration, warm colors',
-    '고향·마을 풍경':'Korean rural village, nostalgic watercolor',
-    '꽃·식물 일러스트':'botanical illustration',
-    '가족·인물 초상화':'warm family portrait illustration',
-    '사진 보정·복원':'restored vintage photo, clear sharp'
+    '풍경·자연 그림':'Korean landscape, soft watercolor style, peaceful nature',
+    '카드·엽서 만들기':'Korean greeting card, cute illustration, pastel colors, warm',
+    '고향·마을 풍경':'Korean rural village scenery, nostalgic watercolor painting',
+    '꽃·식물 일러스트':'beautiful botanical flower illustration, detailed art',
+    '가족·인물 초상화':'heartwarming family cartoon illustration, chibi style, soft colors, no face detail',
+    '사진 보정·복원':'vintage landscape photo, clear and restored, beautiful scenery',
+    '계절 풍경 그림':'seasonal Korean landscape painting, watercolor',
+    '봄꽃 일러스트':'spring flowers illustration, pastel watercolor'
   };
 
   var parts = [];
-  parts.push(userStory.slice(0, 150)); // 사용자 설명 (너무 길면 자름)
+
+  // 인물 강의는 안전 필터 우회를 위해 일러스트 접두어 추가
+  var isPersonCourse = (courseName === '가족·인물 초상화');
+  if(isPersonCourse){
+    parts.push('cute cartoon illustration, chibi characters, no realistic faces');
+  }
+
+  parts.push(userStory.slice(0, 120));
 
   // styleAnswers 영어 변환
   Object.keys(answers||{}).forEach(function(k){
@@ -7632,9 +7757,9 @@ function buildImagePromptForPollinations(userStory, answers, courseName){
   });
 
   // 강의 기본 스타일
-  var def = courseDefaults[courseName] || 'Korean art style';
+  var def = courseDefaults[courseName] || 'Korean art style, beautiful illustration';
   parts.push(def);
-  parts.push('high quality, detailed, beautiful');
+  parts.push('high quality, detailed, beautiful, safe for all ages');
 
   return parts.join(', ');
 }
@@ -7750,6 +7875,482 @@ function appendCsTyping(id){
 function removeCsTyping(id){
   var el = g(id);
   if(el) el.remove();
+}
+
+// ══ 보물상자 해금 애니메이션 ══
+(function(){
+var _chestRunning = false;
+var _chestParticles = [], _chestSparks = [];
+var _chestAnimId = null;
+
+var GOLD1='#f5c842',GOLD2='#e8a020',GOLD3='#c87808',GOLD4='#8b5500';
+var WOOD1='#b87030',WOOD2='#8b4e1a',WOOD3='#6b3610',WOOD4='#3d1e08';
+var SHINE='rgba(255,255,240,0.85)';
+
+function lerp(a,b,t){return a+(b-a)*t;}
+function easeOut(t){return 1-(1-t)*(1-t);}
+function easeElastic(t){var c=2*Math.PI/3;return t===0?0:t===1?1:Math.pow(2,-10*t)*Math.sin((t*10-0.75)*c)+1;}
+
+function spawnChestParticles(W,H){
+  var cx=W/2,cy=H/2+20;
+  var cols=['#f5c842','#ff8844','#44ddff','#ff44aa','#88ff44','#aa44ff','#ffffff','#ffdd00'];
+  for(var i=0;i<70;i++){
+    var angle=Math.random()*Math.PI*2,spd=3+Math.random()*9;
+    _chestParticles.push({x:cx,y:cy,vx:Math.cos(angle)*spd,vy:Math.sin(angle)*spd-5,
+      life:1,decay:0.011+Math.random()*0.013,size:3+Math.random()*7,
+      color:cols[i%cols.length],rot:Math.random()*360,rspd:(Math.random()-0.5)*14,
+      shape:Math.random()>0.5?'rect':'circle'});
+  }
+  for(var j=0;j<35;j++){
+    var ang2=-Math.PI/2+((Math.random()-0.5)*Math.PI*1.5),spd2=5+Math.random()*14;
+    _chestSparks.push({x:cx,y:cy,vx:Math.cos(ang2)*spd2,vy:Math.sin(ang2)*spd2,
+      life:1,decay:0.022+Math.random()*0.02,color:'#fff9c0'});
+  }
+}
+
+function updateChestParticles(){
+  _chestParticles=_chestParticles.filter(function(p){
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.2;p.rot+=p.rspd;p.life-=p.decay;return p.life>0;
+  });
+  _chestSparks=_chestSparks.filter(function(s){
+    s.x+=s.vx;s.y+=s.vy;s.vy+=0.22;s.life-=s.decay;return s.life>0;
+  });
+}
+
+function drawChestParticles(ctx){
+  _chestParticles.forEach(function(p){
+    ctx.save();ctx.globalAlpha=p.life;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle=p.color;
+    if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);}
+    else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}
+    ctx.restore();
+  });
+  _chestSparks.forEach(function(s){
+    ctx.save();ctx.globalAlpha=s.life;ctx.strokeStyle=s.color;ctx.lineWidth=1.5;
+    ctx.shadowColor=s.color;ctx.shadowBlur=4;
+    ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.vx*3,s.y-s.vy*3);ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function draw3DChest(ctx,W,H,lidAngle,glow){
+  ctx.save();
+  var cx=W/2,cy=H/2+30;
+  ctx.translate(cx,cy);
+  var bw=110,bh=62,depth=40,lh=32;
+
+  // 그림자
+  ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=24;ctx.shadowOffsetY=14;
+
+  // 아랫면
+  ctx.fillStyle=WOOD4;
+  ctx.beginPath();
+  ctx.moveTo(-bw/2+depth*0.5,bh*0.5+depth*0.35);ctx.lineTo(bw/2+depth*0.5,bh*0.5+depth*0.35);
+  ctx.lineTo(bw/2,bh*0.5);ctx.lineTo(-bw/2,bh*0.5);ctx.closePath();ctx.fill();
+
+  // 오른쪽 측면
+  var rg=ctx.createLinearGradient(bw/2,0,bw/2+depth*0.5,0);
+  rg.addColorStop(0,WOOD2);rg.addColorStop(1,WOOD4);
+  ctx.fillStyle=rg;
+  ctx.beginPath();
+  ctx.moveTo(bw/2,-bh*0.5);ctx.lineTo(bw/2+depth*0.5,-bh*0.5+depth*0.35);
+  ctx.lineTo(bw/2+depth*0.5,bh*0.5+depth*0.35);ctx.lineTo(bw/2,bh*0.5);
+  ctx.closePath();ctx.fill();
+
+  // 정면 바디
+  var fg=ctx.createLinearGradient(0,-bh*0.5,0,bh*0.5);
+  fg.addColorStop(0,WOOD1);fg.addColorStop(0.5,WOOD2);fg.addColorStop(1,WOOD3);
+  ctx.fillStyle=fg;ctx.fillRect(-bw/2,-bh*0.5,bw,bh);
+
+  // 나무결
+  ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=1;
+  for(var i=1;i<4;i++){
+    ctx.beginPath();ctx.moveTo(-bw/2,-bh*0.5+bh*(i/4));ctx.lineTo(bw/2,-bh*0.5+bh*(i/4));ctx.stroke();
+  }
+
+  // 금장식 밴드
+  var bandG=ctx.createLinearGradient(0,-bh*0.5,0,bh*0.5);
+  bandG.addColorStop(0,GOLD1);bandG.addColorStop(0.5,'#ffd060');bandG.addColorStop(1,GOLD2);
+  [-bh*0.25,bh*0.25].forEach(function(by){
+    ctx.fillStyle=bandG;ctx.fillRect(-bw/2-2,by-5,bw+4,10);
+    var hl=ctx.createLinearGradient(0,by-5,0,by+5);
+    hl.addColorStop(0,SHINE);hl.addColorStop(0.4,'rgba(255,255,200,0)');
+    ctx.fillStyle=hl;ctx.fillRect(-bw/2-2,by-5,bw+4,5);
+  });
+
+  // 자물쇠
+  ctx.fillStyle=GOLD2;ctx.beginPath();ctx.roundRect(-12,-10,24,20,4);ctx.fill();
+  ctx.fillStyle=GOLD3;ctx.beginPath();ctx.roundRect(-12,0,24,10,4);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,0.5)';ctx.beginPath();ctx.arc(0,2,3.5,0,Math.PI*2);ctx.fill();
+  ctx.fillRect(-1.5,2,3,5);
+  var lkg=ctx.createLinearGradient(-12,-10,12,0);
+  lkg.addColorStop(0,SHINE);lkg.addColorStop(1,'rgba(255,255,200,0)');
+  ctx.fillStyle=lkg;ctx.beginPath();ctx.roundRect(-12,-10,24,15,4);ctx.fill();
+  ctx.restore();
+
+  // 뚜껑
+  ctx.save();ctx.translate(0,-bh*0.5);
+  var rad=-lidAngle*Math.PI/180,cosA=Math.cos(rad),sinA=Math.sin(rad);
+  function proj(lx,ly){return [lx,ly*cosA-ly*sinA*0.35];}
+
+  var p0=proj(-bw/2,-lh),p1=proj(bw/2,-lh),p2=proj(bw/2,0),p3=proj(-bw/2,0);
+  var topG=ctx.createLinearGradient(0,-lh,0,0);
+  topG.addColorStop(0,WOOD1);topG.addColorStop(1,WOOD2);
+  ctx.fillStyle=topG;
+  ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);
+  ctx.lineTo(p2[0],p2[1]);ctx.lineTo(p3[0],p3[1]);ctx.closePath();ctx.fill();
+
+  ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;
+  for(var li=1;li<3;li++){
+    var lp0=proj(-bw/2,-lh*(li/3)),lp1=proj(bw/2,-lh*(li/3));
+    ctx.beginPath();ctx.moveTo(lp0[0],lp0[1]);ctx.lineTo(lp1[0],lp1[1]);ctx.stroke();
+  }
+
+  var f0=proj(-bw/2,-lh),f1=proj(bw/2,-lh);
+  var lidFG=ctx.createLinearGradient(0,f0[1],0,f0[1]+lh*0.2);
+  lidFG.addColorStop(0,WOOD2);lidFG.addColorStop(1,WOOD3);
+  ctx.fillStyle=lidFG;
+  ctx.beginPath();ctx.moveTo(f0[0],f0[1]);ctx.lineTo(f1[0],f1[1]);
+  ctx.lineTo(f1[0],f1[1]+lh*0.2*cosA);ctx.lineTo(f0[0],f0[1]+lh*0.2*cosA);
+  ctx.closePath();ctx.fill();
+
+  var b0=proj(-bw/2,-lh*0.5),b1=proj(bw/2,-lh*0.5),bh2=8*Math.abs(cosA);
+  var lidBG=ctx.createLinearGradient(0,b0[1],0,b0[1]+bh2);
+  lidBG.addColorStop(0,GOLD1);lidBG.addColorStop(0.5,'#ffd060');lidBG.addColorStop(1,GOLD2);
+  ctx.fillStyle=lidBG;
+  ctx.beginPath();
+  ctx.moveTo(b0[0]-2,b0[1]-bh2/2);ctx.lineTo(b1[0]+2,b1[1]-bh2/2);
+  ctx.lineTo(b1[0]+2,b1[1]+bh2/2);ctx.lineTo(b0[0]-2,b0[1]+bh2/2);
+  ctx.closePath();ctx.fill();
+
+  // 뚜껑 광택
+  var shineG=ctx.createLinearGradient(p0[0],p0[1],p0[0],p0[1]+lh*0.3);
+  shineG.addColorStop(0,'rgba(255,255,220,0.5)');shineG.addColorStop(1,'rgba(255,255,220,0)');
+  ctx.fillStyle=shineG;
+  var m0=proj(-bw/2,-lh*0.6),m1=proj(bw/2,-lh*0.6);
+  ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);
+  ctx.lineTo(m1[0],m1[1]);ctx.lineTo(m0[0],m0[1]);ctx.closePath();ctx.fill();
+  ctx.restore();
+
+  // glow
+  if(glow>0){
+    var gr=ctx.createRadialGradient(0,-bh*0.3,0,0,-bh*0.3,130*glow);
+    gr.addColorStop(0,'rgba(255,220,80,'+(0.75*glow)+')');
+    gr.addColorStop(0.4,'rgba(255,180,40,'+(0.3*glow)+')');
+    gr.addColorStop(1,'rgba(255,160,0,0)');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(0,-bh*0.3,130*glow,0,Math.PI*2);ctx.fill();
+  }
+
+  // 보석 (뚜껑 60도 이상)
+  if(lidAngle>60){
+    var gems=[{x:-30,y:-bh*0.6,c:'#ff4488',s:10},{x:10,y:-bh*0.8,c:'#44aaff',s:8},
+              {x:35,y:-bh*0.55,c:'#44ff88',s:9},{x:-10,y:-bh*0.95,c:'#ffaa00',s:7}];
+    var pop=Math.min((lidAngle-60)/40,1);
+    gems.forEach(function(gm){
+      ctx.save();ctx.globalAlpha=easeElastic(pop)*0.9;
+      ctx.translate(gm.x,gm.y-easeOut(pop)*15);
+      ctx.fillStyle=gm.c;ctx.shadowColor=gm.c;ctx.shadowBlur=12*pop;
+      ctx.beginPath();ctx.moveTo(0,-gm.s);ctx.lineTo(gm.s,0);ctx.lineTo(0,gm.s*0.6);ctx.lineTo(-gm.s,0);
+      ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,0.6)';
+      ctx.beginPath();ctx.moveTo(-gm.s*0.3,-gm.s*0.6);ctx.lineTo(gm.s*0.1,-gm.s*0.9);ctx.lineTo(gm.s*0.1,-gm.s*0.3);
+      ctx.closePath();ctx.fill();
+      ctx.restore();
+    });
+  }
+  ctx.restore();
+}
+
+function drawKey3D(ctx,x,y,scale,alpha,rot){
+  ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y);ctx.scale(scale,scale);ctx.rotate(rot);
+  ctx.shadowColor='rgba(200,120,0,0.7)';ctx.shadowBlur=24;
+  var kg=ctx.createRadialGradient(-8,-8,2,0,0,28);
+  kg.addColorStop(0,'#fff0a0');kg.addColorStop(0.4,GOLD1);kg.addColorStop(1,GOLD3);
+  ctx.fillStyle=kg;ctx.beginPath();ctx.arc(0,0,26,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle=GOLD3;ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle=GOLD3;ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.fill();
+  var kg2=ctx.createRadialGradient(-4,-4,1,0,0,14);
+  kg2.addColorStop(0,'rgba(255,240,160,0.8)');kg2.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=kg2;ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.fill();
+  var shG=ctx.createLinearGradient(-6,0,6,0);
+  shG.addColorStop(0,GOLD2);shG.addColorStop(0.3,GOLD1);shG.addColorStop(1,GOLD3);
+  ctx.fillStyle=shG;ctx.fillRect(-6,24,12,52);
+  [[8,56,16,10],[8,70,12,8]].forEach(function(r){
+    ctx.fillStyle=shG;ctx.fillRect(r[0],r[1],r[2],r[3]);
+    ctx.fillStyle='rgba(255,255,200,0.4)';ctx.fillRect(r[0],r[1],r[2],r[3]/3);
+  });
+  var ks=ctx.createLinearGradient(-26,-26,0,0);
+  ks.addColorStop(0,'rgba(255,255,240,0.6)');ks.addColorStop(1,'rgba(255,255,240,0)');
+  ctx.fillStyle=ks;ctx.beginPath();ctx.arc(0,0,26,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function drawRays3D(ctx,W,H,alpha,t2){
+  if(alpha<=0)return;
+  var cx=W/2,cy=H/2+30-62*0.5;
+  ctx.save();ctx.globalAlpha=alpha*0.22;
+  for(var i=0;i<14;i++){
+    var ang=(i/14)*Math.PI*2+t2*0.5,len=140+Math.sin(t2*2+i)*20;
+    var grd=ctx.createLinearGradient(cx,cy,cx+Math.cos(ang)*len,cy+Math.sin(ang)*len);
+    grd.addColorStop(0,'rgba(255,220,80,0.85)');grd.addColorStop(1,'rgba(255,180,40,0)');
+    ctx.fillStyle=grd;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(ang-0.07)*len,cy+Math.sin(ang-0.07)*len);
+    ctx.lineTo(cx+Math.cos(ang+0.07)*len,cy+Math.sin(ang+0.07)*len);
+    ctx.closePath();ctx.fill();
+  }
+  ctx.restore();
+}
+
+window.playChestAnimation = function(nextEmoji, nextLabel, callback){
+  if(_chestRunning) return;
+  _chestRunning = true;
+  _chestParticles=[]; _chestSparks=[];
+
+  var overlay = document.getElementById('chestAnimOverlay');
+  var canvas = document.getElementById('chestCanvas');
+  var badge = document.getElementById('chestUnlockBadge');
+  if(!overlay||!canvas) { if(callback)callback(); return; }
+
+  overlay.style.display = 'flex';
+  badge.style.transform = 'scale(0)';
+  badge.style.opacity = '0';
+  badge.style.transition = 'none';
+  badge.textContent = (nextEmoji||'🎨') + ' ' + (nextLabel||'다음 카테고리') + ' 해금!';
+
+  var ctx2 = canvas.getContext('2d');
+  var W=320,H=300,t3=0;
+  var phase=0,pT=0,lidAngle=0,keyScale=0,keyAlpha=0,keyY=H/2,glowA=0,rayA=0,spawned=false;
+
+  function frame(){
+    ctx2.clearRect(0,0,W,H);
+    pT+=0.016; t3+=0.016;
+
+    if(phase===0){
+      // 잠깐 상자 보여주기
+      draw3DChest(ctx2,W,H,0,0);
+      if(pT>0.5){phase=1;pT=0;}
+    }
+    else if(phase===1){
+      // 열쇠 등장
+      keyScale=easeElastic(Math.min(pT/0.8,1))*1.05;
+      keyAlpha=Math.min(pT*4,1); keyY=H/2-20;
+      draw3DChest(ctx2,W,H,0,0);
+      drawKey3D(ctx2,W/2,keyY,keyScale,keyAlpha,Math.sin(pT*3)*0.05);
+      if(pT>1.1){phase=2;pT=0;}
+    }
+    else if(phase===2){
+      // 열쇠 사라짐
+      var p2=Math.min(pT/0.4,1);
+      keyY=H/2-20-easeOut(p2)*130; keyAlpha=1-easeOut(p2); keyScale=1+easeOut(p2)*0.3;
+      draw3DChest(ctx2,W,H,0,0);
+      drawKey3D(ctx2,W/2,keyY,keyScale,keyAlpha,0);
+      if(pT>0.45){phase=3;pT=0;}
+    }
+    else if(phase===3){
+      // 흔들림
+      var shk=Math.sin(pT*55)*Math.max(0,0.55-pT)*14;
+      ctx2.save();ctx2.translate(shk,0);draw3DChest(ctx2,W,H,0,0);ctx2.restore();
+      if(pT>0.6){phase=4;pT=0;}
+    }
+    else if(phase===4){
+      // 뚜껑 열림 + 폭발
+      var p4=Math.min(pT/0.7,1);
+      lidAngle=easeElastic(p4)*118;
+      glowA=Math.sin(p4*Math.PI)*1.3;
+      rayA=easeOut(Math.min(p4*2,1));
+      if(p4>0.25&&!spawned){spawned=true;spawnChestParticles(W,H);}
+      updateChestParticles();
+      drawRays3D(ctx2,W,H,rayA*glowA,t3);
+      draw3DChest(ctx2,W,H,lidAngle,Math.max(glowA,0));
+      drawChestParticles(ctx2);
+      if(pT>0.85){phase=5;pT=0;}
+    }
+    else if(phase===5){
+      // 뱃지 등장
+      updateChestParticles();
+      glowA=Math.max(glowA-0.018,0); rayA=Math.max(rayA-0.014,0);
+      drawRays3D(ctx2,W,H,rayA,t3);
+      draw3DChest(ctx2,W,H,118,glowA);
+      drawChestParticles(ctx2);
+      if(pT>0.25){
+        var sc=easeElastic(Math.min((pT-0.25)/0.6,1));
+        badge.style.transition='none';
+        badge.style.transform='scale('+sc+')';
+        badge.style.opacity=String(Math.min((pT-0.25)*4,1));
+      }
+      if(pT>3.2){phase=6;}
+    }
+    else if(phase===6){
+      // 페이드 아웃
+      updateChestParticles();
+      draw3DChest(ctx2,W,H,118,0);
+      drawChestParticles(ctx2);
+      var fo=1-Math.min(pT/0.5,1);
+      overlay.style.opacity=String(fo);
+      if(pT>0.55){
+        overlay.style.display='none';
+        overlay.style.opacity='1';
+        _chestRunning=false;
+        cancelAnimationFrame(_chestAnimId);
+        if(callback) setTimeout(callback,100);
+        return;
+      }
+    }
+    _chestAnimId=requestAnimationFrame(frame);
+  }
+  frame();
+};
+})();
+
+// ── 사진 업로드 기능 ──
+var _uploadedPhotoBase64 = null;
+var _uploadedPhotoMime = 'image/jpeg';
+
+function showPhotoUpload(show){
+  var sec = g('photoUploadSection');
+  if(sec) sec.style.display = show ? 'block' : 'none';
+}
+
+function handlePhotoSelect(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  loadPhotoFile(file);
+}
+
+function handlePhotoDrop(event){
+  event.preventDefault();
+  g('photoDropZone').style.borderColor = 'var(--ab)';
+  var file = event.dataTransfer.files[0];
+  if(!file || !file.type.startsWith('image/')) return;
+  loadPhotoFile(file);
+}
+
+function loadPhotoFile(file){
+  if(file.size > 5 * 1024 * 1024){ showToast('5MB 이하 사진만 올릴 수 있어요 🙂'); return; }
+  _uploadedPhotoMime = file.type || 'image/jpeg';
+  var reader = new FileReader();
+  reader.onload = function(e){
+    _uploadedPhotoBase64 = e.target.result.split(',')[1];
+    var preview = g('photoPreview');
+    var previewWrap = g('photoPreviewWrap');
+    var placeholder = g('photoUploadPlaceholder');
+    if(preview){ preview.src = e.target.result; }
+    if(previewWrap) previewWrap.style.display = 'block';
+    if(placeholder) placeholder.style.display = 'none';
+    showToast('사진이 올라갔어요! 📷');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(){
+  _uploadedPhotoBase64 = null;
+  var preview = g('photoPreview');
+  var previewWrap = g('photoPreviewWrap');
+  var placeholder = g('photoUploadPlaceholder');
+  var fileInput = g('photoFileInput');
+  if(preview) preview.src = '';
+  if(previewWrap) previewWrap.style.display = 'none';
+  if(placeholder) placeholder.style.display = 'block';
+  if(fileInput) fileInput.value = '';
+}
+
+// 강의 시작 시 requiresUpload 체크
+function checkRequiresUpload(){
+  var d = DOJO_CONFIG.find(function(x){ return x.builderCourse === courseName || x.name === courseName; });
+  var needsUpload = d && d.requiresUpload;
+  showPhotoUpload(needsUpload);
+  if(needsUpload){
+    // storyInput placeholder 변경
+    var si = g('storyInput');
+    if(si) si.placeholder = '사진에 대해 간단히 설명해주세요 (선택사항)';
+  }
+}
+
+// ── fal.ai 이미지-to-이미지 (사진 업로드 변환) ──
+async function generateImageWithFal(base64, mime, prompt){
+  var key = window._falApiKey || '';
+  if(!key){ throw new Error('fal.ai API 키를 설정해주세요 🔑'); }
+
+  // fal.ai REST API (CORS 지원)
+  var endpoint = 'https://fal.run/fal-ai/flux/dev/image-to-image';
+  var dataUrl = 'data:' + mime + ';base64,' + base64;
+
+  var response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Key ' + key
+    },
+    body: JSON.stringify({
+      image_url: dataUrl,
+      prompt: prompt,
+      strength: 0.75,
+      num_inference_steps: 28,
+      guidance_scale: 3.5,
+      image_size: 'square_hd',
+      num_images: 1,
+      enable_safety_checker: true
+    })
+  });
+
+  if(!response.ok){
+    var errText = await response.text();
+    console.error('[fal.ai] error:', errText);
+    if(response.status === 401) throw new Error('fal.ai API 키를 확인해주세요 🔑');
+    if(response.status === 402) throw new Error('fal.ai 크레딧이 부족해요. 충전이 필요해요 💳');
+    throw new Error('사진 변환에 실패했어요. 잠시 후 다시 시도해주세요 🙂');
+  }
+
+  var data = await response.json();
+  if(data.images && data.images[0] && data.images[0].url){
+    return data.images[0].url;
+  }
+  throw new Error('사진 변환 결과를 받지 못했어요. 다시 시도해주세요 🙂');
+}
+
+// ── fal.ai API 키 관리 ──
+window._falApiKey = localStorage.getItem('aiDonghang_falKey') || '';
+
+// 관리자 페이지 진입 시 키 복원
+(function(){
+  var orig = window.onload;
+  // adminView 진입 시 처리
+})();
+
+function saveFalApiKey(){
+  var input = g('falApiKeyInput');
+  var status = g('falApiKeyStatus');
+  if(!input) return;
+  var key = input.value.trim();
+  if(!key){ showToast('API 키를 입력해주세요'); return; }
+  if(!key.startsWith('fal-')){
+    showToast('fal.ai 키는 fal- 로 시작해야 해요');
+    return;
+  }
+  window._falApiKey = key;
+  localStorage.setItem('aiDonghang_falKey', key);
+  input.value = key.slice(0,12) + '...';
+  if(status){ status.textContent = '✅ fal.ai 키 저장 완료!'; status.style.color = '#8B5CF6'; }
+  showToast('🎨 fal.ai API 키가 저장됐어요!');
+}
+
+function clearFalApiKey(){
+  window._falApiKey = '';
+  localStorage.removeItem('aiDonghang_falKey');
+  var input = g('falApiKeyInput');
+  var status = g('falApiKeyStatus');
+  if(input) input.value = '';
+  if(status){ status.textContent = ''; }
+  showToast('fal.ai 키가 초기화됐어요');
+}
+
+function loadFalApiKeyToInput(){
+  var key = localStorage.getItem('aiDonghang_falKey') || '';
+  var input = g('falApiKeyInput');
+  var status = g('falApiKeyStatus');
+  if(input && key) input.value = key.slice(0,12) + '...';
+  if(status && key){ status.textContent = '✅ fal.ai 키 설정됨'; status.style.color = '#8B5CF6'; }
 }
 </script>
 
@@ -7880,5 +8481,11 @@ function removeCsTyping(id){
 </div>
 
 
+
+<!-- ══ 보물상자 해금 애니메이션 ══ -->
+<div id="chestAnimOverlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <canvas id="chestCanvas" width="320" height="300" style="display:block;"></canvas>
+  <div id="chestUnlockBadge" style="background:linear-gradient(135deg,#f5c842,#e8a020);color:#3a2800;font-size:17px;font-weight:800;padding:10px 26px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 20px rgba(245,200,66,0.6);transform:scale(0);opacity:0;transition:none;font-family:'Noto Sans KR',sans-serif;"></div>
+</div>
 </body>
 </html>

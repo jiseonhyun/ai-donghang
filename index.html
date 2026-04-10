@@ -641,7 +641,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .mypage-menu-arr{color:var(--i3);font-size:18px;}
 .logout-btn{width:100%;padding:15px;border:1.5px solid #f0c0c0;border-radius:12px;background:#fff;color:#c44;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;}
 .logout-btn:hover{background:#fff5f5;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-box{background:#fff;border-radius:20px;padding:32px;width:100%;max-width:420px;box-shadow:0 20px 64px rgba(0,0,0,.2);}
 .modal-title{font-family:var(--serif,serif);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:20px;}
 .modal-input-label{font-size:15px;font-weight:600;color:var(--i2);margin-bottom:7px;margin-top:16px;}
@@ -930,9 +930,9 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .abc-pages{font-size:12px;color:var(--gd);font-weight:700;}
 
 /* ══ 온보딩 오버레이 ══ */
-.ob-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .35s,visibility .35s;padding:70px 20px 20px;}
+.ob-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;transition:opacity .35s,visibility .35s;padding:70px 20px 20px;}
 .ob-overlay.ob-bg{background:rgba(0,0,0,.5);}
-.ob-overlay.ob-hide{opacity:0;visibility:hidden;pointer-events:none;}
+.ob-overlay.ob-hide{opacity:0;visibility:hidden;pointer-events:none;display:none;}
 .ob-sheet{background:#fff;border-radius:24px;width:100%;max-width:400px;transform:scale(1);transition:transform .35s cubic-bezier(.32,.72,0,1),opacity .35s;overflow:visible;box-shadow:0 24px 60px rgba(0,0,0,.22);position:relative;}
 .ob-overlay.ob-hide .ob-sheet{transform:scale(.92);opacity:0;}
 
@@ -1325,7 +1325,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .dojo-sidebar-sub{font-size:14px;color:var(--i3);line-height:1.6;transition:color .3s ease;}
 
 /* 온보딩 모달 (하단 슬라이드업) */
-.dojo-onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:970;display:flex;align-items:flex-end;justify-content:center;}
+.dojo-onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:970;display:none;align-items:flex-end;justify-content:center;}
 .dojo-onboard-overlay.hide{display:none;}
 .dojo-onboard{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 36px;width:100%;max-width:480px;animation:slideUp .4s ease-out;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
@@ -4709,13 +4709,14 @@ function obSkip(){
 
 function obClose(){
   var ov = g('obOverlay');
-  if(ov) ov.classList.add('ob-hide');
+  if(ov){ ov.classList.add('ob-hide'); ov.style.display = 'none'; }
 }
 
 function obOpen(type){
   var ov = g('obOverlay');
   if(!ov){ console.warn('[동동이] obOverlay 없음'); return; }
   ov.classList.remove('ob-hide');
+  ov.style.display = 'flex'; // display:none 명시적 해제
   obStep = 0;
   obAnswers = {};
   obCurrentType = type || 'survey'; // 'welcome-dojo' | 'welcome-builder' | 'survey'

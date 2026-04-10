@@ -753,7 +753,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   #bottomNav{display:grid!important;}
   #globalNav{padding:0 16px;}
   #globalNav .nav-links{display:none!important;}
-  #helpFloat{bottom:80px;}
+  #helpFloat{bottom:72px;right:12px;width:44px;height:44px;}
   .hero{grid-template-columns:1fr;padding:44px 20px 36px;gap:28px;}
   .hero-title{font-size:36px;}
   .photo-grid{grid-template-columns:1fr 1fr;}
@@ -786,10 +786,13 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 .bnav-active svg{stroke:var(--ac)!important;}
 .bnav-active span{color:var(--ac)!important;font-weight:700!important;}
-#helpFloat{position:fixed;bottom:28px;right:28px;z-index:300;height:56px;padding:0 20px 0 16px;border-radius:100px;background:var(--ac);box-shadow:0 4px 22px rgba(42,95,82,.38);display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .15s,box-shadow .15s;}
-#helpFloat:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(42,95,82,.48);}
-#helpFloat::after{content:"도움말";font-size:14px;font-weight:700;color:#fff;font-family:'Noto Sans KR',sans-serif;}
+#helpFloat{position:fixed;bottom:28px;right:16px;z-index:180;width:48px;height:48px;padding:0;border-radius:50%;background:var(--ac);box-shadow:0 4px 18px rgba(42,95,82,.38);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+#helpFloat:hover{transform:scale(1.07);box-shadow:0 6px 26px rgba(42,95,82,.48);}
+#helpFloat::after{content:"";display:none;}
 #helpFloat:hover + #helpTooltip{opacity:1;}
+@media(min-width:641px){
+  #helpFloat{bottom:28px;right:28px;width:56px;height:56px;}
+}
 
 /* ── 챕터 탭 ── */
 .chapter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
@@ -1636,7 +1639,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
         <p class="hero-sub">어르신들이 AI 동행으로 만든<br>실제 작품들이에요. 나도 5분이면 만들 수 있어요.</p>
         <div class="hero-cta">
           <button class="btn-p" onclick="goToBuilder()">🏆 나도 5분이면 만들 수 있어요 →</button>
-          <button class="btn-g" onclick="showView('auth')" style="background:var(--ac);color:#fff;border-color:var(--ac);">무료로 시작하기 (30초 가입)</button>
+          
         </div>
         <div class="hero-reassure">✅ 모두 어르신이 직접 만든 작품 &nbsp;·&nbsp; ✅ AI 동행으로 5분 만에</div>
       </div>
@@ -2444,7 +2447,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="font-size:48px;margin-bottom:16px;">😥</div>
     <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:10px;">잠깐, 문제가 생겼어요</div>
     <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:28px;" id="aiErrorMsg">네트워크 연결을 확인하고 다시 시도해 주세요</div>
-    <button onclick="generateWithAI()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">다시 시도하기</button>
+    <button onclick="retryGeneration()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">다시 시도하기</button>
     <button onclick="copyPromptSilent();window.open('https://wrtn.ai','_blank');" style="width:100%;padding:14px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">뤼튼에서 직접 해보기</button>
   </div>
 
@@ -2545,6 +2548,13 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <!-- ══ 요금제 ══ -->
 <div class="view" id="pricingView">
+<div style="background:#FFF8E7;border:1.5px solid #F5C842;border-radius:14px;padding:16px 20px;margin:0 20px 24px;display:flex;align-items:center;gap:12px;">
+  <span style="font-size:24px;">🚧</span>
+  <div>
+    <div style="font-size:15px;font-weight:700;color:#B8860B;margin-bottom:3px;">지금은 베타 서비스예요</div>
+    <div style="font-size:13px;color:#8B6914;line-height:1.6;">모든 기능을 무료로 체험하세요! 정식 출시 후 결제가 오픈돼요.</div>
+  </div>
+</div>
 <div class="pricing-hero"><div class="eyebrow" style="justify-content:center;">요금제</div><div class="pricing-title">작품 하나의 감동,<br>그 가치만큼</div><div class="pricing-sub">처음엔 도장깨기로 무료 체험하세요. 더 자주 만들고 싶어지면 그때 결정하면 돼요.</div></div>
 <div class="pricing-cards">
   <div class="pc">
@@ -2681,33 +2691,36 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- ══ 마이페이지 ══ -->
 <div class="view" id="mypageView">
 <div class="mypage-wrap">
+  <!-- 프로필 헤더 -->
   <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
     <div style="width:64px;height:64px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;" id="mp-avatar">👤</div>
-    <div><div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:var(--ink);" id="mp-name">사용자 님</div><div style="font-size:14px;color:var(--i3);margin-top:3px;" id="mp-phone"></div></div>
+    <div>
+      <div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:var(--ink);" id="mp-name">사용자 님</div>
+      <!-- 전화번호: 로그인한 경우에만 표시 (renderMypage에서 제어) -->
+      <div style="font-size:14px;color:var(--i3);margin-top:3px;display:none;" id="mp-phone"></div>
+    </div>
     <button class="mypage-edit-btn" onclick="openEditModal()" style="margin-left:auto;">✏️ 수정</button>
   </div>
-  <div id="mypagePlanSection"></div>
-  <!-- 도장 현황 -->
+
+  <!-- 1. AI 도장깨기 현황 -->
   <div class="mypage-section">
     <div class="mypage-section-title">🏆 AI 도장깨기 현황</div>
     <div id="mp-dojo-status" style="font-size:15px;color:var(--i3);">도장을 깨기 시작해보세요!</div>
     <button onclick="showView('dojo')" style="width:100%;margin-top:14px;padding:13px;background:var(--al);border:1.5px solid var(--ab);border-radius:100px;font-size:15px;font-weight:700;color:var(--ac);font-family:inherit;cursor:pointer;min-height:50px;">🏆 도장깨기 하러 가기 →</button>
   </div>
 
-  <!-- 뱃지 컬렉션 -->
+  <!-- 2. 뱃지 컬렉션 -->
   <div class="mypage-section" id="mp-badge-collection" style="margin-bottom:16px;"></div>
 
-  <!-- 창작 아카이브 -->
+  <!-- 3. 나의 창작 아카이브 -->
   <div class="mypage-section" id="archiveSection">
     <div class="mypage-section-title">📚 나의 창작 아카이브</div>
-    <!-- 자서전 책 진행도 -->
     <div class="archive-book-card" id="archiveBookCard">
       <div class="abc-title">📖 나의 자서전</div>
       <div class="abc-sub">지금까지 만든 이야기들이 모여 책이 돼요</div>
       <div class="abc-progress"><div class="abc-progress-fill" id="bookProgressFill" style="width:0%"></div></div>
       <div class="abc-pages" id="bookPages">0 / 12챕터 · 계속 써나가요</div>
     </div>
-    <!-- AI 여정 타임라인 -->
     <div id="archiveTimeline">
       <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:14px;">🗓️ 나의 AI 여정</div>
       <div class="archive-timeline" id="timelineList">
@@ -2716,12 +2729,13 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     </div>
     <button onclick="showView('dojo')" style="width:100%;margin-top:16px;padding:12px;background:var(--al);border:1.5px solid var(--ab);border-radius:100px;font-size:14px;font-weight:700;color:var(--ac);font-family:inherit;cursor:pointer;min-height:48px;">✍️ 새 챕터 쓰러 가기 →</button>
   </div>
-  <div class="mypage-section">
-    <div class="mypage-section-title">⚙️ 계정 관리</div>
-    <div class="mypage-menu-item" onclick="showView('portfolio')"><div class="mypage-menu-left"><div class="mypage-menu-icon">📁</div><div><div class="mypage-menu-text">내 작품함</div><div class="mypage-menu-sub" id="mp-portfolio-count">저장된 작품 보기</div></div></div><span class="mypage-menu-arr">›</span></div>
-    <div class="mypage-menu-item" onclick="showView('pricing')"><div class="mypage-menu-left"><div class="mypage-menu-icon">💳</div><div><div class="mypage-menu-text">구독 플랜 변경</div></div></div><span class="mypage-menu-arr">›</span></div>
-    <div class="mypage-menu-item" onclick="showView('faq')"><div class="mypage-menu-left"><div class="mypage-menu-icon">❓</div><div><div class="mypage-menu-text">고객센터</div></div></div><span class="mypage-menu-arr">›</span></div>
-  </div>
+
+  <!-- 4. 1:1 도움 서비스 -->
+  <div id="mp-cs-section" class="mypage-section"></div>
+
+  <!-- 5. 이용 가능한 서비스 -->
+  <div id="mypagePlanSection"></div>
+
   <button class="logout-btn" onclick="confirmLogout()">로그아웃</button>
 </div>
 <div class="modal-overlay" id="editModal" style="display:none;" onclick="closeEditModal(event)">
@@ -2757,6 +2771,67 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <textarea id="faqContactMsg" placeholder="문의 내용을 자유롭게 적어주세요" rows="4" style="padding:14px 16px;border:1.5px solid var(--bd);border-radius:11px;font-size:15px;font-family:'Noto Sans KR',sans-serif;outline:none;resize:none;"></textarea>
       <button onclick="submitFaqContact()" style="padding:15px;background:var(--ac);color:#fff;border:none;border-radius:11px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">문의 보내기</button>
     </div>
+  </div>
+
+  <!-- ── 동동이 CS 채팅 (동행+ 전용) ── -->
+  <div id="csChatSection" style="display:none;margin-top:32px;background:#fff;border:2px solid var(--ac);border-radius:20px;overflow:hidden;">
+    <!-- 헤더 -->
+    <div style="background:var(--ac);padding:16px 20px;display:flex;align-items:center;gap:12px;">
+      <svg width="36" height="44" viewBox="0 0 200 240" style="flex-shrink:0;">
+        <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+        <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+        <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+        <rect x="72" y="206" width="22" height="28" rx="10" fill="#c07010"/>
+        <rect x="106" y="206" width="22" height="28" rx="10" fill="#c07010"/>
+        <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+        <circle cx="100" cy="110" r="44" fill="#d08010"/>
+        <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="100" cy="45" r="7" fill="#2A5F52"/>
+        <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#fff;">동동이 CS 도우미</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.8);">동행+ 전용 · 24시간 언제든지 물어보세요 🙂</div>
+      </div>
+      <div style="margin-left:auto;background:rgba(255,255,255,.2);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;">동행+ 전용</div>
+    </div>
+    <!-- 채팅 메시지 영역 -->
+    <div id="csChatMessages" style="height:320px;overflow-y:auto;padding:16px;background:#f9f9f7;display:flex;flex-direction:column;gap:12px;">
+      <!-- 동동이 첫 메시지 -->
+      <div style="display:flex;align-items:flex-start;gap:8px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
+        <div style="background:#fff;border:1.5px solid var(--bd);border-radius:0 14px 14px 14px;padding:12px 14px;max-width:80%;font-size:14px;color:var(--i2);line-height:1.7;">
+          안녕하세요! 저는 동동이예요 😊<br>AI 동행 사용 중에 궁금한 점이 있으시면 무엇이든 물어보세요!<br><br>
+          예를 들어:<br>
+          · "프롬프트를 어떻게 복사해요?"<br>
+          · "작품함에 저장이 안 돼요"<br>
+          · "카카오 로그인이 안 됩니다"
+        </div>
+      </div>
+    </div>
+    <!-- 입력창 -->
+    <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--bd);display:flex;gap:10px;">
+      <input id="csInput" type="text" placeholder="궁금한 점을 입력해주세요..." 
+        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:100px;font-size:15px;font-family:inherit;outline:none;"
+        onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'"
+        onkeydown="if(event.key==='Enter')sendCsMessage()"/>
+      <button onclick="sendCsMessage()" 
+        style="padding:12px 20px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;min-height:48px;">
+        전송
+      </button>
+    </div>
+  </div>
+
+  <!-- 동행+ 아닌 경우 CS 섹션 안내 -->
+  <div id="csChatLock" style="margin-top:32px;background:#fff;border:2px solid var(--bd);border-radius:20px;padding:28px 24px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:12px;">🤖</div>
+    <div style="font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">동동이 CS 도우미</div>
+    <div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:18px;">동행+ 멤버에게 제공되는 24시간 AI 상담 서비스예요.<br>궁금한 점을 바로바로 해결해드려요 🙂</div>
+    <button onclick="showView('pricing')" style="padding:12px 24px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;">동행+ 시작하기</button>
   </div>
 </div>
 <div class="footer">
@@ -2858,6 +2933,69 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;margin-bottom:16px;">
       <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:11px;">💌 완성된 작품을 카카오톡으로 보내는 법</div>
       <div style="font-size:15px;color:var(--i2);line-height:1.85;">① AI 동행에서 "작품 완성하기" 클릭<br>② 카카오톡 열기<br>③ 보내고 싶은 가족 채팅방 열기<br>④ 입력창 꾹 눌러서 <b>붙여넣기</b><br>⑤ 전송! 💚</div>
+    </div>
+
+    <!-- 프롬프트 사용법 -->
+    <div style="background:linear-gradient(135deg,var(--al),#e8f8f4);border:2px solid var(--ab);border-radius:20px;padding:28px 24px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+        <span style="font-size:28px;">✨</span>
+        <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ac);">AI 툴 사용법 — 아주 쉬워요!</div>
+      </div>
+      <div style="font-size:15px;color:var(--i2);line-height:1.8;margin-bottom:20px;">
+        AI 동행에서 만든 <b style="color:var(--ac);">프롬프트</b>를 AI 툴에 붙여넣기만 하면 글, 그림, 노래가 완성돼요.<br>
+        어렵게 생각하지 마세요 — 복사하고 붙여넣기 두 번이면 끝이에요! 🙂
+      </div>
+
+      <!-- 단계별 안내 -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 2px 8px rgba(42,95,82,.07);">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">1</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">AI 동행에서 프롬프트 완성</div>
+            <div style="font-size:14px;color:var(--i3);line-height:1.6;">원하는 내용을 입력하고 스타일을 선택하면<br><b style="color:var(--ac);">프롬프트가 자동으로 완성</b>돼요.</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 2px 8px rgba(42,95,82,.07);">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">2</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">📋 프롬프트 복사</div>
+            <div style="font-size:14px;color:var(--i3);line-height:1.6;">"복사하기" 버튼을 누르거나<br><b>Ctrl+C</b> (PC) / 텍스트 꾹 누르기 (스마트폰)</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 2px 8px rgba(42,95,82,.07);">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">3</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">🤖 AI 툴 열기</div>
+            <div style="font-size:14px;color:var(--i3);line-height:1.6;">글쓰기 → <b>뤼튼</b> (wrtn.ai) 무료<br>이미지 → <b>뤼튼 이미지</b> 무료<br>음악 → <b>Suno AI</b> (suno.com) 무료</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 2px 8px rgba(42,95,82,.07);">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">4</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">📌 입력창에 붙여넣기</div>
+            <div style="font-size:14px;color:var(--i3);line-height:1.6;">AI 툴 입력창을 클릭하고<br><b>Ctrl+V</b> (PC) / 꾹 눌러서 붙여넣기 (스마트폰)<br>그 다음 <b>Enter (전송)</b>!</div>
+          </div>
+        </div>
+
+        <div style="background:var(--ac);border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#fff;color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎉</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">결과물 완성!</div>
+            <div style="font-size:14px;color:rgba(255,255,255,.85);line-height:1.6;">AI가 글, 그림, 노래를 만들어줘요.<br>결과물을 복사해서 AI 동행으로 돌아와 저장하세요!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 툴 바로가기 버튼 -->
+      <div style="font-size:14px;font-weight:700;color:var(--ac);margin-bottom:10px;">자주 쓰는 AI 툴 바로가기</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="window.open('https://wrtn.ai','_blank')" style="padding:11px 18px;background:#fff;border:1.5px solid var(--ab);border-radius:100px;font-size:14px;font-weight:700;color:var(--ac);cursor:pointer;font-family:inherit;">🤖 뤼튼 (글쓰기·이미지)</button>
+        <button onclick="window.open('https://suno.com','_blank')" style="padding:11px 18px;background:#fff;border:1.5px solid var(--ab);border-radius:100px;font-size:14px;font-weight:700;color:var(--ac);cursor:pointer;font-family:inherit;">🎵 Suno AI (음악)</button>
+        <button onclick="window.open('https://chat.openai.com','_blank')" style="padding:11px 18px;background:#fff;border:1.5px solid var(--ab);border-radius:100px;font-size:14px;font-weight:700;color:var(--ac);cursor:pointer;font-family:inherit;">💬 ChatGPT</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4062,7 +4200,7 @@ function showView(view){
   else if(view==='auth'){_activate('authView');switchAuthTab('signup');}
   else if(view==='login'){_activate('authView');switchAuthTab('login');}
   else if(view==='mypage'){_activate('mypageView');renderMypage();}
-  else if(view==='faq'){_activate('faqView');}
+  else if(view==='faq'){_activate('faqView');setTimeout(initCsChat,100);}
   else if(view==='learn'){_activate('learnView');}
   else if(view==='community'){_activate('communityView');renderCommunity();loadCommunityFromSupabase();}
   else if(view==='about'){_activate('aboutView');}
@@ -5153,6 +5291,10 @@ function renderDojoPath(){
       } else if(isNext){
         stClass = 'st-current';
         circleStyle = 'background:linear-gradient(145deg,'+th.main+','+th.accent+');box-shadow:0 0 0 5px #fff,0 0 0 8px '+th.main+',0 10px 0 8px '+th.dark+';';
+      } else if(unlocked){
+        // 같은 카테고리, 미완료지만 카테고리 열림 → 클릭 가능 스타일
+        stClass = 'st-current';
+        circleStyle = 'background:linear-gradient(145deg,'+th.main+','+th.accent+');opacity:0.75;box-shadow:0 0 0 4px #fff,0 0 0 7px '+th.main+';';
       } else {
         stClass = 'st-ready';
       }
@@ -5161,7 +5303,7 @@ function renderDojoPath(){
       var charHtml = '';
       // 시작 버블, 체크
       var rowExtra = '';
-      var bubble = isNext ? '<div class="dojo-start-bubble" style="color:'+th.main+';border-color:'+th.main+';">시작</div>' : '';
+      var bubble = (!isDone && unlocked) ? '<div class="dojo-start-bubble" style="color:'+th.main+';border-color:'+th.main+';">시작</div>' : '';
       var check = isDone ? '<div class="dn-check" style="border-color:'+th.main+';color:'+th.main+';">✓</div>' : '';
 
       // writing id 0~2: 조건부 라벨
@@ -5178,7 +5320,7 @@ function renderDojoPath(){
       }
       html += '<div class="dojo-node-row '+pos+'">'
         +'<div style="display:flex;flex-direction:column;align-items:center;">'
-        +'<button class="dojo-node" onclick="openDojo('+d.id+')"'+(!isDone&&!isNext?' disabled':'' )+'>'
+        +'<button class="dojo-node" onclick="openDojo('+d.id+')"'+((!isDone&&!unlocked)?' disabled':'' )+'>'
         +'<div class="dojo-node-circle '+stClass+'" style="'+circleStyle+'">'
         +bubble
         +'<span class="dojo-node-icon">'+d.icon+'</span>'
@@ -6106,6 +6248,7 @@ function renderStyles(styles){
 
 function updatePrompt(){
   var si=g('storyInput');var story=si?si.value.trim():'';
+  window._savedUserStory = story; // 이미지 생성에서 재사용
   var cfg=COURSE_CONFIG[courseName];if(!cfg)return;
   var ptEl=g('promptText');var badge=g('promptBadge');
   if(!story||story==='(이야기 없이 진행)'){story='(이야기 미입력 — 일반적인 내용으로 써주세요)';}
@@ -6396,7 +6539,7 @@ function renderPortfolioList(){
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
     var hasResult=item.result&&item.result.trim();
     var preview=(hasResult?item.result:item.prompt||'').slice(0,120)+((hasResult?item.result:item.prompt||'').length>120?'...':'');
-    card.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--al);color:var(--ac);">'+(item.emoji||'📝')+' '+(item.course||'작품')+'</span><span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span></div><div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:14px;">'+preview+'</div><div style="display:flex;gap:9px;"><button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button><button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--al);border:1.5px solid var(--ab);border-radius:9px;font-size:14px;font-weight:600;color:var(--ac);cursor:pointer;font-family:inherit;min-height:46px;">💌 카카오 공유</button><button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:14px;font-weight:600;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button><button onclick="communitySharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:14px;font-weight:600;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;">🏆 커뮤니티 자랑</button></div>';
+    card.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--al);color:var(--ac);">'+(item.emoji||'📝')+' '+(item.course||'작품')+'</span><span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span></div><div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:14px;">'+preview+'</div><div style="display:flex;gap:9px;"><button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button><button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--al);border:1.5px solid var(--ab);border-radius:9px;font-size:14px;font-weight:600;color:var(--ac);cursor:pointer;font-family:inherit;min-height:46px;">💌 카카오 공유</button><button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:14px;font-weight:600;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button><button onclick="<div style=\"display:flex;gap:8px;\"><button onclick=\"copyPfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;\">📋 복사</button><button onclick=\"sharePfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:13px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;\">💬 카카오</button><button onclick=\"communitySharePfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:13px;font-weight:700;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;\">🏆 자랑</button><button onclick=\"deletePfItem(\"\"+idx+\"\")\" style=\"padding:10px 12px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:14px;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;\">🗑</button></div>';
     list.appendChild(card);
   });
 }
@@ -6430,12 +6573,16 @@ function showPaymentView(plan){
   var modal=document.createElement('div');modal.id='paymentModal';
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;';
   modal.innerHTML='<div style="background:#fff;border-radius:24px;padding:38px 34px;width:100%;max-width:460px;box-shadow:0 20px 64px rgba(0,0,0,.22);">'+
+    '<div style="background:#FFF8E7;border:1.5px solid #F5C842;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;">'+
+    '<span style="font-size:20px;">🚧</span>'+
+    '<div><div style="font-size:14px;font-weight:700;color:#B8860B;">베타 서비스 운영 중</div><div style="font-size:12px;color:#8B6914;line-height:1.5;">지금은 무료로 모든 기능을 체험하세요!<br>정식 출시 후 결제가 오픈돼요.</div></div>'+
+    '</div>'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;"><div style="font-family:\'Gowun Batang\',serif;font-size:24px;font-weight:700;color:var(--ink);">💳 결제하기</div><button onclick="document.getElementById(\'paymentModal\').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--i3);min-height:48px;min-width:48px;">✕</button></div>'+
     '<div style="background:var(--al);border:1.5px solid var(--ab);border-radius:14px;padding:20px;margin-bottom:22px;"><div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:5px;">✨ '+plan+' 플랜</div><div style="font-family:\'Gowun Batang\',serif;font-size:34px;font-weight:700;color:var(--ink);margin-bottom:5px;">'+prices[plan]+'<span style="font-size:15px;font-weight:400;color:var(--i3);"> / 월</span></div><div style="font-size:13px;color:var(--i3);">언제든 해지 가능 · 다음 달부터 청구</div></div>'+
     '<div style="margin-bottom:22px;">'+fl+'</div>'+
     '<div style="display:flex;flex-direction:column;gap:11px;">'+
-      '<button onclick="processPayment(\'kakao\',\''+plan+'\')" style="width:100%;padding:16px;background:#FEE500;color:#191919;border:none;border-radius:13px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:11px;min-height:54px;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>카카오페이로 결제</button>'+
-      '<button onclick="processPayment(\'card\',\''+plan+'\')" style="width:100%;padding:15px;background:#fff;color:var(--ink);border:2px solid var(--bd);border-radius:13px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">💳 신용카드로 결제</button>'+
+      '<button onclick="processPayment(\'kakao\',\''+plan+'\')" style="width:100%;padding:16px;background:#FEE500;color:#191919;border:none;border-radius:13px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:11px;min-height:54px;opacity:0.7;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>카카오페이 (정식 출시 후 오픈)</button>'+
+      '<button onclick="processPayment(\'card\',\''+plan+'\')" style="width:100%;padding:15px;background:#fff;color:var(--i3);border:2px solid var(--bd);border-radius:13px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;opacity:0.7;">💳 신용카드 (정식 출시 후 오픈)</button>'+
     '</div>'+
     '<div style="font-size:12px;color:var(--i3);text-align:center;margin-top:16px;line-height:1.65;">결제 후 즉시 이용 가능 · 매월 자동 결제 · 언제든 해지 가능<br>환불: 결제 후 7일 이내 전액 환불</div>'+
   '</div>';
@@ -6443,10 +6590,8 @@ function showPaymentView(plan){
 }
 function processPayment(method,plan){
   var modal=g('paymentModal');if(modal)modal.remove();
-  userProfile.plan=(plan==='동행+')?'plus':'paid';
-  localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
-  showToast('🎉 '+plan+' 플랜이 시작됐어요! 이제 무제한으로 이용하세요');
-  showView('mypage');
+  // 베타 서비스 중 - 실결제 미연결
+  showToast('💛 지금은 베타 서비스 중이에요! 정식 출시 후 결제가 열려요 🙂');
 }
 
 // ── 인증 ──
@@ -6551,7 +6696,16 @@ function showAuthSuccess(name,isNew){
 function renderMypage(){
   var name=userProfile.name||'사용자';var phone=userProfile.phone||'';var plan=userProfile.plan||'free';var org=userProfile.org||'';
   if(g('mp-name'))g('mp-name').textContent=name+' 님';
-  if(g('mp-phone'))g('mp-phone').textContent=phone;
+  // 전화번호: 로그인한 경우만 표시
+  var phoneEl = g('mp-phone');
+  if(phoneEl){
+    if(phone){
+      phoneEl.textContent = phone;
+      phoneEl.style.display = 'block';
+    } else {
+      phoneEl.style.display = 'none';
+    }
+  }
   var pfc=portfolio.length;
   if(g('mp-portfolio-count'))g('mp-portfolio-count').textContent='저장된 작품 '+pfc+'개';
   var avatarColors={free:'var(--ac)',paid:'var(--ac)',plus:'var(--gd)',b2g:'#3355aa'};
@@ -6614,6 +6768,19 @@ function renderMypage(){
   }
   // 아카이브 렌더링
   renderArchive();
+  // 1:1 도움 서비스 섹션 렌더
+  var csEl = g('mp-cs-section');
+  if(csEl){
+    if(plan === 'plus' || plan === 'b2g'){
+      csEl.innerHTML = '<div class="mypage-section-title">🤖 1:1 도움 서비스</div>'+
+        '<div style="font-size:14px;color:var(--i3);line-height:1.75;margin-bottom:16px;">동동이 AI가 24시간 질문에 답변해드려요. 어려운 점은 언제든지 물어보세요!</div>'+
+        '<button onclick="showView(\'faq\')" style="width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">🤖 동동이에게 질문하기 →</button>';
+    } else {
+      csEl.innerHTML = '<div class="mypage-section-title" style="color:var(--i3);">🤖 1:1 도움 서비스</div>'+
+        '<div style="font-size:14px;color:var(--i3);line-height:1.75;margin-bottom:14px;">동행+ 멤버 전용 서비스예요.<br>동동이 AI가 24시간 질문에 답변해드려요.</div>'+
+        '<button onclick="showView(\'pricing\')" style="width:100%;padding:12px;background:var(--wm);color:var(--i3);border:1.5px solid var(--bd);border-radius:100px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;min-height:48px;">동행+로 업그레이드하면 이용 가능</button>';
+    }
+  }
   var sec=g('mypagePlanSection');if(!sec)return;
   if(plan==='free'){
     var todayUsage=JSON.parse(localStorage.getItem('aiDonghang_usage_'+new Date().toDateString())||'{"writing":0,"image":0}');
@@ -6896,11 +7063,13 @@ async function generateWithAI(){
 
   try {
     if(isImageCourse){
-      // ── 이미지 생성: storyInput + styleAnswers → Pollinations ──
+      // ── 이미지 생성: Pollinations (무료, CORS 지원) ──
+      // storyInput 또는 _savedUserStory에서 사용자 입력 가져오기
       var storyEl = g('storyInput');
-      var userStory = storyEl ? storyEl.value.trim() : '';
-      if(!userStory){ throw new Error('이야기를 먼저 입력해주세요 🙂'); }
+      var userStory = (window._savedUserStory || (storyEl ? storyEl.value.trim() : '') || '').trim();
+      if(!userStory) userStory = '한국 풍경을 수채화로 그려줘'; // 기본값
       var imgPrompt = buildImagePromptForPollinations(userStory, styleAnswers, courseName);
+      console.log('[이미지] 프롬프트:', imgPrompt);
       var imageUrl = await generateImageWithPollinations(imgPrompt);
       clearInterval(msgTimer);
       if(!imageUrl) throw new Error('이미지 URL을 받지 못했어요');
@@ -6927,6 +7096,9 @@ async function generateWithAI(){
 
     } else {
       // ── 글쓰기 생성: Claude API ──
+      if(!window._claudeApiKey){
+        throw new Error('글쓰기 AI가 준비 중이에요. 잠시 후 다시 시도해주세요 🙂');
+      }
       var systemPrompt = '당신은 어르신들을 위한 따뜻한 글쓰기 도우미입니다. 지시에 따라 진심 어린 글을 작성해주세요. 글은 한국어로, 이해하기 쉬운 표현을 사용하세요.';
       var response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -6938,7 +7110,7 @@ async function generateWithAI(){
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 1000,
+          max_tokens: 1500,
           system: systemPrompt,
           messages: [{ role: 'user', content: prompt }]
         })
@@ -6970,12 +7142,10 @@ async function generateWithAI(){
     if(em){
       var msg = '잠깐 문제가 생겼어요. 다시 시도해 주세요!';
       if(err.message){
-        if(err.message.includes('Replicate API 키')) msg = err.message;
-        else if(err.message.includes('401')) msg = 'API 키를 확인해 주세요';
-        else if(err.message.includes('403')) msg = '접근이 거부됐어요. API 키를 확인해 주세요';
-        else if(err.message.includes('529') || err.message.includes('5')) msg = 'AI 서버가 잠시 바빠요. 잠깐 후 다시 눌러주세요 🙂';
-        else if(err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) msg = '인터넷 연결을 확인해 주세요';
-        else msg = err.message;
+        if(err.message.includes('이야기를 먼저') || err.message.includes('준비 중') || err.message.includes('시간 초과') || err.message.includes('실패')) msg = err.message;
+        else if(err.message.includes('529') || err.message.includes('overloaded')) msg = 'AI 서버가 잠시 바빠요. 잠깐 후 다시 눌러주세요 🙂';
+        else if(err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('network')) msg = '인터넷 연결을 확인해 주세요';
+        else msg = '잠깐 문제가 생겼어요. 다시 시도해 주세요!';
       }
       em.textContent = msg;
     }
@@ -7011,8 +7181,63 @@ function copyAIResult(){
 }
 
 function shareKakaoResult(){
-  copyAIResult();
-  showToast('복사됐어요! 카카오톡을 열어서 붙여넣기 해주세요 💬');
+  var rt = g('aiResultText');
+  var isImage = rt && rt.querySelector('img');
+
+  // 이미지 결과인 경우
+  if(isImage){
+    var imgUrl = rt.querySelector('img').src;
+    if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: 'AI 동행으로 만든 그림',
+          description: courseName + ' — AI 동행',
+          imageUrl: imgUrl,
+          link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' }
+        },
+        buttons: [{ title: 'AI 동행에서 나도 만들기', link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' } }]
+      });
+    } else {
+      // 모바일 fallback
+      var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if(isMobile){ window.location.href = 'kakaotalk://launch'; }
+      else { showToast('카카오톡 앱에서 이미지를 직접 공유해주세요 📱'); }
+    }
+    return;
+  }
+
+  // 텍스트 결과인 경우
+  var text = (rt ? rt.textContent : (_aiLastResult||'')).trim();
+  var shareText = text.slice(0, 400) + (text.length > 400 ? '...' : '') + '\n\n— AI 동행으로 만든 작품';
+
+  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+    Kakao.Share.sendDefault({
+      objectType: 'text',
+      text: shareText,
+      link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' },
+      buttons: [{ title: 'AI 동행에서 나도 만들기', link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' } }]
+    });
+  } else {
+    // fallback: 클립보드 복사 + 모바일이면 카카오 앱 오픈
+    var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){
+        if(isMobile){
+          showToast('복사됐어요! 카카오톡으로 이동해요 💬');
+          setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
+        } else {
+          showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
+        }
+      }).catch(function(){
+        fallbackCopy(text);
+        showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
+      });
+    } else {
+      fallbackCopy(text);
+      if(isMobile) window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000));
+    }
+  }
 }
 
 function copyPromptSilent(){
@@ -7412,6 +7637,119 @@ function buildImagePromptForPollinations(userStory, answers, courseName){
   parts.push('high quality, detailed, beautiful');
 
   return parts.join(', ');
+}
+
+// ── 오류 후 다시 시도하기 ──
+function retryGeneration(){
+  // 에러 화면 숨기기
+  hideAIScreens();
+  // 이미지 강의면 바로 재생성
+  if(COURSE_CAT[courseName] === 'image'){
+    generateWithAI();
+  } else {
+    // 글쓰기/음악: 프롬프트 확인 화면으로 복귀
+    showAIResultView();
+    var rs = g('aiResultScreen');
+    var ls = g('aiLoadingScreen');
+    var es = g('aiErrorScreen');
+    if(rs) rs.style.display='none';
+    if(ls) ls.style.display='none';
+    if(es) es.style.display='none';
+    // wstep1(프롬프트 확인) 화면 복귀
+    document.querySelectorAll('.wizard-step').forEach(function(el){ el.classList.remove('active'); });
+    var s1 = g('wstep1');
+    if(s1) s1.classList.add('active');
+    backToBuilderView();
+  }
+}
+
+// ── 동동이 CS 채팅 (동행+ 전용) ──
+var _csChatHistory = [];
+
+function initCsChat(){
+  var isPlusMember = userProfile && (userProfile.plan === 'plus');
+  var chatSection = g('csChatSection');
+  var chatLock = g('csChatLock');
+  if(chatSection) chatSection.style.display = isPlusMember ? 'block' : 'none';
+  if(chatLock) chatLock.style.display = isPlusMember ? 'none' : 'block';
+}
+
+async function sendCsMessage(){
+  var input = g('csInput');
+  if(!input) return;
+  var msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+
+  // 사용자 메시지 표시
+  appendCsMessage(msg, 'user');
+  _csChatHistory.push({role:'user', content: msg});
+
+  // 타이핑 인디케이터
+  var typingId = 'cs-typing-' + Date.now();
+  appendCsTyping(typingId);
+
+  try{
+    if(!window._claudeApiKey){
+      throw new Error('잠시 후 다시 시도해주세요');
+    }
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': window._claudeApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 600,
+        system: 'AI 동행 서비스의 CS 상담사 동동이입니다. 시니어 사용자를 대상으로 하는 AI 학습 플랫폼입니다. 사용자의 질문에 친절하고 쉽게 답변해주세요. 주요 기능: 도장깨기(게임형 학습), 만들기(AI 글쓰기/이미지/음악), 커뮤니티, 작품함, 카카오 로그인, 카카오톡 공유. 반드시 한국어로, 짧고 따뜻하게 답변하세요. 이모지를 적절히 사용하세요.',
+        messages: _csChatHistory.slice(-10)
+      })
+    });
+    var data = await response.json();
+    var reply = (data.content||[]).map(function(b){return b.text||'';}).join('');
+    removeCsTyping(typingId);
+    appendCsMessage(reply, 'bot');
+    _csChatHistory.push({role:'assistant', content: reply});
+  } catch(e){
+    removeCsTyping(typingId);
+    appendCsMessage('죄송해요, 잠시 문제가 생겼어요. 다시 시도해주세요 🙏', 'bot');
+  }
+}
+
+function appendCsMessage(text, role){
+  var container = g('csChatMessages');
+  if(!container) return;
+  var isBot = role === 'bot';
+  var div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:flex-start;gap:8px;' + (isBot ? '' : 'flex-direction:row-reverse;');
+  var bgStyle = isBot ? 'background:#fff;border:1.5px solid var(--bd);' : 'background:var(--ac);border:none;';
+  var radiusStyle = isBot ? 'border-radius:0 14px 14px 14px;' : 'border-radius:14px 0 14px 14px;';
+  var colorStyle = isBot ? 'color:var(--i2);' : 'color:#fff;';
+  var safeText = text.split('\n').join('<br>');
+  div.innerHTML = (isBot ? '<div style="width:32px;height:32px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>' : '')
+    + '<div style="' + bgStyle + radiusStyle + 'padding:12px 14px;max-width:80%;font-size:14px;' + colorStyle + 'line-height:1.7;">' + safeText + '</div>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendCsTyping(id){
+  var container = g('csChatMessages');
+  if(!container) return;
+  var div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = 'display:flex;align-items:flex-start;gap:8px;';
+  div.innerHTML = '<div style="width:32px;height:32px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>'
+    + '<div style="background:#fff;border:1.5px solid var(--bd);border-radius:0 14px 14px 14px;padding:12px 14px;font-size:14px;color:var(--i3);">동동이가 답변 중이에요...</div>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeCsTyping(id){
+  var el = g(id);
+  if(el) el.remove();
 }
 </script>
 

@@ -3520,6 +3520,12 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       </div>
     </div>
 
+    <!-- 음악 강의 Suno 가이드 -->
+    <div id="musicGuideBar" style="display:none;background:#F0EEFF;border:1.5px solid #b09de0;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:700;color:#6a30a0;margin-bottom:6px;">🎵 실제 노래로 만들려면?</div>
+      <div style="font-size:13px;color:#4a2080;line-height:1.7;margin-bottom:10px;">위 가사를 복사해서 <b>Suno AI</b>에 붙여넣으면<br>실제 노래로 완성돼요! (무료)</div>
+      <button onclick="copyAIResult();setTimeout(function(){window.open('https://suno.com','_blank');},300);" style="width:100%;padding:11px;background:#6a30a0;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">📋 가사 복사 후 Suno AI 열기</button>
+    </div>
     <!-- 비로그인 가입 유도 -->
     <div id="completionSignupBanner" style="display:none;background:linear-gradient(135deg,#fff8e8,#fdf3d8);border:1.5px solid var(--gb);border-radius:14px;padding:14px 16px;margin-bottom:14px;">
       <div style="font-size:15px;font-weight:700;color:var(--gd);margin-bottom:3px;">💌 이 작품, 가족에게 보내고 싶으세요?</div>
@@ -6270,9 +6276,15 @@ function showCompletionModal(course,text){
   if(s) s.textContent = pick.sub;
 
   // 0.8초 후 팝업 표시 (결과 화면 먼저 보이게)
+  // 음악 강의면 Suno AI 안내 배너 표시
+  var isMusicCourse = ['트로트 만들기','발라드 만들기','동요 만들기','기념일 축하 노래','민요풍 노래','찬송·신앙 노래'].indexOf(course) >= 0;
+
   setTimeout(function(){
     var modal = g('completionModal');
     if(modal) modal.style.display = 'block';
+    // 음악 가이드 배너
+    var mgb = g('musicGuideBar');
+    if(mgb) mgb.style.display = isMusicCourse ? 'block' : 'none';
     // 비로그인 가입 유도 배너
     var csb = g('completionSignupBanner');
     if(csb) csb.style.display = (!userProfile||!userProfile.name) ? 'block' : 'none';
@@ -6884,8 +6896,12 @@ async function generateWithAI(){
 
   try {
     if(isImageCourse){
-      // ── 이미지 생성: Pollinations.ai (무료, API키 불필요) ──
-      var imageUrl = await generateImageWithPollinations(prompt);
+      // ── 이미지 생성: storyInput + styleAnswers → Pollinations ──
+      var storyEl = g('storyInput');
+      var userStory = storyEl ? storyEl.value.trim() : '';
+      if(!userStory){ throw new Error('이야기를 먼저 입력해주세요 🙂'); }
+      var imgPrompt = buildImagePromptForPollinations(userStory, styleAnswers, courseName);
+      var imageUrl = await generateImageWithPollinations(imgPrompt);
       clearInterval(msgTimer);
       if(!imageUrl) throw new Error('이미지 URL을 받지 못했어요');
 
@@ -7348,6 +7364,54 @@ async function generateImageWithPollinations(prompt){
     // 30초 타임아웃
     setTimeout(function(){ reject(new Error('이미지 생성 시간이 오래 걸리고 있어요. 다시 시도해주세요.')); }, 30000);
   });
+}
+
+// ── 이미지용 Pollinations 프롬프트 빌더 ──
+function buildImagePromptForPollinations(userStory, answers, courseName){
+  // 스타일 매핑 (한국어 → 영어)
+  var styleMap = {
+    '수채화':'watercolor painting','유화':'oil painting','동양화 (수묵화)':'Korean ink wash painting',
+    '따뜻한 일러스트':'warm illustration','인상파 스타일':'impressionist style',
+    '봄 (벚꽃·진달래)':'spring cherry blossoms','여름 (푸른 녹음)':'summer lush green',
+    '가을 (단풍·황금들판)':'autumn foliage golden fields','겨울 (눈·서리)':'winter snow frost',
+    '봄':'spring','여름':'summer','가을':'autumn','겨울':'winter',
+    '따뜻하고 포근하게':'warm cozy atmosphere','쓸쓸하고 서정적으로':'melancholic lyrical mood',
+    '밝고 생동감 있게':'bright vibrant','평화롭고 조용하게':'peaceful serene',
+    '진달래·철쭉':'Korean azalea','벚꽃':'cherry blossom','국화':'chrysanthemum',
+    '장미':'rose','무궁화':'hibiscus','연꽃':'lotus',
+    '수채화':'watercolor','펜화·세밀화':'pen and ink fine art','보태니컬 아트':'botanical art',
+    '귀여운 일러스트':'cute illustration',
+    '따뜻한 일러스트':'warm storybook illustration','유화 초상화':'oil portrait painting',
+    '동화 그림 스타일':'fairytale illustration',
+    '환하게 웃는 모습':'joyful smiling','따뜻하고 평화로운':'warm peaceful','자연스럽고 편안하게':'natural relaxed',
+    '빛바랜 사진 느낌':'vintage faded photo'
+  };
+
+  // 강의별 기본 스타일
+  var courseDefaults = {
+    '풍경·자연 그림':'Korean landscape, watercolor style',
+    '카드·엽서 만들기':'Korean greeting card illustration, warm colors',
+    '고향·마을 풍경':'Korean rural village, nostalgic watercolor',
+    '꽃·식물 일러스트':'botanical illustration',
+    '가족·인물 초상화':'warm family portrait illustration',
+    '사진 보정·복원':'restored vintage photo, clear sharp'
+  };
+
+  var parts = [];
+  parts.push(userStory.slice(0, 150)); // 사용자 설명 (너무 길면 자름)
+
+  // styleAnswers 영어 변환
+  Object.keys(answers||{}).forEach(function(k){
+    var v = answers[k];
+    if(v && styleMap[v]) parts.push(styleMap[v]);
+  });
+
+  // 강의 기본 스타일
+  var def = courseDefaults[courseName] || 'Korean art style';
+  parts.push(def);
+  parts.push('high quality, detailed, beautiful');
+
+  return parts.join(', ');
 }
 </script>
 

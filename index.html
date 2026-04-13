@@ -3561,12 +3561,71 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 
 
-  <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:24px;">📊 대시보드</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;"><div style="font-size:13px;color:var(--i3);margin-bottom:6px;">전체 회원</div><div style="font-family:var(--serif,serif);font-size:28px;font-weight:700;color:var(--ac);">1,247명</div></div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;"><div style="font-size:13px;color:var(--i3);margin-bottom:6px;">유료 회원</div><div style="font-family:var(--serif,serif);font-size:28px;font-weight:700;color:var(--ac);">312명</div></div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;"><div style="font-size:13px;color:var(--i3);margin-bottom:6px;">도장 완주자</div><div style="font-family:var(--serif,serif);font-size:28px;font-weight:700;color:var(--gd);">38명</div></div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;"><div style="font-size:13px;color:var(--i3);margin-bottom:6px;">월 매출</div><div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:var(--ac);">3,850,000원</div></div>
+  <!-- ── 관리자 대시보드 ── -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:var(--ink);">📊 대시보드</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="dashLoadingBadge" style="font-size:12px;color:var(--i3);">불러오는 중...</span>
+      <button onclick="loadAdminDashboard()" style="padding:7px 14px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 새로고침</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 8개 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;" id="dashboardGrid">
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">전체 회원</div>
+      <div id="dash-total" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">유료 회원</div>
+      <div id="dash-paid" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+      <div id="dash-paid-rate" style="font-size:11px;color:var(--i3);margin-top:3px;">전환율 —%</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">이번 달 신규</div>
+      <div id="dash-monthly" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+      <div id="dash-yesterday" style="font-size:11px;color:var(--i3);margin-top:3px;">어제 —명</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">도장 완주자</div>
+      <div id="dash-dojo" style="font-size:26px;font-weight:700;color:var(--gd);">—</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">총 작품 수</div>
+      <div id="dash-works" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--i3);margin-bottom:4px;">커뮤니티 공유</div>
+      <div id="dash-community" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+    </div>
+    <div style="background:var(--al);border:1.5px solid var(--ab);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--ac);margin-bottom:4px;">동행 플랜</div>
+      <div id="dash-plan-paid" style="font-size:26px;font-weight:700;color:var(--ac);">—</div>
+    </div>
+    <div style="background:var(--gl);border:1.5px solid var(--gb);border-radius:12px;padding:18px;">
+      <div style="font-size:12px;color:var(--gd);margin-bottom:4px;">동행+ 플랜</div>
+      <div id="dash-plan-plus" style="font-size:26px;font-weight:700;color:var(--gd);">—</div>
+    </div>
+  </div>
+
+  <!-- 최근 7일 가입 트렌드 -->
+  <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:16px;">
+    <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;">📈 최근 7일 신규 가입 트렌드</div>
+    <div id="dash-trend" style="display:flex;align-items:flex-end;gap:8px;height:80px;">
+      <div style="color:var(--i3);font-size:13px;">불러오는 중...</div>
+    </div>
+  </div>
+
+  <!-- 최근 가입자 목록 -->
+  <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:16px;">
+    <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;">👥 최근 가입자 (최신 10명)</div>
+    <div id="dash-users" style="font-size:13px;color:var(--i3);">불러오는 중...</div>
+  </div>
+
+  <!-- 인기 기능 -->
+  <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:20px;">
+    <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;">🏆 기능별 작품 현황</div>
+    <div id="dash-feature-stats" style="font-size:13px;color:var(--i3);">불러오는 중...</div>
   </div>
 </div>
 </div>
@@ -4305,7 +4364,7 @@ function showView(view){
   else if(view==='community'){_activate('communityView');renderCommunity();loadCommunityFromSupabase();}
   else if(view==='about'){_activate('aboutView');}
   else if(view==='b2g'){_activate('b2gView');}
-  else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);}
+  else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);setTimeout(loadAdminDashboard,300);}
 }
 function setNavLoggedIn(name){
   if(g('navLinksGuest'))g('navLinksGuest').style.display='none';
@@ -4792,13 +4851,7 @@ function skipToCurrent(catKey){
 }
 
 // ══ 커뮤니티 ══
-var communityWorks=[
-  {id:1,nickname:'봄날의 할머니',age:'70대',cat:'writing',content:'2025년 1월의 일기\n\n오늘 아침 냇가에 나갔다. 겨울 햇살이 물 위에서 반짝였다. 어린 시절, 이 냇가에서 친구들과 물고기를 잡던 기억이 떠올랐다. 발끝에 닿던 그 차가운 감촉, 친구들의 웃음소리. 나이가 들었어도 그 여름은 여전히 마음속에 살아있다.',cheers:24,comments:['정말 감동적이에요!','저도 비슷한 기억이 있어요 😊'],time:'방금 전',cheered:false},
-  {id:2,nickname:'트로트 아저씨',age:'60대',cat:'music',content:'🎵 아내에게 — 환갑 기념 트로트\n\n[1절]\n당신 만나 삼십 년, 세월이 꽃처럼 흘렀소\n비 오는 날도 눈 오는 날도 당신 손 꼭 잡았소\n\n[후렴]\n꽃길만 걷자 우리 함께\n당신과 나, 이 길 끝까지\n흰머리가 늘어나도 내 마음은 처음 그대로\n당신과 함께라면 매일이 봄이오',cheers:47,comments:['너무 감동이에요!','저도 만들어보고 싶어요!'],time:'1시간 전',cheered:false},
-  {id:3,nickname:'익명',age:'밝히지 않을게요',cat:'writing',content:'어머니께\n\n어머니, 잘 지내고 계시죠?\n요즘 부쩍 어머니 생각이 많이 납니다.\n새벽마다 일어나 밥 짓던 그 뒷모습,\n부엌에서 풍기던 된장찌개 냄새.\n그때는 당연한 줄만 알았는데\n이제야 그 마음이 얼마나 큰지 알 것 같습니다.\n늘 건강하세요. 사랑합니다.',cheers:63,comments:['눈물이 나요 😢','저도 어머니께 편지 써야겠어요'],time:'3시간 전',cheered:false},
-  {id:4,nickname:'서울 박 선생',age:'70대',cat:'writing',content:'손녀에게 쓰는 자서전\n\n지선아, 할아버지가 어렸을 때 이야기를 해줄게.\n1960년대 경상도 시골 마을. 학교 가려면 산 하나를 넘어야 했어. 봄에는 진달래가 가득 피어 길이 분홍빛이 됐지. 배고프면 산딸기를 따 먹으며 걸었어. 그 시절이 힘들었지만, 지금 생각하면 참 아름다웠다.',cheers:38,comments:['할아버지 이야기 너무 따뜻해요!','손녀분이 보물을 받겠네요 💚'],time:'어제',cheered:false},
-  {id:5,nickname:'시인 언니',age:'80대 이상',cat:'writing',content:'봄 편지\n\n봄이 와도 그리운 사람이 있습니다\n개나리 노랗게 피어도\n그 사람 생각에 눈물이 앞섭니다\n\n바람이 불어 꽃잎이 지면\n전화 한 통 드리고 싶어\n수화기 들다가 또 내려놓습니다\n\n그래도 봄은 봄입니다\n그리움도 사랑의 다른 이름이니까요',cheers:52,comments:['정말 감동이에요 눈물 나요','저도 써보고 싶어요','시가 너무 아름다워요 🌸'],time:'이틀 전',cheered:false},
-];
+var communityWorks=[]; // Supabase에서 실시간 로딩
 var commFilter='all';
 var uploadAge='',uploadCat='';
 
@@ -5699,6 +5752,16 @@ function showDojoList(){
   // 게임맵 렌더
   initStreak();
   try{ renderDojoPath(); } catch(e){ console.error('[renderDojoPath]', e.message, e.stack); }
+  // 탭 해금 상태 강제 갱신
+  ['writing','image','music','daily'].forEach(function(cat){
+    var tab = g('ch-tab-'+cat);
+    if(!tab) return;
+    if(isCatUnlocked(cat)){
+      tab.classList.remove('locked-ch');
+    } else {
+      tab.classList.add('locked-ch');
+    }
+  });
   try{ updateDojoVisitCount(); } catch(e){ console.error('[updateDojoVisitCount]', e.message); }
   // seasonalWrap이 있을 때만 실행
   if(g('seasonalWrap')) renderSeasonalBanner();
@@ -6731,7 +6794,7 @@ async function authPhone(){
   try{
     var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
     if(r.data){showToast('이미 가입된 전화번호예요. 로그인해주세요!');return;}
-    var ins=await db.from('Users').insert([{name:rawName,phone:phone,pw_hash:pwHash,plan:'free'}]).select();
+    var ins=await db.from('Users').insert([{name:rawName,phone:phone,pw_hash:pwHash,plan:'free',created_at:new Date().toISOString()}]).select();
     if(ins.error)throw ins.error;
     userProfile={id:ins.data[0].id,name:rawName,phone:phone,plan:'free'};
     localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
@@ -6817,6 +6880,24 @@ function authKakao(){
             loginType: 'kakao'
           };
           localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+          // Supabase에 카카오 회원 저장/업데이트
+          if(isNew && db){
+            try{
+              var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
+              if(!exist.data){
+                var ki = await db.from('Users').insert([{
+                  name: kakaoName,
+                  kakao_id: String(res.id),
+                  plan: 'free',
+                  created_at: new Date().toISOString()
+                }]).select();
+                if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
+              } else {
+                userProfile.id = exist.data.id;
+              }
+              localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+            }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
+          }
           showAuthSuccess(kakaoName, isNew);
         },
         fail: function(err){
@@ -7116,7 +7197,172 @@ function submitB2GContact(){
   if(g('b2gMsg'))g('b2gMsg').value='';
 }
 function adminLogin(){var m=g('adminLoginModal');if(m){m.style.display='flex';var inp=g('adminPwInput');if(inp){inp.value='';setTimeout(function(){inp.focus();},100);}var err=g('adminPwError');if(err)err.style.display='none';}}
-function checkAdminPw(){var pw=(g('adminPwInput').value||'');if(pw==='admin1234'){closeAdminModal();showView('admin');}else{var err=g('adminPwError');if(err)err.style.display='block';var inp=g('adminPwInput');if(inp){inp.value='';inp.focus();}}}
+function checkAdminPw(){
+  var pw=(g('adminPwInput').value||'');
+  if(pw==='admin1234'){
+    closeAdminModal();
+    showView('admin');
+    loadAdminDashboard();
+  } else {
+    var err=g('adminPwError');if(err)err.style.display='block';
+    var inp=g('adminPwInput');if(inp){inp.value='';inp.focus();}
+  }
+}
+
+async function loadAdminDashboard(){
+  var badge = g('dashLoadingBadge');
+  if(badge) badge.textContent = '불러오는 중...';
+  try {
+    if(!db) throw new Error('DB 없음');
+
+    var now = new Date();
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    var yesterday = new Date(now - 86400000).toISOString().slice(0,10);
+    var todayStr = now.toISOString().slice(0,10);
+
+    // 전체 회원
+    var totalR = await db.from('Users').select('*', {count:'exact', head:true});
+    var total = totalR.count || 0;
+
+    // 플랜별 회원
+    var allUsersR = await db.from('Users').select('plan, created_at');
+    var allUsers = allUsersR.data || [];
+    var paidCount = allUsers.filter(function(u){ return u.plan==='paid'||u.plan==='동행'; }).length;
+    var plusCount = allUsers.filter(function(u){ return u.plan==='plus'||u.plan==='동행+'; }).length;
+    var paid = paidCount + plusCount;
+
+    // 이번 달 신규
+    var monthly = allUsers.filter(function(u){ return u.created_at && u.created_at >= monthStart; }).length;
+
+    // 어제 신규
+    var yesterdayCount = allUsers.filter(function(u){
+      return u.created_at && u.created_at.slice(0,10) === yesterday;
+    }).length;
+
+    // 도장 완주자
+    var dojoR = await db.from('Users').select('dojo_progress');
+    var dojoCount = 0;
+    if(dojoR.data){
+      dojoR.data.forEach(function(u){
+        try{
+          var p = typeof u.dojo_progress==='string' ? JSON.parse(u.dojo_progress) : (u.dojo_progress||{});
+          if(Object.values(p).filter(Boolean).length >= 12) dojoCount++;
+        }catch(e){}
+      });
+    }
+
+    // 총 작품 수
+    var worksR = await db.from('works').select('*', {count:'exact', head:true});
+    var worksTotal = worksR.count || 0;
+
+    // 커뮤니티 공유 수
+    var commR = await db.from('community_works').select('*', {count:'exact', head:true});
+    var commTotal = commR.count || 0;
+
+    // 기능별 작품 현황
+    var featureR = await db.from('works').select('course');
+    var featureMap = {};
+    if(featureR.data){
+      featureR.data.forEach(function(w){
+        var cat = w.course || '기타';
+        featureMap[cat] = (featureMap[cat]||0)+1;
+      });
+    }
+
+    // 최근 가입자 10명
+    var recentR = await db.from('Users').select('name, plan, created_at').order('created_at', {ascending:false}).limit(10);
+
+    // ── KPI 업데이트 ──
+    var convRate = total > 0 ? Math.round(paid/total*100) : 0;
+    if(g('dash-total')) g('dash-total').textContent = total.toLocaleString()+'명';
+    if(g('dash-paid')) g('dash-paid').textContent = paid.toLocaleString()+'명';
+    if(g('dash-paid-rate')) g('dash-paid-rate').textContent = '전환율 '+convRate+'%';
+    if(g('dash-monthly')) g('dash-monthly').textContent = '+'+monthly+'명';
+    if(g('dash-yesterday')) g('dash-yesterday').textContent = '어제 '+yesterdayCount+'명';
+    if(g('dash-dojo')) g('dash-dojo').textContent = dojoCount+'명';
+    if(g('dash-works')) g('dash-works').textContent = worksTotal.toLocaleString()+'개';
+    if(g('dash-community')) g('dash-community').textContent = commTotal.toLocaleString()+'개';
+    if(g('dash-plan-paid')) g('dash-plan-paid').textContent = paidCount+'명';
+    if(g('dash-plan-plus')) g('dash-plan-plus').textContent = plusCount+'명';
+
+    // ── 7일 트렌드 바 차트 ──
+    var trendEl = g('dash-trend');
+    if(trendEl){
+      var days = [];
+      for(var i=6; i>=0; i--){
+        var d = new Date(now - i*86400000);
+        days.push(d.toISOString().slice(0,10));
+      }
+      var dayCounts = {};
+      days.forEach(function(d){ dayCounts[d]=0; });
+      allUsers.forEach(function(u){
+        if(u.created_at){
+          var ds = u.created_at.slice(0,10);
+          if(dayCounts[ds] !== undefined) dayCounts[ds]++;
+        }
+      });
+      var maxVal = Math.max(1, Math.max.apply(null, Object.values(dayCounts)));
+      trendEl.innerHTML = days.map(function(d){
+        var cnt = dayCounts[d]||0;
+        var h = Math.max(4, Math.round(cnt/maxVal*72));
+        var isToday = d===todayStr;
+        var label = d.slice(5).replace('-','/');
+        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;">'
+          +'<div style="font-size:11px;font-weight:700;color:'+(isToday?'var(--ac)':'var(--i3)')+';">'+cnt+'</div>'
+          +'<div style="width:100%;background:'+(isToday?'var(--ac)':'var(--ab)') +';border-radius:4px 4px 0 0;height:'+h+'px;min-height:4px;transition:height .3s;"></div>'
+          +'<div style="font-size:10px;color:var(--i3);">'+label+'</div>'
+          +'</div>';
+      }).join('');
+    }
+
+    // ── 최근 가입자 테이블 ──
+    var usersEl = g('dash-users');
+    if(usersEl && recentR.data){
+      var planLabel = function(p){
+        var m = {paid:'동행',plus:'동행+','동행':'동행','동행+':'동행+',b2g:'기관',free:'무료'};
+        return m[p]||p||'무료';
+      };
+      usersEl.innerHTML = '<table style="width:100%;border-collapse:collapse;">'
+        +'<thead><tr style="border-bottom:1.5px solid var(--bd);">'
+        +'<th style="text-align:left;padding:6px 8px;font-size:12px;color:var(--i3);">이름</th>'
+        +'<th style="text-align:left;padding:6px 8px;font-size:12px;color:var(--i3);">플랜</th>'
+        +'<th style="text-align:left;padding:6px 8px;font-size:12px;color:var(--i3);">가입일</th>'
+        +'</tr></thead><tbody>'
+        + recentR.data.map(function(u){
+            var planCol = (u.plan==='plus'||u.plan==='동행+')?'var(--gd)':(u.plan&&u.plan!=='free')?'var(--ac)':'var(--i3)';
+            var dateStr = u.created_at ? u.created_at.slice(0,10) : '—';
+            return '<tr style="border-bottom:1px solid var(--bd);">'
+              +'<td style="padding:7px 8px;font-size:13px;">'+( u.name||'(이름없음)')+'</td>'
+              +'<td style="padding:7px 8px;font-size:12px;font-weight:700;color:'+planCol+';">'+planLabel(u.plan)+'</td>'
+              +'<td style="padding:7px 8px;font-size:12px;color:var(--i3);">'+dateStr+'</td>'
+              +'</tr>';
+          }).join('')
+        +'</tbody></table>';
+    }
+
+    // ── 기능별 작품 현황 ──
+    var featEl = g('dash-feature-stats');
+    if(featEl){
+      var sorted = Object.entries(featureMap).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+      var maxF = sorted.length ? sorted[0][1] : 1;
+      featEl.innerHTML = sorted.map(function(kv){
+        var pct = Math.round(kv[1]/maxF*100);
+        return '<div style="margin-bottom:10px;">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">'
+          +'<span style="color:var(--ink);">'+kv[0]+'</span>'
+          +'<span style="color:var(--i3);font-weight:700;">'+kv[1]+'개</span></div>'
+          +'<div style="background:var(--wm);border-radius:100px;height:6px;">'
+          +'<div style="background:var(--ac);border-radius:100px;height:6px;width:'+pct+'%;transition:width .4s;"></div>'
+          +'</div></div>';
+      }).join('') || '<div style="color:var(--i3);">아직 작품 데이터가 없어요</div>';
+    }
+
+    if(badge) badge.textContent = '업데이트: '+now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    if(badge) badge.textContent = '로딩 실패 — DB 연결 확인';
+    console.warn('대시보드 로딩 오류:', e);
+  }
+}
 function closeAdminModal(){var m=g('adminLoginModal');if(m)m.style.display='none';}
 // ── 자서전 3챕터 시스템 ──
 var MEMOIR_CHAPTERS = [
@@ -7855,6 +8101,22 @@ function saveAIResult(){
     localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
     saveDojoProgressToSupabase();
     try{ renderDojoPath(); } catch(e){}
+
+    // 카테고리 해금 체크 — 탭 UI 갱신 + 알림
+    var _cats = ['writing','image','music','daily'];
+    _cats.forEach(function(cat){
+      if(isCatUnlocked(cat)){
+        var tab = g('ch-tab-'+cat);
+        if(tab) tab.classList.remove('locked-ch');
+      }
+    });
+
+    // 글쓰기 3개 → 이미지 해금 알림
+    if(_dojoMatch.cat === 'writing' && getCatCount('writing') >= 3 && isCatUnlocked('image')){
+      setTimeout(function(){
+        showToast('🎨 이미지 수업이 열렸어요! 도장깨기에서 확인해보세요!');
+      }, 1200);
+    }
   }
   var badge = g('aiResultBadge');
   if(badge) badge.style.display = 'flex';

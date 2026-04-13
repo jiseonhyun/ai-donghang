@@ -2613,9 +2613,11 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <div style="font-size:36px;margin-bottom:12px;">📚</div>
       <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;">종이책 인쇄</div>
       <div style="font-size:14px;color:var(--i3);line-height:1.75;flex:1;">AI로 완성한 자서전을 실제 양장 종이책으로 만들어 드려요. 가족에게 드리는 세상에 하나뿐인 선물.</div>
-      <div style="background:var(--gl);border-radius:8px;padding:8px 12px;margin:10px 0 6px;font-size:13px;color:var(--gd);font-weight:700;">🌟 동행+ 구독 시 연 1권 무료 포함</div>
-      <div style="font-size:18px;font-weight:800;color:var(--gd);margin:4px 0;">39,900원~</div>
-      <div style="font-size:13px;color:var(--i3);margin-bottom:12px;">1권 기준 · 부크크 출판 · 3~5영업일</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin:12px 0;">
+        <div style="background:var(--gl);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--gd);font-weight:700;">🌟 동행+ 멤버 → <b>연 1권 무료</b></div>
+        <div style="background:var(--wm);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--i2);">💳 비멤버 → <b style="color:var(--ink);">39,900원~</b> <span style="color:var(--i3);">(1권 기준)</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--i3);margin-bottom:12px;">부크크 출판 · 3~5영업일</div>
       <button onclick="openBookPublish()" style="width:100%;padding:12px;background:var(--gd);color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:48px;">출판 신청하기 →</button>
     </div>
     <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;display:flex;flex-direction:column;">
@@ -4255,7 +4257,7 @@ var PROMPT_SUFFIX = '\n\n---\n⚠️ 출력 형식 (꼭 지켜주세요):\n"네,
 
 var COURSE_CONFIG = {
   '블로그 글쓰기':{emoji:'📝',exText:'설악산 단풍 여행. 아들이 운전해줬어. 입구에서 옥수수 사먹었고, 오는 길에 비가 왔는데 그게 또 좋았어.',ph:'어디서, 누구랑, 무슨 일이 있었는지... 생각나는 대로 써보세요',styles:[{id:'topic',label:'어떤 주제인가요?',chips:['여행 이야기','가족 이야기','음식·맛집','취미·일상','계절·자연','추억 회상'],def:0},{id:'tone',label:'어떤 느낌으로 쓸까요?',chips:['따뜻하고 감성적으로','재미있고 유머있게','차분하고 진솔하게','정보를 담아 유익하게'],def:0},{id:'length',label:'글 분량은?',chips:['짧게 (300자)','보통 (600자)','길게 (1000자 이상)'],def:1}],fn:function(s,a){return '아래 이야기를 바탕으로 블로그 글을 완성해주세요.\n\n[내가 쓴 이야기]\n'+s+'\n\n주제: '+(a.topic||'여행 이야기')+'\n글의 느낌: '+(a.tone||'따뜻하고 감성적으로')+'\n분량: '+(a.length||'보통 (600자)')+' 내외\n\n제목도 붙여주세요. 내 실제 경험을 살려서 완성해주세요.'+PROMPT_SUFFIX;}},
-  '자서전 쓰기':{emoji:'📖',exText:'초등학교 때 냇가에서 친구들이랑 물고기 잡던 기억. 엄마 보리밥 도시락. 여름 방학이었고 발이 차가웠어.',ph:'기억나는 장면, 사람, 냄새, 소리... 단어 몇 개만 적어도 괜찮아요',styles:[{id:'era',label:'어떤 시절 이야기인가요?',chips:['유년 시절','학창 시절','청년 시절','직장 시절','결혼·가족 이야기'],def:0},{id:'style',label:'어떤 스타일로 쓸까요?',chips:['편안한 대화체로','문학적으로 아름답게','손자에게 들려주듯','일기 형식으로'],def:0},{id:'emotion',label:'어떤 감정을 담을까요?',chips:['그리움과 추억','감사한 마음','가족에 대한 사랑','어려움 속 희망'],def:0},{id:'length',label:'분량은?',chips:['한 단락 (300자)','한 챕터 (700자)','긴 챕터 (1200자)'],def:1}],fn:function(s,a){return '아래 기억을 바탕으로 자서전 한 챕터를 써주세요.\n\n[내가 기억하는 이야기]\n'+s+'\n\n시절: '+(a.era||'유년 시절')+'\n스타일: '+(a.style||'편안한 대화체로')+'\n감정: '+(a.emotion||'그리움과 추억')+'\n분량: '+(a.length||'한 챕터 (700자)')+' 내외\n\n기억 속 장면, 냄새, 소리까지 생생하게 되살려 완성해주세요.'+PROMPT_SUFFIX;}},
+  '자서전 쓰기':{emoji:'📖',exText:'초등학교 때 냇가에서 친구들이랑 물고기 잡던 기억. 친구 이름은 영수. 엄마 보리밥 도시락. 여름 방학. 발이 차가웠어. 귀 뒤로 물 떨어지는 느낌. 집에 오면 된장찌개 냄새. 그 시절이 제일 행복했어.',ph:'예) 초등학교 때 냇가, 엄마 된장찌개 냄새, 아버지 등에 업혀서, 친구 이름은 영수, 여름 방학, 맨발로 뛰어다녔어...',styles:[{id:'era',label:'어떤 시절 이야기인가요?',chips:['유년 시절','학창 시절','청년 시절','직장 시절','결혼·가족 이야기'],def:0},{id:'style',label:'어떤 스타일로 쓸까요?',chips:['편안한 대화체로','문학적으로 아름답게','손자에게 들려주듯','일기 형식으로'],def:0},{id:'emotion',label:'어떤 감정을 담을까요?',chips:['그리움과 추억','감사한 마음','가족에 대한 사랑','어려움 속 희망'],def:0},{id:'length',label:'분량은?',chips:['한 단락 (300자)','한 챕터 (700자)','긴 챕터 (1200자)'],def:1}],fn:function(s,a){return '아래 기억을 바탕으로 자서전 한 챕터를 써주세요.\n\n[내가 기억하는 이야기]\n'+s+'\n\n시절: '+(a.era||'유년 시절')+'\n스타일: '+(a.style||'편안한 대화체로')+'\n감정: '+(a.emotion||'그리움과 추억')+'\n분량: '+(a.length||'한 챕터 (700자)')+' 내외\n\n기억 속 장면, 냄새, 소리까지 생생하게 되살려 완성해주세요.'+PROMPT_SUFFIX;}},
   '편지 쓰기':{emoji:'💌',exText:'아들한테. 취직 힘들어할 때 내가 더 챙겨줬어야 했는데. 바빠서 못 봤던 게 마음에 걸려.',ph:'누구에게, 어떤 마음을 전하고 싶은지 편하게 적어보세요',styles:[{id:'receiver',label:'누구에게 보내나요?',chips:['자녀에게','손자·손녀에게','배우자에게','오랜 친구에게','부모님께'],def:0},{id:'tone',label:'편지 느낌은?',chips:['따뜻하고 진심 담아','짧고 담백하게','감동적으로','유머있고 밝게'],def:0},{id:'length',label:'편지 길이는?',chips:['짧은 메시지 (200자)','보통 편지 (500자)','긴 편지 (800자)'],def:1}],fn:function(s,a){return '아래 마음을 바탕으로 편지를 써주세요.\n\n[전하고 싶은 말]\n'+s+'\n\n받는 분: '+(a.receiver||'__')+'\n느낌: '+(a.tone||'따뜻하고 진심 담아')+'\n길이: '+(a.length||'보통 편지 (500자)')+'\n\n진심이 느껴지도록 완성해주세요. 편지 끝에 마무리 문구도 넣어주세요.'+PROMPT_SUFFIX;}},
   '일기 쓰기':{emoji:'🌿',exText:'오전에 공원 산책. 오리 가족 봤어. 점심은 된장찌개. 딸한테 전화 왔고.',ph:'오늘 만난 사람, 먹은 것, 본 것, 느낀 것... 메모처럼 적어보세요',styles:[{id:'style',label:'일기 스타일은?',chips:['감성적이고 솔직하게','간결하고 담백하게','감사 일기처럼','시적으로 아름답게'],def:0},{id:'length',label:'분량은?',chips:['짧게 (200자)','보통 (500자)','길게 (800자)'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 오늘 하루 일기를 써주세요.\n\n[오늘 있었던 일]\n'+s+'\n\n스타일: '+(a.style||'감성적이고 솔직하게')+'\n분량: '+(a.length||'보통 (500자)')+'\n\n날씨와 계절감도 자연스럽게 넣어주세요.'+PROMPT_SUFFIX;}},
   '공문·안내문':{emoji:'📋',exText:'경로당 12월 모임. 장소가 2층으로 바뀌었어. 점심 제공하고 회비 1만원.',ph:'언제, 어디서, 무슨 내용인지 편하게 적어보세요',styles:[{id:'doctype',label:'어떤 종류인가요?',chips:['모임·행사 공지문','감사패·표창 문구','축사·기념사','초대장'],def:0},{id:'tone',label:'문체는?',chips:['공식적으로 격식있게','친근하고 따뜻하게','간결하고 명확하게'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 '+(a.doctype||'안내문')+'을 써주세요.\n\n[꼭 들어가야 할 내용]\n'+s+'\n\n문체: '+(a.tone||'친근하고 따뜻하게')+'\n\n읽는 사람이 한 번에 이해할 수 있도록 명확하게 써주세요.'+PROMPT_SUFFIX;}},
@@ -6372,6 +6374,15 @@ function _initPage3(name){
   var ws1t=g('ws1-title');if(ws1t)ws1t.textContent='내 이야기 쓰기';
   var ws1e=g('ws1-example');if(ws1e)ws1e.textContent=cfg.exText;
   var si2=g('storyInput');if(si2)si2.placeholder=cfg.ph;
+  // 자서전은 본인 기억 강조 안내로 교체
+  var desc=g('ws1-desc'), reassure=g('ws-reassure');
+  if(name==='자서전 쓰기'){
+    if(desc) desc.innerHTML='<b style="color:var(--ac);">본인의 기억을 꼭 넣어주세요.</b> 완성도가 훨씬 높아져요!';
+    if(reassure) reassure.innerHTML='💡 단어만 나열해도 괜찮아요. 기억나는 장면, 사람 이름, 냄새, 소리, 날씨… 생각나는 것 모두 적어보세요. 많이 적을수록 AI가 더 생생하게 써줘요!';
+  } else {
+    if(desc) desc.textContent='투박하게 써도 괜찮아요. 단어 몇 개만 적어도 충분해요!';
+    if(reassure) reassure.textContent='🙂 아무것도 안 적어도 괜찮아요. 그냥 버튼만 눌러도 AI가 알아서 써줘요!';
+  }
   // 진행바 초기화
   var w0=g('wps0'),w1=g('wps1');
   if(w0)w0.className='wps current';
@@ -6722,9 +6733,27 @@ function renderPortfolioList(){
   portfolio.forEach(function(item,idx){
     var card=document.createElement('div');
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
-    var hasResult=item.result&&item.result.trim();
-    var preview=(hasResult?item.result:item.prompt||'').slice(0,120)+((hasResult?item.result:item.prompt||'').length>120?'...':'');
-    card.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--al);color:var(--ac);">'+(item.emoji||'📝')+' '+(item.course||'작품')+'</span><span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span></div><div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:14px;">'+preview+'</div><div style="display:flex;gap:9px;"><button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button><button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--al);border:1.5px solid var(--ab);border-radius:9px;font-size:14px;font-weight:600;color:var(--ac);cursor:pointer;font-family:inherit;min-height:46px;">💌 카카오 공유</button><button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:14px;font-weight:600;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button><button onclick="<div style=\"display:flex;gap:8px;\"><button onclick=\"copyPfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;\">📋 복사</button><button onclick=\"sharePfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:13px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;\">💬 카카오</button><button onclick=\"communitySharePfItem(\"\"+idx+\"\")\" style=\"flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:13px;font-weight:700;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;\">🏆 자랑</button><button onclick=\"deletePfItem(\"\"+idx+\"\")\" style=\"padding:10px 12px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:14px;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;\">🗑</button></div>';
+    var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
+    var isLong = fullText.length > 120;
+    var preview = isLong ? fullText.slice(0,120)+'...' : fullText;
+    var cardId = 'pf-text-'+idx;
+    card.innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+      +'<span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--al);color:var(--ac);">'+(item.emoji||'📝')+' '+(item.course||'작품')+'</span>'
+      +'<span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span>'
+      +'</div>'
+      // 본문 (접기/펼치기)
+      +'<div id="'+cardId+'" style="font-size:14px;color:var(--i2);line-height:1.8;margin-bottom:6px;white-space:pre-wrap;">'+preview+'</div>'
+      +(isLong
+        ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'
+        : '<div style="margin-bottom:12px;"></div>')
+      // CTA 버튼 4개만
+      +'<div style="display:flex;gap:8px;">'
+      +'<button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button>'
+      +'<button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:14px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;">💬 카카오</button>'
+      +'<button onclick="communitySharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:14px;font-weight:700;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;">🏆 자랑</button>'
+      +'<button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:16px;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button>'
+      +'</div>';
     list.appendChild(card);
   });
 }
@@ -6733,6 +6762,22 @@ function sharePfItem(idx){
   var item=portfolio[idx]; if(!item)return;
   var text = ((item.result&&item.result.trim())?item.result:(item.prompt||'')) + '\n\n— AI 동행으로 만든 작품';
   _sendKakaoMsg(text);
+}
+function togglePfText(idx){
+  var item=portfolio[idx]; if(!item)return;
+  var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
+  var el=g('pf-text-'+idx);
+  var btn=g('pf-toggle-'+idx);
+  if(!el||!btn)return;
+  if(btn.dataset.expanded==='1'){
+    el.textContent=fullText.slice(0,120)+'...';
+    btn.textContent='▼ 전체 보기';
+    btn.dataset.expanded='0';
+  } else {
+    el.textContent=fullText;
+    btn.textContent='▲ 접기';
+    btn.dataset.expanded='1';
+  }
 }
 function deletePfItem(idx){portfolio.splice(idx,1);localStorage.setItem('aiDonghang_portfolio',JSON.stringify(portfolio));renderPortfolioList();}
 

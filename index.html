@@ -109,6 +109,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .anim-prompt-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
 .anim-prompt-text{font-size:13px;color:var(--i2);line-height:1.8;}
 .cursor{display:inline-block;width:2px;height:14px;background:var(--ac);margin-left:1px;vertical-align:middle;animation:blink .7s infinite;}
+@keyframes dongBounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
 /* ── 도장깨기 홈 미리보기 ── */
@@ -2699,10 +2700,11 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       </div>
     </div>
     <div id="authSuccess" style="display:none;text-align:center;padding:10px 0;">
-      <div style="font-size:64px;margin-bottom:16px;">🎉</div>
+      <!-- 동동이 -->
+      <div style="font-size:72px;margin-bottom:8px;animation:dongBounce .6s ease infinite alternate;">🤖</div>
       <div style="font-family:var(--serif,serif);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:9px;" id="authSuccessTitle">환영해요!</div>
       <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:28px;" id="authSuccessMsg"></div>
-      <button class="auth-submit-btn" onclick="showView('dojo')" style="margin-bottom:11px;">🏆 5분이면 첫 도장 완성 →</button>
+      <button class="auth-submit-btn" id="authSuccessBtn" onclick="showView('dojo')" style="margin-bottom:11px;">🏆 5분이면 첫 도장 완성 →</button>
       <button class="auth-back" onclick="showView('home')">홈으로 돌아가기</button>
     </div>
     <button class="auth-back" id="authBackBtn" onclick="showView('home')" style="margin-top:16px;">← 홈으로 돌아가기</button>
@@ -4261,6 +4263,11 @@ var COURSE_CAT = {
 
 // ── 뷰 전환 ──
 function showView(view){
+  // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
+  var skipSave = ['auth','admin','mypage','login'];
+  if(skipSave.indexOf(view) === -1){
+    localStorage.setItem('aiDonghang_lastView', view);
+  }
   var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView'];
   allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
   window.scrollTo(0,0);
@@ -6842,8 +6849,17 @@ function switchAuthTab(tab){var s=(tab==='signup');g('tabSignup').className='aut
 function showAuthSuccess(name,isNew){
   if(g('authSignup'))g('authSignup').style.display='none';if(g('authLogin'))g('authLogin').style.display='none';
   if(g('authSuccess'))g('authSuccess').style.display='block';if(g('authBackBtn'))g('authBackBtn').style.display='none';
-  if(g('authSuccessTitle'))g('authSuccessTitle').textContent=isNew?'오셨군요! 기다리고 있었어요 😊':'또 오셨군요! 보고 싶었어요 🥹';
-  if(g('authSuccessMsg'))g('authSuccessMsg').innerHTML=name+'님,<br>혼자가 아니에요. 제가 계속 옆에 있을게요 😊';
+  var lastView = localStorage.getItem('aiDonghang_lastView') || 'dojo';
+  var lastViewLabel = {home:'홈',dojo:'도장깨기',builder:'만들기',portfolio:'내 작품함',learn:'AI 알아보기',community:'커뮤니티',faq:'고객센터',pricing:'구독'}[lastView] || '도장깨기';
+  if(g('authSuccessTitle'))g('authSuccessTitle').textContent=isNew?'어서 오세요! 기다리고 있었어요 😊':'또 오셨군요! 보고 싶었어요 🥹';
+  if(g('authSuccessMsg'))g('authSuccessMsg').innerHTML=isNew
+    ? name+'님, 반가워요!<br>동동이가 함께할게요 🤖'
+    : name+'님, 다시 오셨군요!<br>'+lastViewLabel+' 페이지로 이동할게요 😊';
+  var btn=g('authSuccessBtn');
+  if(btn){
+    btn.textContent = isNew ? '🏆 도장깨기 시작하기 →' : '→ '+lastViewLabel+'(으)로 이동';
+    btn.onclick = function(){ showView(isNew ? 'dojo' : lastView); };
+  }
   setNavLoggedIn(name);
   var pending=localStorage.getItem('aiDonghang_pendingPlan');
   if(pending){localStorage.removeItem('aiDonghang_pendingPlan');setTimeout(function(){showPaymentView(pending);},400);return;}
@@ -6862,10 +6878,27 @@ function showAuthSuccess(name,isNew){
   if(isNew){
     setTimeout(function(){
       showView('dojo');
+      // 동동이 환영 팝업
+      setTimeout(function(){
+        showDongPopup('welcome');
+      }, 800);
       setTimeout(function(){
         var surveyDone = localStorage.getItem('aiDonghang_surveyDone');
         if(!surveyDone && !localStorage.getItem('aiDonghang_onboarded')) obOpen('survey');
       }, 600);
+    }, 400);
+  } else {
+    // 재방문 → 마지막 페이지로 이동
+    var lastView = localStorage.getItem('aiDonghang_lastView') || 'dojo';
+    // 유효한 페이지만 허용
+    var validViews = ['home','dojo','builder','portfolio','learn','community','faq','pricing'];
+    if(validViews.indexOf(lastView) === -1) lastView = 'dojo';
+    setTimeout(function(){
+      showView(lastView);
+      // 동동이 재방문 팝업
+      setTimeout(function(){
+        showDongPopup('return');
+      }, 800);
     }, 400);
   }
 }

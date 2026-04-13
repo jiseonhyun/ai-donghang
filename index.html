@@ -1593,18 +1593,19 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <div class="nav-links" id="navLinksGuest">
     <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">🏆 AI 도장깨기</a>
     <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" id="nav-learn" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" id="nav-community" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" id="nav-pricing" href="#" onclick="showView('pricing')">요금제</a>
+    <a class="nav-link" id="nav-learn" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq')">고객센터</a>
+    <a class="nav-link" id="nav-pricing" href="#" onclick="showView('pricing')">구독</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
     <a class="nav-link" href="#" onclick="showView('dojo')">🏆 도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" href="#" onclick="showView('community')">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio')">내 작품함</a>
+    <a class="nav-link" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" href="#" onclick="showView('faq')">고객센터</a>
+    <a class="nav-link" href="#" onclick="showView('pricing')">구독</a>
   </div>
   <div class="nav-row" id="navBtnsGuest">
     <button class="btn-nav-login" onclick="showView('login')">로그인</button>
@@ -2015,7 +2016,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- FOOTER -->
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2038,7 +2039,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2316,7 +2317,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       onmouseup="this.style.transform='';this.style.boxShadow='0 6px 0 #0f2e28'"
       ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #0f2e28'"
       ontouchend="this.style.transform='';this.style.boxShadow='0 6px 0 #0f2e28'">
-      ✨ AI 동행으로 바로 결과 받기
+      ✨ AI 동행으로 완성하기
     </button>
 
     <!-- 구분선 + 다른 AI -->
@@ -2331,7 +2332,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="display:flex;gap:8px;margin-bottom:16px;">
       <a href="https://wrtn.ai" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">뤼튼</a>
       <a href="https://chat.openai.com" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">ChatGPT</a>
-      <a href="https://clova-x.naver.com" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">Clova X</a>
+      <a href="https://gemini.google.com" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">Gemini</a>
     </div>
 
     <div class="ws-nav-btns">
@@ -2520,7 +2521,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div><!-- /builderView -->
@@ -2534,7 +2535,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2628,7 +2629,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2655,7 +2656,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <div class="auth-label" style="margin-top:14px;">전화번호</div><div class="auth-hint">예) 010-1234-5678</div>
       <input class="auth-input" id="authPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
       <button class="auth-submit-btn" onclick="authPhone()">가입하기 →</button>
-      <div class="auth-terms">가입하면 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의한 것으로 간주됩니다</div>
+      <div class="auth-terms">가입하면 <a href="https://aitogether.co.kr/terms.html" target="_blank">이용약관</a> 및 <a href="https://aitogether.co.kr/privacy.html" target="_blank">개인정보처리방침</a>에 동의한 것으로 간주됩니다</div>
     </div>
     <div id="authLogin" style="display:none;">
       <div class="auth-sub">가입하실 때 사용하신 방법으로 로그인해주세요</div>
@@ -2678,7 +2679,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2738,7 +2739,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2831,7 +2832,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -2858,7 +2859,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div class="learn-tool-card"><div class="learn-tool-icon">💬</div><div class="learn-tool-body"><div class="learn-tool-name">ChatGPT <span class="learn-tool-tag free">무료(기본)</span></div><div class="learn-tool-desc">전 세계에서 가장 많이 쓰는 AI. 긴 글도 잘 써요. 자서전, 편지, 시 등 다양한 글쓰기에 강해요.</div><div class="learn-tool-features"><span class="learn-tool-feature">전 세계 1위</span><span class="learn-tool-feature">다양한 스타일</span><span class="learn-tool-feature">긴 글 강점</span></div><a href="https://chat.openai.com" target="_blank" class="learn-tool-link">ChatGPT 바로가기 →</a></div></div>
     <div class="learn-tool-card"><div class="learn-tool-icon">✦</div><div class="learn-tool-body"><div class="learn-tool-name">Claude <span class="learn-tool-tag free">무료(기본)</span></div><div class="learn-tool-desc">감성적이고 문학적인 글쓰기에 특히 강해요. 자서전, 편지처럼 따뜻한 감정이 담긴 글을 잘 써줘요.</div><div class="learn-tool-features"><span class="learn-tool-feature">감성 글쓰기 탁월</span><span class="learn-tool-feature">자서전·편지 최적</span><span class="learn-tool-feature">긴 대화 잘 기억</span></div><a href="https://claude.ai" target="_blank" class="learn-tool-link">Claude 바로가기 →</a></div></div>
     <div class="learn-tool-card"><div class="learn-tool-icon">🔷</div><div class="learn-tool-body"><div class="learn-tool-name">Gemini <span class="learn-tool-tag free">무료(기본)</span></div><div class="learn-tool-desc">구글이 만든 AI예요. 구글 검색과 연결되어 최신 정보도 찾아줘요. 구글 계정이 있으면 바로 쓸 수 있어요.</div><div class="learn-tool-features"><span class="learn-tool-feature">구글 계정으로 로그인</span><span class="learn-tool-feature">최신 정보 검색 가능</span><span class="learn-tool-feature">한국어 지원</span></div><a href="https://gemini.google.com" target="_blank" class="learn-tool-link">Gemini 바로가기 →</a></div></div>
-    <div class="learn-tool-card"><div class="learn-tool-icon">🟢</div><div class="learn-tool-body"><div class="learn-tool-name">네이버 클로바X <span class="learn-tool-tag free">무료</span></div><div class="learn-tool-desc">네이버가 만든 AI예요. 네이버 계정으로 바로 쓸 수 있고, 한국 문화와 정서를 잘 이해해요.</div><div class="learn-tool-features"><span class="learn-tool-feature">네이버 계정 사용</span><span class="learn-tool-feature">한국 정서 이해</span><span class="learn-tool-feature">완전 무료</span></div><a href="https://clova-x.naver.com" target="_blank" class="learn-tool-link">클로바X 바로가기 →</a></div></div>
   </div>
 
   <!-- 이미지 -->
@@ -2996,7 +2996,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -3082,7 +3082,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -3188,7 +3188,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -3474,7 +3474,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 <div class="footer">
   <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="alert('준비 중입니다')">이용약관</span><span class="footer-link" onclick="alert('준비 중입니다')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
@@ -6257,6 +6257,12 @@ function filterCards(cat,q){
 // ── 위저드 ──
 function _initPage3(name){
   courseName=name;styleAnswers={};currentWizardStep=0;
+  // 이전 결과 화면 초기화
+  var rv = g('aiResultView'); if(rv) rv.classList.remove('active');
+  hideAIScreens();
+  var badge = g('aiResultBadge'); if(badge) badge.style.display = 'none';
+  var rt = g('aiResultText'); if(rt) rt.textContent = '';
+  var bookBtn = g('bookPublishBtn'); if(bookBtn) bookBtn.style.display = 'none';
   var si=g('storyInput');if(si)si.value='';
   var cc=g('charCount');if(cc)cc.textContent='0자';
   var cfg=COURSE_CONFIG[name];if(!cfg)return;
@@ -7189,7 +7195,8 @@ function showDongPopup(type){
     msgEl.innerHTML = msgs[visits % msgs.length];
 
     var catLabels = {writing:'✍️ 글쓰기', image:'🎨 이미지', music:'🎵 음악', daily:'📱 일상'};
-    var lastCat   = localStorage.getItem('aiDonghang_lastCat') || 'writing';
+    // 현재 활성 탭 기준으로 결정 (탭 클릭 이력이 아닌 지금 보고 있는 카테고리)
+    var lastCat   = currentChapter || localStorage.getItem('aiDonghang_lastCat') || 'writing';
     var catLabel  = catLabels[lastCat] || '✍️ 글쓰기';
     var catDone   = DOJO_CONFIG.filter(function(d){
       return d.cat === lastCat && dojoProgress[d.id];
@@ -7364,6 +7371,9 @@ async function generateWithAI(){
     return;
   }
 
+  // 현재 카테고리 lastCat 업데이트 (동동이 메시지 정확도)
+  localStorage.setItem('aiDonghang_lastCat', _curCat);
+
   _aiGenerating = true;
   var badge = g('aiGenerateBtn');
   if(badge){ badge.textContent = '⏳ 생성 중...'; badge.disabled = true; }
@@ -7516,7 +7526,7 @@ async function generateWithAI(){
   } finally {
     _aiGenerating = false;
     var btn = g('aiGenerateBtn');
-    if(btn){ btn.textContent = isImageCourse ? '🎨 AI로 그림 만들기' : '✨ AI 동행으로 바로 결과 받기'; btn.disabled = false; }
+    if(btn){ btn.textContent = isImageCourse ? '🎨 AI 동행으로 그림 만들기' : '✨ AI 동행으로 완성하기'; btn.disabled = false; }
   }
 }
 
@@ -7630,6 +7640,12 @@ function goToPromptScreen(){
   var w0 = g('wps0'), w1 = g('wps1');
   if(w0){ w0.className='wps done'; }
   if(w1){ w1.className='wps current'; }
+  // CTA 버튼 텍스트 업데이트
+  var isImg = (COURSE_CAT[courseName] === 'image');
+  var btn = g('aiGenerateBtn');
+  if(btn){
+    btn.textContent = isImg ? '🎨 AI 동행으로 그림 만들기' : '✨ AI 동행으로 완성하기';
+  }
   // 화면 전환
   document.querySelectorAll('.wizard-step').forEach(function(el){ el.classList.remove('active'); });
   var s1 = g('wstep1');
@@ -7705,6 +7721,14 @@ function saveAIResult(){
     return;
   }
   saveToPortfolio(course, result, result);
+  // 도장깨기 진행 업데이트
+  var _dojoMatch = DOJO_CONFIG.find(function(d){ return d.builderCourse === course || d.name === course; });
+  if(_dojoMatch && !dojoProgress[_dojoMatch.id]){
+    dojoProgress[_dojoMatch.id] = true;
+    localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+    saveDojoProgressToSupabase();
+    try{ renderDojoPath(); } catch(e){}
+  }
   var badge = g('aiResultBadge');
   if(badge) badge.style.display = 'flex';
   showToast('📁 작품함에 저장됐어요!');

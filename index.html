@@ -1795,7 +1795,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div class="hero">
       <div>
         <div class="hero-pill"><span class="hero-dot"></span>내 삶을 책으로 남겨요</div>
-        <h1 class="hero-title">내 이야기를<br><em>자서전으로</em><br>남겨드릴게요</h1>
+        <h1 class="hero-title">당신의 이야기를<br><em>자서전으로</em><br>남겨드릴게요</h1>
         <p class="hero-sub" style="min-height:5em;">3챕터만 완성하면<br>실제 종이책으로 출판할 수 있어요.<br>가족에게 드리는 세상에 하나뿐인 선물.</p>
         <div class="hero-cta">
           <button class="btn-p" onclick="goToCourse('자서전 쓰기')">📖 자서전 쓰기 시작하기 →</button>
@@ -2655,6 +2655,11 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <div class="auth-label">성함</div><input class="auth-input" id="authName" type="text" placeholder="예) 김순자" autocomplete="name">
       <div class="auth-label" style="margin-top:14px;">전화번호</div><div class="auth-hint">예) 010-1234-5678</div>
       <input class="auth-input" id="authPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
+      <div class="auth-label" style="margin-top:14px;">비밀번호</div><div class="auth-hint">숫자+영문 조합 6자리 이상</div>
+      <input class="auth-input" id="authPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="new-password">
+      <div class="auth-label" style="margin-top:14px;">비밀번호 확인</div>
+      <input class="auth-input" id="authPwConfirm" type="password" placeholder="비밀번호를 한 번 더 입력해주세요" autocomplete="new-password" oninput="checkPwMatch()">
+      <div id="authPwMsg" style="font-size:13px;margin-top:6px;min-height:18px;"></div>
       <button class="auth-submit-btn" onclick="authPhone()">가입하기 →</button>
       <div class="auth-terms">가입하면 <a href="https://aitogether.co.kr/terms.html" target="_blank">이용약관</a> 및 <a href="https://aitogether.co.kr/privacy.html" target="_blank">개인정보처리방침</a>에 동의한 것으로 간주됩니다</div>
     </div>
@@ -2664,8 +2669,34 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">또는 전화번호로 로그인</div><div class="auth-divider-line"></div></div>
       <div class="auth-label">전화번호</div><div class="auth-hint">가입 시 입력하신 전화번호</div>
       <input class="auth-input" id="loginPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
+      <div class="auth-label" style="margin-top:14px;">비밀번호</div>
+      <input class="auth-input" id="loginPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="current-password">
       <button class="auth-submit-btn" onclick="authLoginPhone()">로그인 →</button>
-      <div style="text-align:center;margin-top:16px;"><span style="font-size:14px;color:var(--i3);">아직 회원이 아니신가요? </span><button onclick="switchAuthTab('signup')" style="font-size:14px;color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;">회원가입하기</button></div>
+      <div style="text-align:center;margin-top:12px;">
+        <button onclick="showFindPw()" style="font-size:13px;color:var(--i3);background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;text-decoration:underline;">비밀번호를 잊으셨나요?</button>
+      </div>
+      <div style="text-align:center;margin-top:4px;"><span style="font-size:14px;color:var(--i3);">아직 회원이 아니신가요? </span><button onclick="switchAuthTab('signup')" style="font-size:14px;color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;">회원가입하기</button></div>
+    </div>
+
+    <!-- 비밀번호 찾기 섹션 -->
+    <div id="findPwSection" style="display:none;">
+      <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px;">🔑 비밀번호 재설정</div>
+      <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">가입 시 입력하신 전화번호와 성함을 확인해요</div>
+      <div class="auth-label">전화번호</div>
+      <div class="auth-hint">가입 시 입력하신 전화번호</div>
+      <input class="auth-input" id="findPwPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
+      <div class="auth-label" style="margin-top:14px;">성함</div>
+      <input class="auth-input" id="findPwName" type="text" placeholder="가입 시 입력하신 성함">
+      <div class="auth-label" style="margin-top:14px;">새 비밀번호</div>
+      <div class="auth-hint">숫자+영문 조합 6자리 이상</div>
+      <input class="auth-input" id="findPwNew" type="password" placeholder="새 비밀번호를 입력해주세요">
+      <div class="auth-label" style="margin-top:14px;">새 비밀번호 확인</div>
+      <input class="auth-input" id="findPwNewConfirm" type="password" placeholder="새 비밀번호를 한 번 더 입력해주세요">
+      <div id="findPwMsg" style="font-size:13px;margin-top:8px;min-height:18px;"></div>
+      <button class="auth-submit-btn" onclick="findPwSubmit()" style="margin-top:16px;">비밀번호 변경하기 →</button>
+      <div style="text-align:center;margin-top:12px;">
+        <button onclick="hideFindPw()" style="font-size:14px;color:var(--i3);background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;">← 로그인으로 돌아가기</button>
+      </div>
     </div>
     <div id="authSuccess" style="display:none;text-align:center;padding:10px 0;">
       <div style="font-size:64px;margin-bottom:16px;">🎉</div>
@@ -6680,25 +6711,80 @@ function processPayment(method,plan){
 
 // ── 인증 ──
 async function authPhone(){
-  var rawName=(g('authName').value||'').trim();var phone=(g('authPhone').value||'').trim();
-  if(!rawName){showToast('성함을 입력해주세요');return;}
+  var rawName=(g('authName').value||'').trim();
+  var phone=(g('authPhone').value||'').trim();
+  var pw=(g('authPw')?g('authPw').value||'':'');
+  var pwConfirm=(g('authPwConfirm')?g('authPwConfirm').value||'':'');
+  var pwMsg=g('authPwMsg');
+  if(!rawName){showToast('성함을 입력해주세요 🙂');return;}
   if(!phone||phone.length<12){showToast('전화번호를 올바르게 입력해주세요\n예) 010-1234-5678');return;}
+  if(!pw||pw.length<6){if(pwMsg){pwMsg.textContent='비밀번호는 6자리 이상 입력해주세요';pwMsg.style.color='#E05050';}showToast('비밀번호를 6자리 이상 입력해주세요');return;}
+  if(pw!==pwConfirm){if(pwMsg){pwMsg.textContent='비밀번호가 일치하지 않아요 🙁';pwMsg.style.color='#E05050';}showToast('비밀번호가 일치하지 않아요');return;}
+  var pwHash=btoa(unescape(encodeURIComponent(pw+phone)));
   try{
     var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
-    if(r.data){userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);return;}
-    var ins=await db.from('Users').insert([{name:rawName,phone:phone,plan:'free'}]).select();
+    if(r.data){showToast('이미 가입된 전화번호예요. 로그인해주세요!');return;}
+    var ins=await db.from('Users').insert([{name:rawName,phone:phone,pw_hash:pwHash,plan:'free'}]).select();
     if(ins.error)throw ins.error;
-    userProfile={id:ins.data[0].id,name:rawName,phone:phone,plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(rawName,true);
-  }catch(e){userProfile={name:rawName,phone:phone,plan:'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(rawName,true);}
+    userProfile={id:ins.data[0].id,name:rawName,phone:phone,plan:'free'};
+    localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
+    showAuthSuccess(rawName,true);
+  }catch(e){
+    userProfile={name:rawName,phone:phone,plan:'free'};
+    localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
+    showAuthSuccess(rawName,true);
+  }
 }
 async function authLoginPhone(){
   var phone=(g('loginPhone').value||'').trim();
+  var pw=(g('loginPw')?g('loginPw').value||'':'');
   if(!phone||phone.length<12){showToast('전화번호를 올바르게 입력해주세요');return;}
+  if(!pw){showToast('비밀번호를 입력해주세요');return;}
+  var pwHash = btoa(unescape(encodeURIComponent(pw + phone)));
   try{
     var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
     if(!r.data){showToast('가입된 전화번호가 없어요.\n회원가입을 먼저 해주세요!');return;}
+    // 비밀번호 검증 (pw_hash 없는 기존 계정은 통과)
+    if(r.data.pw_hash && r.data.pw_hash !== pwHash){showToast('비밀번호가 틀렸어요. 다시 확인해주세요 🙁');return;}
     userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);
   }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
+}
+// ── 비밀번호 찾기 ──
+function showFindPw(){
+  var authLogin = g('authLogin');
+  var findPwSection = g('findPwSection');
+  if(authLogin) authLogin.style.display='none';
+  if(findPwSection) findPwSection.style.display='block';
+}
+function hideFindPw(){
+  var authLogin = g('authLogin');
+  var findPwSection = g('findPwSection');
+  if(authLogin) authLogin.style.display='block';
+  if(findPwSection) findPwSection.style.display='none';
+  var msg = g('findPwMsg'); if(msg) msg.textContent='';
+}
+async function findPwSubmit(){
+  var phone=(g('findPwPhone')?g('findPwPhone').value||'':'').trim();
+  var name=(g('findPwName')?g('findPwName').value||'':'').trim();
+  var newPw=(g('findPwNew')?g('findPwNew').value||'':'');
+  var newPwConfirm=(g('findPwNewConfirm')?g('findPwNewConfirm').value||'':'');
+  var msg=g('findPwMsg');
+  if(!phone||phone.length<12){if(msg){msg.textContent='전화번호를 올바르게 입력해주세요';msg.style.color='#E05050';}return;}
+  if(!name){if(msg){msg.textContent='성함을 입력해주세요';msg.style.color='#E05050';}return;}
+  if(!newPw||newPw.length<6){if(msg){msg.textContent='새 비밀번호는 6자리 이상 입력해주세요';msg.style.color='#E05050';}return;}
+  if(newPw!==newPwConfirm){if(msg){msg.textContent='비밀번호가 일치하지 않아요';msg.style.color='#E05050';}return;}
+  try{
+    var r=await db.from('Users').select('*').eq('phone',phone).maybeSingle();
+    if(!r.data){if(msg){msg.textContent='가입된 전화번호가 없어요';msg.style.color='#E05050';}return;}
+    if(r.data.name&&r.data.name!==name){if(msg){msg.textContent='성함이 일치하지 않아요. 가입 시 입력하신 성함을 확인해주세요';msg.style.color='#E05050';}return;}
+    var newHash=btoa(unescape(encodeURIComponent(newPw+phone)));
+    var upd=await db.from('Users').update({pw_hash:newHash}).eq('phone',phone);
+    if(upd.error)throw upd.error;
+    if(msg){msg.textContent='비밀번호가 변경됐어요! 로그인해주세요 ✅';msg.style.color='var(--ac)';}
+    setTimeout(function(){hideFindPw();},2000);
+  }catch(e){
+    if(msg){msg.textContent='오류가 발생했어요. 다시 시도해주세요';msg.style.color='#E05050';}
+  }
 }
 function authKakao(){
   // SDK 없으면 로드 재시도
@@ -6742,6 +6828,14 @@ function authKakao(){
       }
     }
   });
+}
+function checkPwMatch(){
+  var pw = g('authPw') ? g('authPw').value : '';
+  var pc = g('authPwConfirm') ? g('authPwConfirm').value : '';
+  var msg = g('authPwMsg');
+  if(!msg || !pc) return;
+  if(pw === pc){ msg.textContent='비밀번호가 일치해요 ✅'; msg.style.color='var(--ac)'; }
+  else { msg.textContent='비밀번호가 일치하지 않아요'; msg.style.color='#E05050'; }
 }
 function formatPhone(input){var v=input.value.replace(/\D/g,'');if(v.length<=3)input.value=v;else if(v.length<=7)input.value=v.slice(0,3)+'-'+v.slice(3);else input.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);}
 function switchAuthTab(tab){var s=(tab==='signup');g('tabSignup').className='auth-tab-btn'+(s?' active':'');g('tabLogin').className='auth-tab-btn'+(!s?' active':'');g('authSignup').style.display=s?'block':'none';g('authLogin').style.display=!s?'block':'none';g('authSuccess').style.display='none';if(g('authBackBtn'))g('authBackBtn').style.display='flex';}

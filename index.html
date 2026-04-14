@@ -3830,42 +3830,145 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <!-- ── 자서전 합본 완성 모달 ── -->
 <!-- 종이책 출판 안내 모달 -->
-<div class="modal-backdrop" id="bookPublishModal" style="display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
-  <div style="background:#fff;border-radius:20px;padding:28px 24px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);">
-    <div style="font-size:40px;text-align:center;margin-bottom:12px;">📚</div>
-    <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;">자서전 종이책 출판</div>
-    <div id="bookModalDesc" style="font-size:14px;color:var(--i3);text-align:center;line-height:1.75;margin-bottom:20px;"></div>
-    <!-- 동행+ 무료 -->
-    <div id="bookModalFree" style="display:none;">
-      <div style="background:var(--gl);border:1.5px solid var(--gb);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;">
-        <div style="font-size:13px;font-weight:700;color:var(--gd);margin-bottom:2px;">🌟 동행+ 멤버 혜택</div>
-        <div style="font-size:22px;font-weight:700;color:var(--gd);">연 1권 무료</div>
-        <div style="font-size:12px;color:var(--i3);">올해 아직 사용 안 하셨어요</div>
-      </div>
-      <button onclick="useBookFree()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;min-height:50px;">📚 무료로 출판 신청하기 →</button>
+<!-- ═══ 자서전 종이책 주문 모달 (3단계) ═══ -->
+<div class="modal-backdrop" id="bookPublishModal" style="display:none;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeBookModal()">
+  <div style="background:#fff;border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);">
+
+    <!-- 단계 표시 -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+      <div id="bookStep1Dot" style="width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+      <div style="flex:1;height:2px;background:var(--bd);" id="bookLine1"></div>
+      <div id="bookStep2Dot" style="width:28px;height:28px;border-radius:50%;background:var(--bd);color:var(--i3);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+      <div style="flex:1;height:2px;background:var(--bd);" id="bookLine2"></div>
+      <div id="bookStep3Dot" style="width:28px;height:28px;border-radius:50%;background:var(--bd);color:var(--i3);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
     </div>
-    <!-- 유료 -->
-    <div id="bookModalPaid" style="display:none;">
-      <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:14px;color:var(--i2);">양장 종이책 (100p 기준)</span>
-          <span style="font-size:16px;font-weight:700;color:var(--ink);">39,900원~</span>
+
+    <!-- STEP 1: 배송 정보 -->
+    <div id="bookStep1">
+      <div style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;">📦 배송 정보 입력</div>
+      <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">완성된 종이책을 받으실 곳을 알려주세요</div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:6px;">받으시는 분 성함 <span style="color:#e05;">*</span></div>
+        <input id="bookRecipient" type="text" placeholder="예) 김순자"
+          style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:16px;font-family:inherit;outline:none;box-sizing:border-box;"
+          onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:6px;">연락처 <span style="color:#e05;">*</span></div>
+        <input id="bookPhone" type="tel" placeholder="예) 010-1234-5678"
+          style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:16px;font-family:inherit;outline:none;box-sizing:border-box;"
+          onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'"
+          oninput="formatPhone(this)">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:6px;">우편번호 <span style="color:#e05;">*</span></div>
+        <div style="display:flex;gap:8px;">
+          <input id="bookZip" type="text" placeholder="예) 12345" maxlength="5"
+            style="flex:1;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:16px;font-family:inherit;outline:none;"
+            onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+          <button onclick="searchAddress()" style="padding:14px 18px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">주소 찾기</button>
         </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:6px;">주소 <span style="color:#e05;">*</span></div>
+        <input id="bookAddr" type="text" placeholder="주소 찾기 버튼을 눌러주세요"
+          style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px;"
+          onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+        <input id="bookAddrDetail" type="text" placeholder="상세 주소 (예: 101동 202호)"
+          style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;"
+          onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--i2);margin-bottom:6px;">배송 메모 (선택)</div>
+        <input id="bookMemo" type="text" placeholder="예) 경비실 맡겨주세요"
+          style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;"
+          onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+      </div>
+
+      <button onclick="bookStep1Next()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:54px;box-shadow:0 4px 0 var(--ad);">다음 →</button>
+      <button onclick="closeBookModal()" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;margin-top:8px;">취소</button>
+    </div>
+
+    <!-- STEP 2: 주문 확인 -->
+    <div id="bookStep2" style="display:none;">
+      <div style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;">📋 주문 확인</div>
+      <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">주문 내용을 확인해주세요</div>
+
+      <div style="background:var(--al);border:1.5px solid var(--ab);border-radius:14px;padding:18px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px;">📚 주문 상품</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:14px;color:var(--i2);">자서전 양장 종이책</span>
+          <span id="bookOrderPrice" style="font-size:15px;font-weight:700;color:var(--ink);"></span>
+        </div>
+        <div style="font-size:12px;color:var(--i3);">100p 기준 · 배송비 포함 · 3~5영업일</div>
+      </div>
+
+      <div style="background:var(--wm);border-radius:14px;padding:18px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--i2);margin-bottom:10px;">📦 배송 정보</div>
+        <div id="bookOrderAddrSummary" style="font-size:14px;color:var(--i2);line-height:1.8;"></div>
+      </div>
+
+      <div style="background:var(--wm);border-radius:14px;padding:16px;margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:13px;color:var(--i3);">배송비 포함 · 3~5영업일</span>
-          <span style="font-size:11px;color:var(--i3);">부크크 출판</span>
+          <span style="font-size:15px;font-weight:600;color:var(--ink);">최종 결제금액</span>
+          <span id="bookFinalPrice" style="font-size:20px;font-weight:700;color:var(--ac);"></span>
         </div>
       </div>
-      <button onclick="useBookPaid()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;min-height:50px;">📚 유료로 출판 신청하기 →</button>
-      <div id="bookModalUpgradeHint" style="text-align:center;font-size:13px;color:var(--i3);margin-bottom:8px;display:none;">
-        💡 <b style="color:var(--ac);">동행+ 멤버</b>는 연 1권 무료예요
-        <button onclick="g('bookPublishModal').style.display='none';showView('pricing')" style="margin-left:6px;font-size:12px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:700;text-decoration:underline;">업그레이드 →</button>
-      </div>
+
+      <button onclick="bookStep2Next()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:54px;box-shadow:0 4px 0 var(--ad);">결제하기 →</button>
+      <button onclick="bookStepBack(1)" style="width:100%;padding:12px;background:none;border:1px solid var(--bd);color:var(--i3);border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit;margin-top:8px;">← 배송 정보 수정</button>
     </div>
-    <button onclick="g('bookPublishModal').style.display='none'" style="width:100%;padding:11px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">닫기</button>
+
+    <!-- STEP 3: 결제 -->
+    <div id="bookStep3" style="display:none;">
+      <div style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;">💳 결제 방법 선택</div>
+      <div id="bookStep3Price" style="font-size:14px;color:var(--i3);margin-bottom:20px;"></div>
+
+      <!-- 카카오페이 -->
+      <button onclick="payKakao()" style="width:100%;padding:16px;background:#FEE500;color:#191919;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>
+        카카오페이로 결제
+      </button>
+
+      <!-- 계좌이체 -->
+      <button onclick="showBankTransfer()" style="width:100%;padding:16px;background:#fff;color:var(--ink);border:2px solid var(--bd);border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;">
+        🏦 계좌이체로 결제
+      </button>
+
+      <!-- 계좌 안내 (숨김) -->
+      <div id="bankTransferInfo" style="display:none;background:var(--al);border:1.5px solid var(--ab);border-radius:14px;padding:18px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px;">💳 입금 계좌 안내</div>
+        <div style="font-size:15px;color:var(--ink);margin-bottom:4px;"><b>카카오뱅크</b> 3333-00-0000000</div>
+        <div style="font-size:14px;color:var(--i2);margin-bottom:4px;">예금주: AI동행</div>
+        <div id="bankAmount" style="font-size:16px;font-weight:700;color:var(--ac);margin-bottom:10px;"></div>
+        <div style="font-size:12px;color:var(--i3);line-height:1.7;">입금 후 아래 버튼을 눌러주세요.<br>확인 후 1 영업일 내에 제작이 시작돼요.</div>
+        <button onclick="confirmBankTransfer()" style="width:100%;margin-top:12px;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;min-height:50px;">✅ 입금 완료했어요</button>
+      </div>
+
+      <button onclick="bookStepBack(2)" style="width:100%;padding:12px;background:none;border:1px solid var(--bd);color:var(--i3);border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit;">← 주문 확인으로 돌아가기</button>
+    </div>
+
+    <!-- STEP 완료 -->
+    <div id="bookStepDone" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:64px;margin-bottom:16px;">🎉</div>
+      <div style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;">주문이 접수됐어요!</div>
+      <div style="font-size:14px;color:var(--i3);line-height:1.8;margin-bottom:24px;" id="bookDoneMsg"></div>
+      <div style="background:var(--al);border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">
+        <div style="font-size:13px;color:var(--ac);font-weight:700;margin-bottom:8px;">📋 주문 번호</div>
+        <div id="bookOrderNum" style="font-size:18px;font-weight:700;color:var(--ink);"></div>
+      </div>
+      <button onclick="closeBookModal()" style="width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:50px;">확인</button>
+    </div>
+
   </div>
 </div>
 <input type="hidden" id="bookModalType" value="">
+<input type="hidden" id="bookOrderIsFree" value="0">
 
 <div class="modal-backdrop" id="memoirCompleteModal" style="display:none;">
   <div class="save-login-modal" style="max-width:380px;max-height:85vh;overflow-y:auto;">
@@ -6798,16 +6901,36 @@ function renderPortfolioList(){
   portfolio=JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
   if(portfolio.length===0){if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
+
+  // 자서전 챕터가 있으면 합본 배너 표시
+  var memoirItems = portfolio.filter(function(p){ return p.course && p.course.indexOf('자서전 쓰기') === 0; });
+  if(memoirItems.length > 0){
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:linear-gradient(135deg,#7a5c1e,var(--gd));border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;';
+    banner.innerHTML =
+      '<div>'      +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;">📚 자서전 '+memoirItems.length+'챕터 작성됨</div>'      +'<div style="font-size:13px;color:rgba(255,255,255,.8);">합본 보기 · PDF 저장 · 종이책 출판</div>'      +'</div>'      +'<button onclick="showMemoirComplete()" style="padding:10px 16px;background:#fff;color:var(--gd);border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;">합본 보기 →</button>';
+    list.appendChild(banner);
+  }
   portfolio.forEach(function(item,idx){
     var card=document.createElement('div');
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
     var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
     var isLong = fullText.length > 120;
     var preview = isLong ? fullText.slice(0,120)+'...' : fullText;
-    var cardId = 'pf-text-'+idx;
+    var _memoirBtn = '<button onclick="showMemoirComplete()" style="width:100%;padding:10px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:46px;margin-bottom:8px;">📚 자서전 합본 보기 · PDF 저장</button>';
+    var courseLabel = item.course || '작품';
+    var isMemoirItem = courseLabel.indexOf('자서전 쓰기') === 0;
+    if(courseLabel === '자서전 쓰기'){
+      var memoirsBefore = portfolio.slice(0, idx+1).filter(function(p){ return p.course && p.course.indexOf('자서전 쓰기') === 0; }).length;
+      courseLabel = '자서전 쓰기 ' + memoirsBefore + '챕터';
+    }
+    var courseBg  = isMemoirItem ? '#FBF4E4' : 'var(--al)';
+    var courseCol = isMemoirItem ? 'var(--gd)' : 'var(--ac)';
+    var courseEmoji = isMemoirItem ? '📖' : (item.emoji||'📝');
+var cardId = 'pf-text-'+idx;
     card.innerHTML=
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-      +'<span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--al);color:var(--ac);">'+(item.emoji||'📝')+' '+(item.course||'작품')+'</span>'
+      +'<span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:'+courseBg+';color:'+courseCol+';">'+courseEmoji+' '+courseLabel+'</span>'
       +'<span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span>'
       +'</div>'
       // 본문 (접기/펼치기)
@@ -6815,7 +6938,7 @@ function renderPortfolioList(){
       +(isLong
         ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'
         : '<div style="margin-bottom:12px;"></div>')
-      // CTA 버튼 4개만
+            // CTA 버튼
       +'<div style="display:flex;gap:8px;">'
       +'<button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button>'
       +'<button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:14px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;">💬 카카오</button>'
@@ -6823,6 +6946,15 @@ function renderPortfolioList(){
       +'<button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:16px;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button>'
       +'</div>';
     list.appendChild(card);
+
+    // 자서전 카드 아래 합본 버튼 DOM으로 추가
+    if(isMemoirItem){
+      var memoirBtn = document.createElement('button');
+      memoirBtn.textContent = '📚 자서전 합본 보기 · PDF 저장';
+      memoirBtn.style.cssText = 'width:100%;padding:11px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:0 0 14px 14px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:-14px;margin-bottom:14px;display:block;';
+      memoirBtn.onclick = function(){ showMemoirComplete(); };
+      list.appendChild(memoirBtn);
+    }
   });
 }
 function copyPfItem(idx){var item=portfolio[idx];if(!item)return;var text=(item.result&&item.result.trim())?item.result:item.prompt;if(navigator.clipboard)navigator.clipboard.writeText(text).then(function(){showToast('복사됐어요! AI에 붙여넣기 하세요 🙂');});else{fallbackCopy(text);showToast('복사됐어요! 🙂');}}
@@ -7678,40 +7810,186 @@ function openBookPublish(){
     _openBookPublishModal('paid');
   }
 }
+// ══ 자서전 주문 전역 변수 ══
+var _bookOrderData = {};
+
+function closeBookModal(){
+  var m = g('bookPublishModal');
+  if(m) m.style.display = 'none';
+  g('bankTransferInfo') && (g('bankTransferInfo').style.display = 'none');
+}
+
 function _openBookPublishModal(type){
   var modal = g('bookPublishModal');
-  if(!modal) return false;
-  var plan = (userProfile && userProfile.plan) || 'none';
-  var isPlus = (plan==='plus'||plan==='동행+'||plan==='b2g');
-  var descEl = g('bookModalDesc');
-  var freeEl = g('bookModalFree');
-  var paidEl = g('bookModalPaid');
-  var hintEl = g('bookModalUpgradeHint');
-  if(type === 'free'){
-    if(descEl) descEl.textContent = '동행+ 멤버 혜택으로 올해 1권 무료로 출판할 수 있어요!';
-    if(freeEl) freeEl.style.display = 'block';
-    if(paidEl) paidEl.style.display = 'none';
-  } else {
-    if(descEl) descEl.textContent = isPlus
-      ? '올해 무료 출판 1권을 이미 사용하셨어요. 추가 출판은 유료예요.'
-      : '자서전을 실제 종이책으로 만들어드려요. 가족에게 드리는 세상에 하나뿐인 선물이에요.';
-    if(freeEl) freeEl.style.display = 'none';
-    if(paidEl) paidEl.style.display = 'block';
-    if(hintEl) hintEl.style.display = isPlus ? 'none' : 'block';
+  if(!modal) return;
+  var isFree = (type === 'free');
+  g('bookOrderIsFree').value = isFree ? '1' : '0';
+
+  // 기존 유저 정보 자동 채우기
+  if(userProfile){
+    var ri = g('bookRecipient'); if(ri && !ri.value) ri.value = userProfile.name || '';
+    var pi = g('bookPhone');    if(pi && !pi.value) pi.value = userProfile.phone || '';
   }
+
+  // 단계 초기화
+  _bookGoToStep(1);
   modal.style.display = 'flex';
-  return true;
 }
-function useBookFree(){
-  localStorage.setItem('aiDonghang_bookUsed_'+new Date().getFullYear(), '1');
-  g('bookPublishModal').style.display = 'none';
-  window.open('https://bookk.co.kr','_blank');
-  showToast('부크크에서 원고를 업로드하면 출판이 완성돼요 📚');
+
+function _bookGoToStep(step){
+  [1,2,3,'Done'].forEach(function(s){
+    var el = g('bookStep'+s);
+    if(el) el.style.display = (s === step || (step==='Done' && s==='Done')) ? 'block' : 'none';
+  });
+  // 단계 도트 색상
+  [1,2,3].forEach(function(i){
+    var dot = g('bookStep'+i+'Dot');
+    if(!dot) return;
+    if(i < step){
+      dot.style.background = 'var(--ac)'; dot.style.color = '#fff';
+    } else if(i === step){
+      dot.style.background = 'var(--ac)'; dot.style.color = '#fff';
+    } else {
+      dot.style.background = 'var(--bd)'; dot.style.color = 'var(--i3)';
+    }
+  });
 }
-function useBookPaid(){
-  g('bookPublishModal').style.display = 'none';
-  window.open('https://bookk.co.kr','_blank');
-  showToast('부크크에서 원고를 업로드하고 결제하시면 돼요 📚');
+
+function bookStep1Next(){
+  var recipient = (g('bookRecipient').value||'').trim();
+  var phone     = (g('bookPhone').value||'').trim();
+  var zip       = (g('bookZip').value||'').trim();
+  var addr      = (g('bookAddr').value||'').trim();
+  var addrDetail= (g('bookAddrDetail').value||'').trim();
+
+  if(!recipient){ showToast('받으시는 분 성함을 입력해주세요'); g('bookRecipient').focus(); return; }
+  if(!phone || phone.length < 12){ showToast('연락처를 올바르게 입력해주세요'); g('bookPhone').focus(); return; }
+  if(!zip || zip.length < 5){ showToast('우편번호를 입력해주세요'); g('bookZip').focus(); return; }
+  if(!addr){ showToast('주소를 입력해주세요'); g('bookAddr').focus(); return; }
+
+  _bookOrderData.recipient  = recipient;
+  _bookOrderData.phone      = phone;
+  _bookOrderData.zip        = zip;
+  _bookOrderData.addr       = addr;
+  _bookOrderData.addrDetail = addrDetail;
+  _bookOrderData.memo       = (g('bookMemo').value||'').trim();
+
+  var isFree  = g('bookOrderIsFree').value === '1';
+  var price   = isFree ? 0 : 39900;
+  _bookOrderData.price  = price;
+  _bookOrderData.isFree = isFree;
+
+  // 주문 확인 화면 채우기
+  var op = g('bookOrderPrice');
+  if(op) op.textContent = isFree ? '무료 (동행+ 혜택)' : '39,900원';
+  var fp = g('bookFinalPrice');
+  if(fp) fp.textContent = isFree ? '0원' : '39,900원';
+  var as = g('bookOrderAddrSummary');
+  if(as) as.innerHTML =
+    '<b>'+recipient+'</b> · '+phone+'<br>'+
+    '['+zip+'] '+addr+(addrDetail?' '+addrDetail:'')+((_bookOrderData.memo)?'<br>메모: '+_bookOrderData.memo:'');
+
+  _bookGoToStep(2);
+}
+
+function bookStep2Next(){
+  var isFree = _bookOrderData.isFree;
+  if(isFree){
+    // 무료: 바로 주문 완료
+    submitBookOrder('무료(동행+)', function(orderNum){
+      localStorage.setItem('aiDonghang_bookUsed_'+new Date().getFullYear(), '1');
+      _showBookDone(orderNum, '무료');
+    });
+  } else {
+    var sp = g('bookStep3Price');
+    if(sp) sp.textContent = '결제 금액: 39,900원';
+    var ba = g('bankAmount');
+    if(ba) ba.textContent = '입금 금액: 39,900원';
+    _bookGoToStep(3);
+  }
+}
+
+function bookStepBack(toStep){
+  _bookGoToStep(toStep);
+}
+
+function searchAddress(){
+  // 카카오 우편번호 API 사용
+  if(typeof daum !== 'undefined' && daum.Postcode){
+    new daum.Postcode({
+      oncomplete: function(data){
+        g('bookZip').value  = data.zonecode;
+        g('bookAddr').value = data.roadAddress || data.jibunAddress;
+        g('bookAddrDetail').focus();
+      }
+    }).open();
+  } else {
+    // 카카오 우편번호 SDK 동적 로드
+    var s = document.createElement('script');
+    s.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    s.onload = function(){ searchAddress(); };
+    document.head.appendChild(s);
+  }
+}
+
+function showBankTransfer(){
+  var el = g('bankTransferInfo');
+  if(el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function payKakao(){
+  // 카카오페이 결제 (가맹점 심사 완료 후 활성화)
+  showToast('카카오페이 결제는 준비 중이에요. 계좌이체를 이용해 주세요 🙏');
+  showBankTransfer();
+}
+
+function confirmBankTransfer(){
+  submitBookOrder('계좌이체', function(orderNum){
+    _showBookDone(orderNum, '계좌이체');
+  });
+}
+
+function _showBookDone(orderNum, payMethod){
+  var msg = payMethod === '무료'
+    ? '동행+ 혜택으로 출판이 신청됐어요! 제작까지 3~5영업일이 소요돼요. 완성되면 등록하신 연락처로 알려드릴게요.'
+    : '입금 확인 후 제작이 시작돼요 (1영업일 이내). 3~5영업일 후 배송이 시작돼요. 연락처로 배송 안내 드릴게요.';
+  var dm = g('bookDoneMsg'); if(dm) dm.textContent = msg;
+  var on = g('bookOrderNum'); if(on) on.textContent = orderNum;
+  _bookGoToStep('Done');
+}
+
+async function submitBookOrder(payMethod, callback){
+  var orderNum = 'BOOK-' + Date.now();
+  _bookOrderData.orderNum   = orderNum;
+  _bookOrderData.payMethod  = payMethod;
+  _bookOrderData.status     = payMethod === '무료' ? 'confirmed' : 'pending_payment';
+  _bookOrderData.userId     = (userProfile && userProfile.id) || null;
+  _bookOrderData.memoirText = (localStorage.getItem('aiDonghang_memoir_1')||'') + '\n\n' +
+                              (localStorage.getItem('aiDonghang_memoir_2')||'') + '\n\n' +
+                              (localStorage.getItem('aiDonghang_memoir_3')||'');
+
+  // Supabase 저장
+  if(db){
+    try{
+      await db.from('book_orders').insert([{
+        order_num:     orderNum,
+        user_id:       _bookOrderData.userId,
+        user_name:     _bookOrderData.recipient,
+        phone:         _bookOrderData.phone,
+        zip_code:      _bookOrderData.zip,
+        address:       _bookOrderData.addr,
+        address_detail:_bookOrderData.addrDetail,
+        memo:          _bookOrderData.memo,
+        pay_method:    payMethod,
+        amount:        _bookOrderData.price,
+        is_free:       _bookOrderData.isFree,
+        status:        _bookOrderData.status,
+        memoir_text:   _bookOrderData.memoirText,
+        created_at:    new Date().toISOString()
+      }]);
+    } catch(e){ console.warn('주문 저장 오류:', e); }
+  }
+  callback(orderNum);
 }
 function showToast(msg){var t=g('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 24px;border-radius:100px;font-size:15px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 22px rgba(0,0,0,.22);transition:opacity .3s;opacity:0;pointer-events:none;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},3200);}
 function goToCategory(cat){showView('builder');setTimeout(function(){document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});var tab=document.querySelector('.cat-tab[data-cat="'+cat+'"]');if(tab)tab.classList.add('active');currentCat=cat;filterCards(cat,'');},100);}

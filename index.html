@@ -1584,6 +1584,9 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </style>
   <!-- 카카오 SDK -->
   <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
+  <!-- jsPDF + html2canvas (자서전 PDF 저장) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <!-- NAV -->
@@ -3824,6 +3827,44 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 
 <!-- ── 자서전 합본 완성 모달 ── -->
+<!-- 종이책 출판 안내 모달 -->
+<div class="modal-backdrop" id="bookPublishModal" style="display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#fff;border-radius:20px;padding:28px 24px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+    <div style="font-size:40px;text-align:center;margin-bottom:12px;">📚</div>
+    <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;">자서전 종이책 출판</div>
+    <div id="bookModalDesc" style="font-size:14px;color:var(--i3);text-align:center;line-height:1.75;margin-bottom:20px;"></div>
+    <!-- 동행+ 무료 -->
+    <div id="bookModalFree" style="display:none;">
+      <div style="background:var(--gl);border:1.5px solid var(--gb);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:var(--gd);margin-bottom:2px;">🌟 동행+ 멤버 혜택</div>
+        <div style="font-size:22px;font-weight:700;color:var(--gd);">연 1권 무료</div>
+        <div style="font-size:12px;color:var(--i3);">올해 아직 사용 안 하셨어요</div>
+      </div>
+      <button onclick="useBookFree()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;min-height:50px;">📚 무료로 출판 신청하기 →</button>
+    </div>
+    <!-- 유료 -->
+    <div id="bookModalPaid" style="display:none;">
+      <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:14px;color:var(--i2);">양장 종이책 (100p 기준)</span>
+          <span style="font-size:16px;font-weight:700;color:var(--ink);">39,900원~</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--i3);">배송비 포함 · 3~5영업일</span>
+          <span style="font-size:11px;color:var(--i3);">부크크 출판</span>
+        </div>
+      </div>
+      <button onclick="useBookPaid()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;min-height:50px;">📚 유료로 출판 신청하기 →</button>
+      <div id="bookModalUpgradeHint" style="text-align:center;font-size:13px;color:var(--i3);margin-bottom:8px;display:none;">
+        💡 <b style="color:var(--ac);">동행+ 멤버</b>는 연 1권 무료예요
+        <button onclick="g('bookPublishModal').style.display='none';showView('pricing')" style="margin-left:6px;font-size:12px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:700;text-decoration:underline;">업그레이드 →</button>
+      </div>
+    </div>
+    <button onclick="g('bookPublishModal').style.display='none'" style="width:100%;padding:11px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">닫기</button>
+  </div>
+</div>
+<input type="hidden" id="bookModalType" value="">
+
 <div class="modal-backdrop" id="memoirCompleteModal" style="display:none;">
   <div class="save-login-modal" style="max-width:380px;max-height:85vh;overflow-y:auto;">
     <div style="font-size:48px;margin-bottom:12px;">🎉</div>
@@ -3831,6 +3872,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">3챕터가 모두 완성됐어요. 종이책으로 출판해보세요!</div>
     <div id="memoirFullText" style="background:var(--al);border-radius:12px;padding:16px;font-size:14px;color:var(--i2);line-height:1.9;font-family:'Gowun Batang',serif;white-space:pre-wrap;max-height:260px;overflow-y:auto;text-align:left;margin-bottom:16px;"></div>
     <button onclick="openBookPublish()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">📚 종이책으로 출판하기 →</button>
+    <button onclick="downloadMemoirPdf()" style="width:100%;padding:12px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;" id="pdfDownloadBtn">📄 PDF로 저장하기</button>
     <button onclick="copyMemoirFull()" style="width:100%;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:10px;">📋 전체 복사하기</button>
     <button onclick="g('memoirCompleteModal').style.display='none'" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">닫기</button>
   </div>
@@ -5751,6 +5793,30 @@ function showDojoList(){
   var visits = parseInt(localStorage.getItem('aiDonghang_visits')||'0') + 1;
   localStorage.setItem('aiDonghang_visits', visits);
 
+  // ★ 포트폴리오 기반 dojoProgress 자동 보정
+  // (자서전 챕터 방식으로 저장해서 dojoProgress 누락된 경우 복구)
+  try{
+    var pf = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
+    var savedCourses = pf.map(function(item){ return item.course||''; });
+    var needsUpdate = false;
+    DOJO_CONFIG.forEach(function(d){
+      if(dojoProgress[d.id]) return; // 이미 완료
+      // 포트폴리오에 해당 코스 작품이 있으면 완료로 간주
+      var courseMatch = savedCourses.some(function(c){
+        return c === d.builderCourse || c === d.name ||
+               (d.builderCourse === '자서전 쓰기' && c.indexOf('자서전 쓰기') === 0);
+      });
+      if(courseMatch){
+        dojoProgress[d.id] = true;
+        needsUpdate = true;
+      }
+    });
+    if(needsUpdate){
+      localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+      saveDojoProgressToSupabase();
+    }
+  } catch(e){ console.warn('dojoProgress 보정 오류:', e); }
+
   // 게임맵 렌더
   initStreak();
   try{ renderDojoPath(); } catch(e){ console.error('[renderDojoPath]', e.message, e.stack); }
@@ -7498,31 +7564,152 @@ function copyMemoirFull(){
   else { var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('자서전 전체가 복사됐어요! 📋'); }
 }
 
+async function downloadMemoirPdf(){
+  var btn = g('pdfDownloadBtn');
+  if(btn){ btn.textContent = '⏳ PDF 만드는 중...'; btn.disabled = true; }
+
+  try {
+    var d = getMemoirData();
+    var userName = (userProfile && userProfile.name) ? userProfile.name : '나의';
+
+    // PDF 렌더링용 숨긴 DIV 생성
+    var wrap = document.createElement('div');
+    wrap.id = '_pdfWrap';
+    wrap.style.cssText = [
+      'position:fixed', 'left:-9999px', 'top:0',
+      'width:210mm',    // A4 너비
+      'background:#fff',
+      'padding:20mm 18mm',
+      'font-family:"Gowun Batang",serif',
+      'color:#1C1A17',
+      'font-size:14pt',
+      'line-height:2',
+      'box-sizing:border-box'
+    ].join(';');
+
+    var chapters = [
+      { title: '1챕터. 내가 자란 곳',       text: d.ch1 },
+      { title: '2챕터. 내 삶의 전환점',     text: d.ch2 },
+      { title: '3챕터. 가족에게 전하는 말', text: d.ch3 }
+    ];
+
+    // 표지
+    var coverHtml =
+      '<div style="text-align:center;padding:40mm 0 30mm;">' +
+        '<div style="font-size:11pt;color:#7A7669;letter-spacing:.15em;margin-bottom:12mm;">나의 이야기</div>' +
+        '<div style="font-size:26pt;font-weight:700;color:#1C1A17;line-height:1.5;margin-bottom:8mm;">' + userName + '의 자서전</div>' +
+        '<div style="width:40mm;height:2px;background:#2A5F52;margin:0 auto 8mm;"></div>' +
+        '<div style="font-size:10pt;color:#7A7669;">AI 동행 · aitogether.co.kr</div>' +
+        '<div style="font-size:10pt;color:#7A7669;margin-top:3mm;">' + new Date().getFullYear() + '년</div>' +
+      '</div>';
+
+    // 본문 챕터들
+    var bodyHtml = chapters.filter(function(c){ return c.text && c.text.trim(); }).map(function(c, i){
+      return '<div style="' + (i > 0 ? 'margin-top:16mm;' : '') + '">' +
+        '<div style="font-size:12pt;font-weight:700;color:#2A5F52;letter-spacing:.05em;' +
+          'border-bottom:2px solid #2A5F52;padding-bottom:3mm;margin-bottom:6mm;">' + c.title + '</div>' +
+        '<div style="font-size:13pt;line-height:2.1;color:#3D3A33;white-space:pre-wrap;">' +
+          c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    wrap.innerHTML = coverHtml + bodyHtml;
+    document.body.appendChild(wrap);
+
+    // html2canvas로 렌더링 후 jsPDF로 변환
+    var canvas = await html2canvas(wrap, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    document.body.removeChild(wrap);
+
+    var { jsPDF } = window.jspdf;
+    var pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+    var pageW = pdf.internal.pageSize.getWidth();
+    var pageH = pdf.internal.pageSize.getHeight();
+    var imgW = pageW;
+    var imgH = (canvas.height * imgW) / canvas.width;
+    var posY = 0;
+    var pageIdx = 0;
+
+    while(posY < imgH){
+      if(pageIdx > 0) pdf.addPage();
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 0.92),
+        'JPEG', 0, -posY, imgW, imgH
+      );
+      posY += pageH;
+      pageIdx++;
+    }
+
+    var fileName = userName + '_자서전_' + new Date().getFullYear() + '.pdf';
+    pdf.save(fileName);
+    showToast('📄 PDF 저장 완료! 다운로드 폴더를 확인해보세요');
+
+  } catch(e) {
+    console.error('PDF 생성 오류:', e);
+    showToast('PDF 생성에 실패했어요. 다시 시도해주세요 🙂');
+  } finally {
+    if(btn){ btn.textContent = '📄 PDF로 저장하기'; btn.disabled = false; }
+    var leftover = document.getElementById('_pdfWrap');
+    if(leftover) leftover.remove();
+  }
+}
+
 function saveMemoirChapter(chapterNum, text){
   localStorage.setItem('aiDonghang_memoir_'+chapterNum, text);
 }
 
 function openBookPublish(){
   var plan = (userProfile && userProfile.plan) || 'none';
-  if(plan === 'plus' || plan === 'b2g'){
-    // 동행+: 연 1권 무료 안내 후 부크크로
-    var used = parseInt(localStorage.getItem('aiDonghang_bookUsed_'+new Date().getFullYear())||'0');
-    if(used < 1){
-      if(confirm('자서전을 종이책으로 출판할까요?\n동행+ 멤버 혜택으로 올해 1권 무료예요!\n\n부크크 출판 서비스로 연결돼요.')){
-        localStorage.setItem('aiDonghang_bookUsed_'+new Date().getFullYear(), '1');
-        window.open('https://bookk.co.kr','_blank');
-        showToast('부크크에서 원고를 업로드하면 출판이 완성돼요 📚');
-      }
-    } else {
-      if(confirm('올해 무료 출판 1권을 이미 사용했어요.\n추가 출판은 39,900원~이에요.\n\n부크크 출판 서비스로 연결할까요?')){
-        window.open('https://bookk.co.kr','_blank');
-      }
-    }
+  var isPlus = (plan === 'plus' || plan === '동행+' || plan === 'b2g');
+  var used = parseInt(localStorage.getItem('aiDonghang_bookUsed_'+new Date().getFullYear())||'0');
+
+  if(isPlus && used < 1){
+    _openBookPublishModal('free');
   } else {
-    // 비동행+: 업그레이드 유도
-    showToast('종이책 출판은 동행+ 플랜 혜택이에요 🌟');
-    setTimeout(function(){ showView('pricing'); }, 1200);
+    _openBookPublishModal('paid');
   }
+}
+function _openBookPublishModal(type){
+  var modal = g('bookPublishModal');
+  if(!modal) return false;
+  var plan = (userProfile && userProfile.plan) || 'none';
+  var isPlus = (plan==='plus'||plan==='동행+'||plan==='b2g');
+  var descEl = g('bookModalDesc');
+  var freeEl = g('bookModalFree');
+  var paidEl = g('bookModalPaid');
+  var hintEl = g('bookModalUpgradeHint');
+  if(type === 'free'){
+    if(descEl) descEl.textContent = '동행+ 멤버 혜택으로 올해 1권 무료로 출판할 수 있어요!';
+    if(freeEl) freeEl.style.display = 'block';
+    if(paidEl) paidEl.style.display = 'none';
+  } else {
+    if(descEl) descEl.textContent = isPlus
+      ? '올해 무료 출판 1권을 이미 사용하셨어요. 추가 출판은 유료예요.'
+      : '자서전을 실제 종이책으로 만들어드려요. 가족에게 드리는 세상에 하나뿐인 선물이에요.';
+    if(freeEl) freeEl.style.display = 'none';
+    if(paidEl) paidEl.style.display = 'block';
+    if(hintEl) hintEl.style.display = isPlus ? 'none' : 'block';
+  }
+  modal.style.display = 'flex';
+  return true;
+}
+function useBookFree(){
+  localStorage.setItem('aiDonghang_bookUsed_'+new Date().getFullYear(), '1');
+  g('bookPublishModal').style.display = 'none';
+  window.open('https://bookk.co.kr','_blank');
+  showToast('부크크에서 원고를 업로드하면 출판이 완성돼요 📚');
+}
+function useBookPaid(){
+  g('bookPublishModal').style.display = 'none';
+  window.open('https://bookk.co.kr','_blank');
+  showToast('부크크에서 원고를 업로드하고 결제하시면 돼요 📚');
 }
 function showToast(msg){var t=g('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 24px;border-radius:100px;font-size:15px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 22px rgba(0,0,0,.22);transition:opacity .3s;opacity:0;pointer-events:none;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},3200);}
 function goToCategory(cat){showView('builder');setTimeout(function(){document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});var tab=document.querySelector('.cat-tab[data-cat="'+cat+'"]');if(tab)tab.classList.add('active');currentCat=cat;filterCards(cat,'');},100);}
@@ -8129,6 +8316,24 @@ function saveAIResult(){
     saveToPortfolio(course+' '+_currentMemoirChapter+'챕터', result, result);
     var badge = g('aiResultBadge');
     if(badge) badge.style.display = 'flex';
+
+    // ★ 자서전 도장 업데이트 (id:2) — 챕터 방식이어도 반드시 기록
+    var _memoirDojo = DOJO_CONFIG.find(function(d){ return d.builderCourse === '자서전 쓰기' || d.name === '자서전 쓰기'; });
+    if(_memoirDojo && !dojoProgress[_memoirDojo.id]){
+      dojoProgress[_memoirDojo.id] = true;
+      localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+      saveDojoProgressToSupabase();
+      try{ renderDojoPath(); } catch(e){}
+      // 탭 해금 체크
+      ['writing','image','music','daily'].forEach(function(cat){
+        var tab = g('ch-tab-'+cat);
+        if(tab && isCatUnlocked(cat)) tab.classList.remove('locked-ch');
+      });
+      if(getCatCount('writing') >= 3 && isCatUnlocked('image')){
+        setTimeout(function(){ showToast('🎨 이미지 수업이 열렸어요!'); }, 1200);
+      }
+    }
+
     var done = getMemoirDoneCount();
     if(done >= 3){
       showToast('🎉 자서전 3챕터 완성! 종이책으로 만들어보세요!');

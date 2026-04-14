@@ -6927,21 +6927,23 @@ function authKakao(){
           localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
           // Supabase에 카카오 회원 저장/업데이트
           if(isNew && db){
-            try{
-              var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
-              if(!exist.data){
-                var ki = await db.from('Users').insert([{
-                  name: kakaoName,
-                  kakao_id: String(res.id),
-                  plan: 'free',
-                  created_at: new Date().toISOString()
-                }]).select();
-                if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
-              } else {
-                userProfile.id = exist.data.id;
-              }
-              localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-            }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
+            (async function(){
+              try{
+                var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
+                if(!exist.data){
+                  var ki = await db.from('Users').insert([{
+                    name: kakaoName,
+                    kakao_id: String(res.id),
+                    plan: 'free',
+                    created_at: new Date().toISOString()
+                  }]).select();
+                  if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
+                } else {
+                  userProfile.id = exist.data.id;
+                }
+                localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+              }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
+            })();
           }
           showAuthSuccess(kakaoName, isNew);
         },
@@ -7540,7 +7542,6 @@ filterCards('writing','');
 showView('home');
 
 // ══ 동동이 하단 팝업 ══
-var _dongPopupAction = null;
 
 function showDongPopup(type){
   var overlay = g('dongPopupOverlay');

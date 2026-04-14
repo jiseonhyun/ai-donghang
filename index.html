@@ -3816,17 +3816,44 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <!-- ── 자서전 챕터 선택 모달 ── -->
 <div class="modal-backdrop" id="memoirChapterModal" style="display:none;">
-  <div class="save-login-modal" style="max-width:360px;">
-    <div style="font-size:36px;margin-bottom:12px;">📖</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;">내 자서전</div>
-    <div style="font-size:14px;color:var(--i3);margin-bottom:20px;line-height:1.65;">3챕터를 완성하면 종이책으로 출판할 수 있어요 📚</div>
+  <div class="save-login-modal" style="max-width:380px;max-height:88vh;overflow-y:auto;">
+    <div style="font-size:32px;margin-bottom:8px;">📖</div>
+    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;">내 자서전</div>
+    <div id="memoirChapterDesc" style="font-size:13px;color:var(--i3);margin-bottom:16px;line-height:1.65;">5챕터를 완성하면 종이책으로 출판할 수 있어요 📚</div>
+
+    <!-- 챕터 수 선택 -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:var(--i3);margin-bottom:6px;letter-spacing:.05em;">챕터 수 선택</div>
+      <div id="memoirCountTabs" style="display:flex;gap:6px;background:var(--wm);padding:4px;border-radius:10px;"></div>
+    </div>
+
     <!-- 진행 바 -->
-    <div style="background:var(--wm);border-radius:100px;height:8px;margin-bottom:20px;overflow:hidden;">
+    <div style="background:var(--wm);border-radius:100px;height:6px;margin-bottom:14px;overflow:hidden;">
       <div id="memoirProgressBar" style="height:100%;background:var(--ac);border-radius:100px;transition:width .4s;width:0%;"></div>
     </div>
+
     <!-- 챕터 목록 -->
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;" id="memoirChapterList"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="memoirChapterList"></div>
     <button onclick="closeMemoirChapterModal()" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">닫기</button>
+  </div>
+</div>
+
+<!-- ── 커스텀 챕터 제목 변경 모달 ── -->
+<div class="modal-backdrop" id="customChapterModal" style="display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#fff;border-radius:20px;padding:24px;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+    <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px;">✏️ 챕터 제목 변경</div>
+    <div style="font-size:13px;color:var(--i3);margin-bottom:18px;">나만의 챕터 제목과 설명을 입력해주세요</div>
+    <input type="hidden" id="customChapterNum" value="">
+    <div style="font-size:13px;font-weight:600;color:var(--i2);margin-bottom:6px;">챕터 제목 <span style="color:#e05;">*</span></div>
+    <input id="customChapterTitle" type="text" placeholder="예) 군대 시절, 첫 해외여행..."
+      style="width:100%;padding:12px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:12px;"
+      onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+    <div style="font-size:13px;font-weight:600;color:var(--i2);margin-bottom:6px;">챕터 설명 (선택)</div>
+    <input id="customChapterDesc" type="text" placeholder="어떤 이야기를 담을지 간단히 적어보세요"
+      style="width:100%;padding:12px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:18px;"
+      onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+    <button onclick="saveCustomChapter()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;">저장하기</button>
+    <button onclick="g('customChapterModal').style.display='none'" style="width:100%;padding:11px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">취소</button>
   </div>
 </div>
 
@@ -3976,7 +4003,21 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <div class="save-login-modal" style="max-width:380px;max-height:85vh;overflow-y:auto;">
     <div style="font-size:48px;margin-bottom:12px;">🎉</div>
     <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;">자서전이 완성됐어요!</div>
-    <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">3챕터가 모두 완성됐어요. 종이책으로 출판해보세요!</div>
+    <div style="font-size:14px;color:var(--i3);margin-bottom:16px;">3챕터가 모두 완성됐어요. 제목을 짓고 종이책으로 출판해보세요!</div>
+
+    <!-- 제목 선택 영역 -->
+    <div id="memoirTitleDisplay" style="display:none;background:var(--gl);border:1.5px solid var(--gb);border-radius:12px;padding:12px 16px;font-size:15px;font-weight:700;color:var(--gd);margin-bottom:14px;text-align:center;cursor:pointer;" onclick="document.getElementById('memoirTitleWrap').style.display='block';this.style.display='none';"></div>
+
+    <div id="memoirTitleWrap" style="margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--i2);margin-bottom:8px;">📖 자서전 제목 짓기</div>
+      <button id="memoirTitleGenBtn" onclick="generateMemoirTitles()" style="width:100%;padding:11px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;">✨ AI로 제목 후보 생성하기</button>
+      <div id="memoirTitlePick" style="display:none;">
+        <div style="font-size:12px;color:var(--i3);margin-bottom:6px;">마음에 드는 제목을 선택해주세요</div>
+        <div id="memoirTitleList"></div>
+        <input type="text" id="memoirTitleCustom" placeholder="직접 제목 입력하기" style="width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box;margin-top:4px;" onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'">
+        <button onclick="var t=document.getElementById('memoirTitleCustom').value.trim();if(t)selectMemoirTitle(t);" style="width:100%;padding:9px;background:var(--wm);border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px;color:var(--i2);">직접 입력한 제목으로 저장</button>
+      </div>
+    </div>
     <div id="memoirFullText" style="background:var(--al);border-radius:12px;padding:16px;font-size:14px;color:var(--i2);line-height:1.9;font-family:'Gowun Batang',serif;white-space:pre-wrap;max-height:260px;overflow-y:auto;text-align:left;margin-bottom:16px;"></div>
     <button onclick="openBookPublish()" style="width:100%;padding:14px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">📚 종이책으로 출판하기 →</button>
     <button onclick="downloadMemoirPdf()" style="width:100%;padding:12px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;" id="pdfDownloadBtn">📄 PDF로 저장하기</button>
@@ -4406,7 +4447,7 @@ var PROMPT_SUFFIX = '\n\n---\n⚠️ 출력 형식 (꼭 지켜주세요):\n"네,
 
 var COURSE_CONFIG = {
   '블로그 글쓰기':{emoji:'📝',exText:'설악산 단풍 여행. 아들이 운전해줬어. 입구에서 옥수수 사먹었고, 오는 길에 비가 왔는데 그게 또 좋았어.',ph:'어디서, 누구랑, 무슨 일이 있었는지... 생각나는 대로 써보세요',styles:[{id:'topic',label:'어떤 주제인가요?',chips:['여행 이야기','가족 이야기','음식·맛집','취미·일상','계절·자연','추억 회상'],def:0},{id:'tone',label:'어떤 느낌으로 쓸까요?',chips:['따뜻하고 감성적으로','재미있고 유머있게','차분하고 진솔하게','정보를 담아 유익하게'],def:0},{id:'length',label:'글 분량은?',chips:['짧게 (300자)','보통 (600자)','길게 (1000자 이상)'],def:1}],fn:function(s,a){return '아래 이야기를 바탕으로 블로그 글을 완성해주세요.\n\n[내가 쓴 이야기]\n'+s+'\n\n주제: '+(a.topic||'여행 이야기')+'\n글의 느낌: '+(a.tone||'따뜻하고 감성적으로')+'\n분량: '+(a.length||'보통 (600자)')+' 내외\n\n제목도 붙여주세요. 내 실제 경험을 살려서 완성해주세요.'+PROMPT_SUFFIX;}},
-  '자서전 쓰기':{emoji:'📖',exText:'초등학교 때 냇가에서 친구들이랑 물고기 잡던 기억. 친구 이름은 영수. 엄마 보리밥 도시락. 여름 방학. 발이 차가웠어. 귀 뒤로 물 떨어지는 느낌. 집에 오면 된장찌개 냄새. 그 시절이 제일 행복했어.',ph:'예) 초등학교 때 냇가, 엄마 된장찌개 냄새, 아버지 등에 업혀서, 친구 이름은 영수, 여름 방학, 맨발로 뛰어다녔어...',styles:[{id:'era',label:'어떤 시절 이야기인가요?',chips:['유년 시절','학창 시절','청년 시절','직장 시절','결혼·가족 이야기'],def:0},{id:'style',label:'어떤 스타일로 쓸까요?',chips:['편안한 대화체로','문학적으로 아름답게','손자에게 들려주듯','일기 형식으로'],def:0},{id:'emotion',label:'어떤 감정을 담을까요?',chips:['그리움과 추억','감사한 마음','가족에 대한 사랑','어려움 속 희망'],def:0},{id:'length',label:'분량은?',chips:['한 단락 (300자)','한 챕터 (700자)','긴 챕터 (1200자)'],def:1}],fn:function(s,a){return '아래 기억을 바탕으로 자서전 한 챕터를 써주세요.\n\n[내가 기억하는 이야기]\n'+s+'\n\n시절: '+(a.era||'유년 시절')+'\n스타일: '+(a.style||'편안한 대화체로')+'\n감정: '+(a.emotion||'그리움과 추억')+'\n분량: '+(a.length||'한 챕터 (700자)')+' 내외\n\n기억 속 장면, 냄새, 소리까지 생생하게 되살려 완성해주세요.'+PROMPT_SUFFIX;}},
+  '자서전 쓰기':{emoji:'📖',exText:'초등학교 때 냇가에서 친구들이랑 물고기 잡던 기억. 친구 이름은 영수. 엄마 보리밥 도시락. 여름 방학. 발이 차가웠어. 귀 뒤로 물 떨어지는 느낌. 집에 오면 된장찌개 냄새. 그 시절이 제일 행복했어.',ph:'예) 초등학교 때 냇가, 엄마 된장찌개 냄새, 아버지 등에 업혀서, 친구 이름은 영수, 여름 방학, 맨발로 뛰어다녔어...',styles:[{id:'era',label:'어떤 시절 이야기인가요?',chips:['유년 시절','학창 시절','청년 시절','직장 시절','결혼·가족 이야기'],def:0},{id:'style',label:'어떤 스타일로 쓸까요?',chips:['편안한 대화체로','문학적으로 아름답게','손자에게 들려주듯','일기 형식으로'],def:0},{id:'emotion',label:'어떤 감정을 담을까요?',chips:['그리움과 추억','감사한 마음','가족에 대한 사랑','어려움 속 희망'],def:0},{id:'length',label:'분량은?',chips:['보통 (1500자)','충분히 (2500자)','풍성하게 (4000자)'],def:1}],fn:function(s,a){return '아래 기억을 바탕으로 자서전 한 챕터를 써주세요.\n\n[내가 기억하는 이야기]\n'+s+'\n\n시절: '+(a.era||'유년 시절')+'\n스타일: '+(a.style||'편안한 대화체로')+'\n감정: '+(a.emotion||'그리움과 추억')+'\n분량: '+(a.length||'충분히 (2500자)')+' 내외\n\n단순 요약이 아니라 장면을 구체적으로 묘사해주세요. 대화, 냄새, 색깔, 날씨, 사람들의 표정까지 생생하게 살려서 한 편의 이야기로 완성해주세요.'+PROMPT_SUFFIX;}},
   '편지 쓰기':{emoji:'💌',exText:'아들한테. 취직 힘들어할 때 내가 더 챙겨줬어야 했는데. 바빠서 못 봤던 게 마음에 걸려.',ph:'누구에게, 어떤 마음을 전하고 싶은지 편하게 적어보세요',styles:[{id:'receiver',label:'누구에게 보내나요?',chips:['자녀에게','손자·손녀에게','배우자에게','오랜 친구에게','부모님께'],def:0},{id:'tone',label:'편지 느낌은?',chips:['따뜻하고 진심 담아','짧고 담백하게','감동적으로','유머있고 밝게'],def:0},{id:'length',label:'편지 길이는?',chips:['짧은 메시지 (200자)','보통 편지 (500자)','긴 편지 (800자)'],def:1}],fn:function(s,a){return '아래 마음을 바탕으로 편지를 써주세요.\n\n[전하고 싶은 말]\n'+s+'\n\n받는 분: '+(a.receiver||'__')+'\n느낌: '+(a.tone||'따뜻하고 진심 담아')+'\n길이: '+(a.length||'보통 편지 (500자)')+'\n\n진심이 느껴지도록 완성해주세요. 편지 끝에 마무리 문구도 넣어주세요.'+PROMPT_SUFFIX;}},
   '일기 쓰기':{emoji:'🌿',exText:'오전에 공원 산책. 오리 가족 봤어. 점심은 된장찌개. 딸한테 전화 왔고.',ph:'오늘 만난 사람, 먹은 것, 본 것, 느낀 것... 메모처럼 적어보세요',styles:[{id:'style',label:'일기 스타일은?',chips:['감성적이고 솔직하게','간결하고 담백하게','감사 일기처럼','시적으로 아름답게'],def:0},{id:'length',label:'분량은?',chips:['짧게 (200자)','보통 (500자)','길게 (800자)'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 오늘 하루 일기를 써주세요.\n\n[오늘 있었던 일]\n'+s+'\n\n스타일: '+(a.style||'감성적이고 솔직하게')+'\n분량: '+(a.length||'보통 (500자)')+'\n\n날씨와 계절감도 자연스럽게 넣어주세요.'+PROMPT_SUFFIX;}},
   '공문·안내문':{emoji:'📋',exText:'경로당 12월 모임. 장소가 2층으로 바뀌었어. 점심 제공하고 회비 1만원.',ph:'언제, 어디서, 무슨 내용인지 편하게 적어보세요',styles:[{id:'doctype',label:'어떤 종류인가요?',chips:['모임·행사 공지문','감사패·표창 문구','축사·기념사','초대장'],def:0},{id:'tone',label:'문체는?',chips:['공식적으로 격식있게','친근하고 따뜻하게','간결하고 명확하게'],def:1}],fn:function(s,a){return '아래 내용을 바탕으로 '+(a.doctype||'안내문')+'을 써주세요.\n\n[꼭 들어가야 할 내용]\n'+s+'\n\n문체: '+(a.tone||'친근하고 따뜻하게')+'\n\n읽는 사람이 한 번에 이해할 수 있도록 명확하게 써주세요.'+PROMPT_SUFFIX;}},
@@ -7614,82 +7655,275 @@ async function loadAdminDashboard(){
 }
 function closeAdminModal(){var m=g('adminLoginModal');if(m)m.style.display='none';}
 // ── 자서전 3챕터 시스템 ──
-var MEMOIR_CHAPTERS = [
-  {num:1, title:'내가 자란 곳',   desc:'고향과 유년 시절 이야기',    era:'유년 시절'},
-  {num:2, title:'내 삶의 전환점', desc:'결혼·직업·도전의 순간들',    era:'결혼·가족 이야기'},
-  {num:3, title:'가족에게 전하는 말', desc:'소중한 분들께 남기는 말', era:'가족에 대한 사랑'}
-];
+// ── 챕터 구성 템플릿 ──
+var MEMOIR_TEMPLATES = {
+  5: [
+    {num:1, title:'내가 자란 곳',       desc:'고향·가족·유년 시절의 기억',     era:'유년 시절'},
+    {num:2, title:'배움의 날들',         desc:'학창 시절·친구·꿈을 키우던 때',   era:'학창 시절'},
+    {num:3, title:'청춘과 도전',         desc:'사회에 첫발을 내딛던 청년 시절',  era:'청년 시절'},
+    {num:4, title:'사랑과 가정',         desc:'결혼·육아·가족과 함께한 세월',    era:'결혼·가족 이야기'},
+    {num:5, title:'소중한 분들께',       desc:'가족과 후세에게 남기는 말',       era:'가족에 대한 사랑'}
+  ],
+  7: [
+    {num:1, title:'내가 태어난 곳',      desc:'고향과 가족, 어린 시절 풍경',     era:'유년 시절'},
+    {num:2, title:'배움의 날들',         desc:'학교생활·선생님·친구들 이야기',   era:'학창 시절'},
+    {num:3, title:'세상 속으로',         desc:'군대·첫 직장·독립 이야기',        era:'청년 시절'},
+    {num:4, title:'일과 꿈 사이',        desc:'직장생활·성취와 좌절의 순간들',   era:'직장 시절'},
+    {num:5, title:'사랑을 만나다',       desc:'연애·결혼·새 가정을 이루던 때',   era:'결혼·가족 이야기'},
+    {num:6, title:'부모로 살다',         desc:'자녀 양육·가족과 함께한 세월',    era:'가족에 대한 사랑'},
+    {num:7, title:'소중한 분들께',       desc:'가족과 후세에게 남기는 말',       era:'가족에 대한 사랑'}
+  ],
+  10: [
+    {num:1,  title:'내가 태어난 곳',     desc:'출생지·가족·고향의 첫 기억',      era:'유년 시절'},
+    {num:2,  title:'유년의 풍경',        desc:'어린 시절 놀이·동네·이웃 이야기', era:'유년 시절'},
+    {num:3,  title:'학교 가던 날들',     desc:'초등학교·선생님·단짝 친구',       era:'학창 시절'},
+    {num:4,  title:'청소년의 꿈',        desc:'중·고등 시절·진로·첫사랑',        era:'학창 시절'},
+    {num:5,  title:'세상 속으로',        desc:'군대·첫 직장·독립의 시작',        era:'청년 시절'},
+    {num:6,  title:'일과 꿈 사이',       desc:'직장생활·성공과 실패의 순간들',   era:'직장 시절'},
+    {num:7,  title:'사랑을 만나다',      desc:'연애·결혼·신혼 이야기',           era:'결혼·가족 이야기'},
+    {num:8,  title:'부모로 살다',        desc:'자녀 탄생·육아·가족 추억',        era:'가족에 대한 사랑'},
+    {num:9,  title:'흘러간 세월',        desc:'중년의 도전·변화·돌아보는 삶',    era:'직장 시절'},
+    {num:10, title:'소중한 분들께',      desc:'가족과 후세에게 남기는 마지막 말',era:'가족에 대한 사랑'}
+  ]
+};
+
+// 현재 선택된 챕터 수 (localStorage 기반)
+function getMemoirChapterCount(){
+  return parseInt(localStorage.getItem('aiDonghang_memoir_count') || '5');
+}
+function setMemoirChapterCount(n){
+  localStorage.setItem('aiDonghang_memoir_count', String(n));
+  MEMOIR_CHAPTERS = MEMOIR_TEMPLATES[n];
+}
+
+var MEMOIR_CHAPTERS = MEMOIR_TEMPLATES[getMemoirChapterCount()];
 var _currentMemoirChapter = 0;
 
 function getMemoirData(){
   return {
-    ch1: localStorage.getItem('aiDonghang_memoir_1') || '',
-    ch2: localStorage.getItem('aiDonghang_memoir_2') || '',
-    ch3: localStorage.getItem('aiDonghang_memoir_3') || ''
+    ch1:   localStorage.getItem('aiDonghang_memoir_1') || '',
+    ch2:   localStorage.getItem('aiDonghang_memoir_2') || '',
+    ch3:   localStorage.getItem('aiDonghang_memoir_3') || '',
+    title: localStorage.getItem('aiDonghang_memoir_title') || ''
   };
 }
 
 function getMemoirDoneCount(){
-  var d = getMemoirData();
-  return (d.ch1?1:0)+(d.ch2?1:0)+(d.ch3?1:0);
+  var cnt = getMemoirChapterCount();
+  var done = 0;
+  for(var i=1; i<=cnt; i++){
+    if(localStorage.getItem('aiDonghang_memoir_'+i) || isChapterSkipped(i)) done++;
+  }
+  return done;
 }
 
 function showMemoirChapterSelect(){
-  var d = getMemoirData();
+  var cnt = getMemoirChapterCount();
   var done = getMemoirDoneCount();
+
+  // 상단 안내 텍스트 업데이트
+  var desc = g('memoirChapterDesc');
+  if(desc) desc.textContent = cnt+'챕터를 완성하면 종이책으로 출판할 수 있어요 📚';
+
   // 진행 바
   var bar = g('memoirProgressBar');
-  if(bar) bar.style.width = Math.round(done/3*100)+'%';
+  if(bar) bar.style.width = Math.round(done/cnt*100)+'%';
+
+  // 챕터 수 선택 탭
+  var tabWrap = g('memoirCountTabs');
+  if(tabWrap){
+    tabWrap.innerHTML = [5,7,10].map(function(n){
+      var active = n === cnt;
+      return '<button onclick="changeMemoirCount('+n+')" style="flex:1;padding:9px 0;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;border:none;border-radius:8px;background:'+(active?'var(--ac)':'var(--wm)')+';color:'+(active?'#fff':'var(--i3)')+';">'+n+'챕터</button>';
+    }).join('');
+  }
+
   // 챕터 목록 렌더
   var list = g('memoirChapterList');
   if(!list) return;
   list.innerHTML = MEMOIR_CHAPTERS.map(function(ch){
-    var saved = localStorage.getItem('aiDonghang_memoir_'+ch.num);
-    var locked = ch.num > 1 && !localStorage.getItem('aiDonghang_memoir_'+(ch.num-1));
-    var stateIcon = saved ? '✅' : (locked ? '🔒' : '✏️');
-    var stateColor = saved ? 'var(--ac)' : (locked ? 'var(--i3)' : 'var(--ink)');
-    var bgColor = saved ? 'var(--al)' : (locked ? 'var(--wm)' : '#fff');
-    var borderColor = saved ? 'var(--ab)' : (locked ? 'var(--bd)' : 'var(--bd)');
-    var btnHtml = locked ? '' :
-      '<button onclick="startMemoirChapter('+ch.num+')" style="padding:7px 16px;background:'+(saved?'var(--wm)':'var(--ac)')+';color:'+(saved?'var(--i3)':'#fff')+';border:none;border-radius:100px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">'+(saved?'다시 쓰기':'작성하기')+'</button>';
-    return '<div style="background:'+bgColor+';border:1.5px solid '+borderColor+';border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;">'
-      +'<div style="font-size:22px;">'+stateIcon+'</div>'
-      +'<div style="flex:1;">'
-        +'<div style="font-size:15px;font-weight:700;color:'+stateColor+';">'+ch.num+'챕터. '+ch.title+'</div>'
-        +'<div style="font-size:12px;color:var(--i3);margin-top:2px;">'+ch.desc+'</div>'
+    var saved   = localStorage.getItem('aiDonghang_memoir_'+ch.num);
+    var skipped = isChapterSkipped(ch.num);
+    var customTitle = localStorage.getItem('aiDonghang_memoir_custom_title_'+ch.num);
+    var displayTitle = customTitle || ch.title;
+    var prevDone = ch.num === 1 ? true :
+      (localStorage.getItem('aiDonghang_memoir_'+(ch.num-1)) || isChapterSkipped(ch.num-1));
+    var locked = !prevDone;
+
+    var stateIcon  = saved ? '✅' : (skipped ? '⏭️' : (locked ? '🔒' : '✏️'));
+    var stateColor = saved ? 'var(--ac)' : (skipped ? 'var(--i3)' : (locked ? 'var(--i3)' : 'var(--ink)'));
+    var bgColor    = saved ? 'var(--al)' : (skipped ? '#F5F5F5' : (locked ? 'var(--wm)' : '#fff'));
+    var borderColor= saved ? 'var(--ab)' : 'var(--bd)';
+    var strikeStyle = skipped ? 'text-decoration:line-through;' : '';
+    var customBadge = customTitle ? ' <span style="font-size:10px;color:var(--ac);font-weight:700;">수정됨</span>' : '';
+
+    var btns = '';
+    if(!locked){
+      if(!skipped){
+        btns += '<button onclick="startMemoirChapter('+ch.num+')" style="padding:6px 12px;background:'+(saved?'var(--wm)':'var(--ac)')+';color:'+(saved?'var(--i3)':'#fff')+';border:none;border-radius:100px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">'+(saved?'수정':'작성')+'</button>';
+      }
+      btns += '<button onclick="toggleSkipChapter('+ch.num+')" style="padding:6px 10px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--i3);white-space:nowrap;">'+(skipped?'↩ 되돌리기':'⏭ 스킵')+'</button>';
+      btns += '<button onclick="openCustomChapterModal('+ch.num+')" title="챕터 제목 변경" style="padding:6px 9px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;cursor:pointer;color:var(--i3);">✏️ 제목 변경</button>';
+    }
+
+    return '<div style="background:'+bgColor+';border:1.5px solid '+borderColor+';border-radius:12px;padding:11px 12px;margin-bottom:2px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;'+(btns?'margin-bottom:8px;':'')+'">'
+        +'<div style="font-size:16px;">'+stateIcon+'</div>'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:13px;font-weight:700;color:'+stateColor+';'+strikeStyle+'">'+ch.num+'챕터. '+displayTitle+customBadge+'</div>'
+          +'<div style="font-size:11px;color:var(--i3);margin-top:1px;">'+ch.desc+'</div>'
+        +'</div>'
       +'</div>'
-      +btnHtml
+      +(btns?'<div style="display:flex;gap:5px;flex-wrap:wrap;">'+btns+'</div>':'')
       +'</div>';
   }).join('');
-  // 3챕터 완성 시 합본 버튼
-  if(done >= 3){
-    list.innerHTML += '<button onclick="showMemoirComplete()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:4px;">📚 자서전 완성본 보기 →</button>';
+
+  // 전체 완성 시 합본 버튼
+  if(done >= cnt){
+    list.innerHTML += '<button onclick="showMemoirComplete()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;">📚 자서전 완성본 보기 →</button>';
   }
   g('memoirChapterModal').style.display = 'flex';
 }
 
+function changeMemoirCount(n){
+  var done = getMemoirDoneCount();
+  if(done > 0 && n !== getMemoirChapterCount()){
+    if(!confirm(n+'챕터로 변경할까요?\n기존에 작성한 내용은 유지되지만 챕터 제목 구성이 바뀌어요.')) return;
+  }
+  setMemoirChapterCount(n);
+  showMemoirChapterSelect();
+}
 function closeMemoirChapterModal(){
   var m = g('memoirChapterModal');
   if(m) m.style.display = 'none';
 }
 
+function toggleSkipChapter(num){
+  var key = 'aiDonghang_memoir_skip_'+num;
+  var isSkipped = localStorage.getItem(key);
+  if(isSkipped){
+    localStorage.removeItem(key);
+    showToast(num+'챕터 스킵을 취소했어요');
+  } else {
+    localStorage.setItem(key, '1');
+    showToast(num+'챕터를 스킵했어요');
+  }
+  showMemoirChapterSelect();
+}
+
+function isChapterSkipped(num){
+  return !!localStorage.getItem('aiDonghang_memoir_skip_'+num);
+}
+
+function openCustomChapterModal(num){
+  var existing = MEMOIR_CHAPTERS.find(function(c){ return c.num === num; });
+  var customTitle = localStorage.getItem('aiDonghang_memoir_custom_title_'+num) || (existing ? existing.title : '');
+  var customDesc  = localStorage.getItem('aiDonghang_memoir_custom_desc_'+num)  || (existing ? existing.desc  : '');
+  var modal = g('customChapterModal');
+  if(!modal) return;
+  var ti = g('customChapterNum');    if(ti) ti.value = num;
+  var tt = g('customChapterTitle');  if(tt) tt.value = customTitle;
+  var td = g('customChapterDesc');   if(td) td.value = customDesc;
+  modal.style.display = 'flex';
+}
+
+function saveCustomChapter(){
+  var num   = parseInt(g('customChapterNum').value);
+  var title = (g('customChapterTitle').value||'').trim();
+  var desc  = (g('customChapterDesc').value||'').trim();
+  if(!title){ showToast('챕터 제목을 입력해주세요'); return; }
+  localStorage.setItem('aiDonghang_memoir_custom_title_'+num, title);
+  localStorage.setItem('aiDonghang_memoir_custom_desc_'+num,  desc);
+  // MEMOIR_CHAPTERS 내 해당 챕터 업데이트
+  var ch = MEMOIR_CHAPTERS.find(function(c){ return c.num === num; });
+  if(ch){ ch.title = title; ch.desc = desc; }
+  g('customChapterModal').style.display = 'none';
+  showToast(num+'챕터 제목이 변경됐어요 ✅');
+  showMemoirChapterSelect();
+}
+
 function startMemoirChapter(num){
   _currentMemoirChapter = num;
+  // 현재 챕터 제목(커스텀 포함) 세팅
+  var ch = MEMOIR_CHAPTERS.find(function(c){ return c.num === num; });
+  if(ch){
+    var customTitle = localStorage.getItem('aiDonghang_memoir_custom_title_'+num);
+    if(customTitle) ch.title = customTitle;
+  }
   closeMemoirChapterModal();
-  // 기존 자서전 쓰기 빌더로 진입
   goToCourseDirectly('자서전 쓰기');
 }
 
 function showMemoirComplete(){
   var d = getMemoirData();
-  var full = '[ 1챕터. 내가 자란 곳 ]\n'+d.ch1
-    +'\n\n[ 2챕터. 내 삶의 전환점 ]\n'+d.ch2
-    +'\n\n[ 3챕터. 가족에게 전하는 말 ]\n'+d.ch3;
+  var cnt = getMemoirChapterCount();
+  var lines = [];
+  MEMOIR_CHAPTERS.forEach(function(ch){
+    var text = d['ch'+ch.num] || '';
+    var skipped = isChapterSkipped(ch.num);
+    if(text && !skipped) lines.push('[ '+ch.num+'챕터. '+(localStorage.getItem('aiDonghang_memoir_custom_title_'+ch.num)||ch.title)+' ]\n'+text);
+  });
+  var full = lines.join('\n\n');
   var el = g('memoirFullText');
   if(el) el.textContent = full;
+
+  // 제목 UI 갱신
+  var titleWrap = g('memoirTitleWrap');
+  var titleDisplay = g('memoirTitleDisplay');
+  if(d.title){
+    if(titleWrap) titleWrap.style.display = 'none';
+    if(titleDisplay){ titleDisplay.style.display = 'block'; titleDisplay.textContent = '📖 ' + d.title; }
+  } else {
+    if(titleWrap) titleWrap.style.display = 'block';
+    if(titleDisplay) titleDisplay.style.display = 'none';
+  }
+
   var m = g('memoirCompleteModal');
   if(m) m.style.display = 'flex';
   closeMemoirChapterModal();
+}
+
+async function generateMemoirTitles(){
+  var btn = g('memoirTitleGenBtn');
+  if(btn){ btn.textContent = '⏳ 생성 중...'; btn.disabled = true; }
+  var d = getMemoirData();
+  var summary = (d.ch1+d.ch2+d.ch3).slice(0, 600);
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key': window._claudeApiKey||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:400,
+        messages:[{role:'user',content:'다음 자서전 내용을 읽고 감동적이고 시적인 자서전 제목 후보 5개를 만들어주세요. 짧고 울림 있게. 번호 없이 한 줄씩만.\n\n'+summary}]
+      })
+    });
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : '';
+    var titles = text.trim().split('\n').filter(function(t){ return t.trim(); }).slice(0,5);
+    var listEl = g('memoirTitleList');
+    if(listEl){
+      listEl.innerHTML = titles.map(function(t){
+        var clean = t.replace(/^\d+\.\s*/, '').trim();
+        return '<button onclick="selectMemoirTitle(\''+clean.replace(/'/g,"\\'")+'\')" style="width:100%;padding:11px 14px;background:#fff;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;font-family:inherit;text-align:left;margin-bottom:6px;">'+clean+'</button>';
+      }).join('');
+    }
+    var pickEl = g('memoirTitlePick');
+    if(pickEl) pickEl.style.display = 'block';
+  } catch(e){
+    showToast('제목 생성에 실패했어요. API 키를 확인해주세요.');
+  } finally {
+    if(btn){ btn.textContent = '✨ 제목 후보 생성하기'; btn.disabled = false; }
+  }
+}
+
+function selectMemoirTitle(title){
+  localStorage.setItem('aiDonghang_memoir_title', title);
+  var titleWrap = g('memoirTitleWrap');
+  var titleDisplay = g('memoirTitleDisplay');
+  if(titleWrap) titleWrap.style.display = 'none';
+  if(titleDisplay){ titleDisplay.style.display = 'block'; titleDisplay.textContent = '📖 ' + title; }
+  showToast('제목이 저장됐어요: ' + title);
 }
 
 function copyMemoirFull(){
@@ -7723,34 +7957,48 @@ async function downloadMemoirPdf(){
       'box-sizing:border-box'
     ].join(';');
 
-    var chapters = [
-      { title: '1챕터. 내가 자란 곳',       text: d.ch1 },
-      { title: '2챕터. 내 삶의 전환점',     text: d.ch2 },
-      { title: '3챕터. 가족에게 전하는 말', text: d.ch3 }
-    ];
+    var chapters = MEMOIR_CHAPTERS.map(function(ch){
+      return { title: ch.num+'챕터. '+ch.title, text: d['ch'+ch.num] || '' };
+    });
 
-    // 표지
+    var memoirTitle = d.title || (userName + '의 자서전');
+
+    // 표지 (A4 한 페이지 전체)
     var coverHtml =
-      '<div style="text-align:center;padding:40mm 0 30mm;">' +
-        '<div style="font-size:11pt;color:#7A7669;letter-spacing:.15em;margin-bottom:12mm;">나의 이야기</div>' +
-        '<div style="font-size:26pt;font-weight:700;color:#1C1A17;line-height:1.5;margin-bottom:8mm;">' + userName + '의 자서전</div>' +
-        '<div style="width:40mm;height:2px;background:#2A5F52;margin:0 auto 8mm;"></div>' +
-        '<div style="font-size:10pt;color:#7A7669;">AI 동행 · aitogether.co.kr</div>' +
-        '<div style="font-size:10pt;color:#7A7669;margin-top:3mm;">' + new Date().getFullYear() + '년</div>' +
+      '<div style="height:277mm;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-bottom:3px solid #2A5F52;page-break-after:always;">' +
+        '<div style="font-size:10pt;color:#7A7669;letter-spacing:.2em;margin-bottom:16mm;">자 서 전</div>' +
+        '<div style="font-size:28pt;font-weight:700;color:#1C1A17;line-height:1.5;margin-bottom:10mm;">' + memoirTitle + '</div>' +
+        '<div style="width:50mm;height:2px;background:#2A5F52;margin:0 auto 10mm;"></div>' +
+        '<div style="font-size:13pt;color:#3D3A33;margin-bottom:4mm;">' + userName + '</div>' +
+        '<div style="font-size:10pt;color:#7A7669;">' + new Date().getFullYear() + '년</div>' +
+        '<div style="position:absolute;bottom:12mm;right:16mm;font-size:8pt;color:#C0BCB4;">AI 동행 · aitogether.co.kr</div>' +
       '</div>';
 
-    // 본문 챕터들
+    // 목차 페이지
+    var tocHtml =
+      '<div style="padding:20mm 0;page-break-after:always;">' +
+        '<div style="font-size:14pt;font-weight:700;color:#2A5F52;border-bottom:2px solid #2A5F52;padding-bottom:4mm;margin-bottom:8mm;">목 차</div>' +
+        chapters.filter(function(c){ return c.text && c.text.trim(); }).map(function(c, i){
+          return '<div style="display:flex;justify-content:space-between;padding:5mm 0;border-bottom:1px dashed #DDD;font-size:12pt;color:#3D3A33;">' +
+            '<span>' + c.title + '</span>' +
+            '<span style="color:#7A7669;">' + (i+1) + '</span>' +
+            '</div>';
+        }).join('') +
+      '</div>';
+
+    // 본문 챕터들 (각 챕터 새 페이지 시작)
     var bodyHtml = chapters.filter(function(c){ return c.text && c.text.trim(); }).map(function(c, i){
-      return '<div style="' + (i > 0 ? 'margin-top:16mm;' : '') + '">' +
-        '<div style="font-size:12pt;font-weight:700;color:#2A5F52;letter-spacing:.05em;' +
-          'border-bottom:2px solid #2A5F52;padding-bottom:3mm;margin-bottom:6mm;">' + c.title + '</div>' +
-        '<div style="font-size:13pt;line-height:2.1;color:#3D3A33;white-space:pre-wrap;">' +
+      return '<div style="page-break-before:always;padding-top:8mm;">' +
+        '<div style="font-size:9pt;color:#A07C30;letter-spacing:.1em;margin-bottom:3mm;">' + (i+1) + '챕터</div>' +
+        '<div style="font-size:16pt;font-weight:700;color:#1C1A17;margin-bottom:8mm;padding-bottom:4mm;border-bottom:2px solid #2A5F52;">' + c.title + '</div>' +
+        '<div style="font-size:12pt;line-height:2.2;color:#3D3A33;white-space:pre-wrap;text-align:justify;">' +
           c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') +
         '</div>' +
+        '<div style="margin-top:12mm;text-align:right;font-size:8pt;color:#C0BCB4;">AI 동행 · aitogether.co.kr</div>' +
       '</div>';
     }).join('');
 
-    wrap.innerHTML = coverHtml + bodyHtml;
+    wrap.innerHTML = coverHtml + tocHtml + bodyHtml;
     document.body.appendChild(wrap);
 
     // html2canvas로 렌더링 후 jsPDF로 변환

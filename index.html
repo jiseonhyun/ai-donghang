@@ -88,7 +88,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .sec-sub{font-size:18px;color:var(--i3);line-height:1.85;margin-bottom:44px;max-width:500px;}
 
 /* ── HERO ── */
-.hero{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;padding:72px 40px 64px;max-width:1100px;margin:0 auto;min-height:620px;}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;padding:72px 40px 64px;max-width:1100px;margin:0 auto;}
 .hero-pill{display:inline-flex;align-items:center;gap:7px;background:var(--al);color:var(--ac);border:1px solid var(--ab);border-radius:100px;font-size:13px;font-weight:600;padding:6px 16px;margin-bottom:18px;}
 .hero-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
@@ -1466,6 +1466,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   #heroSliderWrap{
     min-height:auto !important;
     height:auto !important;
+    overflow:hidden;
   }
   /* heroV1만 static으로, V2는 display none */
   #heroV1{
@@ -1473,7 +1474,11 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     opacity:1 !important;
     pointer-events:auto !important;
   }
-  #heroV2, #heroV3{
+  #heroV2, #heroV3, #heroV3Placeholder, #heroImgPlaceholder{
+    display:none !important;
+  }
+  /* 히어로 dot 버튼 공간 제거 */
+  #heroSliderWrap > div:first-child{
     display:none !important;
   }
   /* 히어로 슬라이더 페이지네이션 숨기기 */
@@ -1482,7 +1487,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   }
   /* 홈 섹션 상단 여백 */
   #homeView .sec-w:first-of-type{
-    padding-top:36px !important;
+    padding-top:16px !important;
   }
 }
 
@@ -1630,7 +1635,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <div style="background:var(--bg);position:relative;">
 
   <!-- 히어로 슬라이더 wrapper - 고정 높이로 두 버전 높이 통일 -->
-  <div id="heroSliderWrap" style="position:relative;min-height:620px;">
+  <div id="heroSliderWrap" style="position:relative;">
 
     <!-- 히어로 페이지네이션 dots -->
     <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;">
@@ -1843,7 +1848,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
     <!-- ── 히어로 버전3: 프롬프트 애니메이션 ── -->
 
-    <div style="min-height:620px;visibility:hidden;pointer-events:none;" aria-hidden="true">
+    <div id="heroV3Placeholder" style="visibility:hidden;pointer-events:none;" aria-hidden="true">
       <div class="hero">
         <div>
           <div class="hero-pill" style="opacity:0;">placeholder</div>
@@ -1852,7 +1857,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
           <div class="hero-cta" style="opacity:0;"><button class="btn-p">placeholder</button></div>
           <div class="hero-reassure" style="opacity:0;">placeholder</div>
         </div>
-        <div style="height:420px;border-radius:20px;background:transparent;"></div>
+        <div id="heroImgPlaceholder" style="height:420px;border-radius:20px;background:transparent;"></div>
       </div>
     </div>
 
@@ -3815,26 +3820,39 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- ── 구독 유도 팝업 (로그인 사용자) ── -->
 
 <!-- ── 자서전 챕터 선택 모달 ── -->
-<div class="modal-backdrop" id="memoirChapterModal" style="display:none;">
-  <div class="save-login-modal" style="max-width:380px;max-height:88vh;overflow-y:auto;">
-    <div style="font-size:32px;margin-bottom:8px;">📖</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;">내 자서전</div>
-    <div id="memoirChapterDesc" style="font-size:13px;color:var(--i3);margin-bottom:16px;line-height:1.65;">5챕터를 완성하면 종이책으로 출판할 수 있어요 📚</div>
+<!-- ── 자서전 챕터 선택 페이지 뷰 ── -->
+<div class="view" id="memoirView" style="background:var(--bg,#FAF8F4);min-height:100vh;">
+  <div style="max-width:560px;margin:0 auto;padding:24px 20px 100px;">
+
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="closeMemoirChapterModal()" style="width:40px;height:40px;border:none;background:var(--wm);border-radius:100px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">←</button>
+      <div>
+        <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);">내 자서전</div>
+        <div id="memoirChapterDesc" style="font-size:13px;color:var(--i3);">5챕터를 완성하면 종이책으로 출판할 수 있어요 📚</div>
+      </div>
+    </div>
 
     <!-- 챕터 수 선택 -->
-    <div style="margin-bottom:14px;">
-      <div style="font-size:12px;font-weight:700;color:var(--i3);margin-bottom:6px;letter-spacing:.05em;">챕터 수 선택</div>
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--i2);margin-bottom:10px;">📚 챕터 수 선택</div>
       <div id="memoirCountTabs" style="display:flex;gap:6px;background:var(--wm);padding:4px;border-radius:10px;"></div>
     </div>
 
-    <!-- 진행 바 -->
-    <div style="background:var(--wm);border-radius:100px;height:6px;margin-bottom:14px;overflow:hidden;">
-      <div id="memoirProgressBar" style="height:100%;background:var(--ac);border-radius:100px;transition:width .4s;width:0%;"></div>
+    <!-- 진행 현황 -->
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:700;color:var(--i2);">진행 현황</div>
+        <div id="memoirProgressLabel" style="font-size:13px;font-weight:700;color:var(--ac);">0/5 챕터</div>
+      </div>
+      <div style="background:var(--wm);border-radius:100px;height:8px;overflow:hidden;">
+        <div id="memoirProgressBar" style="height:100%;background:var(--ac);border-radius:100px;transition:width .4s;width:0%;"></div>
+      </div>
     </div>
 
     <!-- 챕터 목록 -->
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="memoirChapterList"></div>
-    <button onclick="closeMemoirChapterModal()" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">닫기</button>
+    <div style="display:flex;flex-direction:column;gap:10px;" id="memoirChapterList"></div>
+
   </div>
 </div>
 
@@ -3856,6 +3874,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <button onclick="g('customChapterModal').style.display='none'" style="width:100%;padding:11px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">취소</button>
   </div>
 </div>
+
 
 <!-- ── 자서전 합본 완성 모달 ── -->
 <!-- 종이책 출판 안내 모달 -->
@@ -4513,13 +4532,35 @@ var COURSE_CAT = {
 };
 
 // ── 뷰 전환 ──
-function showView(view){
+function showView(view, _skipHash){
   // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
   var skipSave = ['auth','admin','mypage','login'];
   if(skipSave.indexOf(view) === -1){
     localStorage.setItem('aiDonghang_lastView', view);
   }
-  var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView'];
+  // 해시 URL 업데이트 (뒤로가기 트리거 시엔 스킵)
+  if(!_skipHash){
+    var hashMap = {
+      home:'', dojo:'dojo', builder:'builder', portfolio:'portfolio',
+      pricing:'pricing', auth:'auth', mypage:'mypage', faq:'faq',
+      learn:'learn', community:'community', about:'about',
+      b2g:'b2g', admin:'admin', memoir:'memoir'
+    };
+    var hash = hashMap[view] !== undefined ? hashMap[view] : view;
+    var newHash = hash ? '#'+hash : '#';
+    if(window.location.hash !== newHash){
+      window.history.pushState({view:view}, '', newHash || window.location.pathname);
+    }
+  }
+  // URL 해시 업데이트 (뒤로가기 지원)
+  var hashSkip = ['auth','admin','login'];
+  if(hashSkip.indexOf(view) === -1){
+    var newHash = '#' + (view === 'home' ? '' : view);
+    if(window.location.hash !== newHash){
+      history.pushState({view: view}, '', newHash || window.location.pathname);
+    }
+  }
+  var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView'];
   allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
   window.scrollTo(0,0);
   var bMap={dojo:'bnav-dojo',builder:'bnav-builder',learn:'bnav-learn',portfolio:'bnav-portfolio',faq:'bnav-faq'};
@@ -4553,6 +4594,14 @@ function showView(view){
   else if(view==='mypage'){_activate('mypageView');renderMypage();}
   else if(view==='faq'){_activate('faqView');setTimeout(initCsChat,100);}
   else if(view==='learn'){_activate('learnView');}
+  else if(view==='memoir'){
+    // builder 하위 페이지들 정리
+    ['page2View','page3View','page4View'].forEach(function(id){
+      var el=g(id); if(el) el.classList.remove('active');
+    });
+    _activate('memoirView');
+    showMemoirChapterSelect();
+  }
   else if(view==='community'){_activate('communityView');renderCommunity();loadCommunityFromSupabase();}
   else if(view==='about'){_activate('aboutView');}
   else if(view==='b2g'){_activate('b2gView');}
@@ -6533,7 +6582,8 @@ var catLabels={writing:{label:'내 이야기를 글로 남겨요',count:6},image
 function goToCategory(cat){showView('builder');setTimeout(function(){document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});var tab=document.querySelector('.cat-tab[data-cat="'+cat+'"]');if(tab)tab.classList.add('active');currentCat=cat;filterCards(cat,'');},100);}
 function goToCourse(name){
   if(name === '자서전 쓰기'){
-    showMemoirChapterSelect();
+    localStorage.setItem('aiDonghang_memoirFrom','builder');
+    showView('memoir');
     return;
   }
   showView('builder');setTimeout(function(){showPage3(name);},100);
@@ -6549,7 +6599,8 @@ function showPage2(){['page3View','page4View'].forEach(function(id){var el=g(id)
 function showPage3(name){
   // 자서전 쓰기 → 챕터 선택 모달로
   if(name === '자서전 쓰기'){
-    showMemoirChapterSelect();
+    localStorage.setItem('aiDonghang_memoirFrom','builder');
+    showView('memoir');
     return;
   }
   ['page2View','page4View'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
@@ -7447,7 +7498,29 @@ function confirmLogout(){
   modal.innerHTML='<div style="background:#fff;border-radius:22px;padding:34px;width:100%;max-width:360px;box-shadow:0 20px 64px rgba(0,0,0,.25);text-align:center;"><div style="font-size:52px;margin-bottom:16px;">👋</div><div style="font-family:\'Gowun Batang\',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:9px;">로그아웃 하시겠어요?</div><div style="font-size:15px;color:var(--i3);margin-bottom:26px;">작품함은 다음에 로그인해도 유지돼요</div><div style="display:flex;gap:10px;"><button onclick="document.getElementById(\'logoutConfirmModal\').remove()" style="flex:1;padding:14px;border:1.5px solid var(--bd);border-radius:100px;background:#fff;color:var(--i3);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;">취소</button><button onclick="doLogout()" style="flex:1;padding:14px;border:none;border-radius:100px;background:#e05555;color:#fff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">로그아웃</button></div></div>';
   document.body.appendChild(modal);
 }
-function doLogout(){var m=g('logoutConfirmModal');if(m)m.remove();userProfile={};portfolio=[];dojoProgress={};['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});setNavLoggedOut();showView('home');showToast('또 올게요? 기다리고 있을게요 😊');}
+function doLogout(){var m=g('logoutConfirmModal');if(m)m.remove();userProfile={};portfolio=[];dojoProgress={};['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});setNavLoggedOut();// ── 해시 라우터 ──
+function _hashToView(hash){
+  var map = {
+    '':'home', '#':'home', '#home':'home',
+    '#dojo':'dojo', '#builder':'builder', '#portfolio':'portfolio',
+    '#pricing':'pricing', '#auth':'auth', '#mypage':'mypage',
+    '#faq':'faq', '#learn':'learn', '#community':'community',
+    '#about':'about', '#b2g':'b2g', '#admin':'admin', '#memoir':'memoir'
+  };
+  return map[hash] || 'home';
+}
+
+// 브라우저 뒤로/앞으로 버튼
+window.addEventListener('popstate', function(e){
+  var view = (e.state && e.state.view) ? e.state.view : _hashToView(window.location.hash);
+  showView(view, true); // _skipHash=true (pushState 안 함)
+});
+
+// 최초 로드: 해시에 맞는 뷰로
+(function(){
+  var initView = _hashToView(window.location.hash);
+  showView(initView, true);
+})();showToast('또 올게요? 기다리고 있을게요 😊');}
 
 // ── 기타 ──
 function toggleFaqById(id){var item=g(id);if(item)item.classList.toggle('open');}
@@ -7728,6 +7801,8 @@ function showMemoirChapterSelect(){
   // 진행 바
   var bar = g('memoirProgressBar');
   if(bar) bar.style.width = Math.round(done/cnt*100)+'%';
+  var lbl = g('memoirProgressLabel');
+  if(lbl) lbl.textContent = done+'/'+cnt+' 챕터';
 
   // 챕터 수 선택 탭
   var tabWrap = g('memoirCountTabs');
@@ -7782,7 +7857,7 @@ function showMemoirChapterSelect(){
   if(done >= cnt){
     list.innerHTML += '<button onclick="showMemoirComplete()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;">📚 자서전 완성본 보기 →</button>';
   }
-  g('memoirChapterModal').style.display = 'flex';
+  // 페이지 전환은 showView('memoir')로 처리 (이미 호출된 상태)
 }
 
 function changeMemoirCount(n){
@@ -7791,11 +7866,15 @@ function changeMemoirCount(n){
     if(!confirm(n+'챕터로 변경할까요?\n기존에 작성한 내용은 유지되지만 챕터 제목 구성이 바뀌어요.')) return;
   }
   setMemoirChapterCount(n);
-  showMemoirChapterSelect();
+  showMemoirChapterSelect(); // 같은 뷰 내 갱신
 }
 function closeMemoirChapterModal(){
-  var m = g('memoirChapterModal');
-  if(m) m.style.display = 'none';
+  var last = localStorage.getItem('aiDonghang_memoirFrom') || 'builder';
+  showView(last);
+  // 빌더로 돌아갈 때 코스 선택 화면으로
+  if(last === 'builder'){
+    setTimeout(function(){ showPage2(); }, 50);
+  }
 }
 
 function toggleSkipChapter(num){

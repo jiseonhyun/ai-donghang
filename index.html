@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="AI 동행 — 어르신을 위한 AI 창작 플랫폼">
+<meta property="og:description" content="블로그 글쓰기, 자서전, 그림, 음악까지. 버튼만 누르면 AI가 완성해드려요.">
+<meta property="og:image" content="https://aitogether.co.kr/images/og_image.png">
+<meta property="og:url" content="https://aitogether.co.kr">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aitogether.co.kr/images/og_image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon_32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="images/favicon.png">
@@ -56,8 +63,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 /* ── NAV ── */
 .nav{height:64px;background:rgba(250,248,244,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(28,26,23,0.09);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:fixed;top:0;left:0;right:0;z-index:200;box-shadow:0 1px 12px rgba(28,26,23,0.06);}
-.nav-logo{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;}
-.nav-logo-icon{width:38px;height:38px;background:var(--ac);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo{display:flex;align-items:center;text-decoration:none;}
+.nav-logo-icon{display:flex;align-items:center;}
 .nav-logo .g{color:var(--ac);}
 .nav-links{display:flex;gap:24px;}
 .nav-link{font-size:15px;font-weight:500;color:var(--i3);cursor:pointer;transition:color .15s;text-decoration:none;padding:4px 0;}
@@ -1601,7 +1608,40 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- NAV -->
 <nav class="nav" id="globalNav">
   <a href="#" onclick="showView('home')" class="nav-logo">
-    <div class="nav-logo-icon"><svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI<span class="g">동행</span>
+    <svg width="38" height="38" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="nv_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="nv_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="nv_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="nv_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="nv_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#nv_bg3D)"/>
+                <g filter="url(#nv_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#nv_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#nv_bulbWhite3D)"/>
+                </g>
+            </svg><span style="font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:var(--ink);margin-left:8px;letter-spacing:-.02em;">AI<span style="color:#2D6A59;margin-left:4px;">동행</span></span>
   </a>
   <div class="nav-links" id="navLinksGuest">
     <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">🏆 AI 도장깨기</a>
@@ -2028,7 +2068,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <!-- FOOTER -->
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2051,7 +2125,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2533,7 +2641,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2547,7 +2689,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <div id="portfolioEmpty" style="text-align:center;padding:80px 20px;display:none;"><div style="font-size:60px;margin-bottom:18px;">📭</div><div style="font-family:var(--serif,serif);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px;">아직 작품이 없어요</div><div style="font-size:15px;color:var(--i3);margin-bottom:30px;line-height:1.7;">프롬프트를 만들고 결과를 저장하면<br>여기에 모아져요</div><button onclick="showView('builder')" class="btn-p">첫 작품 만들러 가기 →</button></div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2643,7 +2819,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2725,7 +2935,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2785,7 +3029,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <div class="modal-box"><div class="modal-title">✏️ 프로필 수정</div><div class="modal-input-label">성함</div><input class="modal-input" id="edit-name" type="text" placeholder="성함을 입력해주세요"><div class="modal-input-label">전화번호</div><input class="modal-input" id="edit-phone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13"><div class="modal-btns"><button class="modal-btn-cancel" onclick="closeEditModal()">취소</button><button class="modal-btn-save" onclick="saveProfile()">저장하기</button></div></div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2878,7 +3156,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3042,7 +3354,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3128,7 +3474,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3142,6 +3522,70 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">AI 동행이란?</div>
     <div style="font-family:var(--serif,serif);font-size:40px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:18px;">AI 시대를<br>함께 걸어요</div>
     <div style="font-size:17px;color:rgba(255,255,255,.8);line-height:1.9;max-width:540px;margin:0 auto;">뤼튼, ChatGPT, Suno AI…<br>요즘 사람들이 쓰는 AI를 어르신도 직접 써볼 수 있도록<br>손잡고 함께 걷는 서비스예요.</div>
+  </div>
+
+  <!-- 로고 의미 -->
+  <div style="padding:64px 52px;background:#fff;border-bottom:1px solid var(--bd);">
+    <div class="eyebrow">로고 이야기</div>
+    <div style="font-family:var(--serif,serif);font-size:32px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:40px;">이 전구 하나에<br>담긴 이야기</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:48px;">
+      <!-- 로고 크게 -->
+      <div style="display:flex;justify-content:center;">
+        <div style="position:relative;display:inline-block;">
+          <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="180" height="180" style="display:block;">
+            <defs>
+              <radialGradient id="ab_bg" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#4B9D83"/><stop offset="50%" stop-color="#2D6A59"/><stop offset="100%" stop-color="#14362D"/></radialGradient>
+              <radialGradient id="ab_bw" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="60%" stop-color="#F2F5F4"/><stop offset="100%" stop-color="#C5D1CE"/></radialGradient>
+              <filter id="ab_sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/></filter>
+            </defs>
+            <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ab_bg)"/>
+            <g filter="url(#ab_sh)">
+              <path d="M100,36 C72,36 58,58 58,82 C58,105 70,118 85,132 C92,138 95,142 100,142 C105,142 108,138 115,132 C130,118 142,105 142,82 C142,58 128,36 100,36 Z" fill="url(#ab_bw)"/>
+              <circle cx="100" cy="162" r="11" fill="url(#ab_bw)"/>
+            </g>
+          </svg>
+          <!-- 설명 말풍선 - 전구 -->
+          <div style="position:absolute;top:-10px;right:-130px;background:var(--al);border:1.5px solid var(--ab);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--ac);font-weight:600;white-space:nowrap;">💡 전구 = 깨달음 · 가능성</div>
+          <!-- 설명 말풍선 - 점 -->
+          <div style="position:absolute;bottom:20px;right:-110px;background:var(--gl);border:1.5px solid var(--gb);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--gd);font-weight:600;white-space:nowrap;">● 점 = 사람 · 연결</div>
+        </div>
+      </div>
+      <!-- 의미 설명 -->
+      <div>
+        <div style="font-size:16px;color:var(--i2);line-height:2;margin-bottom:20px;">
+          전구는 오랫동안 인류가 <b style="color:var(--ac);">'아이디어', '깨달음', '새로운 시작'</b>의 상징으로 써온 도형이에요. AI동행이 어르신들께 새로운 세계를 열어드린다는 의미와 딱 맞아요.
+        </div>
+        <div style="font-size:16px;color:var(--i2);line-height:2;">
+          전구 아래 작은 점은 소켓 접점이지만, 다르게 읽으면 <b style="color:var(--ac);">사람</b>이에요. <b>기술(전구)과 사람(점)이 연결된 순간 — 그게 바로 동행이에요.</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- 컬러 의미 3개 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:48px;">
+      <div style="background:var(--wm);border-radius:14px;padding:22px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#4B9D83,#14362D);margin-bottom:14px;"></div>
+        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;">다크 틸 배경</div>
+        <div style="font-size:13px;color:var(--i3);line-height:1.8;">신뢰, 안정감, 깊이. 어르신들이 믿고 기댈 수 있는 든든함을 담았어요.</div>
+      </div>
+      <div style="background:var(--wm);border-radius:14px;padding:22px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FFFFFF,#C5D1CE);border:1px solid var(--bd);margin-bottom:14px;"></div>
+        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;">흰 전구</div>
+        <div style="font-size:13px;color:var(--i3);line-height:1.8;">순수함, 가능성, 빛. 나이와 상관없이 누구나 빛날 수 있다는 메시지예요.</div>
+      </div>
+      <div style="background:var(--wm);border-radius:14px;padding:22px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#F2F5F4,#C5D1CE);margin-bottom:14px;"></div>
+        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;">입체 그라데이션</div>
+        <div style="font-size:13px;color:var(--i3);line-height:1.8;">디지털이지만 따뜻하고 살아있는 느낌. 평면이 아닌 온기를 담았어요.</div>
+      </div>
+    </div>
+
+    <!-- 한 줄 메시지 -->
+    <div style="background:linear-gradient(135deg,var(--ad),#1a5c48);border-radius:16px;padding:32px;text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.1em;margin-bottom:12px;">OUR MESSAGE</div>
+      <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:#fff;line-height:1.7;">"AI라는 새로운 빛을 켜는 순간,<br>당신 곁에 있겠습니다."</div>
+    </div>
   </div>
 
   <!-- 탄생 배경 -->
@@ -3234,7 +3678,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3520,7 +3998,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div>
 </div>
 <div class="footer">
-  <div class="footer-logo"><div style="width:26px;height:26px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="16" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div>AI&nbsp;<b>동행</b></div>
+  <div class="footer-logo">
+<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
+                <g filter="url(#ft_shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
+                </g>
+            </svg>AI&nbsp;<b>동행</b></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -7833,11 +8345,17 @@ function showMemoirChapterSelect(){
     var customBadge = customTitle ? ' <span style="font-size:10px;color:var(--ac);font-weight:700;">수정됨</span>' : '';
 
     var btns = '';
-    if(!locked){
-      if(!skipped){
-        btns += '<button onclick="startMemoirChapter('+ch.num+')" style="padding:6px 12px;background:'+(saved?'var(--wm)':'var(--ac)')+';color:'+(saved?'var(--i3)':'#fff')+';border:none;border-radius:100px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">'+(saved?'수정':'작성')+'</button>';
+    if(skipped){
+      // 스킵된 챕터: locked 여부 관계없이 항상 되돌리기 + 제목변경 표시
+      btns += '<button onclick="toggleSkipChapter('+ch.num+')" style="padding:6px 10px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--i3);white-space:nowrap;">↩ 되돌리기</button>';
+      btns += '<button onclick="openCustomChapterModal('+ch.num+')" title="챕터 제목 변경" style="padding:6px 9px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;cursor:pointer;color:var(--i3);">✏️ 제목 변경</button>';
+    } else if(!locked){
+      if(!saved){
+        btns += '<button onclick="startMemoirChapter('+ch.num+')" style="padding:6px 12px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">작성</button>';
+      } else {
+        btns += '<button onclick="startMemoirChapter('+ch.num+')" style="padding:6px 12px;background:var(--wm);color:var(--i3);border:none;border-radius:100px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">수정</button>';
       }
-      btns += '<button onclick="toggleSkipChapter('+ch.num+')" style="padding:6px 10px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--i3);white-space:nowrap;">'+(skipped?'↩ 되돌리기':'⏭ 스킵')+'</button>';
+      btns += '<button onclick="toggleSkipChapter('+ch.num+')" style="padding:6px 10px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--i3);white-space:nowrap;">⏭ 스킵</button>';
       btns += '<button onclick="openCustomChapterModal('+ch.num+')" title="챕터 제목 변경" style="padding:6px 9px;background:none;border:1px solid var(--bd);border-radius:100px;font-size:11px;cursor:pointer;color:var(--i3);">✏️ 제목 변경</button>';
     }
 

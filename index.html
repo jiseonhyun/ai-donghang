@@ -1499,6 +1499,53 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 }
 
 /* ══ 동동이 하단 팝업 ══ */
+/* 동동이 v2 애니메이션 */
+@keyframes dongWaveV2 {
+  0%,100%{transform:rotate(-75deg);}
+  25%{transform:rotate(-95deg);}
+  75%{transform:rotate(-55deg);}
+}
+@keyframes dongCheerL {
+  0%,100%{transform:rotate(10deg);}
+  50%{transform:rotate(110deg);}
+}
+@keyframes dongCheerR {
+  0%,100%{transform:rotate(-10deg);}
+  50%{transform:rotate(-110deg);}
+}
+@keyframes dongPonderL {
+  0%,100%{transform:rotate(10deg);}
+  50%{transform:rotate(-30deg);}
+}
+@keyframes dongPonderR {
+  0%,100%{transform:rotate(-10deg);}
+  50%{transform:rotate(30deg);}
+}
+@keyframes dongRestL {
+  0%,100%{transform:rotate(10deg);}
+  50%{transform:rotate(15deg);}
+}
+@keyframes dongRestR {
+  0%,100%{transform:rotate(-10deg);}
+  50%{transform:rotate(-15deg);}
+}
+@keyframes dongSway {
+  0%,100%{transform:rotate(0deg);}
+  50%{transform:rotate(2deg);}
+}
+@keyframes dongBreathe {
+  0%,100%{transform:scale(1) translateY(0);}
+  50%{transform:scale(1.02) translateY(-2px);}
+}
+.dong-arm-wave-r { animation:dongWaveV2 1.2s ease-in-out infinite; transform-origin:178px 145px; }
+.dong-arm-cheer-l { animation:dongCheerL 0.7s ease-out infinite; transform-origin:62px 145px; }
+.dong-arm-cheer-r { animation:dongCheerR 0.7s ease-out infinite; transform-origin:178px 145px; }
+.dong-arm-ponder-l { animation:dongPonderL 1.5s ease-in-out infinite; transform-origin:62px 145px; }
+.dong-arm-ponder-r { animation:dongPonderR 1.5s ease-in-out infinite; transform-origin:178px 145px; }
+.dong-arm-rest-l { animation:dongRestL 3s ease-in-out infinite; transform-origin:62px 145px; }
+.dong-arm-rest-r { animation:dongRestR 3s ease-in-out infinite; transform-origin:178px 145px; }
+.dong-body-sway { animation:dongSway 2s ease-in-out infinite; transform-origin:120px 240px; }
+.dong-body-breathe { animation:dongBreathe 4s ease-in-out infinite; transform-origin:center bottom; }
 #dongPopupOverlay.show { display:flex !important; }
 @keyframes slideUp {
   from { transform:translateY(100%); opacity:0; }
@@ -8857,12 +8904,72 @@ showView('home');
 
 // ══ 동동이 하단 팝업 ══
 
+// ── 동동이 v2 포즈 시스템 ──
+var _dongPose = 'basic';
+var _dongWinkTimer = null;
+var _dongWinkInterval = null;
+
+var _dongPoseConfig = {
+  basic:   { armL:'', armR:'dong-arm-wave-r', body:'', eyeL:'<circle r="8" fill="#333"/>', eyeR:'<circle r="8" fill="#333"/>', mouth:'<path d="M-15,0 Q0,12 15,0" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>', antenna:'#4B9D83' },
+  excited: { armL:'dong-arm-cheer-l', armR:'dong-arm-cheer-r', body:'', eyeL:'<path d="M0-11 L2.5-3.5 L11-3.5 L4.5 2.5 L6.5 11 L0 6 L-6.5 11 L-4.5 2.5 L-11-3.5 L-2.5-3.5 Z" fill="#333"/>', eyeR:'<path d="M0-11 L2.5-3.5 L11-3.5 L4.5 2.5 L6.5 11 L0 6 L-6.5 11 L-4.5 2.5 L-11-3.5 L-2.5-3.5 Z" fill="#333"/>', mouth:'<path d="M-15,0 Q0,18 15,0 L12,-2 Q0,4 -12,-2 Z" fill="#333"/>', antenna:'#FFD700' },
+  thinking:{ armL:'dong-arm-ponder-l', armR:'dong-arm-ponder-r', body:'dong-body-sway', eyeL:'<path d="M-8,4 Q0,-8 8,4" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>', eyeR:'<path d="M-8,4 Q0,-8 8,4" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>', mouth:'<path d="M-10,5 Q0,-2 10,5" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>', antenna:'#4B9D83' },
+  rest:    { armL:'dong-arm-rest-l', armR:'dong-arm-rest-r', body:'dong-body-breathe', eyeL:'<path d="M-10,0 C-10,-8 10,-8 10,0" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round" transform="translate(0,4)"/>', eyeR:'<path d="M-10,0 C-10,-8 10,-8 10,0" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round" transform="translate(0,4)"/>', mouth:'<path d="M-15,0 Q0,12 15,0" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>', antenna:'#4B9D83' }
+};
+
+function setDongPose(pose){
+  _dongPose = pose;
+  var cfg = _dongPoseConfig[pose];
+  if(!cfg) return;
+  var armL  = g('dongArmL');
+  var armR  = g('dongArmR');
+  var body  = g('dongBody');
+  var neck  = g('dongNeck');
+  var head  = g('dongHead');
+  var eyeL  = g('dongEyeL');
+  var eyeR  = g('dongEyeR');
+  var mouth = g('dongMouth');
+  var ant   = g('dongAntenna');
+  if(armL)  armL.className.baseVal  = cfg.armL;
+  if(armR)  armR.className.baseVal  = cfg.armR;
+  if(body)  body.className.baseVal  = cfg.body;
+  if(neck)  neck.className.baseVal  = cfg.body;
+  if(head)  head.className.baseVal  = cfg.body;
+  if(eyeL)  eyeL.innerHTML = cfg.eyeL;
+  if(eyeR)  eyeR.innerHTML = cfg.eyeR;
+  if(mouth) mouth.innerHTML = cfg.mouth;
+  if(ant)   ant.setAttribute('fill', cfg.antenna);
+
+  // 윙크 타이머 (basic 전용)
+  if(_dongWinkInterval) clearInterval(_dongWinkInterval);
+  if(pose === 'basic'){
+    _dongWinkInterval = setInterval(function(){
+      var el = g('dongEyeR');
+      if(el){ el.innerHTML = '<path d="M-10,0 L10,0" stroke="#333" stroke-width="6" stroke-linecap="round"/>'; }
+      setTimeout(function(){
+        var el2 = g('dongEyeR');
+        if(el2) el2.innerHTML = '<circle r="8" fill="#333"/>';
+      }, 200);
+    }, 4000);
+  }
+}
+
 function showDongPopup(type){
   var overlay = g('dongPopupOverlay');
   var msgEl   = g('dongPopupMsg');
   var subEl   = g('dongPopupSub');
   var ctaEl   = g('dongPopupCtaText');
   if(!overlay || !msgEl){ console.error('[dongPopup] 팝업 요소 없음 overlay='+overlay+' msgEl='+msgEl); return; }
+
+  // 타입별 포즈 설정
+  var poseMap = {
+    'return':    'basic',
+    'first':     'excited',
+    'complete':  'excited',
+    'loading':   'thinking',
+    'encourage': 'basic',
+    'rest':      'rest'
+  };
+  setTimeout(function(){ setDongPose(poseMap[type] || 'basic'); }, 100);
   // type이 없으면 자동 판단
   if(!type){
     type = localStorage.getItem('aiDonghang_dojoSeen') ? 'return' : 'first';
@@ -10504,36 +10611,58 @@ function loadFalApiKeyToInput(){
     <!-- 핸들 -->
     <div style="width:44px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 24px;"></div>
 
-    <!-- 동동이 + 말풍선 -->
+    <!-- 동동이 v2 + 말풍선 -->
     <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:22px;">
-      <svg width="88" height="108" viewBox="0 0 200 240" style="animation:dongBounce 2.5s ease-in-out infinite;filter:drop-shadow(0 6px 16px rgba(232,160,32,.35));flex-shrink:0;">
-        <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
-        <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
-        <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
-        <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
-        <g style="transform-origin:136px 154px;animation:dongWave 2s ease-in-out infinite;">
-          <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
-        </g>
-        <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
-        <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
-        <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
-        <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
-        <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
-        <circle cx="100" cy="110" r="44" fill="#d08010"/>
-        <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
-        <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
-        <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
-        <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
-        <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
-        <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
-        <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
-        <ellipse cx="112" cy="106" rx="4" style="animation:dongWink 4s ease-in-out infinite;" ry="6" fill="#7a4000"/>
-        <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
-        <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
-        <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
-      </svg>
+      <div style="flex-shrink:0;position:relative;">
+        <svg id="dongCharSvg" width="88" height="104" viewBox="0 0 240 280"
+          style="animation:dongBounce 2.5s ease-in-out infinite;filter:drop-shadow(0 6px 16px rgba(212,163,56,.4));">
+          <defs>
+            <radialGradient id="dpbg" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FFE8A1"/>
+              <stop offset="60%" stop-color="#D4A338"/>
+              <stop offset="100%" stop-color="#B8860B"/>
+            </radialGradient>
+          </defs>
+          <!-- 하체 -->
+          <rect x="85" y="240" width="25" height="12" rx="6" fill="#444"/>
+          <rect x="130" y="240" width="25" height="12" rx="6" fill="#444"/>
+          <rect x="90" y="210" width="12" height="35" rx="6" fill="#2D6A59"/>
+          <rect x="138" y="210" width="12" height="35" rx="6" fill="#2D6A59"/>
+          <!-- 왼팔 -->
+          <g id="dongArmL">
+            <rect x="50" y="140" width="24" height="60" rx="12" fill="url(#dpbg)" transform="rotate(10 62 145)"/>
+          </g>
+          <!-- 몸통 -->
+          <g id="dongBody">
+            <rect x="65" y="130" width="110" height="95" rx="40" fill="url(#dpbg)"/>
+            <rect x="85" y="150" width="70" height="45" rx="15" fill="#2D6A59" opacity="0.2"/>
+            <text x="120" y="180" text-anchor="middle" font-size="22" font-weight="900" fill="#2D6A59" style="letter-spacing:2px;opacity:.8">AI</text>
+          </g>
+          <!-- 목 -->
+          <g id="dongNeck">
+            <rect x="105" y="115" width="30" height="20" rx="5" fill="#2D6A59"/>
+          </g>
+          <!-- 머리 -->
+          <g id="dongHead">
+            <circle cx="120" cy="75" r="65" fill="url(#dpbg)"/>
+            <rect x="117" y="0" width="6" height="15" rx="3" fill="#2D6A59"/>
+            <circle cx="120" cy="0" r="10" fill="#4B9D83" id="dongAntenna"/>
+            <circle cx="85" cy="95" r="10" fill="#FFB2B2" opacity="0.5"/>
+            <circle cx="155" cy="95" r="10" fill="#FFB2B2" opacity="0.5"/>
+            <!-- 눈 -->
+            <g id="dongEyeL" transform="translate(85,75)"><circle r="8" fill="#333"/></g>
+            <g id="dongEyeR" transform="translate(155,75)"><circle r="8" fill="#333"/></g>
+            <!-- 입 -->
+            <g id="dongMouth" transform="translate(120,105)">
+              <path d="M-15,0 Q0,12 15,0" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+            </g>
+          </g>
+          <!-- 오른팔 -->
+          <g id="dongArmR" class="dong-arm-wave-r">
+            <rect x="166" y="140" width="24" height="60" rx="12" fill="url(#dpbg)" transform="rotate(-75 178 145)"/>
+          </g>
+        </svg>
+      </div>
       <div style="flex:1;background:linear-gradient(135deg,var(--al),#e8f8f4);border:2px solid var(--ab);border-radius:20px 20px 20px 6px;padding:14px 18px;position:relative;">
         <div id="dongPopupMsg" style="font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.55;margin-bottom:6px;">
           처음 오셨군요! 반가워요 😊

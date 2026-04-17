@@ -1,0 +1,35 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="svg1" viewBox="0 0 200 200" width="180" height="180"><defs>
+            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
+            <radialGradient id="bg3D" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#4B9D83"/>
+                <stop offset="50%" stop-color="#2D6A59"/>
+                <stop offset="100%" stop-color="#14362D"/>
+            </radialGradient>
+
+            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
+            <radialGradient id="bulbWhite3D" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="60%" stop-color="#F2F5F4"/>
+                <stop offset="100%" stop-color="#C5D1CE"/>
+            </radialGradient>
+
+            <!-- 소켓 부분 그레이 3D 그라데이션 -->
+            <linearGradient id="socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E8EFED"/>
+                <stop offset="100%" stop-color="#A9B8B5"/>
+            </linearGradient>
+
+            <!-- 부드러운 그림자 효과 -->
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#bg3D)"/>
+                <g filter="url(#shadow)">
+                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
+                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#bulbWhite3D)"/>
+                    <!-- 하단 점 (Dot) -->
+                    <circle cx="100" cy="162" r="11" fill="url(#bulbWhite3D)"/>
+                </g>
+            </svg>

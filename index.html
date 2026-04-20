@@ -969,6 +969,59 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .story-empathy-text{font-size:16px;line-height:1.85;color:var(--ink);word-break:keep-all;white-space:pre-wrap;}
 .story-empathy-cta{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
 .story-empathy-cta .btn-p,.story-empathy-cta .btn-g{flex:1;min-width:0;justify-content:center;}
+
+/* ── 자서전 스타일/분량 선택 ── */
+.memoir-picker{padding:20px 22px;background:var(--al);border:1px solid var(--ab);border-radius:14px;margin-bottom:4px;}
+.memoir-picker-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:16px;text-align:center;}
+.memoir-picker-label{font-size:13px;font-weight:700;color:var(--ac);margin:14px 0 8px;letter-spacing:-.01em;}
+.memoir-picker-label:first-of-type{margin-top:0;}
+.memoir-picker-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.mem-chip{
+  font-family:inherit;font-size:14px;font-weight:500;
+  padding:9px 14px;border-radius:100px;
+  background:#fff;border:1.5px solid var(--bd);color:var(--i2);
+  cursor:pointer;transition:all .15s;
+}
+.mem-chip:hover{border-color:var(--ab);color:var(--ac);}
+.mem-chip.on{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700;box-shadow:0 2px 0 var(--ad);}
+
+/* ── 자서전 생성 로딩 ── */
+.memoir-generating{text-align:center;padding:36px 20px;}
+.memoir-gen-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.memoir-gen-sub{font-size:14px;color:var(--i3);margin-bottom:20px;}
+.memoir-gen-dots{display:inline-flex;gap:8px;}
+.memoir-gen-dots span{
+  width:10px;height:10px;border-radius:50%;background:var(--ac);
+  animation:memDotBounce 1.4s ease-in-out infinite;
+}
+.memoir-gen-dots span:nth-child(2){animation-delay:.2s;}
+.memoir-gen-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes memDotBounce{
+  0%,80%,100%{transform:scale(.6);opacity:.4;}
+  40%{transform:scale(1);opacity:1;}
+}
+
+/* ── 자서전 결과 박스 ── */
+.memoir-result-box{
+  background:#fff;border:1.5px solid var(--ab);border-radius:14px;
+  overflow:hidden;margin-bottom:4px;
+}
+.memoir-result-header{
+  background:var(--al);padding:14px 18px;
+  border-bottom:1px solid var(--ab);
+}
+.memoir-result-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ad);margin-bottom:3px;}
+.memoir-result-meta{font-size:12px;color:var(--ac);font-weight:500;}
+.memoir-result-text{
+  padding:20px 22px;
+  font-family:var(--serif);font-size:16px;line-height:1.95;
+  color:var(--ink);white-space:pre-wrap;
+  max-height:340px;overflow-y:auto;
+  background:#fff;
+}
+.memoir-result-cta{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.memoir-result-cta .btn-p,.memoir-result-cta .btn-g{width:100%;justify-content:center;}
+
 @media(max-width:720px){
   .story-modal-box{padding:24px 18px 20px;border-radius:14px;max-height:92vh;}
   .story-modal-question{font-size:19px;padding-right:36px;}
@@ -977,6 +1030,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .story-modal-footer .btn-g,.story-modal-footer .btn-p{width:100%;justify-content:center;}
   .story-empathy-cta{flex-direction:column;}
   .story-empathy-cta .btn-p,.story-empathy-cta .btn-g{width:100%;}
+  .memoir-picker{padding:16px 14px;}
+  .memoir-picker-title{font-size:16px;}
+  .mem-chip{font-size:13px;padding:8px 12px;}
+  .memoir-result-text{font-size:15px;padding:16px 18px;max-height:280px;}
 }
 
 /* ── 푸터 로고 서브텍스트 ── */
@@ -7778,18 +7835,273 @@ async function _showEmpathyFeedback(question, answer){
     empathyText = '소중한 이야기를 들려주셔서 감사해요. 이렇게 하나씩 꺼내주시는 기억들이 모여서, 한 권의 책이 될 거예요. 🌿';
   }
 
+  // 질문과 답변을 전역에 보관 (다음 단계에서 사용)
+  window._storyCurrentQuestion = question;
+  window._storyCurrentAnswer = answer;
+
   fb.innerHTML =
     '<div class="story-empathy-box">' +
       '<div class="story-empathy-label">🤗 동동이의 한마디</div>' +
       '<div class="story-empathy-text">' + _escapeStoryHtml(empathyText) + '</div>' +
     '</div>' +
     '<div class="story-empathy-cta">' +
-      '<button class="btn-p" onclick="goToMemoirFromStory()">📖 자서전 한 챕터 만들기</button>' +
-      '<button class="btn-g" onclick="closeStoryModal()">나중에 하기</button>' +
+      '<button class="btn-p" onclick="showMemoirStylePicker()">✨ 자서전 챕터로 완성하기</button>' +
+      '<button class="btn-g" onclick="closeStoryModal()">답변만 저장하기</button>' +
     '</div>';
 }
 
+// ── 자서전 스타일 & 분량 선택 화면 ──
+var _storyStyleChoices = {
+  style: '편안한 대화체로',
+  length: '충분히 (2500자)'
+};
+
+function showMemoirStylePicker(){
+  var fb = document.getElementById('storyModalFeedback');
+  if(!fb) return;
+
+  _storyStyleChoices = {
+    style: '편안한 대화체로',
+    length: '충분히 (2500자)'
+  };
+
+  var styles = ['편안한 대화체로','문학적으로 아름답게','손자에게 들려주듯','일기 형식으로'];
+  var lengths = ['보통 (1500자)','충분히 (2500자)','풍성하게 (4000자)'];
+
+  function renderChips(groupId, items, selected){
+    return items.map(function(item, idx){
+      var isSel = item === selected;
+      return '<button type="button" class="mem-chip' + (isSel?' on':'') + '" data-group="'+groupId+'" data-val="'+_escapeStoryHtml(item)+'" onclick="_pickMemoirChoice(\''+groupId+'\', \''+item.replace(/'/g,"\\'")+'\')">'+item+'</button>';
+    }).join('');
+  }
+
+  fb.innerHTML =
+    '<div class="memoir-picker">' +
+      '<div class="memoir-picker-title">어떤 분위기로 자서전을 쓸까요?</div>' +
+      '<div class="memoir-picker-label">스타일</div>' +
+      '<div class="memoir-picker-chips" id="memChipsStyle">' + renderChips('style', styles, _storyStyleChoices.style) + '</div>' +
+      '<div class="memoir-picker-label">분량</div>' +
+      '<div class="memoir-picker-chips" id="memChipsLength">' + renderChips('length', lengths, _storyStyleChoices.length) + '</div>' +
+    '</div>' +
+    '<div class="story-empathy-cta">' +
+      '<button class="btn-p" onclick="generateMemoirFromStory()">✨ 완성하기</button>' +
+      '<button class="btn-g" onclick="_backToEmpathy()">← 이전으로</button>' +
+    '</div>';
+}
+
+function _pickMemoirChoice(groupId, value){
+  _storyStyleChoices[groupId] = value;
+  var container = document.getElementById('memChips' + groupId.charAt(0).toUpperCase() + groupId.slice(1));
+  if(!container) return;
+  var chips = container.querySelectorAll('.mem-chip');
+  chips.forEach(function(c){
+    if(c.getAttribute('data-val') === value){ c.classList.add('on'); }
+    else { c.classList.remove('on'); }
+  });
+}
+
+function _backToEmpathy(){
+  // 다시 공감 멘트 단계로 돌아가기
+  var q = window._storyCurrentQuestion;
+  var a = window._storyCurrentAnswer;
+  if(q && a) _showEmpathyFeedback(q, a);
+}
+
+// ── AI 자서전 생성 ──
+async function generateMemoirFromStory(){
+  var fb = document.getElementById('storyModalFeedback');
+  if(!fb) return;
+
+  var question = window._storyCurrentQuestion || '';
+  var answer = window._storyCurrentAnswer || '';
+  var style = _storyStyleChoices.style || '편안한 대화체로';
+  var length = _storyStyleChoices.length || '충분히 (2500자)';
+
+  // 분량에 따라 max_tokens 조정
+  var maxTokens = 2000;
+  if(length.indexOf('1500') !== -1) maxTokens = 2400;
+  else if(length.indexOf('2500') !== -1) maxTokens = 3800;
+  else if(length.indexOf('4000') !== -1) maxTokens = 6000;
+
+  // 로딩 UI
+  fb.innerHTML =
+    '<div class="memoir-generating">' +
+      '<div class="memoir-gen-title">✨ 동동이가 자서전을 쓰고 있어요</div>' +
+      '<div class="memoir-gen-sub">잠깐만요, 곧 완성돼요…</div>' +
+      '<div class="memoir-gen-dots"><span></span><span></span><span></span></div>' +
+    '</div>';
+
+  var memoirText = '';
+  try{
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        messages: [{
+          role:'user',
+          content:
+            '다음은 "AI 동행"에서 어르신(60~80대)이 오늘의 질문에 답한 내용입니다. 이 답변을 재료로, 감동적인 자서전 한 챕터를 완성해주세요.\n\n' +
+            '[질문]\n' + question + '\n\n' +
+            '[어르신의 답변]\n' + answer + '\n\n' +
+            '[스타일] ' + style + '\n' +
+            '[분량] ' + length + ' 내외\n\n' +
+            '요구사항:\n' +
+            '- 답변 속 단편적 기억들을 장면으로 살려 한 편의 이야기로 엮어주세요\n' +
+            '- 단순 요약 금지. 냄새·소리·색깔·표정·날씨 같은 감각 디테일을 풍부하게 살려주세요\n' +
+            '- 1인칭 시점 ("나"로 시작)\n' +
+            '- 답변에 없는 사실은 지어내지 마세요. 언급된 인물과 사건만 사용하세요\n' +
+            '- 따옴표 없이 본문만 출력 (제목 포함 금지, 장면 설명만)\n' +
+            '- 문단 사이 빈 줄로 구분'
+        }]
+      })
+    });
+    var data = await resp.json();
+    if(data && data.content && data.content.length){
+      memoirText = data.content.map(function(c){ return c.text || ''; }).join('').trim();
+    }
+  }catch(e){ console.warn('[memoir-gen] failed:', e && e.message); }
+
+  if(!memoirText){
+    fb.innerHTML =
+      '<div class="story-empathy-box" style="border-left-color:#c23e2a;background:#ffeceb;">' +
+        '<div class="story-empathy-label" style="color:#c23e2a;">⚠️ 잠시 문제가 있었어요</div>' +
+        '<div class="story-empathy-text">자서전을 만드는 데 실패했어요. 잠시 후 다시 시도해주세요.</div>' +
+      '</div>' +
+      '<div class="story-empathy-cta">' +
+        '<button class="btn-p" onclick="generateMemoirFromStory()">다시 시도</button>' +
+        '<button class="btn-g" onclick="closeStoryModal()">닫기</button>' +
+      '</div>';
+    return;
+  }
+
+  // 결과 전역 보관
+  window._storyGeneratedMemoir = memoirText;
+  _showMemoirResult(memoirText);
+}
+
+// ── 완성 결과 화면 ──
+function _showMemoirResult(text){
+  var fb = document.getElementById('storyModalFeedback');
+  if(!fb) return;
+
+  var charCount = text.length;
+  // 자서전 챕터 매핑 (폴백 포함)
+  var q = window._storyCurrentDailyQ || window._currentDailyQ || {};
+  var chapterMapping = q.chapter_mapping || 1;
+  var chapterTitle = '';
+  try{
+    if(typeof MEMOIR_CHAPTERS !== 'undefined'){
+      var ch = MEMOIR_CHAPTERS.find(function(c){ return c.num === chapterMapping; });
+      if(ch) chapterTitle = chapterMapping + '챕터. ' + ch.title;
+    }
+  }catch(e){}
+  if(!chapterTitle) chapterTitle = chapterMapping + '챕터';
+
+  fb.innerHTML =
+    '<div class="memoir-result-box">' +
+      '<div class="memoir-result-header">' +
+        '<div class="memoir-result-title">📖 자서전 챕터 완성</div>' +
+        '<div class="memoir-result-meta">' + charCount.toLocaleString() + '자 · ' + _escapeStoryHtml(chapterTitle) + '</div>' +
+      '</div>' +
+      '<div class="memoir-result-text" id="memoirResultText">' + _escapeStoryHtml(text) + '</div>' +
+    '</div>' +
+    '<div class="memoir-result-cta">' +
+      '<button class="btn-p" onclick="saveMemoirResultToPortfolio()">📁 내 작품함 + 자서전에 저장</button>' +
+      '<button class="btn-g" onclick="shareMemoirKakao()">💬 카카오톡 공유</button>' +
+      '<button class="btn-g" onclick="showMemoirStylePicker()">🔄 다시 쓰기</button>' +
+    '</div>';
+}
+
+// ── 저장: 작품함 + 자서전 챕터 둘 다 ──
+function saveMemoirResultToPortfolio(){
+  var text = window._storyGeneratedMemoir || '';
+  if(!text){ if(typeof showToast==='function') showToast('저장할 내용이 없어요'); return; }
+
+  var q = window._storyCurrentDailyQ || window._currentDailyQ || {};
+  var chapterMapping = q.chapter_mapping || 1;
+
+  try{
+    // 1. 포트폴리오 저장
+    if(typeof saveToPortfolio === 'function'){
+      saveToPortfolio('자서전 쓰기 ' + chapterMapping + '챕터', text, window._storyCurrentAnswer || '');
+    }
+
+    // 2. 자서전 챕터 저장 (localStorage)
+    if(typeof saveMemoirChapter === 'function'){
+      saveMemoirChapter(chapterMapping, text);
+    } else {
+      try{ localStorage.setItem('aiDonghang_memoir_' + chapterMapping, text); }catch(e){}
+    }
+
+    // 3. 자서전 도장 업데이트
+    try{
+      if(typeof DOJO_CONFIG !== 'undefined' && typeof dojoProgress !== 'undefined'){
+        var memoirDojo = DOJO_CONFIG.find(function(d){ return d.builderCourse === '자서전 쓰기' || d.name === '자서전 쓰기'; });
+        if(memoirDojo && !dojoProgress[memoirDojo.id]){
+          dojoProgress[memoirDojo.id] = true;
+          localStorage.setItem('aiDonghang_dojo', JSON.stringify(dojoProgress));
+          if(typeof saveDojoProgressToSupabase === 'function') saveDojoProgressToSupabase();
+        }
+      }
+    }catch(e){ console.warn('[memoir dojo] '+e.message); }
+
+    if(typeof showToast === 'function'){
+      showToast('📖 자서전 ' + chapterMapping + '챕터에 저장됐어요!');
+    }
+
+    // 완료 화면
+    var fb = document.getElementById('storyModalFeedback');
+    if(fb){
+      fb.innerHTML =
+        '<div class="story-empathy-box" style="text-align:center;padding:28px 20px;">' +
+          '<div style="font-size:44px;margin-bottom:10px;">🎉</div>' +
+          '<div class="story-empathy-label" style="font-size:15px;margin-bottom:10px;">저장 완료!</div>' +
+          '<div class="story-empathy-text" style="font-size:14px;">내 작품함과 자서전 ' + chapterMapping + '챕터에<br>모두 저장됐어요.</div>' +
+        '</div>' +
+        '<div class="story-empathy-cta">' +
+          '<button class="btn-p" onclick="closeStoryModal();showView(\'portfolio\');">📁 내 작품함 보기</button>' +
+          '<button class="btn-g" onclick="closeStoryModal();showView(\'memoir\');">📖 자서전 보기</button>' +
+        '</div>';
+    }
+  }catch(e){
+    console.error('[saveMemoirResult] '+e.message);
+    if(typeof showToast === 'function') showToast('저장 중 오류가 발생했어요');
+  }
+}
+
+// ── 카카오톡 공유 ──
+function shareMemoirKakao(){
+  var text = window._storyGeneratedMemoir || '';
+  if(!text) return;
+  var preview = text.slice(0, 200) + (text.length > 200 ? '...' : '') + '\n\n— AI 동행으로 만든 자서전 한 챕터';
+  try{
+    if(typeof Kakao !== 'undefined' && Kakao.Share){
+      Kakao.Share.sendDefault({
+        objectType: 'text',
+        text: preview,
+        link: { mobileWebUrl: 'https://aitogether.co.kr', webUrl: 'https://aitogether.co.kr' },
+        buttons: [{ title: 'AI 동행에서 나도 만들기', link: { mobileWebUrl: 'https://aitogether.co.kr', webUrl: 'https://aitogether.co.kr' } }]
+      });
+    } else {
+      // 폴백: 클립보드 복사
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(preview);
+        if(typeof showToast==='function') showToast('📋 복사했어요! 카카오톡에 붙여넣으세요');
+      }
+    }
+  }catch(e){
+    console.warn('[kakao share] '+e.message);
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(preview);
+      if(typeof showToast==='function') showToast('📋 복사했어요!');
+    }
+  }
+}
+
 function goToMemoirFromStory(){
+  // 하위 호환용 — 사용 안 함
   closeStoryModal();
   try{
     if(typeof goToCourse === 'function'){ goToCourse('자서전 쓰기'); return; }

@@ -1050,7 +1050,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 .bnav-active svg{stroke:var(--ac)!important;}
 .bnav-active span{color:var(--ac)!important;font-weight:700!important;}
-#helpFloat{position:fixed;bottom:28px;right:16px;z-index:180;width:48px;height:48px;padding:0;border-radius:50%;background:var(--ac);box-shadow:0 4px 18px rgba(42,95,82,.38);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+#helpFloat{position:fixed;bottom:28px;right:16px;z-index:180;width:48px;height:48px;padding:0;border-radius:50%;background:var(--ac);box-shadow:0 4px 18px rgba(42,95,82,.38);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,box-shadow .15s,bottom .2s;}
+/* builder 뷰 활성 시 CTA 바와 겹치지 않도록 위로 올림 */
+#builderView.active ~ #helpFloat,
+body:has(#builderView.active) #helpFloat{bottom:104px;}
 #helpFloat:hover{transform:scale(1.07);box-shadow:0 6px 26px rgba(42,95,82,.48);}
 #helpFloat::after{content:"";display:none;}
 #helpFloat:hover + #helpTooltip{opacity:1;}
@@ -1912,7 +1915,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <body>
 <!-- NAV -->
 <nav class="nav" id="globalNav">
-  <a href="#" onclick="showView('home')" class="nav-logo">
+  <a href="#" onclick="showView('home');return false;" class="nav-logo">
     <svg width="38" height="38" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="nv_svg1" viewBox="0 0 200 200"  ><defs>
             <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
             <radialGradient id="nv_bg3D" cx="30%" cy="30%" r="70%">
@@ -1949,17 +1952,17 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
             </svg><span style="font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:var(--ink);margin-left:8px;letter-spacing:-.02em;">AI<span style="color:#2D6A59;margin-left:4px;">동행</span></span>
   </a>
   <div class="nav-links" id="navLinksGuest">
-    <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">도장깨기</a>
-    <a class="nav-link" id="nav-community" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq')">고객센터</a>
+    <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder');return false;">만들기</a>
+    <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo');return false;">도장깨기</a>
+    <a class="nav-link" id="nav-community" href="#" onclick="showView('community');return false;">커뮤니티</a>
+    <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
-    <a class="nav-link" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" href="#" onclick="showView('dojo')">도장깨기</a>
-    <a class="nav-link" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" href="#" onclick="showView('portfolio')">내 작품함</a>
-    <a class="nav-link" href="#" onclick="showView('faq')">고객센터</a>
+    <a class="nav-link" href="#" onclick="showView('builder');return false;">만들기</a>
+    <a class="nav-link" href="#" onclick="showView('dojo');return false;">도장깨기</a>
+    <a class="nav-link" href="#" onclick="showView('community');return false;">커뮤니티</a>
+    <a class="nav-link" href="#" onclick="showView('portfolio');return false;">내 작품함</a>
+    <a class="nav-link" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-row" id="navBtnsGuest">
     <button class="btn-nav-login" onclick="showView('login')">로그인</button>
@@ -5406,79 +5409,107 @@ var COURSE_CAT = {
 
 // ── 뷰 전환 ──
 function showView(view, _skipHash){
-  // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
-  var skipSave = ['auth','admin','mypage','login'];
-  if(skipSave.indexOf(view) === -1){
-    localStorage.setItem('aiDonghang_lastView', view);
-  }
-  // 해시 URL 업데이트 (뒤로가기 트리거 시엔 스킵)
-  if(!_skipHash){
-    var hashMap = {
-      home:'', dojo:'dojo', builder:'builder', portfolio:'portfolio',
-      pricing:'pricing', auth:'auth', mypage:'mypage', faq:'faq',
-      learn:'learn', community:'community', about:'about',
-      b2g:'b2g', admin:'admin', memoir:'memoir'
+  try{
+    // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
+    var skipSave = ['auth','admin','mypage','login'];
+    if(skipSave.indexOf(view) === -1){
+      try{ localStorage.setItem('aiDonghang_lastView', view); }catch(e){}
+    }
+    // 해시 URL 업데이트 (뒤로가기 트리거 시엔 스킵) — pushState 실패해도 뷰 전환은 계속
+    if(!_skipHash){
+      try{
+        var hashMap = {
+          home:'', dojo:'dojo', builder:'builder', portfolio:'portfolio',
+          pricing:'pricing', auth:'auth', mypage:'mypage', faq:'faq',
+          learn:'learn', community:'community', about:'about',
+          b2g:'b2g', admin:'admin', memoir:'memoir'
+        };
+        var hash = hashMap[view] !== undefined ? hashMap[view] : view;
+        var newHash = hash ? '#'+hash : '#';
+        if(window.location.hash !== newHash){
+          window.history.pushState({view:view}, '', newHash || window.location.pathname);
+        }
+      }catch(e){ /* pushState 실패(샌드박스 등) 무시 */ }
+    }
+    var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView'];
+    allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
+    try{ window.scrollTo(0,0); }catch(e){}
+    var bMap={dojo:'bnav-dojo',builder:'bnav-builder',portfolio:'bnav-portfolio',community:'bnav-community',faq:'bnav-faq'};
+    ['bnav-dojo','bnav-builder','bnav-portfolio','bnav-community','bnav-faq'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
+    if(bMap[view]){var el=g(bMap[view]);if(el)el.classList.add('bnav-active');}
+    var nMap={dojo:'nav-dojo',builder:'nav-builder',learn:'nav-learn',pricing:'nav-pricing',faq:'nav-faq',about:'nav-about',b2g:'nav-b2g'};
+    ['nav-dojo','nav-builder','nav-learn','nav-community','nav-pricing','nav-faq','nav-about','nav-b2g'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
+    if(nMap[view]){var el=g(nMap[view]);if(el)el.classList.add('active');}
+    var gn=g('globalNav');if(gn)gn.style.display=(view==='admin')?'none':'flex';
+    // helpFloat(?)과 builder CTA 바 겹침 방지
+    var hf=g('helpFloat');
+    if(hf){ hf.style.bottom = (view==='builder') ? '104px' : ''; }
+
+    // ★ 핵심: 무조건 먼저 해당 view를 active로 만든다.
+    // 각 뷰별 초기화 함수(renderXXX 등)의 에러가 화면 전환을 막지 않도록 분리.
+    var viewIdMap = {
+      home:'homeView', dojo:'dojoView', builder:'builderView', portfolio:'portfolioView',
+      pricing:'pricingView', auth:'authView', mypage:'mypageView', faq:'faqView',
+      learn:'learnView', community:'communityView', about:'aboutView', b2g:'b2gView',
+      admin:'adminView', memoir:'memoirView', login:'authView'
     };
-    var hash = hashMap[view] !== undefined ? hashMap[view] : view;
-    var newHash = hash ? '#'+hash : '#';
-    if(window.location.hash !== newHash){
-      window.history.pushState({view:view}, '', newHash || window.location.pathname);
+    // 회원 전용 가드 (먼저 체크, 리다이렉트 후 종료)
+    if((view==='portfolio' || view==='mypage') && (!userProfile || !userProfile.name)){
+      return showView('login');
     }
-  }
-  // URL 해시 업데이트 (뒤로가기 지원)
-  var hashSkip = ['auth','admin','login'];
-  if(hashSkip.indexOf(view) === -1){
-    var newHash = '#' + (view === 'home' ? '' : view);
-    if(window.location.hash !== newHash){
-      history.pushState({view: view}, '', newHash || window.location.pathname);
-    }
-  }
-  var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView'];
-  allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
-  window.scrollTo(0,0);
-  var bMap={dojo:'bnav-dojo',builder:'bnav-builder',portfolio:'bnav-portfolio',community:'bnav-community',faq:'bnav-faq'};
-  ['bnav-dojo','bnav-builder','bnav-portfolio','bnav-community','bnav-faq'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
-  if(bMap[view]){var el=g(bMap[view]);if(el)el.classList.add('bnav-active');}
-  var nMap={dojo:'nav-dojo',builder:'nav-builder',learn:'nav-learn',pricing:'nav-pricing',faq:'nav-faq',about:'nav-about',b2g:'nav-b2g'};
-  ['nav-dojo','nav-builder','nav-learn','nav-community','nav-pricing','nav-faq','nav-about','nav-b2g'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
-  if(nMap[view]){var el=g(nMap[view]);if(el)el.classList.add('active');}
-  var gn=g('globalNav');if(gn)gn.style.display=(view==='admin')?'none':'flex';
-  function _activate(id){var el=g(id);if(el)el.classList.add('active');}
-  if(view==='home'){_activate('homeView');}
-  else if(view==='dojo'){
-    _activate('dojoView');resetDojoViews();showDojoList();
-    // 팝업 트리거
-    setTimeout(function(){
-      var surveyDone = localStorage.getItem('aiDonghang_surveyDone') || localStorage.getItem('aiDonghang_onboarded');
-      if(!surveyDone){
-        // 첫 방문 → 설문 바로 표시 (동동이 없이)
-        obOpen('survey');
-      } else {
-        // 재방문 → 동동이 팝업
-        showDongPopup('return');
+    var targetId = viewIdMap[view] || 'homeView';
+    var targetEl = g(targetId);
+    if(targetEl) targetEl.classList.add('active');
+
+    // 각 뷰별 초기화 — 실패해도 화면 전환은 유지
+    try{
+      if(view==='dojo'){
+        if(typeof resetDojoViews==='function') resetDojoViews();
+        if(typeof showDojoList==='function') showDojoList();
+        // 팝업 트리거
+        setTimeout(function(){
+          try{
+            var surveyDone = localStorage.getItem('aiDonghang_surveyDone') || localStorage.getItem('aiDonghang_onboarded');
+            if(!surveyDone){
+              if(typeof obOpen==='function') obOpen('survey');
+            } else {
+              if(typeof showDongPopup==='function') showDongPopup('return');
+            }
+          }catch(e){ console.warn('[dojo popup] '+e.message); }
+        }, 600);
       }
-    }, 600);
+      else if(view==='builder'){ if(typeof showPage2==='function') showPage2(); }
+      else if(view==='portfolio'){ if(typeof renderPortfolioList==='function') renderPortfolioList(); }
+      else if(view==='auth'){ if(typeof switchAuthTab==='function') switchAuthTab('signup'); }
+      else if(view==='login'){ if(typeof switchAuthTab==='function') switchAuthTab('login'); }
+      else if(view==='mypage'){ if(typeof renderMypage==='function') renderMypage(); }
+      else if(view==='faq'){ setTimeout(function(){ try{ if(typeof initCsChat==='function') initCsChat(); }catch(e){} }, 100); }
+      else if(view==='memoir'){
+        ['page2View','page3View','page4View'].forEach(function(id){
+          var el=g(id); if(el) el.classList.remove('active');
+        });
+        if(typeof showMemoirChapterSelect==='function') showMemoirChapterSelect();
+      }
+      else if(view==='community'){
+        if(typeof renderCommunity==='function') renderCommunity();
+        if(typeof loadCommunityFromSupabase==='function') loadCommunityFromSupabase();
+      }
+      else if(view==='admin'){
+        setTimeout(function(){ try{ if(typeof loadApiKeyToAdmin==='function') loadApiKeyToAdmin(); }catch(e){} }, 100);
+        setTimeout(function(){ try{ if(typeof loadReplicateKeyToAdmin==='function') loadReplicateKeyToAdmin(); }catch(e){} }, 100);
+        setTimeout(function(){ try{ if(typeof loadAdminDashboard==='function') loadAdminDashboard(); }catch(e){} }, 300);
+      }
+    }catch(initErr){
+      console.error('[showView init] view='+view+': '+initErr.message);
+    }
+  }catch(outerErr){
+    console.error('[showView outer] view='+view+': '+outerErr.message);
+    // 최종 안전망: 홈이라도 띄움
+    try{
+      var homeEl = g('homeView');
+      if(homeEl) homeEl.classList.add('active');
+    }catch(e){}
   }
-  else if(view==='builder'){_activate('builderView');showPage2();}
-  else if(view==='portfolio'){_activate('portfolioView');renderPortfolioList();}
-  else if(view==='pricing'){_activate('pricingView');}
-  else if(view==='auth'){_activate('authView');switchAuthTab('signup');}
-  else if(view==='login'){_activate('authView');switchAuthTab('login');}
-  else if(view==='mypage'){_activate('mypageView');renderMypage();}
-  else if(view==='faq'){_activate('faqView');setTimeout(initCsChat,100);}
-  else if(view==='learn'){_activate('learnView');}
-  else if(view==='memoir'){
-    // builder 하위 페이지들 정리
-    ['page2View','page3View','page4View'].forEach(function(id){
-      var el=g(id); if(el) el.classList.remove('active');
-    });
-    _activate('memoirView');
-    showMemoirChapterSelect();
-  }
-  else if(view==='community'){_activate('communityView');renderCommunity();loadCommunityFromSupabase();}
-  else if(view==='about'){_activate('aboutView');}
-  else if(view==='b2g'){_activate('b2gView');}
-  else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);setTimeout(loadAdminDashboard,300);}
 }
 function setNavLoggedIn(name){
   if(g('navLinksGuest'))g('navLinksGuest').style.display='none';
@@ -8786,7 +8817,19 @@ function confirmLogout(){
   modal.innerHTML='<div style="background:#fff;border-radius:22px;padding:34px;width:100%;max-width:360px;box-shadow:0 20px 64px rgba(0,0,0,.25);text-align:center;"><div style="font-size:52px;margin-bottom:16px;">👋</div><div style="font-family:\'Gowun Batang\',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:9px;">로그아웃 하시겠어요?</div><div style="font-size:15px;color:var(--i3);margin-bottom:26px;">작품함은 다음에 로그인해도 유지돼요</div><div style="display:flex;gap:10px;"><button onclick="document.getElementById(\'logoutConfirmModal\').remove()" style="flex:1;padding:14px;border:1.5px solid var(--bd);border-radius:100px;background:#fff;color:var(--i3);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;">취소</button><button onclick="doLogout()" style="flex:1;padding:14px;border:none;border-radius:100px;background:#e05555;color:#fff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">로그아웃</button></div></div>';
   document.body.appendChild(modal);
 }
-function doLogout(){var m=g('logoutConfirmModal');if(m)m.remove();userProfile={};portfolio=[];dojoProgress={};['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});setNavLoggedOut();// ── 해시 라우터 ──
+function doLogout(){
+  var m=g('logoutConfirmModal');if(m)m.remove();
+  userProfile={};portfolio=[];dojoProgress={};
+  ['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});
+  setNavLoggedOut();
+  // 오늘의 질문 카드 숨기기 (회원 전용)
+  var dqCard = g('dailyQuestionCard'); if(dqCard) dqCard.style.display = 'none';
+  // 홈으로 이동
+  showView('home');
+  showToast('또 올게요? 기다리고 있을게요 😊');
+}
+
+// ── 해시 라우터 ──
 function _hashToView(hash){
   var map = {
     '':'home', '#':'home', '#home':'home',
@@ -8808,7 +8851,7 @@ window.addEventListener('popstate', function(e){
 (function(){
   var initView = _hashToView(window.location.hash);
   showView(initView, true);
-})();showToast('또 올게요? 기다리고 있을게요 😊');}
+})();
 
 // ── 기타 ──
 function toggleFaqById(id){var item=g(id);if(item)item.classList.toggle('open');}
@@ -9629,7 +9672,7 @@ filterCards('writing','');
   // 스트릭 초기화
   initStreak();
 })();
-showView('home');
+// NOTE: 초기 뷰 전환은 아래 해시 라우터가 담당 (showView('home') 무조건 호출 제거)
 
 // ══ 동동이 하단 팝업 ══
 
@@ -9683,6 +9726,18 @@ function setDongPose(pose){
 }
 
 function showDongPopup(type){
+  // D2 이후: 홈에서의 'return' 팝업은 상단 "오늘의 질문 카드"가 대체하므로 skip
+  // 도장깨기 페이지의 'return' 팝업은 유지 (해당 페이지 진입 맥락의 재방문 인사)
+  // welcome(신규 가입 설문 유도)은 항상 유지
+  if(type === 'return'){
+    try{
+      var currentHash = (window.location.hash || '').replace('#','');
+      // 홈(빈 해시 또는 #home)에서만 skip
+      if(currentHash === '' || currentHash === 'home'){
+        return;
+      }
+    }catch(e){ /* fallthrough */ }
+  }
   var overlay = g('dongPopupOverlay');
   var msgEl   = g('dongPopupMsg');
   var subEl   = g('dongPopupSub');

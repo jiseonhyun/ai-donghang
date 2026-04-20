@@ -507,18 +507,18 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .example-cta-text{font-size:14px;color:var(--i3);}
 
 /* ── PHOTO CARDS ── */
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px;}
-.photo-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:var(--wm);transition:transform .3s,box-shadow .3s;}
-.photo-card:hover{transform:translateY(-5px);box-shadow:0 20px 52px rgba(28,26,23,.14);}
-.photo-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px;}
+.photo-card{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:#2a2622;transition:transform .25s,box-shadow .25s;border:1px solid rgba(28,26,23,.08);}
+.photo-card:hover{transform:translateY(-4px);box-shadow:0 16px 44px rgba(28,26,23,.14);}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;position:absolute;inset:0;z-index:0;}
 .photo-card:hover img{transform:scale(1.06);}
-.photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(20,40,30,.88) 0%,rgba(20,40,30,.15) 55%,transparent 100%);}
-.photo-content{position:absolute;bottom:0;left:0;right:0;padding:20px 22px;}
-.photo-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);color:#fff;padding:5px 12px;border-radius:100px;margin-bottom:9px;}
-.photo-badge.gold{background:rgba(200,160,80,.9);}
-.photo-title{font-family:var(--serif,serif);font-size:21px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;}
-.photo-tags{display:flex;flex-wrap:wrap;gap:6px;}
-.photo-tag{font-size:12px;color:rgba(255,255,255,.78);background:rgba(255,255,255,.15);padding:3px 9px;border-radius:100px;}
+.photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.05) 100%);z-index:1;}
+.photo-content{position:absolute;bottom:0;left:0;right:0;padding:20px 22px;z-index:2;}
+.photo-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;background:rgba(255,255,255,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:5px 11px;border-radius:100px;margin-bottom:10px;border:1px solid rgba(255,255,255,.25);}
+.photo-badge.gold{background:rgba(222,201,138,.95);color:#3a2800;border-color:transparent;}
+.photo-title{font-family:var(--serif,serif);font-size:22px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3;text-shadow:0 2px 10px rgba(0,0,0,.4);}
+.photo-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.photo-tag{font-size:12px;color:#fff;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:100px;font-weight:500;letter-spacing:-.01em;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 .photo-coming{opacity:.45;cursor:default;}
 .photo-coming:hover{transform:none!important;box-shadow:none!important;}
 .photo-coming:hover img{transform:none!important;}
@@ -747,6 +747,251 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .share-step-num{width:26px;height:26px;border-radius:50%;background:var(--al);color:var(--ac);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .share-close-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;}
 
+/* ── 오늘의 질문 카드 (D2 · 동동이 + 말풍선 리디자인) ── */
+.daily-q-card{
+  margin:24px auto 0;
+  max-width:1040px;
+  padding:34px 40px 30px;
+  background:
+    radial-gradient(circle at 85% -10%, rgba(42,95,82,.06) 0%, transparent 45%),
+    radial-gradient(circle at 10% 110%, rgba(160,124,48,.05) 0%, transparent 40%),
+    linear-gradient(135deg,#FBF8F0 0%,#F4EFE3 100%);
+  border:1px solid rgba(28,26,23,.07);
+  border-radius:22px;
+  box-shadow:0 4px 28px rgba(28,26,23,.06), 0 1px 0 rgba(255,255,255,.8) inset;
+  position:relative;overflow:hidden;
+}
+.daily-q-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 0%,var(--ac) 20%,#3d7a6a 50%,var(--ac) 80%,transparent 100%);
+  opacity:.75;
+}
+.daily-q-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:22px;gap:12px;flex-wrap:wrap;
+}
+.daily-q-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ac);
+}
+.daily-q-eyebrow::before{
+  content:'';width:24px;height:2px;background:var(--ac);display:inline-block;
+}
+.daily-q-counter{
+  font-size:12px;color:var(--i3);font-weight:500;
+  background:rgba(255,255,255,.6);border:1px solid rgba(28,26,23,.08);
+  padding:4px 10px;border-radius:100px;letter-spacing:-.01em;
+}
+
+.daily-q-scene{
+  display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;
+  margin-bottom:26px;
+}
+.daily-q-dong{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  flex-shrink:0;
+}
+.daily-q-dong-label{
+  font-size:11px;font-weight:600;color:var(--i3);
+  background:#fff;border:1px solid rgba(28,26,23,.08);
+  padding:3px 9px;border-radius:100px;white-space:nowrap;
+  letter-spacing:-.01em;
+}
+.daily-q-bubble{
+  position:relative;
+  background:#fff;
+  border:1px solid rgba(42,95,82,.15);
+  border-radius:20px 20px 20px 6px;
+  padding:22px 26px 20px;
+  box-shadow:0 2px 14px rgba(28,26,23,.05);
+}
+.daily-q-bubble::before{
+  content:'';position:absolute;left:-9px;bottom:18px;
+  width:18px;height:18px;background:#fff;
+  border-left:1px solid rgba(42,95,82,.15);
+  border-bottom:1px solid rgba(42,95,82,.15);
+  transform:rotate(45deg);
+  border-bottom-left-radius:3px;
+}
+.daily-q-chapter{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;color:var(--ac);
+  background:var(--al);border:1px solid var(--ab);
+  padding:4px 11px;border-radius:100px;
+  margin-bottom:12px;letter-spacing:-.01em;
+}
+.daily-q-chapter::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--ac);display:inline-block;
+}
+.daily-q-text{
+  font-family:var(--serif);font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.55;letter-spacing:-.01em;
+  margin:0 0 12px;word-break:keep-all;
+}
+.daily-q-hint{
+  font-size:13px;color:var(--i3);line-height:1.6;
+  display:flex;align-items:center;gap:6px;
+}
+.daily-q-hint::before{content:'💡';font-size:12px;}
+
+.daily-q-cta{
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  padding-top:4px;
+}
+.daily-q-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 30px;
+  background:var(--ac);color:#fff;
+  border:none;border-radius:100px;
+  font-size:16px;font-weight:700;font-family:inherit;
+  cursor:pointer;transition:all .18s;min-height:52px;
+  box-shadow:0 3px 0 var(--ad), 0 6px 18px rgba(42,95,82,.18);
+  letter-spacing:-.01em;
+}
+.daily-q-btn:hover{background:var(--ad);transform:translateY(-2px);box-shadow:0 5px 0 var(--ad), 0 10px 24px rgba(42,95,82,.25);}
+.daily-q-btn:active{transform:translateY(0);box-shadow:0 2px 0 var(--ad), 0 3px 10px rgba(42,95,82,.18);}
+.daily-q-skip{
+  background:none;border:none;color:var(--i3);
+  font-size:14px;font-weight:500;cursor:pointer;
+  padding:10px 6px;font-family:inherit;min-height:44px;
+  border-bottom:1px solid transparent;
+  transition:all .15s;letter-spacing:-.01em;
+}
+.daily-q-skip:hover{color:var(--ac);border-bottom-color:var(--ac);}
+
+/* 동동이 SVG 스타일 */
+.daily-q-dong-svg{
+  filter:drop-shadow(0 8px 20px rgba(232,160,32,.28));
+  animation:dongBounce 2.8s ease-in-out infinite;
+}
+
+@media(max-width:780px){
+  .daily-q-card{margin:16px 14px 0;padding:24px 22px 22px;border-radius:18px;}
+  .daily-q-head{margin-bottom:18px;}
+  .daily-q-scene{grid-template-columns:1fr;gap:14px;margin-bottom:22px;}
+  .daily-q-dong{flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;}
+  .daily-q-dong-label{font-size:12px;padding:3px 10px;}
+  .daily-q-dong-svg{width:54px!important;height:68px!important;}
+  .daily-q-bubble{
+    border-radius:4px 20px 20px 20px;
+    padding:18px 20px 16px;
+  }
+  .daily-q-bubble::before{
+    left:20px;top:-9px;bottom:auto;
+    border-left:1px solid rgba(42,95,82,.15);
+    border-top:1px solid rgba(42,95,82,.15);
+    border-bottom:none;
+    border-bottom-left-radius:0;
+    border-top-left-radius:3px;
+  }
+  .daily-q-text{font-size:20px;}
+  .daily-q-cta{flex-direction:column;align-items:stretch;gap:8px;}
+  .daily-q-btn{width:100%;justify-content:center;padding:14px;}
+  .daily-q-skip{text-align:center;padding:12px;}
+}
+
+/* ── 스토리 답변 모달 ── */
+.story-modal-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(28,26,23,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.story-modal-box{
+  background:#fff;border-radius:20px;
+  width:100%;max-width:640px;max-height:90vh;
+  overflow-y:auto;padding:32px 34px 28px;position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.story-modal-close{
+  position:absolute;top:14px;right:14px;
+  width:40px;height:40px;border:none;background:var(--wm);
+  border-radius:50%;cursor:pointer;font-size:22px;color:var(--i3);
+  display:flex;align-items:center;justify-content:center;
+}
+.story-modal-close:hover{background:var(--al);color:var(--ac);}
+.story-modal-badge{
+  display:inline-block;background:var(--gl);color:var(--gd);
+  font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;
+  margin-bottom:12px;letter-spacing:-.01em;
+}
+.story-modal-question{
+  font-family:var(--serif);font-size:22px;font-weight:700;
+  color:var(--ink);line-height:1.55;margin-bottom:20px;
+  word-break:keep-all;padding-right:30px;
+}
+.story-textarea{
+  width:100%;min-height:170px;
+  padding:14px 16px;
+  border:1.5px solid var(--bd);border-radius:12px;
+  font-family:inherit;font-size:16px;line-height:1.75;
+  color:var(--ink);resize:vertical;background:var(--bg);
+  -webkit-appearance:none;
+}
+.story-textarea:focus{outline:none;border-color:var(--ac);background:#fff;box-shadow:0 0 0 3px var(--al);}
+.story-modal-tools{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:10px;gap:12px;flex-wrap:wrap;
+}
+.story-voice-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--al);color:var(--ac);
+  border:1px solid var(--ab);border-radius:100px;
+  padding:9px 16px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:inherit;min-height:40px;
+}
+.story-voice-btn:hover{background:var(--ab);}
+.story-voice-btn.listening{
+  background:#ffeceb;color:#c23e2a;border-color:#f3c2bb;
+  animation:voicePulse 1.4s infinite;
+}
+@keyframes voicePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(194,62,42,.35);}
+  50%{box-shadow:0 0 0 7px rgba(194,62,42,0);}
+}
+.story-char-count{font-size:13px;color:var(--i3);}
+.story-modal-footer{
+  display:flex;gap:10px;justify-content:flex-end;
+  margin-top:22px;padding-top:20px;border-top:1px solid var(--bd);
+}
+.story-empathy-loading{
+  text-align:center;padding:28px 20px;color:var(--i3);
+  font-size:15px;line-height:1.7;
+}
+.story-empathy-loading-dots{display:inline-block;min-width:18px;text-align:left;}
+.story-empathy-box{
+  background:linear-gradient(135deg,var(--al) 0%,#e0f0eb 100%);
+  border-left:4px solid var(--ac);border-radius:12px;
+  padding:20px 22px;margin-top:14px;
+}
+.story-empathy-label{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:8px;letter-spacing:-.01em;}
+.story-empathy-text{font-size:16px;line-height:1.85;color:var(--ink);word-break:keep-all;white-space:pre-wrap;}
+.story-empathy-cta{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
+.story-empathy-cta .btn-p,.story-empathy-cta .btn-g{flex:1;min-width:0;justify-content:center;}
+@media(max-width:720px){
+  .story-modal-box{padding:24px 18px 20px;border-radius:14px;max-height:92vh;}
+  .story-modal-question{font-size:19px;padding-right:36px;}
+  .story-textarea{font-size:17px;min-height:150px;}
+  .story-modal-footer{flex-direction:column-reverse;gap:8px;}
+  .story-modal-footer .btn-g,.story-modal-footer .btn-p{width:100%;justify-content:center;}
+  .story-empathy-cta{flex-direction:column;}
+  .story-empathy-cta .btn-p,.story-empathy-cta .btn-g{width:100%;}
+}
+
+/* ── 푸터 로고 서브텍스트 ── */
+.ft-logo-txt{display:inline-flex;flex-direction:column;margin-left:2px;line-height:1.2;}
+.ft-logo-tag{
+  font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;
+  color:var(--i3);margin-top:2px;letter-spacing:-.01em;
+}
+.footer-logo{align-items:center;}
+
+/* ── 도장깨기 홈 미리보기 축소 ── */
+#dojoHomePreview{padding-top:48px!important;padding-bottom:48px!important;}
+#dojoHomePreview .sec-title{font-size:28px!important;margin-bottom:8px;}
+#dojoHomePreview .sec-sub{font-size:15px!important;margin-bottom:22px!important;}
+
 /* 페이월 */
 .paywall-modal{background:#fff;border-radius:24px;padding:38px 34px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;}
 .paywall-emoji{font-size:56px;display:block;margin-bottom:16px;}
@@ -768,7 +1013,14 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   #helpFloat{bottom:72px;right:12px;width:44px;height:44px;}
   .hero{grid-template-columns:1fr;padding:44px 20px 36px;gap:28px;}
   .hero-title{font-size:36px;}
-  .photo-grid{grid-template-columns:1fr 1fr;}
+  /* 모바일: 사진 카드 1열 가로형 (낭비 공간 제거) */
+  .photo-grid{grid-template-columns:1fr;gap:12px;}
+  .photo-card{aspect-ratio:auto;height:120px;}
+  .photo-overlay{background:linear-gradient(to right,rgba(0,0,0,.68) 0%,rgba(0,0,0,.35) 55%,rgba(0,0,0,.1) 100%);}
+  .photo-content{padding:16px 18px;bottom:auto;top:50%;transform:translateY(-50%);max-width:80%;}
+  .photo-badge{margin-bottom:6px;font-size:10px;padding:3px 9px;}
+  .photo-title{font-size:19px;margin-bottom:5px;}
+  .photo-tag{font-size:11px;padding:2px 8px;}
   .p3-wrap,.p3-right,.p3-left{all:unset;}
   .cards-wrap,.search-wrap,.cat-wrap,.page-hdr{padding-left:20px;padding-right:20px;}
   .sec-w,.sec-c,.sec-d,.cta-sec{padding-left:20px;padding-right:20px;}
@@ -1440,16 +1692,25 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .sec-w{ padding-top:40px !important; padding-bottom:40px !important; }
   .sec-c{ padding-top:40px !important; padding-bottom:40px !important; }
   .sec-d{ padding-top:40px !important; padding-bottom:40px !important; }
-  
-  /* 히어로V2, V3 absolute → static (모바일에서 겹침 방지) */
-  #heroV2, #heroV3{
-    position:static !important;
-    pointer-events:none !important;
+
+  /* 모바일 히어로: V2(자서전)만 고정 노출, V1/V3 숨김 */
+  #heroSliderWrap{
+    position:relative !important;
+    min-height:auto !important;
+    height:auto !important;
   }
-  /* 슬라이더는 데스크톱에서만 작동, 모바일은 V1만 */
-  #heroV1{
+  #heroV2{
     position:static !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
     display:block !important;
+  }
+  #heroV1, #heroV3, #heroV3Placeholder, #heroImgPlaceholder{
+    display:none !important;
+  }
+  /* 모바일 히어로 도트 숨김 */
+  #heroSliderWrap > div:first-child{
+    display:none !important;
   }
 }
 
@@ -1469,27 +1730,24 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 }
 
 @media(max-width:480px){
-  /* 히어로 슬라이더: 모바일에서는 auto 높이 */
+  /* 모바일 히어로: V2(자서전)만 고정 노출 */
   #heroSliderWrap{
+    position:relative !important;
     min-height:auto !important;
     height:auto !important;
-    overflow:hidden;
+    overflow:visible;
   }
-  /* heroV1만 static으로, V2는 display none */
-  #heroV1{
+  #heroV2{
     position:static !important;
     opacity:1 !important;
     pointer-events:auto !important;
+    display:block !important;
   }
-  #heroV2, #heroV3, #heroV3Placeholder, #heroImgPlaceholder{
+  #heroV1, #heroV3, #heroV3Placeholder, #heroImgPlaceholder{
     display:none !important;
   }
-  /* 히어로 dot 버튼 공간 제거 */
+  /* 도트 완전 숨김 */
   #heroSliderWrap > div:first-child{
-    display:none !important;
-  }
-  /* 히어로 슬라이더 페이지네이션 숨기기 */
-  #homeView > div > div[style*="min-height"] > div[style*="position:absolute;bottom"]{
     display:none !important;
   }
   /* 홈 섹션 상단 여백 */
@@ -1691,21 +1949,17 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
             </svg><span style="font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:var(--ink);margin-left:8px;letter-spacing:-.02em;">AI<span style="color:#2D6A59;margin-left:4px;">동행</span></span>
   </a>
   <div class="nav-links" id="navLinksGuest">
-    <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">🏆 AI 도장깨기</a>
     <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder')">만들기</a>
+    <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">도장깨기</a>
     <a class="nav-link" id="nav-community" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" id="nav-learn" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq')">고객센터</a>
-    <a class="nav-link" id="nav-pricing" href="#" onclick="showView('pricing')">구독</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
-    <a class="nav-link" href="#" onclick="showView('dojo')">🏆 도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('builder')">만들기</a>
+    <a class="nav-link" href="#" onclick="showView('dojo')">도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('community')">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio')">내 작품함</a>
-    <a class="nav-link" href="#" onclick="showView('learn')">AI 알아보기</a>
     <a class="nav-link" href="#" onclick="showView('faq')">고객센터</a>
-    <a class="nav-link" href="#" onclick="showView('pricing')">구독</a>
   </div>
   <div class="nav-row" id="navBtnsGuest">
     <button class="btn-nav-login" onclick="showView('login')">로그인</button>
@@ -1720,6 +1974,63 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 <!-- ══ HOME ══ -->
 <div class="view active" id="homeView">
 <div style="background:var(--bg);position:relative;">
+
+  <!-- 🌟 동동이 오늘의 질문 카드 (D2) — 회원 전용 -->
+  <section id="dailyQuestionCard" class="daily-q-card" aria-label="동동이 오늘의 질문" style="display:none;">
+    <div class="daily-q-head">
+      <div class="daily-q-eyebrow">오늘의 질문</div>
+      <div class="daily-q-counter" id="dailyQuestionCounter" style="display:none;"></div>
+    </div>
+
+    <div class="daily-q-scene">
+      <!-- 동동이 캐릭터 -->
+      <div class="daily-q-dong">
+        <svg class="daily-q-dong-svg" width="96" height="120" viewBox="0 0 200 240" aria-hidden="true">
+          <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+          <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+          <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+          <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+          <g style="transform-origin:136px 154px;animation:dongWave 2s ease-in-out infinite;">
+            <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+          </g>
+          <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+          <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+          <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+          <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+          <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+          <circle cx="100" cy="110" r="44" fill="#d08010"/>
+          <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+          <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+          <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+          <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+          <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+          <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
+          <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+          <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/>
+          <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
+          <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+          <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+        </svg>
+        <span class="daily-q-dong-label">동동이가 물었어요</span>
+      </div>
+
+      <!-- 말풍선 -->
+      <div class="daily-q-bubble">
+        <div class="daily-q-chapter" id="dailyQuestionChapter" style="display:none;"></div>
+        <div class="daily-q-text" id="dailyQuestionText">오늘의 질문을 준비하고 있어요…</div>
+        <div class="daily-q-hint" id="dailyQuestionHint">짧게 적어도 괜찮아요. 3~4줄이면 충분해요.</div>
+      </div>
+    </div>
+
+    <div class="daily-q-cta">
+      <button class="daily-q-btn" id="dailyQuestionBtn" onclick="openStoryModal()">
+        <span>✍️</span><span id="dailyQuestionBtnLabel">이야기 들려주기</span>
+      </button>
+      <button class="daily-q-skip" onclick="refreshDailyQuestion()">다른 질문 보기</button>
+    </div>
+  </section>
 
   <!-- 히어로 슬라이더 wrapper - 고정 높이로 두 버전 높이 통일 -->
   <div id="heroSliderWrap" style="position:relative;">
@@ -1951,7 +2262,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   </div><!-- /슬라이더 wrapper -->
 
 <!-- 도장깨기 홈 미리보기 -->
-<div class="sec-w"><div class="sec-w-in">
+<div class="sec-w" id="dojoHomePreview"><div class="sec-w-in">
   <div class="eyebrow">새로 나왔어요</div>
   <h2 class="sec-title">AI 툴 도장깨기 🏆</h2>
   <p class="sec-sub" style="margin-bottom:28px;">뤼튼, ChatGPT, Suno AI... 하나씩 직접 써보고 도장을 받아요.<br>"나 ChatGPT 써봤어!" 손자한테 자랑하는 그 날을 위해.</p>
@@ -2026,9 +2337,9 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <h2 class="sec-title">관심사를 고르면<br>바로 시작할 수 있어요</h2>
   <p class="sec-sub">클릭하면 해당 과정으로 바로 이동해요.</p>
   <div class="photo-grid">
-    <div class="photo-card" onclick="goToCategory('writing')"><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-badge gold">가장 인기</div><div class="photo-title">글쓰기</div><div class="photo-tags"><span class="photo-tag">블로그</span><span class="photo-tag">자서전</span><span class="photo-tag">편지</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('image')"><img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">이미지 만들기</div><div class="photo-tags"><span class="photo-tag">풍경</span><span class="photo-tag">꽃</span><span class="photo-tag">고향</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('music')"><img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">음악 만들기</div><div class="photo-tags"><span class="photo-tag">트로트</span><span class="photo-tag">발라드</span><span class="photo-tag">동요</span></div></div></div>
+    <div class="photo-card" onclick="goToCategory('writing')"><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-badge gold">가장 인기</div><div class="photo-title">글쓰기</div><div class="photo-tags"><span class="photo-tag">블로그</span><span class="photo-tag">자서전</span><span class="photo-tag">편지</span></div></div></div>
+    <div class="photo-card" onclick="goToCategory('image')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">이미지 만들기</div><div class="photo-tags"><span class="photo-tag">풍경</span><span class="photo-tag">꽃</span><span class="photo-tag">고향</span></div></div></div>
+    <div class="photo-card" onclick="goToCategory('music')"><img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">음악 만들기</div><div class="photo-tags"><span class="photo-tag">트로트</span><span class="photo-tag">발라드</span><span class="photo-tag">동요</span></div></div></div>
   </div>
 </div></div>
 
@@ -2149,7 +2460,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2206,7 +2517,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2722,7 +3033,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2770,7 +3081,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -2900,7 +3211,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3016,7 +3327,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3110,7 +3421,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3240,7 +3551,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3438,7 +3749,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3558,7 +3869,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -3762,7 +4073,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -4082,7 +4393,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
                 </g>
-            </svg>AI&nbsp;<b>동행</b></div>
+            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
   <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
@@ -4632,11 +4943,11 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 <!-- 하단 탭바 -->
 <nav id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:199;background:#fff;border-top:1px solid var(--bd);padding:8px 0 max(8px,env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr);">
-  <button onclick="showView('dojo')" id="bnav-dojo" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><span style="font-size:20px;">🏆</span><span style="font-size:11px;color:var(--i3);font-weight:600;">도장깨기</span></button>
   <button onclick="showView('builder')" id="bnav-builder" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">만들기</span></button>
-  <button onclick="showView('learn')" id="bnav-learn" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">AI알아보기</span></button>
-  <button onclick="showView('portfolio')" id="bnav-portfolio" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">내 작품함</span></button>
+  <button onclick="showView('dojo')" id="bnav-dojo" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0012 0V2z"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">도장깨기</span></button>
   <button onclick="showView('community')" id="bnav-community" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">커뮤니티</span></button>
+  <button onclick="showView('portfolio')" id="bnav-portfolio" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">내 작품함</span></button>
+  <button onclick="showView('faq')" id="bnav-faq" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:5px 0;min-height:52px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--i3)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span style="font-size:11px;color:var(--i3);font-weight:600;">고객센터</span></button>
 </nav>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -5125,8 +5436,8 @@ function showView(view, _skipHash){
   var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView'];
   allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
   window.scrollTo(0,0);
-  var bMap={dojo:'bnav-dojo',builder:'bnav-builder',learn:'bnav-learn',portfolio:'bnav-portfolio',faq:'bnav-faq'};
-  ['bnav-dojo','bnav-builder','bnav-learn','bnav-portfolio','bnav-faq'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
+  var bMap={dojo:'bnav-dojo',builder:'bnav-builder',portfolio:'bnav-portfolio',community:'bnav-community',faq:'bnav-faq'};
+  ['bnav-dojo','bnav-builder','bnav-portfolio','bnav-community','bnav-faq'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
   if(bMap[view]){var el=g(bMap[view]);if(el)el.classList.add('bnav-active');}
   var nMap={dojo:'nav-dojo',builder:'nav-builder',learn:'nav-learn',pricing:'nav-pricing',faq:'nav-faq',about:'nav-about',b2g:'nav-b2g'};
   ['nav-dojo','nav-builder','nav-learn','nav-community','nav-pricing','nav-faq','nav-about','nav-b2g'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
@@ -7030,10 +7341,11 @@ function switchExample(btn,id){document.querySelectorAll('.example-tab').forEach
 var currentHero = 0;
 var heroAutoTimer = null;
 function switchHero(idx){
-  // 모바일에서는 히어로 전환 안 함
-  if(window.innerWidth <= 480) return;
+  // 모바일에서는 V2(자서전) 고정이므로 전환 불필요
+  if(window.innerWidth <= 768) return;
   currentHero = idx;
-  var versions = [g('heroV1'), g('heroV2'), g('heroV3')];
+  // D2 리포지셔닝: 자서전(heroV2)을 기본(0번)으로 — 자서전 강조
+  var versions = [g('heroV2'), g('heroV1'), g('heroV3')];
   var dots = [g('hero-dot-0'), g('hero-dot-1'), g('hero-dot-2')];
 
   versions.forEach(function(v, i){
@@ -7062,6 +7374,420 @@ function startHeroAuto(){
     switchHero((currentHero + 1) % 3);
   }, 12000);
 }
+
+// ══════════════════════════════════════════════
+// D2: 오늘의 질문 카드 + 스토리 답변 모달
+// ══════════════════════════════════════════════
+
+// 폴백 질문 3개 (question_pool fetch 실패 시)
+// chapter_mapping: 1=유년기, 2=학창시절, 3=청년기, 4=결혼·가족, 5=가족에게
+var FALLBACK_QUESTIONS = [
+  { id:null, question:'어릴 적 가장 기억에 남는 명절 풍경은 어떤 모습이었나요?', chapter:'유년기', chapter_mapping:1 },
+  { id:null, question:'부모님께서 자주 하시던 말씀 중 지금도 마음에 남는 게 있나요?', chapter:'가족', chapter_mapping:5 },
+  { id:null, question:'처음 월급을 받았을 때 가장 먼저 하고 싶었던 일은 뭐였나요?', chapter:'청년기', chapter_mapping:3 }
+];
+
+window._currentDailyQ = null;
+
+function _isLoggedIn(){
+  try{ return !!(window.userProfile && window.userProfile.name); }
+  catch(e){ return false; }
+}
+
+function _todayKey(){
+  try{ return 'aiDonghang_dailyQ_' + new Date().toISOString().slice(0,10); }
+  catch(e){ return 'aiDonghang_dailyQ_today'; }
+}
+
+async function loadDailyQuestion(forceRefresh){
+  // 회원 전용 카드 — 비로그인이면 카드 숨기고 종료
+  var card = document.getElementById('dailyQuestionCard');
+  if(!_isLoggedIn()){
+    if(card) card.style.display = 'none';
+    return;
+  }
+  if(card) card.style.display = 'block';
+
+  var cacheKey = _todayKey();
+  if(!forceRefresh){
+    try{
+      var cached = localStorage.getItem(cacheKey);
+      if(cached){
+        var parsed = JSON.parse(cached);
+        if(parsed && parsed.question){
+          renderDailyQuestion(parsed);
+          return;
+        }
+      }
+    }catch(e){}
+  }
+
+  // Supabase에서 로드 시도 — 전체를 try/catch로 감싸서 어떤 에러도 유실
+  try{
+    if(typeof db !== 'undefined' && db && db.from){
+      var resp = null;
+      try{
+        // is_active = true인 것만 가져오기, 실제 스키마: question_text, category, chapter_mapping
+        resp = await db.from('question_pool').select('id,question_text,category,chapter_mapping,min_days_after_signup').eq('is_active', true).limit(60);
+      }catch(fetchErr){
+        console.warn('[dailyQ] fetch threw:', fetchErr && fetchErr.message);
+      }
+      var rows = (resp && resp.data) || [];
+      if(rows.length){
+        var pick = rows[Math.floor(Math.random()*rows.length)];
+        var q = {
+          id: pick.id || null,
+          question: pick.question_text || '',
+          chapter: pick.category || '',
+          chapter_mapping: (pick.chapter_mapping != null ? pick.chapter_mapping : 1)
+        };
+        if(q.question){
+          try{ localStorage.setItem(cacheKey, JSON.stringify(q)); }catch(e){}
+          renderDailyQuestion(q);
+          return;
+        }
+      }
+    }
+  }catch(e){ console.warn('[dailyQ] load failed:', e && e.message); }
+
+  // 폴백
+  try{
+    var fb = FALLBACK_QUESTIONS[Math.floor(Math.random()*FALLBACK_QUESTIONS.length)];
+    renderDailyQuestion(fb);
+  }catch(e){ console.warn('[dailyQ] fallback render failed:', e && e.message); }
+}
+
+function renderDailyQuestion(q){
+  window._currentDailyQ = q;
+  var card = document.getElementById('dailyQuestionCard');
+  var textEl = document.getElementById('dailyQuestionText');
+  var chapterEl = document.getElementById('dailyQuestionChapter');
+  var hintEl = document.getElementById('dailyQuestionHint');
+  var btnLabel = document.getElementById('dailyQuestionBtnLabel');
+  var btn = document.getElementById('dailyQuestionBtn');
+  if(!textEl || !btn) return;
+
+  // 회원 전용 — 비로그인이면 카드 숨기고 종료
+  if(!_isLoggedIn()){
+    if(card) card.style.display = 'none';
+    return;
+  }
+  if(card) card.style.display = 'block';
+
+  textEl.textContent = q.question;
+
+  if(chapterEl){
+    if(q.chapter){
+      chapterEl.textContent = q.chapter;
+      chapterEl.style.display = 'inline-flex';
+    } else {
+      chapterEl.style.display = 'none';
+    }
+  }
+
+  if(btnLabel) btnLabel.textContent = '이야기 들려주기';
+  btn.onclick = openStoryModal;
+  if(hintEl) hintEl.textContent = '짧게 적어도 괜찮아요. 3~4줄이면 충분해요.';
+}
+
+function refreshDailyQuestion(){
+  try{ localStorage.removeItem(_todayKey()); }catch(e){}
+  loadDailyQuestion(true);
+}
+
+// 초기 로드 (DOMContentLoaded or 이미 로드됨)
+(function initDailyQuestion(){
+  function boot(){ try{ loadDailyQuestion(false); }catch(e){ console.warn(e); } }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    setTimeout(boot, 0);
+  }
+})();
+
+// ── 음성 입력 (Web Speech API) ──
+var _voiceRecognition = null;
+var _voiceListening = false;
+
+function toggleVoiceInput(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('이 브라우저에서는 음성 입력이 지원되지 않아요. 직접 적어주세요.');
+    return;
+  }
+  var btn = document.getElementById('storyVoiceBtn');
+  var icon = document.getElementById('storyVoiceIcon');
+  var label = document.getElementById('storyVoiceLabel');
+  var ta = document.getElementById('storyAnswerTextarea');
+  if(!btn || !ta) return;
+
+  if(_voiceListening){
+    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
+    _resetVoiceUI();
+    return;
+  }
+
+  try{
+    _voiceRecognition = new SR();
+    _voiceRecognition.lang = 'ko-KR';
+    _voiceRecognition.continuous = true;
+    _voiceRecognition.interimResults = true;
+
+    var baseText = ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
+    var finalText = baseText;
+
+    _voiceRecognition.onresult = function(ev){
+      var interim = '';
+      for(var i=ev.resultIndex; i<ev.results.length; i++){
+        var t = ev.results[i][0].transcript;
+        if(ev.results[i].isFinal){
+          finalText += t + ' ';
+        } else {
+          interim += t;
+        }
+      }
+      ta.value = finalText + interim;
+      _updateStoryCharCount();
+    };
+    _voiceRecognition.onerror = function(ev){
+      console.warn('voice error:', ev && ev.error);
+      _resetVoiceUI();
+      if(ev && ev.error === 'not-allowed'){
+        alert('마이크 권한을 허용해주세요.');
+      } else if(ev && ev.error === 'no-speech'){
+        // 침묵은 조용히 무시
+      }
+    };
+    _voiceRecognition.onend = function(){ _resetVoiceUI(); };
+    _voiceRecognition.start();
+    _voiceListening = true;
+    icon.textContent = '🔴';
+    label.textContent = '녹음 중 · 누르면 중지';
+    btn.classList.add('listening');
+  }catch(e){
+    console.warn('voice start failed:', e.message);
+    alert('음성 입력을 시작할 수 없어요. 직접 적어주세요.');
+    _resetVoiceUI();
+  }
+}
+
+function _resetVoiceUI(){
+  _voiceListening = false;
+  var btn = document.getElementById('storyVoiceBtn');
+  var icon = document.getElementById('storyVoiceIcon');
+  var label = document.getElementById('storyVoiceLabel');
+  if(btn) btn.classList.remove('listening');
+  if(icon) icon.textContent = '🎤';
+  if(label) label.textContent = '음성으로 말하기';
+}
+
+function _updateStoryCharCount(){
+  var ta = document.getElementById('storyAnswerTextarea');
+  var cc = document.getElementById('storyCharCount');
+  if(ta && cc) cc.textContent = ta.value.length;
+}
+
+function _escapeStoryHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+// ── 모달 제어 ──
+function openStoryModal(){
+  if(!_isLoggedIn()){
+    // 비로그인은 가입으로
+    showView('auth');
+    return;
+  }
+  var q = window._currentDailyQ;
+  if(!q){
+    // 질문이 아직 안 불러와졌으면 폴백
+    q = FALLBACK_QUESTIONS[0];
+    window._currentDailyQ = q;
+  }
+  var modal = document.getElementById('storyModal');
+  var qEl = document.getElementById('storyModalQuestion');
+  var ta = document.getElementById('storyAnswerTextarea');
+  var cc = document.getElementById('storyCharCount');
+  var fb = document.getElementById('storyModalFeedback');
+  var ft = document.getElementById('storyModalFooter');
+  var saveBtn = document.getElementById('storySaveBtn');
+  if(!modal || !qEl || !ta) return;
+
+  qEl.textContent = '"' + q.question + '"';
+  ta.value = '';
+  if(cc) cc.textContent = '0';
+  if(fb){ fb.style.display = 'none'; fb.innerHTML = ''; }
+  if(ft) ft.style.display = 'flex';
+  if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = '저장하기'; }
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  ta.oninput = _updateStoryCharCount;
+  setTimeout(function(){ try{ ta.focus(); }catch(e){} }, 80);
+
+  // ESC로 닫기
+  document.addEventListener('keydown', _storyKeyHandler);
+}
+
+function _storyKeyHandler(ev){
+  if(ev.key === 'Escape'){ closeStoryModal(); }
+}
+
+function closeStoryModal(){
+  if(_voiceListening){
+    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
+    _resetVoiceUI();
+  }
+  var modal = document.getElementById('storyModal');
+  if(modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+  document.removeEventListener('keydown', _storyKeyHandler);
+}
+
+async function saveStory(){
+  var ta = document.getElementById('storyAnswerTextarea');
+  if(!ta) return;
+  var content = ta.value.trim();
+  if(content.length < 5){
+    alert('조금만 더 적어주시겠어요? (5자 이상)');
+    try{ ta.focus(); }catch(e){}
+    return;
+  }
+  var q = window._currentDailyQ;
+  if(!q) q = FALLBACK_QUESTIONS[0];
+
+  var saveBtn = document.getElementById('storySaveBtn');
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = '저장 중…'; }
+
+  // 음성 녹음 중이면 중지
+  if(_voiceListening){
+    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
+    _resetVoiceUI();
+  }
+
+  // user_stories INSERT — 실제 스키마에 맞춰 정확한 컬럼명 사용
+  // 필수 NOT NULL: user_id, question_text, answer_text, category, chapter_mapping
+  // 선택: question_id(bigint 또는 null), used_in_chapter_id
+  try{
+    var userId = (window.userProfile && window.userProfile.id) || null;
+    // question_id는 bigint NULLable — fallback(id=null)이면 null, 실제 DB 질문이면 id값
+    var qId = (q && q.id && typeof q.id === 'number') ? q.id : null;
+    var payload = {
+      user_id: userId,
+      question_id: qId,
+      question_text: q.question || '',
+      answer_text: content,
+      category: q.chapter || '기타',
+      chapter_mapping: (q.chapter_mapping != null ? q.chapter_mapping : 1)
+    };
+    if(typeof db !== 'undefined' && db && db.from){
+      try{
+        await db.from('user_stories').insert(payload);
+      }catch(insertErr){
+        console.warn('[user_stories] insert failed:', insertErr && insertErr.message, payload);
+      }
+    }
+  }catch(e){ console.warn('[saveStory] persist error:', e && e.message); }
+
+  // 공감 멘트 생성 (실패해도 피드백 UI는 표시)
+  await _showEmpathyFeedback(q.question, content);
+}
+
+async function _showEmpathyFeedback(question, answer){
+  var fb = document.getElementById('storyModalFeedback');
+  var ft = document.getElementById('storyModalFooter');
+  if(!fb) return;
+  if(ft) ft.style.display = 'none';
+  fb.style.display = 'block';
+  fb.innerHTML = '<div class="story-empathy-loading">동동이가 이야기를 듣고 있어요<span class="story-empathy-loading-dots" id="_empDots">.</span></div>';
+
+  // 로딩 dots 애니메이션
+  var dots = document.getElementById('_empDots');
+  var _dotIdx = 0;
+  var _dotTimer = setInterval(function(){
+    _dotIdx = (_dotIdx + 1) % 4;
+    if(dots) dots.textContent = '.'.repeat(_dotIdx || 1);
+  }, 350);
+
+  var empathyText = '';
+  try{
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 350,
+        messages: [{
+          role:'user',
+          content:
+            '다음은 "AI 동행"이라는 서비스에서 어르신(60~80대) 사용자가 "오늘의 질문"에 답한 내용입니다.\n\n' +
+            '[질문]\n' + question + '\n\n' +
+            '[어르신의 답변]\n' + answer + '\n\n' +
+            '이 이야기에 대한 따뜻한 공감 멘트를 2~3문장으로 써주세요.\n' +
+            '- 손녀가 할머니·할아버지 이야기를 듣고 진심으로 공감하는 톤\n' +
+            '- 답변에서 구체적으로 마음에 남은 장면을 하나 언급\n' +
+            '- "동동이"라는 자기 지칭은 하지 말고, 공감 멘트만 바로 출력\n' +
+            '- 조언이나 평가는 금지, 오직 공감만\n' +
+            '- 이모지는 최대 1개\n' +
+            '- 반말 금지. 따뜻한 존댓말.'
+        }]
+      })
+    });
+    var data = await resp.json();
+    if(data && data.content && data.content.length){
+      empathyText = data.content.map(function(c){ return c.text || ''; }).join('').trim();
+    }
+  }catch(e){ console.warn('empathy API failed:', e && e.message); }
+
+  clearInterval(_dotTimer);
+
+  if(!empathyText){
+    empathyText = '소중한 이야기를 들려주셔서 감사해요. 이렇게 하나씩 꺼내주시는 기억들이 모여서, 한 권의 책이 될 거예요. 🌿';
+  }
+
+  fb.innerHTML =
+    '<div class="story-empathy-box">' +
+      '<div class="story-empathy-label">🤗 동동이의 한마디</div>' +
+      '<div class="story-empathy-text">' + _escapeStoryHtml(empathyText) + '</div>' +
+    '</div>' +
+    '<div class="story-empathy-cta">' +
+      '<button class="btn-p" onclick="goToMemoirFromStory()">📖 자서전 한 챕터 만들기</button>' +
+      '<button class="btn-g" onclick="closeStoryModal()">나중에 하기</button>' +
+    '</div>';
+}
+
+function goToMemoirFromStory(){
+  closeStoryModal();
+  try{
+    if(typeof goToCourse === 'function'){ goToCourse('자서전 쓰기'); return; }
+  }catch(e){}
+  try{ showView('builder'); }catch(e){}
+}
+
+// ── 로그인 상태 변경 시 카드 표시/숨김 ──
+(function watchAuthState(){
+  var lastLoggedIn = null;
+  setInterval(function(){
+    try{
+      var now = _isLoggedIn();
+      if(now !== lastLoggedIn){
+        lastLoggedIn = now;
+        var card = document.getElementById('dailyQuestionCard');
+        if(!now){
+          // 로그아웃 → 카드 숨김
+          if(card) card.style.display = 'none';
+        } else {
+          // 로그인 → 카드 보이고 질문 로드
+          if(card) card.style.display = 'block';
+          loadDailyQuestion(false);
+        }
+      }
+    }catch(e){ /* silent */ }
+  }, 1500);
+})();
+
 
 // ── 이미지 슬라이드 ──
 var currentHeroSlide = 0;
@@ -10698,5 +11424,31 @@ function loadFalApiKeyToInput(){
   <canvas id="chestCanvas" width="320" height="300" style="display:block;"></canvas>
   <div id="chestUnlockBadge" style="background:linear-gradient(135deg,#f5c842,#e8a020);color:#3a2800;font-size:17px;font-weight:800;padding:10px 26px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 20px rgba(245,200,66,0.6);transform:scale(0);opacity:0;transition:none;font-family:'Noto Sans KR',sans-serif;"></div>
 </div>
+<!-- ══ 스토리 답변 모달 (D2: 오늘의 질문) ══ -->
+<div id="storyModal" class="story-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="storyModalQuestion">
+  <div class="story-modal-box">
+    <button class="story-modal-close" onclick="closeStoryModal()" aria-label="닫기">×</button>
+    <div class="story-modal-badge">📖 내 자서전에 기록돼요</div>
+    <div class="story-modal-question" id="storyModalQuestion"></div>
+    <div id="storyModalBody">
+      <textarea id="storyAnswerTextarea" class="story-textarea"
+        placeholder="편하게 적어주세요. 길어도, 몇 줄이어도 괜찮아요."
+        rows="8"></textarea>
+      <div class="story-modal-tools">
+        <button type="button" class="story-voice-btn" id="storyVoiceBtn" onclick="toggleVoiceInput()">
+          <span id="storyVoiceIcon">🎤</span>
+          <span id="storyVoiceLabel">음성으로 말하기</span>
+        </button>
+        <div class="story-char-count"><span id="storyCharCount">0</span>자</div>
+      </div>
+    </div>
+    <div class="story-modal-feedback" id="storyModalFeedback" style="display:none;"></div>
+    <div class="story-modal-footer" id="storyModalFooter">
+      <button class="btn-g" onclick="closeStoryModal()">취소</button>
+      <button class="btn-p" id="storySaveBtn" onclick="saveStory()">저장하기</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

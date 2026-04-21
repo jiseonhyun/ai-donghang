@@ -4,569 +4,412 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>개인정보처리방침 — AI 동행</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="에듀그린(AI 동행)의 개인정보처리방침 — 이용자 개인정보의 수집·이용·보관·파기에 관한 안내">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ac: #2A5F52;
-  --dark: #1E4840;
-  --light: #EBF5F2;
-  --ink: #1C1A17;
-  --i2: #3D3A33;
-  --i3: #7A7669;
-  --bd: rgba(28,26,23,0.12);
-  --bg: #FAF8F4;
+:root{
+  --ac:#2A5F52; --ad:#1E4840; --al:#EBF5F2; --ab:#B8DDD6;
+  --ink:#1C1A17; --i2:#3D3A33; --i3:#7A7669;
+  --bd:rgba(28,26,23,0.13); --cr:#FAF8F4; --wm:#F4F0E8;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  color: var(--ink);
-  background: var(--bg);
-  line-height: 1.8;
-  font-size: 15px;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--cr);line-height:1.75;}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
 
-/* 헤더 */
-.header {
-  background: var(--dark);
-  padding: 24px 40px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.header-logo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-}
-.header-logo span { color: #B8DDD6; }
+/* ── 상단 ── */
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--bd);}
+.topbar a{color:var(--ac);text-decoration:none;font-size:14px;font-weight:600;}
+.topbar a:hover{text-decoration:underline;}
 
-/* 히어로 */
-.hero {
-  background: var(--ac);
-  padding: 48px 40px;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 10px;
-}
-.hero p {
-  font-size: 14px;
-  color: rgba(255,255,255,0.75);
-}
-.hero .version-badge {
-  display: inline-block;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  font-size: 12px;
-  padding: 4px 14px;
-  border-radius: 100px;
-  margin-top: 12px;
-}
+/* ── 타이틀 ── */
+.hero{text-align:center;margin-bottom:36px;}
+.hero h1{font-family:'Gowun Batang',serif;font-size:32px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+.hero .lead{font-size:15px;color:var(--i3);margin-bottom:14px;}
+.hero .meta{display:inline-flex;align-items:center;gap:14px;font-size:12px;color:var(--i3);background:var(--al);border:1px solid var(--ab);border-radius:100px;padding:6px 16px;}
+.hero .meta b{color:var(--ac);}
 
-/* 본문 레이아웃 */
-.container {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-}
+/* ── TOC ── */
+.toc{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:22px 26px;margin-bottom:40px;}
+.toc h3{font-size:14px;font-weight:700;color:var(--ac);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.toc ol{list-style:none;counter-reset:toc;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;}
+.toc li{counter-increment:toc;font-size:13px;}
+.toc li::before{content:counter(toc) ". ";color:var(--i3);margin-right:4px;}
+.toc a{color:var(--i2);text-decoration:none;}
+.toc a:hover{color:var(--ac);text-decoration:underline;}
 
-/* 목차 */
-.toc {
-  background: var(--light);
-  border: 1px solid #B8DDD6;
-  border-radius: 12px;
-  padding: 24px 28px;
-  margin-bottom: 40px;
-}
-.toc-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ac);
-  margin-bottom: 12px;
-  letter-spacing: 0.05em;
-}
-.toc ol {
-  padding-left: 20px;
-}
-.toc li {
-  margin-bottom: 4px;
-}
-.toc a {
-  font-size: 14px;
-  color: var(--ac);
-  text-decoration: none;
-}
-.toc a:hover { text-decoration: underline; }
+/* ── 서문 ── */
+.intro{background:#fff;border-left:4px solid var(--ac);padding:18px 22px;border-radius:0 10px 10px 0;margin-bottom:40px;font-size:15px;color:var(--i2);line-height:1.9;}
+.intro b{color:var(--ac);font-weight:700;}
 
-/* 섹션 */
-.section {
-  margin-bottom: 48px;
-  scroll-margin-top: 80px;
-}
-.section-num {
-  display: inline-block;
-  background: var(--ac);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 100px;
-  margin-bottom: 10px;
-}
-.section h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--light);
-}
-.section p {
-  color: var(--i2);
-  margin-bottom: 12px;
-}
-.section ul, .section ol {
-  padding-left: 22px;
-  margin-bottom: 14px;
-}
-.section li {
-  color: var(--i2);
-  margin-bottom: 6px;
-}
+/* ── 섹션 ── */
+.sec{margin-bottom:36px;}
+.sec-label{display:inline-block;font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.08em;background:var(--al);padding:3px 10px;border-radius:100px;margin-bottom:8px;}
+.sec h2{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--ab);}
+.sec p{font-size:15px;color:var(--i2);margin-bottom:12px;}
+.sec ul{padding-left:4px;margin-bottom:12px;}
+.sec ul li{font-size:15px;color:var(--i2);padding:6px 0 6px 22px;position:relative;line-height:1.75;}
+.sec ul li::before{content:"·";position:absolute;left:8px;top:6px;color:var(--ac);font-weight:700;font-size:18px;}
+.sec ul li b{color:var(--ink);font-weight:700;}
+.sec dl{background:var(--al);border-radius:10px;padding:18px 22px;margin:14px 0;}
+.sec dt{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:4px;}
+.sec dd{font-size:15px;color:var(--i2);margin-bottom:10px;padding-left:0;}
+.sec dd:last-child{margin-bottom:0;}
 
-/* 표 */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 16px 0 20px;
-  font-size: 14px;
-}
-th {
-  background: var(--ac);
-  color: #fff;
-  padding: 10px 14px;
-  text-align: left;
-  font-weight: 600;
-}
-td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--bd);
-  color: var(--i2);
-  vertical-align: top;
-}
-tr:nth-child(even) td { background: #F5F3EF; }
+/* ── 테이블 ── */
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+thead{background:var(--al);}
+th{padding:11px 14px;text-align:left;font-size:13px;font-weight:700;color:var(--ac);border-bottom:1.5px solid var(--ab);}
+td{padding:11px 14px;color:var(--i2);border-bottom:1px solid var(--bd);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
 
-/* 강조 박스 */
-.highlight-box {
-  background: var(--light);
-  border-left: 4px solid var(--ac);
-  border-radius: 0 8px 8px 0;
-  padding: 14px 18px;
-  margin: 16px 0;
-  font-size: 14px;
-  color: var(--dark);
-}
-.highlight-box strong { color: var(--ac); }
+/* ── 책임자 박스 ── */
+.officer{background:linear-gradient(135deg,var(--al),#f5faf8);border:1.5px solid var(--ab);border-radius:14px;padding:24px 28px;margin:18px 0;}
+.officer-title{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.officer-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px;}
+.officer-grid dt{font-weight:700;color:var(--i2);}
+.officer-grid dd{color:var(--ink);}
+.officer-grid a{color:var(--ac);text-decoration:none;font-weight:600;}
+.officer-grid a:hover{text-decoration:underline;}
 
-/* 책임자 카드 */
-.officer-card {
-  background: #fff;
-  border: 1.5px solid var(--bd);
-  border-radius: 12px;
-  padding: 20px 24px;
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-.officer-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--light);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-.officer-info dt {
-  font-size: 13px;
-  color: var(--i3);
-  margin-top: 6px;
-}
-.officer-info dd {
-  font-size: 15px;
-  color: var(--ink);
-  font-weight: 500;
-}
+/* ── 주의 박스 ── */
+.callout{background:#FFF8E7;border-left:4px solid #F5C842;padding:14px 18px;border-radius:0 10px 10px 0;font-size:14px;color:var(--i2);margin:14px 0;line-height:1.75;}
+.callout b{color:var(--ink);font-weight:700;}
 
-/* 푸터 */
-.footer {
-  background: var(--dark);
-  padding: 24px 40px;
-  text-align: center;
-}
-.footer p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.6);
-  line-height: 1.8;
-}
-.footer a {
-  color: #B8DDD6;
-  text-decoration: none;
-}
+/* ── 푸터 ── */
+.docfooter{margin-top:60px;padding-top:28px;border-top:1px solid var(--bd);text-align:center;font-size:13px;color:var(--i3);}
+.docfooter b{color:var(--i2);font-weight:700;}
+.docfooter a{color:var(--ac);text-decoration:none;}
 
-/* 반응형 */
-@media (max-width: 600px) {
-  .header, .hero { padding: 20px; }
-  .container { padding: 28px 16px 60px; }
-  .hero h1 { font-size: 22px; }
-  table { font-size: 13px; }
-  th, td { padding: 8px 10px; }
+/* 모바일 */
+@media (max-width:640px){
+  .wrap{padding:24px 16px 60px;}
+  .hero h1{font-size:24px;}
+  .sec h2{font-size:18px;}
+  .toc ol{grid-template-columns:1fr;}
+  table{display:block;overflow-x:auto;}
 }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<!-- 헤더 -->
-<div class="header">
-  <a href="https://aitogether.co.kr" class="header-logo">AI <span>동행</span></a>
+<div class="topbar">
+  <a href="https://aitogether.co.kr">← AI 동행으로 돌아가기</a>
 </div>
 
-<!-- 히어로 -->
 <div class="hero">
   <h1>개인정보처리방침</h1>
-  <p>AI 동행은 이용자의 개인정보를 소중히 여기며 관련 법규를 준수합니다</p>
-  <span class="version-badge">시행일: 2026년 4월 13일 · 버전 1.0</span>
+  <p class="lead">에듀그린은 이용자의 개인정보를 소중히 여기며 관련 법령을 준수합니다</p>
+  <div class="meta">
+    <span>시행일: <b>2026년 4월 21일</b></span>
+    <span>버전 <b>2.0</b></span>
+  </div>
 </div>
 
-<!-- 본문 -->
-<div class="container">
-
-  <!-- 목차 -->
-  <div class="toc">
-    <div class="toc-title">📋 목차</div>
-    <ol>
-      <li><a href="#s1">개인정보의 처리 목적</a></li>
-      <li><a href="#s2">수집하는 개인정보 항목 및 수집 방법</a></li>
-      <li><a href="#s3">개인정보의 처리 및 보유 기간</a></li>
-      <li><a href="#s4">개인정보의 제3자 제공</a></li>
-      <li><a href="#s5">개인정보 처리의 위탁</a></li>
-      <li><a href="#s6">정보주체의 권리·의무 및 행사 방법</a></li>
-      <li><a href="#s7">개인정보의 파기</a></li>
-      <li><a href="#s8">개인정보의 안전성 확보 조치</a></li>
-      <li><a href="#s9">쿠키(Cookie)의 운영 및 거부</a></li>
-      <li><a href="#s10">만 14세 미만 아동의 개인정보</a></li>
-      <li><a href="#s11">개인정보 보호책임자 및 담당부서</a></li>
-      <li><a href="#s12">권익침해 구제방법</a></li>
-      <li><a href="#s13">개인정보처리방침의 변경</a></li>
-    </ol>
-  </div>
-
-  <!-- 서문 -->
-  <div class="highlight-box">
-    <strong>AI 동행(이하 "회사")</strong>은 「개인정보 보호법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 등 관련 법령을 준수하며, 이용자의 개인정보를 보호하기 위해 최선을 다합니다. 본 방침은 회사가 운영하는 AI 동행 서비스(aitogether.co.kr)에 적용됩니다.
-  </div>
-
-  <!-- 1. 처리 목적 -->
-  <div class="section" id="s1">
-    <span class="section-num">제1조</span>
-    <h2>개인정보의 처리 목적</h2>
-    <p>회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리한 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 목적이 변경될 시에는 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
-    <ul>
-      <li><strong>회원 가입 및 관리</strong>: 회원가입 의사 확인, 회원제 서비스 제공, 본인 식별·인증, 서비스 부정 이용 방지</li>
-      <li><strong>서비스 제공</strong>: AI 창작 서비스(글쓰기·이미지·음악 등) 제공, 학습 진도 관리, 작품함 저장·조회</li>
-      <li><strong>고객 상담 및 불만 처리</strong>: 고객 문의 접수, 처리 결과 통보</li>
-      <li><strong>서비스 개선 및 마케팅</strong>: 서비스 이용 통계 분석, 신규 서비스 개발, 이벤트·프로모션 정보 제공(동의한 경우에 한함)</li>
-      <li><strong>유료 서비스 결제</strong>: 구독 요금 결제, 환불 처리</li>
-    </ul>
-  </div>
-
-  <!-- 2. 수집 항목 -->
-  <div class="section" id="s2">
-    <span class="section-num">제2조</span>
-    <h2>수집하는 개인정보 항목 및 수집 방법</h2>
-
-    <p><strong>① 수집 항목</strong></p>
-    <table>
-      <thead>
-        <tr><th>구분</th><th>수집 항목</th><th>수집 근거</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>카카오 간편가입</td>
-          <td>닉네임, 프로필 이미지(선택)</td>
-          <td>동의</td>
-        </tr>
-        <tr>
-          <td>이메일 회원가입</td>
-          <td>이메일 주소, 비밀번호(암호화), 닉네임</td>
-          <td>동의</td>
-        </tr>
-        <tr>
-          <td>유료 구독 결제</td>
-          <td>결제 수단 정보(카드사 처리, 회사 미보관), 구독 이력</td>
-          <td>계약 이행</td>
-        </tr>
-        <tr>
-          <td>서비스 이용 중 자동 생성</td>
-          <td>서비스 이용 기록, 접속 로그, IP 주소, 쿠키, 기기 정보, 도장깨기 진행 현황</td>
-          <td>정당한 이익</td>
-        </tr>
-        <tr>
-          <td>고객 문의</td>
-          <td>이름, 연락처, 문의 내용</td>
-          <td>동의</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p><strong>② 수집 방법</strong></p>
-    <ul>
-      <li>회원가입 및 서비스 이용 과정에서 이용자가 직접 입력</li>
-      <li>카카오 소셜 로그인을 통한 연동(이용자 동의 하에 제공받음)</li>
-      <li>서비스 이용 과정에서 자동으로 생성·수집</li>
-    </ul>
-  </div>
-
-  <!-- 3. 보유 기간 -->
-  <div class="section" id="s3">
-    <span class="section-num">제3조</span>
-    <h2>개인정보의 처리 및 보유 기간</h2>
-    <p>회사는 법령에 따른 개인정보 보유·이용 기간 또는 정보주체로부터 개인정보를 수집 시 동의받은 개인정보 보유·이용 기간 내에서 개인정보를 처리·보유합니다.</p>
-
-    <table>
-      <thead>
-        <tr><th>보유 항목</th><th>보유 기간</th><th>근거</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>회원 정보</td>
-          <td>회원 탈퇴 시까지</td>
-          <td>동의</td>
-        </tr>
-        <tr>
-          <td>서비스 이용 기록</td>
-          <td>3년</td>
-          <td>통신비밀보호법</td>
-        </tr>
-        <tr>
-          <td>전자상거래 결제·거래 기록</td>
-          <td>5년</td>
-          <td>전자상거래법</td>
-        </tr>
-        <tr>
-          <td>소비자 불만·분쟁 처리 기록</td>
-          <td>3년</td>
-          <td>전자상거래법</td>
-        </tr>
-        <tr>
-          <td>접속 로그</td>
-          <td>3개월</td>
-          <td>통신비밀보호법</td>
-        </tr>
-        <tr>
-          <td>고객 문의 내역</td>
-          <td>처리 완료 후 1년</td>
-          <td>동의</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 4. 제3자 제공 -->
-  <div class="section" id="s4">
-    <span class="section-num">제4조</span>
-    <h2>개인정보의 제3자 제공</h2>
-    <p>회사는 정보주체의 개인정보를 제1조에서 명시한 목적 범위 내에서만 처리하며, 다음의 경우에 해당하지 않는 한 제3자에게 제공하지 않습니다.</p>
-    <ul>
-      <li>정보주체가 사전에 동의한 경우</li>
-      <li>법률에 특별한 규정이 있거나 법령상 의무를 준수하기 위해 불가피한 경우</li>
-      <li>수사기관의 적법한 요청이 있는 경우</li>
-    </ul>
-    <div class="highlight-box">
-      현재 회사는 <strong>이용자의 개인정보를 제3자에게 제공하지 않습니다.</strong>
-    </div>
-  </div>
-
-  <!-- 5. 처리 위탁 -->
-  <div class="section" id="s5">
-    <span class="section-num">제5조</span>
-    <h2>개인정보 처리의 위탁</h2>
-    <p>회사는 원활한 서비스 제공을 위해 다음과 같이 개인정보 처리 업무를 위탁하고 있습니다.</p>
-
-    <table>
-      <thead>
-        <tr><th>수탁업체</th><th>위탁 업무</th><th>보유 기간</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Supabase Inc.</td>
-          <td>데이터베이스 운영 및 회원 정보 저장</td>
-          <td>회원 탈퇴 시까지</td>
-        </tr>
-        <tr>
-          <td>Anthropic PBC</td>
-          <td>AI 텍스트 생성 서비스 제공</td>
-          <td>처리 후 즉시 삭제</td>
-        </tr>
-        <tr>
-          <td>카카오(주)</td>
-          <td>카카오 소셜 로그인 및 알림 서비스</td>
-          <td>서비스 이용 기간</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>회사는 위탁 계약 시 개인정보 보호 관련 법규 준수, 개인정보 제3자 제공 금지, 사고 시 책임 부담 등을 명시합니다.</p>
-  </div>
-
-  <!-- 6. 권리 행사 -->
-  <div class="section" id="s6">
-    <span class="section-num">제6조</span>
-    <h2>정보주체의 권리·의무 및 행사 방법</h2>
-    <p>이용자는 개인정보주체로서 다음과 같은 권리를 행사할 수 있습니다.</p>
-    <ul>
-      <li><strong>개인정보 열람 요구</strong>: 회사가 보유한 본인의 개인정보를 확인할 수 있습니다.</li>
-      <li><strong>오류 정정 요구</strong>: 잘못된 개인정보가 있는 경우 정정을 요구할 수 있습니다.</li>
-      <li><strong>삭제 요구</strong>: 개인정보의 삭제를 요구할 수 있습니다(법령에 따른 보존 의무가 있는 경우 제외).</li>
-      <li><strong>처리 정지 요구</strong>: 개인정보 처리의 정지를 요구할 수 있습니다.</li>
-    </ul>
-    <p>권리 행사는 서비스 내 <strong>마이페이지 → 회원탈퇴</strong> 또는 이메일(contact@aitogether.co.kr)로 요청하실 수 있으며, 회사는 지체 없이(10일 이내) 조치하겠습니다.</p>
-    <div class="highlight-box">
-      만 14세 미만 아동의 경우, 법정대리인이 권리를 행사할 수 있습니다.
-    </div>
-  </div>
-
-  <!-- 7. 파기 -->
-  <div class="section" id="s7">
-    <span class="section-num">제7조</span>
-    <h2>개인정보의 파기</h2>
-    <p>회사는 개인정보 보유 기간의 경과, 처리 목적 달성 등 개인정보가 불필요하게 된 경우 지체 없이(5일 이내) 해당 개인정보를 파기합니다.</p>
-    <ul>
-      <li><strong>전자 파일 형태</strong>: 복원이 불가능한 방법으로 영구 삭제</li>
-      <li><strong>종이 문서</strong>: 분쇄 또는 소각 처리</li>
-    </ul>
-    <p>단, 다른 법령에 따라 보존하여야 하는 경우에는 해당 개인정보를 별도의 데이터베이스로 옮기거나 보관 장소를 달리하여 보존합니다.</p>
-  </div>
-
-  <!-- 8. 안전성 확보 -->
-  <div class="section" id="s8">
-    <span class="section-num">제8조</span>
-    <h2>개인정보의 안전성 확보 조치</h2>
-    <p>회사는 개인정보의 안전성 확보를 위해 다음의 조치를 취하고 있습니다.</p>
-    <ul>
-      <li><strong>관리적 조치</strong>: 개인정보 취급 직원 최소화, 정기적 교육 실시</li>
-      <li><strong>기술적 조치</strong>: 개인정보 암호화(비밀번호 단방향 암호화), HTTPS 보안 통신, 접근 권한 관리</li>
-      <li><strong>물리적 조치</strong>: 클라우드 서버 보안 구역 접근 통제(Supabase SOC2 인증)</li>
-    </ul>
-  </div>
-
-  <!-- 9. 쿠키 -->
-  <div class="section" id="s9">
-    <span class="section-num">제9조</span>
-    <h2>쿠키(Cookie)의 운영 및 거부</h2>
-    <p>회사는 이용자에게 개인화된 서비스를 제공하기 위해 쿠키를 사용합니다.</p>
-    <ul>
-      <li><strong>사용 목적</strong>: 로그인 상태 유지, 서비스 이용 설정 저장, 이용 현황 분석</li>
-      <li><strong>운영 방식</strong>: 쿠키는 브라우저 종료 시 만료되는 세션 쿠키와 일정 기간 유지되는 지속 쿠키를 사용합니다.</li>
-    </ul>
-    <p>이용자는 브라우저 설정을 통해 쿠키 저장을 거부할 수 있습니다. 단, 쿠키 저장을 거부할 경우 로그인이 필요한 서비스 이용이 제한될 수 있습니다.</p>
-  </div>
-
-  <!-- 10. 아동 -->
-  <div class="section" id="s10">
-    <span class="section-num">제10조</span>
-    <h2>만 14세 미만 아동의 개인정보</h2>
-    <p>회사의 서비스는 만 14세 이상을 대상으로 합니다. 만 14세 미만 아동의 회원가입은 원칙적으로 제한하며, 만 14세 미만 아동의 개인정보가 수집된 경우 법정대리인의 동의 확인 후 처리합니다.</p>
-    <div class="highlight-box">
-      만 14세 미만 아동의 개인정보가 수집되었음을 확인한 경우, 지체 없이 해당 정보를 삭제합니다.
-    </div>
-  </div>
-
-  <!-- 11. 책임자 -->
-  <div class="section" id="s11">
-    <span class="section-num">제11조</span>
-    <h2>개인정보 보호책임자 및 담당부서</h2>
-    <p>회사는 개인정보 처리에 관한 업무를 총괄하여 책임지고, 이용자의 개인정보 관련 불만 처리 및 피해 구제를 위해 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
-
-    <div class="officer-card">
-      <div class="officer-icon">👤</div>
-      <dl class="officer-info">
-        <dt>개인정보 보호책임자</dt>
-        <dd>현지선</dd>
-        <dt>소속/직위</dt>
-        <dd>AI 동행 대표</dd>
-        <dt>이메일</dt>
-        <dd><a href="mailto:contact@aitogether.co.kr" style="color:var(--ac);">contact@aitogether.co.kr</a></dd>
-        <dt>홈페이지</dt>
-        <dd><a href="https://aitogether.co.kr" style="color:var(--ac);">aitogether.co.kr</a></dd>
-      </dl>
-    </div>
-    <p style="margin-top:14px;">개인정보 침해 관련 문의는 위 연락처로 문의하시면 성실히 답변드리겠습니다.</p>
-  </div>
-
-  <!-- 12. 권익침해 구제 -->
-  <div class="section" id="s12">
-    <span class="section-num">제12조</span>
-    <h2>권익침해 구제방법</h2>
-    <p>정보주체는 개인정보 침해로 인한 구제를 받기 위하여 아래 기관에 분쟁 해결이나 상담 등을 신청할 수 있습니다.</p>
-    <table>
-      <thead>
-        <tr><th>기관명</th><th>연락처</th><th>홈페이지</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>개인정보분쟁조정위원회</td>
-          <td>(국번없이) 1833-6972</td>
-          <td>www.kopico.go.kr</td>
-        </tr>
-        <tr>
-          <td>개인정보침해신고센터</td>
-          <td>(국번없이) 118</td>
-          <td>privacy.kisa.or.kr</td>
-        </tr>
-        <tr>
-          <td>대검찰청 사이버수사과</td>
-          <td>(국번없이) 1301</td>
-          <td>www.spo.go.kr</td>
-        </tr>
-        <tr>
-          <td>경찰청 사이버수사국</td>
-          <td>(국번없이) 182</td>
-          <td>ecrm.cyber.go.kr</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 13. 변경 -->
-  <div class="section" id="s13">
-    <span class="section-num">제13조</span>
-    <h2>개인정보처리방침의 변경</h2>
-    <p>이 개인정보처리방침은 2026년 4월 13일부터 적용됩니다. 법령·정책 또는 보안 기술의 변경에 따라 내용이 추가·삭제·수정될 수 있으며, 변경 시 서비스 내 공지사항을 통해 사전에 안내합니다.</p>
-    <ul>
-      <li>공고일자: 2026년 4월 13일</li>
-      <li>시행일자: 2026년 4월 13일</li>
-    </ul>
-    <div class="highlight-box">
-      중요한 변경이 있을 경우 시행 <strong>7일 전</strong> 서비스 내 공지사항 및 이메일로 별도 고지합니다.
-    </div>
-  </div>
-
+<div class="toc">
+  <h3>📋 목차</h3>
+  <ol>
+    <li><a href="#s1">개인정보의 처리 목적</a></li>
+    <li><a href="#s2">수집하는 개인정보 항목 및 수집 방법</a></li>
+    <li><a href="#s3">개인정보의 처리 및 보유 기간</a></li>
+    <li><a href="#s4">개인정보의 제3자 제공</a></li>
+    <li><a href="#s5">개인정보 처리의 위탁</a></li>
+    <li><a href="#s6">개인정보의 국외 이전</a></li>
+    <li><a href="#s7">정보주체의 권리·의무 및 행사 방법</a></li>
+    <li><a href="#s8">개인정보의 파기</a></li>
+    <li><a href="#s9">개인정보의 안전성 확보 조치</a></li>
+    <li><a href="#s10">쿠키 및 로컬 저장소 운영</a></li>
+    <li><a href="#s11">만 14세 미만 아동의 개인정보</a></li>
+    <li><a href="#s12">AI 창작물 및 자서전 콘텐츠 처리</a></li>
+    <li><a href="#s13">개인정보 보호책임자</a></li>
+    <li><a href="#s14">권익침해 구제방법</a></li>
+    <li><a href="#s15">개인정보처리방침의 변경</a></li>
+  </ol>
 </div>
 
-<!-- 푸터 -->
-<div class="footer">
-  <p>
-    AI 동행 · <a href="https://aitogether.co.kr">aitogether.co.kr</a><br>
-    문의: <a href="mailto:contact@aitogether.co.kr">contact@aitogether.co.kr</a><br>
-    © 2026 AI 동행. All rights reserved.
-  </p>
+<div class="intro">
+  <b>에듀그린(이하 "회사", 서비스명 "AI 동행")</b>은 <b>「개인정보 보호법」</b>, <b>「정보통신망 이용촉진 및 정보보호 등에 관한 법률」</b> 등 관련 법령을 준수하며, 이용자의 개인정보를 보호하기 위해 최선을 다합니다. 본 방침은 회사가 운영하는 AI 동행 서비스(<b>aitogether.co.kr</b>)에 적용됩니다.
 </div>
 
+<!-- ── 1 ── -->
+<div class="sec" id="s1">
+<span class="sec-label">제1조</span>
+<h2>개인정보의 처리 목적</h2>
+<p>회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리한 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 목적이 변경될 시에는 별도의 동의를 받는 등 필요한 조치를 이행합니다.</p>
+<ul>
+  <li><b>회원 가입 및 관리</b>: 회원가입 의사 확인, 본인 식별·인증, 회원제 서비스 제공, 서비스 부정 이용 방지</li>
+  <li><b>서비스 제공</b>: AI 창작 서비스(글쓰기·이미지·음악 등) 제공, 도장깨기 학습 진도 관리, 작품함 저장·조회, 자서전 챕터 구성</li>
+  <li><b>고객 상담 및 민원 처리</b>: 문의 접수, 처리 경과 통보, 불만·분쟁 처리</li>
+  <li><b>유료 서비스 결제</b>: 이용권 결제, 환불 처리, 결제 내역 관리</li>
+  <li><b>선물 서비스 운영</b>: 선물 링크 생성·전달, 활성화 관리, 결제자에게 리마인더 알림 발송, <b>결제자의 동의 하에 월간 부모님 이용 리포트 발송</b>, 유효기간 만료 시 자동 환불 처리</li>
+  <li><b>서비스 개선</b>: 서비스 이용 통계 분석, 접속 빈도 분석, 신규 기능 개발</li>
+  <li><b>마케팅 및 광고</b>(동의한 이용자에 한함): 이벤트·신규 기능 안내, 맞춤 콘텐츠 추천</li>
+</ul>
+</div>
+
+<!-- ── 2 ── -->
+<div class="sec" id="s2">
+<span class="sec-label">제2조</span>
+<h2>수집하는 개인정보 항목 및 수집 방법</h2>
+<p><b>① 수집 항목</b></p>
+<table>
+<thead><tr><th>구분</th><th>수집 항목</th><th>법적 근거</th></tr></thead>
+<tbody>
+<tr><td>전화번호 가입</td><td>성함, 전화번호, 비밀번호(암호화), 선택적 나이·지역</td><td>이용자 동의</td></tr>
+<tr><td>카카오 간편가입</td><td>카카오 ID, 닉네임, 프로필 이미지(선택)</td><td>이용자 동의</td></tr>
+<tr><td>유료 이용권 결제</td><td>결제 이력, 이용권 종류, 결제 수단 정보는 결제대행사에서 직접 처리하며 회사는 보관하지 않음</td><td>계약 이행</td></tr>
+<tr><td><b>선물 구매(결제자)</b></td><td>결제자 성함, 연락처(카카오 ID 또는 이메일), 결제 이력, 선물 전달 내역, 리마인더 및 월간 리포트 수신 동의 정보</td><td>계약 이행 / 이용자 동의</td></tr>
+<tr><td><b>선물 수령(수취인)</b></td><td>선물 링크 클릭 시 기록, 활성화 여부, 활성화 후에는 일반 회원가입과 동일한 항목 수집</td><td>이용자 동의</td></tr>
+<tr><td>자서전·작품 생성</td><td>이용자가 직접 입력한 이야기·프롬프트·사진(선택), 생성된 AI 창작물</td><td>이용자 동의</td></tr>
+<tr><td>서비스 이용 중 자동 생성</td><td>서비스 이용 기록, 접속 로그, IP 주소, 쿠키, 기기 정보, 도장깨기 진행 현황</td><td>정당한 이익 / 법령상 의무</td></tr>
+<tr><td>고객 문의</td><td>성함, 연락처(이메일), 문의 내용</td><td>이용자 동의</td></tr>
+<tr><td>마케팅 수신 동의(선택)</td><td>마케팅 정보 수신 여부, 수신 채널(이메일·알림톡)</td><td>이용자 동의</td></tr>
+</tbody>
+</table>
+
+<p><b>② 수집 방법</b></p>
+<ul>
+  <li>회원가입 및 서비스 이용 과정에서 이용자가 직접 입력</li>
+  <li>카카오 소셜 로그인을 통한 연동(이용자 동의 하에 제공받음)</li>
+  <li>서비스 이용 과정에서 자동으로 생성·수집(IP·접속 로그·기기 정보 등)</li>
+</ul>
+
+<div class="callout">
+<b>🔒 민감정보 수집 안 함</b><br>
+회사는 사상·신념·노동조합 가입·정치적 견해·건강·성생활 등의 민감정보와 주민등록번호를 수집하지 않습니다.
+</div>
+</div>
+
+<!-- ── 3 ── -->
+<div class="sec" id="s3">
+<span class="sec-label">제3조</span>
+<h2>개인정보의 처리 및 보유 기간</h2>
+<p>회사는 법령에 따른 개인정보 보유·이용 기간 또는 이용자로부터 수집 시 동의받은 보유·이용 기간 내에서 개인정보를 처리·보유합니다.</p>
+<table>
+<thead><tr><th>보유 항목</th><th>보유 기간</th><th>근거</th></tr></thead>
+<tbody>
+<tr><td>회원 정보(성함·전화번호·카카오 ID 등)</td><td>회원 탈퇴 시까지</td><td>이용자 동의</td></tr>
+<tr><td>자서전·작품 내용</td><td>회원 탈퇴 시까지(이용자 요청 시 즉시 삭제 가능)</td><td>이용자 동의</td></tr>
+<tr><td>선물 결제자 정보</td><td>결제일로부터 5년(전자상거래법) 또는 이용자 탈퇴 시 까지 중 먼저 도래하는 시점</td><td>전자상거래법 / 이용자 동의</td></tr>
+<tr><td>선물 링크 및 활성화 기록</td><td>이용권 만료 후 5년</td><td>전자상거래법</td></tr>
+<tr><td>서비스 이용 기록</td><td>3년</td><td>통신비밀보호법</td></tr>
+<tr><td>전자상거래 결제·거래 기록</td><td>5년</td><td>전자상거래법 제6조</td></tr>
+<tr><td>소비자 불만·분쟁 처리 기록</td><td>3년</td><td>전자상거래법 제6조</td></tr>
+<tr><td>접속 로그</td><td>3개월</td><td>통신비밀보호법</td></tr>
+<tr><td>고객 문의 내역</td><td>처리 완료 후 1년</td><td>이용자 동의</td></tr>
+<tr><td>마케팅 수신 동의 기록</td><td>동의 철회 시까지</td><td>정보통신망법</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ── 4 ── -->
+<div class="sec" id="s4">
+<span class="sec-label">제4조</span>
+<h2>개인정보의 제3자 제공</h2>
+<p>회사는 이용자의 개인정보를 제1조에서 명시한 목적 범위 내에서만 처리하며, 다음의 경우에 해당하지 않는 한 <b>제3자에게 제공하지 않습니다</b>.</p>
+<ul>
+  <li>이용자가 사전에 동의한 경우</li>
+  <li>법률에 특별한 규정이 있거나 법령상 의무를 준수하기 위해 불가피한 경우</li>
+  <li>수사기관이 수사 목적으로 법령에 정해진 절차와 방법에 따라 요청하는 경우</li>
+</ul>
+
+<p><b>[월간 리포트 제공에 관한 안내]</b></p>
+<p>회사는 선물 서비스의 특성상, <b>수취인(부모님)의 별도 동의</b>가 있는 경우에 한해 수취인의 서비스 이용 내역을 요약한 <b>월간 리포트</b>를 결제자(자녀 등)에게 제공할 수 있습니다.</p>
+<table>
+<thead><tr><th>제공받는 자</th><th>제공 항목</th><th>제공 목적</th><th>보유 기간</th></tr></thead>
+<tbody>
+<tr><td>결제자(자녀 등)</td><td>수취인의 월간 서비스 이용 요약(접속 빈도, 완성한 작품 수, 작성한 자서전 챕터 수 등 비민감 통계)</td><td>선물 이용 현황 공유 및 지속적 이용 독려</td><td>선물 이용권 만료 시까지</td></tr>
+</tbody>
+</table>
+<p>월간 리포트에는 <b>수취인이 작성한 이야기·자서전의 구체적 내용, 사진, 개인적 정보는 포함되지 않습니다</b>. 수취인은 언제든지 월간 리포트 제공 동의를 철회할 수 있으며, 결제자는 수신을 거부할 수 있습니다.</p>
+
+<p>위 월간 리포트 외의 경우 회사는 <b>이용자의 개인정보를 제3자에게 제공하지 않습니다</b>. 추가적인 제3자 제공이 필요한 경우 사전에 개별 동의를 받습니다.</p>
+</div>
+
+<!-- ── 5 ── -->
+<div class="sec" id="s5">
+<span class="sec-label">제5조</span>
+<h2>개인정보 처리의 위탁</h2>
+<p>회사는 원활한 서비스 제공을 위해 다음과 같이 개인정보 처리 업무를 위탁하고 있습니다. 위탁 계약 시 「개인정보 보호법」 제26조에 따라 개인정보가 안전하게 처리되도록 필요한 사항을 문서화하여 관리하고 있습니다.</p>
+<table>
+<thead><tr><th>수탁업체</th><th>위탁 업무</th><th>보유 및 이용기간</th></tr></thead>
+<tbody>
+<tr><td>Supabase Inc. (미국)</td><td>회원 데이터베이스 운영, 회원 정보 및 작품 저장</td><td>회원 탈퇴 시까지</td></tr>
+<tr><td>Anthropic PBC (미국)</td><td>AI 텍스트 생성(Claude API)</td><td>Anthropic 정책에 따라 최대 30일 후 자동 삭제</td></tr>
+<tr><td>fal.ai (미국)</td><td>AI 이미지 생성·보정·복원</td><td>처리 후 자동 삭제</td></tr>
+<tr><td>Pollinations.ai</td><td>일반 이미지 생성</td><td>처리 후 자동 삭제</td></tr>
+<tr><td>Suno, Inc. (미국)</td><td>AI 음악 생성</td><td>처리 후 자동 삭제</td></tr>
+<tr><td>토스페이먼츠㈜</td><td>자체 결제(신용카드·체크카드·간편결제)</td><td>결제 후 5년(전자상거래법)</td></tr>
+<tr><td>카카오㈜</td><td>카카오 소셜 로그인, 카카오톡 공유, 카카오톡 선물하기 결제, 리마인더 알림톡 발송</td><td>서비스 이용 기간</td></tr>
+<tr><td>GitHub, Inc. (미국)</td><td>웹사이트 호스팅(GitHub Pages), 접속 로그 처리</td><td>30일</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<b>📌 향후 추가될 수 있는 수탁업체</b><br>
+· <b>자서전 인쇄 업체</b>(부크크 등): 종이책 출판 신청 시 배송 정보 위탁<br>
+· <b>웹 분석 서비스</b>(Google Analytics 등): 이용 통계 수집 시<br>
+새로운 수탁업체가 추가되는 경우 본 방침을 업데이트하고 서비스 내 공지사항을 통해 안내합니다.
+</div>
+</div>
+
+<!-- ── 6 ── -->
+<div class="sec" id="s6">
+<span class="sec-label">제6조</span>
+<h2>개인정보의 국외 이전</h2>
+<p>회사가 이용하는 일부 수탁업체는 해외에 서버를 두고 있어 개인정보가 국외로 이전될 수 있습니다.</p>
+<table>
+<thead><tr><th>이전 국가</th><th>수탁업체</th><th>이전 정보 및 시점</th><th>보유 기간</th></tr></thead>
+<tbody>
+<tr><td>미국</td><td>Supabase Inc.</td><td>회원 가입·이용 시 회원 정보, 작품 데이터</td><td>회원 탈퇴 시까지</td></tr>
+<tr><td>미국</td><td>Anthropic PBC</td><td>AI 요청 시 이용자 입력 텍스트</td><td>최대 30일</td></tr>
+<tr><td>미국</td><td>fal.ai</td><td>이미지 생성 요청 시 프롬프트 및 업로드 이미지</td><td>처리 후 삭제</td></tr>
+<tr><td>미국</td><td>Suno, Inc.</td><td>음악 생성 요청 시 프롬프트 및 가사 텍스트</td><td>처리 후 삭제</td></tr>
+<tr><td>미국</td><td>GitHub, Inc.</td><td>사이트 접속 시 IP, 접속 로그</td><td>30일</td></tr>
+</tbody>
+</table>
+<p>이용자가 국외 이전을 원하지 않는 경우 회원가입 및 서비스 이용이 제한될 수 있습니다. 수탁업체는 「개인정보 보호법」에 따른 안전성 확보 조치를 이행하고 있습니다.</p>
+</div>
+
+<!-- ── 7 ── -->
+<div class="sec" id="s7">
+<span class="sec-label">제7조</span>
+<h2>정보주체의 권리·의무 및 행사 방법</h2>
+<p>이용자는 개인정보주체로서 다음과 같은 권리를 행사할 수 있습니다.</p>
+<ul>
+  <li><b>개인정보 열람 요구</b>: 회사가 보유한 본인의 개인정보를 확인할 수 있습니다.</li>
+  <li><b>오류 정정 요구</b>: 잘못된 개인정보가 있는 경우 정정을 요구할 수 있습니다.</li>
+  <li><b>삭제 요구</b>: 개인정보의 삭제를 요구할 수 있습니다(법령에 따른 보존 의무가 있는 경우 제외).</li>
+  <li><b>처리 정지 요구</b>: 개인정보 처리의 정지를 요구할 수 있습니다.</li>
+  <li><b>동의 철회</b>: 마케팅 정보 수신 등 선택 동의 항목은 언제든 철회할 수 있습니다.</li>
+</ul>
+<p>권리 행사는 <b>서비스 내 「마이페이지 → 회원 탈퇴」</b> 또는 이메일(<a href="mailto:edu-green@naver.com" style="color:var(--ac);">edu-green@naver.com</a>)로 요청할 수 있으며, 회사는 <b>지체 없이(10일 이내)</b> 조치합니다.</p>
+<p>만 14세 미만 아동의 경우 법정대리인이 권리를 행사할 수 있습니다.</p>
+</div>
+
+<!-- ── 8 ── -->
+<div class="sec" id="s8">
+<span class="sec-label">제8조</span>
+<h2>개인정보의 파기</h2>
+<p>회사는 개인정보 보유 기간의 경과, 처리 목적 달성 등 개인정보가 불필요하게 된 경우 <b>지체 없이(5일 이내)</b> 해당 개인정보를 파기합니다.</p>
+<ul>
+  <li><b>전자 파일 형태</b>: 복원이 불가능한 방법으로 영구 삭제</li>
+  <li><b>종이 문서</b>: 분쇄 또는 소각</li>
+</ul>
+<p>다만, 다른 법령에 따라 보존해야 하는 경우에는 해당 개인정보를 별도의 데이터베이스로 옮기거나 보관 장소를 달리하여 보존합니다.</p>
+</div>
+
+<!-- ── 9 ── -->
+<div class="sec" id="s9">
+<span class="sec-label">제9조</span>
+<h2>개인정보의 안전성 확보 조치</h2>
+<p>회사는 개인정보의 안전성 확보를 위해 다음의 조치를 취하고 있습니다.</p>
+<ul>
+  <li><b>관리적 조치</b>: 개인정보 취급 직원 최소화, 내부 관리 계획 수립·시행</li>
+  <li><b>기술적 조치</b>: 개인정보 암호화(비밀번호 단방향 해시), HTTPS 보안 통신, 접근 권한 관리, 접속 기록 보관</li>
+  <li><b>물리적 조치</b>: 클라우드 서버 보안 구역 접근 통제(Supabase SOC2 Type 2 인증), 관리자 계정 2단계 인증</li>
+</ul>
+</div>
+
+<!-- ── 10 ── -->
+<div class="sec" id="s10">
+<span class="sec-label">제10조</span>
+<h2>쿠키 및 로컬 저장소 운영</h2>
+<p>회사는 이용자에게 개인화된 서비스를 제공하기 위해 쿠키 및 브라우저 로컬 저장소(localStorage)를 사용합니다.</p>
+<p><b>① 사용 목적</b></p>
+<ul>
+  <li>로그인 상태 유지</li>
+  <li>서비스 이용 설정 저장(프로필, 진행 현황)</li>
+  <li>작품함 임시 저장</li>
+  <li>이용 현황 분석 및 서비스 개선</li>
+</ul>
+<p><b>② 저장 항목</b></p>
+<ul>
+  <li><code>aiDonghang_profile</code>: 이용자 프로필 정보</li>
+  <li><code>aiDonghang_dojo</code>: 도장깨기 진행 현황</li>
+  <li><code>aiDonghang_portfolio</code>: 작품함 임시 데이터</li>
+  <li><code>aiDonghang_claudeKey</code>, <code>aiDonghang_falKey</code>: API 키(관리자만, 일반 이용자는 해당 없음)</li>
+</ul>
+<p><b>③ 거부 방법</b>: 이용자는 브라우저 설정을 통해 쿠키·localStorage 저장을 거부할 수 있습니다. 다만 거부 시 로그인 유지, 작품 저장 등 일부 기능 이용이 제한됩니다.</p>
+</div>
+
+<!-- ── 11 ── -->
+<div class="sec" id="s11">
+<span class="sec-label">제11조</span>
+<h2>만 14세 미만 아동의 개인정보</h2>
+<p>회사의 서비스는 <b>만 14세 이상</b>을 대상으로 합니다. 만 14세 미만 아동의 회원가입은 원칙적으로 제한하며, 만 14세 미만 아동의 개인정보가 수집된 사실이 확인된 경우 법정대리인의 동의 확인 후 처리하거나 즉시 삭제합니다.</p>
+</div>
+
+<!-- ── 12 ── -->
+<div class="sec" id="s12">
+<span class="sec-label">제12조</span>
+<h2>AI 창작물 및 자서전 콘텐츠 처리</h2>
+<p>AI 동행은 이용자가 직접 이야기를 입력하고 AI가 창작물(글·이미지·음악)을 생성하는 서비스입니다. 이와 관련한 개인정보 처리는 다음과 같습니다.</p>
+<ul>
+  <li><b>자서전·편지 등에 포함된 제3자 정보</b>: 이용자가 가족·지인 이야기를 입력하는 경우, 해당 정보는 이용자가 본인의 기록·창작 목적으로 직접 입력한 것으로 간주되며, 이용자는 제3자의 명예·사생활을 침해하지 않도록 주의할 책임이 있습니다.</li>
+  <li><b>AI 학습 활용 여부</b>: 회사는 이용자가 입력한 내용 및 생성된 창작물을 <b>AI 모델 학습에 사용하지 않습니다</b>. 위탁업체 중 Anthropic은 API 데이터를 학습에 사용하지 않으며, Supabase는 데이터 처리 목적 외 이용을 금지합니다.</li>
+  <li><b>커뮤니티 공유</b>: 이용자가 명시적으로 「커뮤니티에 공유하기」 버튼을 눌러 작품을 공개하는 경우에 한해 해당 작품이 다른 이용자에게 노출됩니다. 공개는 언제든 철회할 수 있습니다.</li>
+  <li><b>자서전 종이책 출판 신청</b>: 향후 종이책 인쇄 서비스 도입 시, 배송에 필요한 최소한의 정보(수취인·주소·연락처)만 수집하며 별도 동의를 받습니다.</li>
+</ul>
+</div>
+
+<!-- ── 13 ── -->
+<div class="sec" id="s13">
+<span class="sec-label">제13조</span>
+<h2>개인정보 보호책임자</h2>
+<p>회사는 개인정보 처리에 관한 업무를 총괄하여 책임지고, 이용자의 개인정보 관련 불만 처리 및 피해 구제를 위해 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+
+<div class="officer">
+<div class="officer-title">👤 개인정보 보호책임자</div>
+<dl class="officer-grid">
+<dt>성명</dt><dd>박소중</dd>
+<dt>직책</dt><dd>에듀그린 대표</dd>
+<dt>이메일</dt><dd><a href="mailto:edu-green@naver.com">edu-green@naver.com</a></dd>
+<dt>전화</dt><dd>031-608-6132 (평일 10:00~18:00)</dd>
+<dt>주소</dt><dd>경기도 화성시 동탄기흥로 590, B동 1118호</dd>
+</dl>
+</div>
+<p>개인정보 침해 관련 문의, 열람·정정·삭제 요청 등은 위 연락처로 문의하시면 성실히 답변드립니다.</p>
+</div>
+
+<!-- ── 14 ── -->
+<div class="sec" id="s14">
+<span class="sec-label">제14조</span>
+<h2>권익침해 구제방법</h2>
+<p>정보주체는 개인정보 침해로 인한 구제를 받기 위해 아래 기관에 분쟁 해결이나 상담 등을 신청할 수 있습니다.</p>
+<table>
+<thead><tr><th>기관명</th><th>연락처</th><th>홈페이지</th></tr></thead>
+<tbody>
+<tr><td>개인정보분쟁조정위원회</td><td>(국번없이) 1833-6972</td><td>www.kopico.go.kr</td></tr>
+<tr><td>개인정보침해신고센터</td><td>(국번없이) 118</td><td>privacy.kisa.or.kr</td></tr>
+<tr><td>대검찰청 사이버수사과</td><td>(국번없이) 1301</td><td>www.spo.go.kr</td></tr>
+<tr><td>경찰청 사이버수사국</td><td>(국번없이) 182</td><td>ecrm.cyber.go.kr</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ── 15 ── -->
+<div class="sec" id="s15">
+<span class="sec-label">제15조</span>
+<h2>개인정보처리방침의 변경</h2>
+<p>이 개인정보처리방침은 <b>2026년 4월 21일</b>부터 적용됩니다. 법령·정책 또는 보안 기술의 변경에 따라 내용이 추가·삭제·수정될 수 있습니다.</p>
+<ul>
+  <li>공고일자: 2026년 4월 21일</li>
+  <li>시행일자: 2026년 4월 21일</li>
+  <li>이전 버전: 2026년 4월 13일 시행(버전 1.0)</li>
+</ul>
+<p><b>중요한 변경이 있을 경우 시행 7일 전(이용자에게 불리한 변경은 30일 전) 서비스 내 공지사항 및 이메일로 별도 고지합니다.</b></p>
+</div>
+
+<div class="docfooter">
+<b>에듀그린</b> · 대표 박소중 · 사업자등록번호 715-04-01808<br>
+통신판매업 신고번호 2023-화성동탄-1451<br>
+경기도 화성시 동탄기흥로 590, B동 1118호<br>
+문의: <a href="mailto:edu-green@naver.com">edu-green@naver.com</a> · 전화 031-608-6132<br>
+운영시간: 평일 10:00~18:00 (점심 12:00~13:00 제외, 주말·공휴일 휴무)<br><br>
+© 2026 AI 동행. All rights reserved.
+</div>
+
+</div>
 </body>
 </html>

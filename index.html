@@ -68,6 +68,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .nav-logo .g{color:var(--ac);}
 .nav-links{display:flex;gap:24px;}
 .nav-link{font-size:15px;font-weight:500;color:var(--i3);cursor:pointer;transition:color .15s;text-decoration:none;padding:4px 0;}
+.nav-link-gift{color:#E8725A !important;font-weight:600;position:relative;}
+.nav-link-gift:hover{color:#D65A3F !important;}
 .nav-link:hover,.nav-link.active{color:var(--ac);}
 .nav-row{display:flex;align-items:center;gap:8px;}
 .btn-nav-login{font-size:15px;color:var(--i3);cursor:pointer;border:none;background:none;font-family:inherit;font-weight:500;padding:10px 14px;min-height:48px;}
@@ -2082,6 +2084,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder');return false;">만들기</a>
     <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" id="nav-community" href="#" onclick="showView('community');return false;">커뮤니티</a>
+    <a class="nav-link nav-link-gift" href="/gift.html">🎁 선물하기</a>
     <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
@@ -2089,6 +2092,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('community');return false;">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio');return false;">내 작품함</a>
+    <a class="nav-link nav-link-gift" href="/gift.html">🎁 선물하기</a>
     <a class="nav-link" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-row" id="navBtnsGuest">
@@ -2602,6 +2606,24 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
 </div>
 </div>
+
+<!-- 🎁 선물 유도 배너 (푸터 직전) -->
+<section class="gift-cta-banner" style="background:linear-gradient(135deg,#FFF0EC 0%,#FFE8DC 100%);padding:40px 24px;text-align:center;border-top:1px solid #F5D4C6;">
+  <div style="max-width:640px;margin:0 auto;">
+    <div style="font-size:28px;margin-bottom:8px;">🎁</div>
+    <h2 style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;line-height:1.45;margin-bottom:10px;color:#1C1A17;word-break:keep-all;">
+      부모님께 <em style="color:#E8725A;font-style:normal;">AI 세상</em>을 선물하세요
+    </h2>
+    <p style="font-size:14px;color:#7A7669;line-height:1.8;margin-bottom:20px;word-break:keep-all;">
+      꽃다발은 시들지만, AI 동행으로 만든 자서전은 평생 남습니다.<br>
+      카톡 한 번으로 부모님께 바로 전달됩니다.
+    </p>
+    <a href="/gift.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:#E8725A;color:#fff;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;transition:all .15s;">
+      선물하기 자세히 보기 →
+    </a>
+  </div>
+</section>
+
 </div><!-- /homeView -->
 
 <!-- ══ AI 도장깨기 ══ -->

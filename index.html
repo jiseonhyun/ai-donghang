@@ -96,8 +96,8 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .nav-logo .g{color:var(--ac);}
 /* ── NAV (Claude design v2) ── */
 .nav{background:#fff;border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:200;padding:0 32px;height:auto;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;display:block;}
-.nav-inner{max-width:1400px;margin:0 auto;padding:14px 0;display:flex;align-items:center;gap:24px;justify-content:space-between;}
-.nav-left{display:flex;align-items:center;gap:24px;flex-shrink:0;}
+.nav-inner{max-width:none;margin:0;padding:14px 0;display:flex;align-items:center;justify-content:space-between;width:100%;}
+.nav-left{display:flex;align-items:center;gap:32px;flex-shrink:0;}
 .nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .nav-logo-icon{display:flex;align-items:center;}
@@ -2267,7 +2267,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .gift-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(30px,3.6vw,46px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.025em;margin-bottom:20px;word-break:keep-all;}
 .gift-desc{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:16px;color:var(--ash);line-height:1.7;margin-bottom:28px;max-width:520px;word-break:keep-all;font-weight:500;}
 .gift-quote{border-left:3px solid var(--donghang);padding:6px 18px;margin-bottom:32px;font-size:17px;font-weight:700;color:var(--ink);line-height:1.55;word-break:keep-all;}
-.gift-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;max-width:560px;}
+.gift-plans{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px;max-width:480px;}
 .gift-plan{background:#fff;border:1.5px solid var(--hairline);border-radius:14px;padding:16px 14px;position:relative;text-align:left;transition:border-color .15s,transform .15s;cursor:pointer;}
 .gift-plan:hover{border-color:var(--donghang);transform:translateY(-2px);}
 .gift-plan.pick{border-color:var(--donghang);border-width:2px;}
@@ -2414,6 +2414,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder');return false;">만들기</a>
     <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" id="nav-community" href="#" onclick="showView('community');return false;">커뮤니티</a>
+    <a class="nav-link" id="nav-pricing" href="#" onclick="showView('pricing');return false;">요금제</a>
     <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
@@ -2421,6 +2422,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('community');return false;">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio');return false;">내 작품함</a>
+    <a class="nav-link" href="#" onclick="showView('pricing');return false;">요금제</a>
     <a class="nav-link" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   </div><!-- /.nav-left -->
@@ -2729,57 +2731,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
     </div>
 
-    <!-- 6. 영상 만들기 (출시 예정) -->
-    <div class="interest-card soon">
-      <div class="interest-illus" style="background:#A8A8A8;">
-        <span class="interest-badge soon">출시 예정</span>
-        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect width="400" height="250" fill="#9a9a9a"/>
-          <rect y="55" width="400" height="135" fill="#2a2a2a"/>
-          <g fill="#9a9a9a">
-            <rect x="15" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="45" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="75" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="105" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="135" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="165" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="195" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="225" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="255" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="285" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="315" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="345" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="375" y="65" width="12" height="12" rx="1.5"/>
-            <rect x="15" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="45" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="75" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="105" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="135" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="165" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="195" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="225" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="255" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="285" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="315" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="345" y="168" width="12" height="12" rx="1.5"/>
-            <rect x="375" y="168" width="12" height="12" rx="1.5"/>
-          </g>
-          <rect x="70" y="88" width="80" height="70" fill="#F5C588"/>
-          <circle cx="110" cy="123" r="14" fill="#E89550"/>
-          <path d="M78,145 L95,130 L108,138 L140,115 L140,158 L78,158 Z" fill="#D47A3E" opacity="0.7"/>
-          <rect x="160" y="88" width="80" height="70" fill="#E85A4C"/>
-          <circle cx="200" cy="123" r="19" fill="#fff"/>
-          <polygon points="194,112 194,134 212,123" fill="#E85A4C"/>
-          <rect x="250" y="88" width="80" height="70" fill="#5A9BC8"/>
-          <path d="M258,145 L275,125 L290,135 L318,110 L318,158 L258,158 Z" fill="#4680A8"/>
-          <circle cx="278" cy="108" r="7" fill="#FFE88C"/>
-        </svg>
-      </div>
-      <div class="interest-body">
-        <div class="interest-name">영상 만들기</div>
-        <div class="interest-desc">사진과 이야기로 짧은 영상을. 곧 만나요.</div>
-      </div>
-    </div>
 
   </div>
   </div>
@@ -2901,21 +2852,16 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
         <p class="gift-desc">자녀가 부모님께 이용권을 선물하는 효도 모델. 설치부터 첫 작품까지, 동행이 도와드립니다.</p>
         <div class="gift-quote">"꽃다발은 시들지만,<br>자서전은 평생 남습니다."</div>
         <div class="gift-plans">
-          <div class="gift-plan" onclick="location.href='/gift.html?plan=trial'">
-            <div class="gift-plan-label">체험권</div>
-            <div class="gift-plan-price">₩19,900</div>
-            <div class="gift-plan-meta">1개월 · 3작품</div>
-          </div>
-          <div class="gift-plan pick" onclick="location.href='/gift.html?plan=regular'">
-            <span class="gift-plan-pick">추천</span>
+          <div class="gift-plan" onclick="location.href='/gift.html?plan=regular'">
             <div class="gift-plan-label">정기권</div>
-            <div class="gift-plan-price">₩49,900</div>
-            <div class="gift-plan-meta">3개월 · 무제한</div>
+            <div class="gift-plan-price">₩18,900</div>
+            <div class="gift-plan-meta">1개월 · 한도 내 자유</div>
           </div>
-          <div class="gift-plan" onclick="location.href='/gift.html?plan=annual'">
+          <div class="gift-plan pick" onclick="location.href='/gift.html?plan=annual'">
+            <span class="gift-plan-pick">추천</span>
             <div class="gift-plan-label">연간권</div>
-            <div class="gift-plan-price">₩149,000</div>
-            <div class="gift-plan-meta">12개월 · 자서전 출간</div>
+            <div class="gift-plan-price">₩169,000</div>
+            <div class="gift-plan-meta">12개월 · 자서전 1권 포함</div>
           </div>
         </div>
         <div class="gift-ctas">
@@ -2928,7 +2874,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
           <div class="gcp-badge">🎁 기프트 카드</div>
           <div class="gcp-body">
             <div class="gcp-eyebrow">부모님께 드리는</div>
-            <div class="gcp-title">3개월<br>동행권</div>
+            <div class="gcp-title">1년<br>동행권</div>
           </div>
           <div class="gcp-foot">
             <b>— 사랑하는 엄마, 아빠께.</b>
@@ -3025,8 +2971,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3082,8 +3028,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3237,7 +3183,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <button class="cat-tab active" data-cat="writing" onclick="switchCat(this,'writing')">✍️ 글쓰기</button>
       <button class="cat-tab" data-cat="image" onclick="switchCat(this,'image')">🎨 이미지</button>
       <button class="cat-tab" data-cat="music" onclick="switchCat(this,'music')">🎵 음악</button>
-      <button class="cat-tab" data-cat="video" onclick="switchCat(this,'video')">🎬 영상</button>
     </div>
   </div>
   <div class="search-wrap">
@@ -3269,9 +3214,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <div class="course-card" data-cat="music" data-kw="기념일 축하 생일 결혼" onclick="toggleCard(this)"><div class="card-emoji">🎂</div><div class="card-body"><div class="card-title">기념일 축하 노래</div><div class="card-desc">생일·결혼기념일에 특별한 노래를 선물해요</div></div><div class="card-check">✓</div></div>
       <div class="course-card" data-cat="music" data-kw="민요 고향 전통 옛날" onclick="toggleCard(this)"><div class="card-emoji">🪘</div><div class="card-body"><div class="card-title">민요풍 노래</div><div class="card-desc">고향의 정취가 담긴 민요풍 노래를 만들어요</div></div><div class="card-check">✓</div></div>
       <div class="course-card" data-cat="music" data-kw="찬송 종교 신앙 노래" onclick="toggleCard(this)"><div class="card-emoji">🕊️</div><div class="card-body"><div class="card-title">찬송·신앙 노래</div><div class="card-desc">신앙과 감사를 담은 노래를 만들어요</div></div><div class="card-check">✓</div></div>
-      <div class="course-card" data-cat="video" data-kw="슬라이드쇼 사진 영상 추억" onclick="toggleCard(this)"><div class="card-emoji">📽️</div><div class="card-body"><div class="card-title">슬라이드쇼 영상</div><div class="card-desc">소중한 사진으로 추억 영상을 만들어요</div></div><div class="card-check">✓</div></div>
-      <div class="course-card" data-cat="video" data-kw="자서전 영상 나레이션" onclick="toggleCard(this)"><div class="card-emoji">🎬</div><div class="card-body"><div class="card-title">자서전 영상</div><div class="card-desc">내 이야기를 나레이션 영상으로 만들어요</div></div><div class="card-check">✓</div></div>
-      <div class="course-card" data-cat="video" data-kw="가족 영상 편지 메시지" onclick="toggleCard(this)"><div class="card-emoji">💝</div><div class="card-body"><div class="card-title">가족 영상 편지</div><div class="card-desc">가족에게 영상으로 마음을 전해요</div></div><div class="card-check">✓</div></div>
     </div>
     <div id="emptyState" style="display:none;text-align:center;padding:60px 20px;color:var(--i3);"><div style="font-size:52px;margin-bottom:14px;">🔍</div><div style="font-size:16px;">검색 결과가 없어요. 다른 키워드로 찾아보세요.</div></div>
   </div>
@@ -3597,8 +3539,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3644,8 +3586,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3677,47 +3619,50 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div style="font-size:13px;color:#8B6914;line-height:1.6;">모든 기능을 무료로 체험하세요! 정식 출시 후 결제가 오픈돼요.</div>
   </div>
 </div>
-<div class="pricing-hero"><div class="eyebrow" style="justify-content:center;">요금제</div><div class="pricing-title">작품 하나의 감동,<br>그 가치만큼</div><div class="pricing-sub">처음엔 도장깨기로 무료 체험하세요. 더 자주 만들고 싶어지면 그때 결정하면 돼요.</div></div>
+<div class="pricing-hero"><div class="eyebrow" style="justify-content:center;">요금제</div><div class="pricing-title">작품 하나의 감동,<br>그 가치만큼</div><div class="pricing-sub">먼저 7일 무료로 써보세요. 마음에 드시면 정기권으로, 1년 동안 마음껏 쓰고 싶으시면 연간권으로 가시면 돼요.</div></div>
 <div class="pricing-cards">
   <div class="pc">
-    <div class="pc-name">체험권</div><div class="pc-price">19,900원 <span>/ 1개월</span></div><div class="pc-desc">한 달 동안 가볍게 써보세요</div>
-    <button class="pc-btn pc-btn-paid" style="min-height:52px;" onclick="startPlan('체험권')">시작하기 →</button>
+    <div class="pc-badge" style="background:var(--ink);">🎁 첫 7일 무료</div>
+    <div class="pc-name">7일 무료 체험</div><div class="pc-price">0원 <span>/ 7일</span></div><div class="pc-desc">결제 없이 가볍게 둘러보세요</div>
+    <button class="pc-btn pc-btn-paid" style="min-height:52px;background:var(--ink);" onclick="showView('auth')">무료로 시작하기 →</button>
     <div class="pc-features">
-      <div class="pc-feature"><span>📦</span><span><b>1개월</b> 이용</span></div>
-      <div class="pc-feature"><span>🖼️</span><span>작품 <b>3개</b>까지</span></div>
-      <div class="pc-feature"><span>✍️</span><span>글쓰기·이미지·편지</span></div>
-      <div class="pc-feature"><span>💌</span><span>카카오톡 공유</span></div>
-      <div class="pc-feature"><span>📁</span><span>작품함 저장</span></div>
+      <div class="pc-feature"><span>📦</span><span><b>7일</b> 동안 체험</span></div>
+      <div class="pc-feature"><span>✍️</span><span>글쓰기 <b>5회</b></span></div>
+      <div class="pc-feature"><span>🎨</span><span>이미지 <b>3장</b></span></div>
+      <div class="pc-feature dim"><span style="opacity:.3">🎵</span><span>음악 (정기권부터)</span></div>
+      <div class="pc-feature dim"><span style="opacity:.3">🖼️</span><span>사진 복원 (정기권부터)</span></div>
     </div>
   </div>
   <div class="pc featured">
     <div class="pc-badge">✨ 가장 많이 선택해요</div>
-    <div class="pc-name">정기권</div><div class="pc-price">49,900원 <span>/ 3개월</span></div><div class="pc-desc">무제한, 가장 인기 있는 선택</div>
+    <div class="pc-name">정기권</div><div class="pc-price">18,900원 <span>/ 1개월</span></div><div class="pc-desc">한 달 동안 충분히 만들 수 있어요</div>
     <button class="pc-btn pc-btn-paid" style="min-height:52px;" onclick="startPlan('정기권')">시작하기 →</button>
     <div class="pc-features">
-      <div class="pc-feature"><span>📦</span><span><b>3개월</b> 이용</span></div>
-      <div class="pc-feature"><span>♾️</span><span>작품 <b>무제한</b></span></div>
-      <div class="pc-feature"><span>✍️</span><span>글쓰기·이미지·편지·자서전</span></div>
-      <div class="pc-feature"><span>🎵</span><span>음악 만들기 포함</span></div>
-      <div class="pc-feature"><span>💌</span><span>카카오톡 공유 + PDF 다운로드</span></div>
+      <div class="pc-feature"><span>📦</span><span><b>1개월</b> 이용</span></div>
+      <div class="pc-feature"><span>✍️</span><span>글쓰기 <b>월 30회</b></span></div>
+      <div class="pc-feature"><span>🎨</span><span>이미지 <b>월 30장</b></span></div>
+      <div class="pc-feature"><span>🎵</span><span>음악 <b>월 3곡</b></span></div>
+      <div class="pc-feature"><span>🖼️</span><span>사진 복원 <b>월 15장</b></span></div>
+      <div class="pc-feature"><span>💌</span><span>카카오톡 공유 + PDF</span></div>
       <div class="pc-feature"><span>📞</span><span>1:1 도움 서비스</span></div>
     </div>
   </div>
   <div class="pc" style="border-color:var(--gd);">
-    <div class="pc-badge" style="background:var(--gd);">📚 자서전 출간 포함</div>
-    <div class="pc-name" style="color:var(--gd);">연간권</div><div class="pc-price">149,000원 <span>/ 12개월</span></div><div class="pc-desc">1년 동안 마음껏, 그리고 책 한 권으로</div>
+    <div class="pc-badge" style="background:var(--gd);">📚 자서전 출간 + 시간 할인</div>
+    <div class="pc-name" style="color:var(--gd);">연간권</div><div class="pc-price">169,000원 <span>/ 12개월</span></div><div class="pc-desc">정기권 12달치보다 25% 할인 + 종이책 포함</div>
     <button class="pc-btn" style="background:var(--gd);color:#fff;min-height:52px;" onclick="startPlan('연간권')">시작하기 →</button>
     <div class="pc-features">
       <div class="pc-feature"><span>📦</span><span><b>12개월</b> 이용</span></div>
-      <div class="pc-feature"><span>♾️</span><span>작품 <b>무제한</b></span></div>
-      <div class="pc-feature"><span>✍️</span><span>모든 만들기 기능</span></div>
-      <div class="pc-feature"><span>🎵</span><span>음악·영상 만들기 포함</span></div>
+      <div class="pc-feature"><span>✍️</span><span>글쓰기 <b>월 50회</b></span></div>
+      <div class="pc-feature"><span>🎨</span><span>이미지 <b>월 50장</b></span></div>
+      <div class="pc-feature"><span>🎵</span><span>음악 <b>월 5곡</b></span></div>
+      <div class="pc-feature"><span>🖼️</span><span>사진 복원 <b>월 25장</b></span></div>
       <div class="pc-feature"><span>📚</span><span>자서전 <b>종이책 출판 1권</b> 포함</span></div>
       <div class="pc-feature"><span>📞</span><span>1:1 도움 서비스 우선</span></div>
     </div>
   </div>
 </div>
-<div style="text-align:center;font-size:14px;color:var(--i3);padding-bottom:28px;">💳 카카오페이·신용카드 일시불 결제 · 자동 갱신 없음 · 기간 종료 시 자동 만료</div>
+<div style="text-align:center;font-size:14px;color:var(--i3);padding-bottom:28px;">💳 카카오페이·신용카드 일시불 결제 · 자동 갱신 없음 · 기간 종료 시 자동 만료 · 매월 1일 사용 한도 리셋</div>
 
 <!-- 프리미엄 전환 경로 -->
 <div style="max-width:860px;margin:0 auto;padding:0 40px 64px;">
@@ -3726,7 +3671,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div style="font-family:var(--serif,serif);font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px;">작품을 더 특별하게 남기고 싶다면</div>
     <div style="font-size:16px;color:var(--i3);">구독 외에도 작품을 더 가치있게 만드는 방법이 있어요</div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;">
     <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;display:flex;flex-direction:column;">
       <div style="font-size:36px;margin-bottom:12px;">📄</div>
       <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;">PDF 다운로드</div>
@@ -3746,14 +3691,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <div style="font-size:12px;color:var(--i3);margin-bottom:12px;">부크크 출판 · 3~5영업일</div>
       <button onclick="openBookPublish()" style="width:100%;padding:12px;background:var(--gd);color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:48px;">출판 신청하기 →</button>
     </div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;display:flex;flex-direction:column;">
-      <div style="font-size:36px;margin-bottom:12px;">✍️</div>
-      <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;">전문 작가 첨삭</div>
-      <div style="font-size:14px;color:var(--i3);line-height:1.75;flex:1;">AI가 쓴 자서전을 전문 문학 작가가 읽고 더 감동적으로 다듬어 드려요. 진짜 책 같은 문장으로.</div>
-      <div style="font-size:18px;font-weight:800;color:var(--ac);margin:12px 0 4px;">59,000원~</div>
-      <div style="font-size:13px;color:var(--i3);margin-bottom:12px;">챕터 1개 기준 · 7영업일</div>
-      <button onclick="showToast('전문 작가 첨삭 서비스 준비 중이에요! 곧 오픈할게요 ✍️')" style="width:100%;padding:12px;background:var(--al);border:1.5px solid var(--ab);color:var(--ac);border-radius:100px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:48px;">신청하기 (준비 중)</button>
-    </div>
   </div>
 </div>
 <footer class="footer-v3">
@@ -3772,8 +3709,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3887,8 +3824,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -3980,8 +3917,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -4017,7 +3954,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div class="faq-item" id="faq5"><button class="faq-q" onclick="toggleFaqById('faq5')"><span>완성된 작품을 가족에게 어떻게 보내나요?</span><span class="faq-arr">›</span></button><div class="faq-a">작품이 완성되면 화면에 <b>'카카오톡으로 보내기'</b> 버튼이 나와요. 한 번만 누르시면 자녀·손주에게 바로 전달돼요. 글뿐 아니라 그림과 노래도 같은 방식으로 보낼 수 있어요.</div></div>
     <div class="faq-item" id="faq6"><button class="faq-q" onclick="toggleFaqById('faq6')"><span>AI 동행은 왜 만들어졌나요?</span><span class="faq-arr">›</span></button><div class="faq-a">2025년 기준 60대 이상 절반 이상이 AI를 한 번이라도 써본 적이 있어요. 하지만 혼자서 작품을 끝까지 완성하시는 분은 한 자릿수예요. AI 동행은 그 <b>활용 격차</b>를 메우려고 만들어졌어요. 더 자세한 이야기는 <button onclick="showView('about')" style="color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0;text-decoration:underline;">AI 동행 소개 페이지</button>에서 확인하세요.</div></div>
     <div class="faq-item" id="faq7"><button class="faq-q" onclick="toggleFaqById('faq7')"><span>복지관·지자체에 AI 동행을 도입하고 싶어요</span><span class="faq-arr">›</span></button><div class="faq-a">AI 동행은 복지관, 지자체, 실버타운, 경로당 등 기관에 맞춤 프로그램을 제공해요. 어르신이 직접 작품을 만드는 6주 과정, 수료증 발급, 성과 리포트까지 함께해요.<br><br><button onclick="showView('b2g')" style="color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0;text-decoration:underline;">기관 도입 페이지에서 자세히 보기 →</button></div></div>
-    <div class="faq-item" id="faq8"><button class="faq-q" onclick="toggleFaqById('faq8')"><span>요금제는 어떻게 되나요?</span><span class="faq-arr">›</span></button><div class="faq-a">체험권(1개월 19,900원·작품 3개), 정기권(3개월 49,900원·무제한), 연간권(12개월 149,000원·자서전 종이책 1권 포함) 세 가지 중 고르실 수 있어요. <b>자동 갱신은 없어요</b> — 기간이 끝나면 자동으로 만료돼요. <button onclick="showView('pricing')" style="color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0;text-decoration:underline;">요금제 자세히 보기 →</button></div></div>
+    <div class="faq-item" id="faq8"><button class="faq-q" onclick="toggleFaqById('faq8')"><span>요금제는 어떻게 되나요?</span><span class="faq-arr">›</span></button><div class="faq-a"><b>7일 무료 체험</b>(글 5회·이미지 3장)으로 가볍게 시작해 보세요. 마음에 드시면 <b>정기권</b>(1개월 18,900원)으로 글 30회·이미지 30장·음악 3곡·사진 복원 15장을 한 달 동안 만드실 수 있어요. 1년 동안 마음껏 쓰고 자서전 종이책까지 받으시려면 <b>연간권</b>(12개월 169,000원)을 추천드려요. 정기권 12달치보다 25% 할인된 가격이에요. <b>자동 갱신은 없어요</b> — 기간이 끝나면 자동으로 만료돼요. 매월 1일 사용 한도가 리셋되고 미사용분은 이월되지 않아요. <button onclick="showView('pricing')" style="color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0;text-decoration:underline;">요금제 자세히 보기 →</button></div></div>
     <div class="faq-item" id="faq9"><button class="faq-q" onclick="toggleFaqById('faq9')"><span>이용 기간이 끝나면 작품은 사라지나요?</span><span class="faq-arr">›</span></button><div class="faq-a">아니요. 만든 작품은 그대로 남아요. 언제든 다시 둘러보실 수 있고, PDF로 내려받아 두실 수도 있어요. 새로운 작품을 만들고 싶으시면 그때 다시 충전하시면 돼요.</div></div>
     <div class="faq-item" id="faq10"><button class="faq-q" onclick="toggleFaqById('faq10')"><span>AI 서비스가 바뀌거나 업데이트되나요?</span><span class="faq-arr">›</span></button><div class="faq-a">AI 동행은 글·그림·음악을 만드는 여러 AI 엔진을 안에서 연결해 드려요. 더 좋은 엔진이 나오면 자동으로 바꿔 적용하니, 어르신은 따로 신경 쓰실 게 없어요. 결과물의 품질은 계속 더 좋아져요 😊</div></div>
   </div>
@@ -4109,8 +4046,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -4151,7 +4088,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <button class="learn-cat-tab active" onclick="switchLearnCat(this,'lc-writing')">✍️ 글쓰기</button>
     <button class="learn-cat-tab" onclick="switchLearnCat(this,'lc-image')">🎨 이미지</button>
     <button class="learn-cat-tab" onclick="switchLearnCat(this,'lc-music')">🎵 음악</button>
-    <button class="learn-cat-tab" onclick="switchLearnCat(this,'lc-video')">🎬 영상</button>
     <button class="learn-cat-tab" onclick="switchLearnCat(this,'lc-daily')">📱 일상 활용</button>
     <button class="learn-cat-tab" onclick="switchLearnCat(this,'lc-howto')">📖 사용법</button>
   </div>
@@ -4182,14 +4118,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div class="learn-tool-card"><div class="learn-tool-icon">🎹</div><div class="learn-tool-body"><div class="learn-tool-name">Mureka <span class="learn-tool-tag free">일부 무료</span></div><div class="learn-tool-desc">한국어 노래 생성에 특화된 AI예요. 트로트, 민요, 찬송가 등 한국적 음악 장르를 잘 이해해요.</div><div class="learn-tool-features"><span class="learn-tool-feature">한국어 노래 특화</span><span class="learn-tool-feature">트로트·민요</span><span class="learn-tool-feature">한국 감성</span></div><a href="https://mureka.ai" target="_blank" class="learn-tool-link">Mureka 바로가기 →</a></div></div>
   </div>
 
-  <!-- 영상 -->
-  <div class="learn-cat-content" id="lc-video">
-    <div class="learn-guide-box"><div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:7px;">🎬 영상 AI 이렇게 써요</div><div style="font-size:15px;color:var(--i2);line-height:1.8;">사진으로 슬라이드쇼 영상 → CapCut 앱. 스마트폰에서 가장 쉽게 쓸 수 있어요!</div></div>
-    <div class="learn-tool-card"><div class="learn-tool-icon">✂️</div><div class="learn-tool-body"><div class="learn-tool-name">CapCut <span class="learn-tool-tag free">무료</span><span class="learn-tool-tag best">👍 추천</span></div><div class="learn-tool-desc">사진을 넣으면 자동으로 슬라이드쇼 영상을 만들어주는 앱이에요. AI가 자동으로 음악과 효과를 추가해줘요.</div><div class="learn-tool-features"><span class="learn-tool-feature">사진→슬라이드쇼</span><span class="learn-tool-feature">자동 음악 추가</span><span class="learn-tool-feature">스마트폰 앱</span></div><a href="https://capcut.com" target="_blank" class="learn-tool-link">CapCut 바로가기 →</a></div></div>
-    <div class="learn-tool-card"><div class="learn-tool-icon">🎞️</div><div class="learn-tool-body"><div class="learn-tool-name">Runway <span class="learn-tool-tag free">일부 무료</span></div><div class="learn-tool-desc">텍스트나 이미지를 입력하면 AI가 영상을 만들어줘요. "봄날 꽃이 피는 장면"이라고 쓰면 영상이 생성돼요.</div><div class="learn-tool-features"><span class="learn-tool-feature">텍스트→영상 생성</span><span class="learn-tool-feature">이미지→영상 변환</span><span class="learn-tool-feature">창작 영상</span></div><a href="https://runwayml.com" target="_blank" class="learn-tool-link">Runway 바로가기 →</a></div></div>
-    <div class="learn-tool-card"><div class="learn-tool-icon">📹</div><div class="learn-tool-body"><div class="learn-tool-name">브루 (Vrew) <span class="learn-tool-tag free">무료(기본)</span></div><div class="learn-tool-desc">글을 입력하면 AI가 자동으로 영상 자막, 목소리까지 만들어줘요. 자서전 낭독 영상 만들기에 딱이에요.</div><div class="learn-tool-features"><span class="learn-tool-feature">글→영상 자동생성</span><span class="learn-tool-feature">AI 목소리 나레이션</span><span class="learn-tool-feature">자막 자동 생성</span></div><a href="https://vrew.ai" target="_blank" class="learn-tool-link">브루(Vrew) 바로가기 →</a></div></div>
-  </div>
-
   <!-- 일상 활용 -->
   <div class="learn-cat-content" id="lc-daily">
     <div class="learn-guide-box"><div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:7px;">📱 일상 AI 이렇게 써요</div><div style="font-size:15px;color:var(--i2);line-height:1.8;">별도 프롬프트 없이 앱을 설치하고 바로 쓸 수 있는 AI 도구들이에요.<br>스마트폰 하나면 충분해요!</div></div>
@@ -4214,10 +4142,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div class="learn-guide-box"><div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:7px;">🎵 음악 AI 이렇게 써요</div><div style="font-size:15px;color:var(--i2);line-height:1.8;">AI 동행에서 가사 프롬프트 완성 → 뤼튼으로 가사 완성 → Suno AI에 붙여넣기 → 진짜 노래 완성!</div></div>
     <div class="learn-tool-card"><div class="learn-tool-icon">🎵</div><div class="learn-tool-body"><div class="learn-tool-name">Suno AI <span class="learn-tool-tag free">하루 5곡 무료</span><span class="learn-tool-tag best">👍 추천</span></div><div class="learn-tool-desc">가사를 입력하면 실제 노래로 만들어주는 AI예요. 트로트, 발라드, 동요 스타일로 지정하면 그에 맞게 음악이 만들어져요.</div><div class="learn-tool-features"><span class="learn-tool-feature">가사→노래 자동생성</span><span class="learn-tool-feature">트로트 지원</span><span class="learn-tool-feature">하루 5곡 무료</span></div><a href="https://suno.com" target="_blank" class="learn-tool-link">Suno AI 바로가기 →</a></div></div>
     <div class="learn-tool-card"><div class="learn-tool-icon">🎹</div><div class="learn-tool-body"><div class="learn-tool-name">Mureka <span class="learn-tool-tag free">일부 무료</span></div><div class="learn-tool-desc">한국어 노래 생성에 특화된 AI예요. 트로트, 민요, 찬송가 등 한국적 음악 장르를 잘 이해해요.</div><div class="learn-tool-features"><span class="learn-tool-feature">한국어 노래 특화</span><span class="learn-tool-feature">트로트·민요</span></div><a href="https://mureka.ai" target="_blank" class="learn-tool-link">Mureka 바로가기 →</a></div></div>
-  </div>
-  <div class="learn-cat-content" id="lc-video">
-    <div class="learn-guide-box"><div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:7px;">🎬 영상 AI 이렇게 써요</div><div style="font-size:15px;color:var(--i2);line-height:1.8;">사진으로 슬라이드쇼 영상 만들기 → CapCut 앱 추천. 스마트폰에서 쉽게 쓸 수 있어요!</div></div>
-    <div class="learn-tool-card"><div class="learn-tool-icon">✂️</div><div class="learn-tool-body"><div class="learn-tool-name">CapCut <span class="learn-tool-tag free">무료</span><span class="learn-tool-tag best">👍 추천</span></div><div class="learn-tool-desc">사진을 넣으면 자동으로 슬라이드쇼 영상을 만들어주는 앱이에요. AI가 자동으로 음악과 효과를 추가해줘요.</div><div class="learn-tool-features"><span class="learn-tool-feature">사진→슬라이드쇼</span><span class="learn-tool-feature">자동 음악 추가</span><span class="learn-tool-feature">스마트폰 앱</span></div><a href="https://capcut.com" target="_blank" class="learn-tool-link">CapCut 바로가기 →</a></div></div>
   </div>
   <div class="learn-cat-content" id="lc-howto">
     <div class="learn-guide-box"><div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:12px;">📖 전체 사용 흐름</div>
@@ -4314,8 +4238,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -4433,8 +4357,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -4636,8 +4560,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -4740,18 +4664,18 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <!-- 어르신 작품 사례 -->
   <div style="background:var(--wm);padding:56px 52px;border-bottom:1px solid var(--bd);">
     <div class="eyebrow">실제 수료작</div>
-    <div style="font-family:var(--serif,serif);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:8px;">파일럿 복지관에서 완성된 작품</div>
-    <div style="font-size:16px;color:var(--i3);margin-bottom:32px;">2026년 봄 시범 운영 · 어르신 30명 전원 완주</div>
+    <div style="font-family:var(--serif,serif);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:8px;">파일럿 복지관에서 완성된 자서전</div>
+    <div style="font-size:16px;color:var(--i3);margin-bottom:32px;">2026년 봄 시범 운영 · 어르신 30명 전원 책 한 권씩 완주</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;">
 
       <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.07);">
         <div style="background:linear-gradient(135deg,var(--ac),var(--ad));padding:24px;text-align:center;">
           <div style="font-size:48px;margin-bottom:8px;">📖</div>
-          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">자서전 1권 완성</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">자서전 5챕터 · 양장 인쇄</div>
           <div style="font-family:var(--serif,serif);font-size:18px;font-weight:700;color:#fff;">냇가의 여름</div>
         </div>
         <div style="padding:18px 20px;">
-          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"그 여름, 냇가는 우리들의 세상이었다. 발밑으로 차가운 물이 흘렀고..."</div>
+          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"그 여름, 냇가는 우리들의 세상이었다. 발밑으로 차가운 물이 흘렀고, 돌 틈에서 피라미들이 반짝였다…"</div>
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:36px;height:36px;border-radius:50%;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:18px;">👩‍🦳</div>
             <div>
@@ -4764,12 +4688,12 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 
       <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.07);">
         <div style="background:linear-gradient(135deg,#7a3a9a,#a060c0);padding:24px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:8px;">🎵</div>
-          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">트로트 1곡 완성</div>
-          <div style="font-family:var(--serif,serif);font-size:18px;font-weight:700;color:#fff;">어머니 생각</div>
+          <div style="font-size:48px;margin-bottom:8px;">📚</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">자서전 5챕터 · 양장 인쇄</div>
+          <div style="font-family:var(--serif,serif);font-size:18px;font-weight:700;color:#fff;">아버지의 작업복</div>
         </div>
         <div style="padding:18px 20px;">
-          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"새벽빛이 물드는 부엌에서 / 손이 거칠어도 따뜻했던 어머니..."</div>
+          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"아버지의 작업복에선 늘 쇠 냄새가 났다. 어린 시절 그 냄새가 싫었지만, 이제는 그 냄새가 그립다…"</div>
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:36px;height:36px;border-radius:50%;background:#f3eeff;display:flex;align-items:center;justify-content:center;font-size:18px;">👴</div>
             <div>
@@ -4782,12 +4706,12 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 
       <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.07);">
         <div style="background:linear-gradient(135deg,#c43060,#e05080);padding:24px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:8px;">💌</div>
-          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">편지 모음집 완성</div>
-          <div style="font-family:var(--serif,serif);font-size:18px;font-weight:700;color:#fff;">딸에게 편지</div>
+          <div style="font-size:48px;margin-bottom:8px;">📔</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px;">자서전 5챕터 · 양장 인쇄</div>
+          <div style="font-family:var(--serif,serif);font-size:18px;font-weight:700;color:#fff;">시장 골목 53년</div>
         </div>
         <div style="padding:18px 20px;">
-          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"말은 잘 못했지만, 언제나 네 편이었단다. 고맙다, 지영아..."</div>
+          <div style="font-family:var(--serif,serif);font-size:14px;color:var(--i2);line-height:2;margin-bottom:14px;">"새벽 네 시 시장은 늘 분주했다. 나물 한 단을 다듬으며 자식 셋을 키웠다. 후회는 없다…"</div>
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:36px;height:36px;border-radius:50%;background:#fff0f5;display:flex;align-items:center;justify-content:center;font-size:18px;">👩‍🦳</div>
             <div>
@@ -4828,39 +4752,42 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <!-- 6주 프로그램 (각 주차 = 결과물) -->
   <div id="b2gCurriculumSection" style="padding:64px 52px;background:var(--wm);border-bottom:1px solid var(--bd);">
     <div class="eyebrow">6주 프로그램</div>
-    <div style="font-family:var(--serif,serif);font-size:32px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:12px;">매주 한 챕터씩, 6주 만에 한 권</div>
-    <div style="font-size:15px;color:var(--i3);margin-bottom:36px;">주 1회 2시간 / 총 12시간 / 30명 그룹 운영 / <b style="color:var(--ac);">매 주차마다 결과물 산출</b></div>
+    <div style="font-family:var(--serif,serif);font-size:32px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:12px;">매주 한 챕터씩, 6주 만에 자서전 한 권</div>
+    <div style="font-size:15px;color:var(--i3);margin-bottom:36px;">주 1회 2시간 / 총 12시간 / 30명 그룹 운영 / <b style="color:var(--ac);">목표는 단 하나 — 자서전 1권 완성</b></div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:#fff;border-radius:14px;border-left:4px solid var(--ac);">
         <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">1주차</div><div style="font-size:24px;margin-top:4px;">🌱</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">내 인생 지도 그리기</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">유년기·청년기·결혼·자녀·현재 — 5개 챕터 주제 정하기. AI 동행이 질문을 던져드려요.</div></div>
-        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📋 챕터 5개 결정</div>
+        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">자기소개 + 책 목차 정하기</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">서로 인사하고, 어떤 인생 이야기를 책에 담을지 5개 챕터의 목차를 함께 정해요. AI 동행이 질문을 던져 드려요.</div></div>
+        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📋 목차 5개 결정</div>
       </div>
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:#fff;border-radius:14px;border-left:4px solid var(--ac);">
         <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">2주차</div><div style="font-size:24px;margin-top:4px;">📖</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">유년기 챕터 — 첫 글 완성</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">기억 조각만 말씀하시면 AI 동행이 한 챕터 분량의 글로 다듬어 드려요. 가족에게 카톡으로 즉시 공유.</div></div>
-        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">✍️ 1챕터 완성</div>
+        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">1챕터 — 유년기 이야기</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">기억 조각 몇 줄만 말씀하시면 AI 동행이 한 챕터로 다듬어 드려요. 첫 챕터를 가족에게 카톡으로 공유.</div></div>
+        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">✍️ 1/5 완성</div>
       </div>
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:#fff;border-radius:14px;border-left:4px solid var(--ac);">
-        <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">3주차</div><div style="font-size:24px;margin-top:4px;">🎨</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">고향·청년기 챕터 + 그림</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">2개 챕터를 더 쓰면서 책에 들어갈 일러스트도 함께 만들어요. 수채화 풍 고향 풍경 자동 생성.</div></div>
-        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📚 3챕터 + 그림 5장</div>
+        <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">3주차</div><div style="font-size:24px;margin-top:4px;">🌿</div></div>
+        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">2챕터 — 청년기 이야기</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">학창시절·첫 직장·첫사랑 — 가장 빛났던 시절의 이야기를 한 챕터로. 지난주 챕터도 다듬을 수 있어요.</div></div>
+        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">✍️ 2/5 완성</div>
       </div>
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:#fff;border-radius:14px;border-left:4px solid var(--ac);">
         <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">4주차</div><div style="font-size:24px;margin-top:4px;">💑</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">결혼·자녀 챕터 + 추억 사진 복원</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">오래된 가족 사진을 선명하게 복원해 책에 함께 실어요. 결혼식·자녀 출생 시절 글로 기록.</div></div>
-        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📷 5챕터 + 사진 복원</div>
+        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">3챕터 — 결혼·자녀 이야기</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">결혼·자녀 출생·가족이 만들어진 시절. 가장 행복했던 순간을 글로 남겨요.</div></div>
+        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">✍️ 3/5 완성</div>
       </div>
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:#fff;border-radius:14px;border-left:4px solid var(--ac);">
-        <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">5주차</div><div style="font-size:24px;margin-top:4px;">🎵</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">현재 챕터 + 헌정곡 한 곡</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">마지막 챕터를 마무리하고 가족에게 들려줄 트로트 한 곡을 만들어요. 책의 QR로 노래 연결.</div></div>
-        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📕 책 원고 완성 + 노래</div>
+        <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--ac);">5주차</div><div style="font-size:24px;margin-top:4px;">📕</div></div>
+        <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">4·5챕터 — 인생 회고 + 책 마무리</div><div style="font-size:14px;color:var(--i3);line-height:1.7;">현재의 일상과 가족에게 남기고 싶은 말씀을 마지막 두 챕터에 담아 책 원고를 완성해요. 표지도 정해요.</div></div>
+        <div style="background:var(--al);color:var(--ac);font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">📕 책 원고 완성</div>
       </div>
       <div style="display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;padding:22px;background:linear-gradient(135deg,var(--cream),var(--gold-soft));border-radius:14px;border-left:4px solid var(--gd);">
         <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--gd);">6주차</div><div style="font-size:24px;margin-top:4px;">🎓</div></div>
         <div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;">수료식 — 책을 가족에게 전달</div><div style="font-size:14px;color:var(--i3);line-height:1.7;"><b style="color:var(--gd);">완성된 양장 종이책 30권</b>을 가족 초청 수료식에서 전달. 어르신 본인이 발표·기관 로고 수료증·언론 보도자료까지.</div></div>
         <div style="background:var(--gd);color:#fff;font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px;white-space:nowrap;">🎁 책 전달식</div>
       </div>
+    </div>
+    <div style="margin-top:18px;background:#fff;border:1px dashed var(--hairline);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--i3);line-height:1.7;">
+      💡 <b style="color:var(--ink);">왜 자서전 한 권에 집중하나요?</b> 6주는 짧은 시간이에요. 그림·노래·사진 복원까지 한꺼번에 다루면 하나도 제대로 끝나지 않아요. <b>"내 인생을 한 권에 담는다"</b>는 분명한 결과물 하나에 집중해야 어르신 30명 모두가 끝까지 완주할 수 있어요. 다른 창작 활동은 자서전 완성 후 부가 옵션으로 제공됩니다.
     </div>
   </div>
 
@@ -5010,8 +4937,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
       <div>
         <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('pricing');return false;" href="#">요금제</a>
         <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
-        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
         <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
         <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
       </div>
@@ -5557,14 +5484,14 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <div class="save-login-modal">
     <div style="font-size:60px;margin-bottom:16px;">✨</div>
     <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:9px;">커뮤니티에 작품을 올려요!</div>
-    <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:22px;">동행 플랜으로 업그레이드하면<br>내 작품을 커뮤니티에 공유하고<br><b style="color:var(--ac);">다른 분들의 응원</b>을 받을 수 있어요 🥹</div>
+    <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:22px;">정기권으로 업그레이드하면<br>내 작품을 커뮤니티에 공유하고<br><b style="color:var(--ac);">다른 분들의 응원</b>을 받을 수 있어요 🥹</div>
     <div style="background:var(--al);border-radius:12px;padding:14px 16px;margin-bottom:20px;text-align:left;">
-      <div style="font-weight:700;color:var(--ac);margin-bottom:8px;font-size:14px;">✅ 동행 플랜 혜택</div>
-      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">🏆 커뮤니티 작품 공유 여유롭게</div>
-      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">📁 작품함 월 100개 저장</div>
-      <div style="font-size:14px;color:var(--i2);">💌 카카오톡 전송 자유롭게</div>
+      <div style="font-weight:700;color:var(--ac);margin-bottom:8px;font-size:14px;">✅ 정기권 혜택</div>
+      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">✍️ 글쓰기 월 30회 · 🎨 이미지 월 30장</div>
+      <div style="font-size:14px;color:var(--i2);margin-bottom:5px;">🎵 음악 월 3곡 · 🖼️ 사진 복원 월 15장</div>
+      <div style="font-size:14px;color:var(--i2);">💌 카카오톡 공유 + PDF 다운로드</div>
     </div>
-    <button onclick="showView('pricing');g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;box-shadow:0 4px 0 var(--ad);">월 13,900원으로 시작하기 →</button>
+    <button onclick="showView('pricing');g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;min-height:54px;box-shadow:0 4px 0 var(--ad);">월 18,900원으로 시작하기 →</button>
     <button onclick="g('upgradeNudgeModal').classList.remove('show')" style="width:100%;padding:13px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">나중에 하기</button>
   </div>
 </div>
@@ -12483,7 +12410,7 @@ function loadFalApiKeyToInput(){
   <li><b>회원</b>: 회사와 서비스 이용계약을 체결하고 회사가 제공하는 서비스를 이용하는 자를 말합니다.</li>
   <li><b>아이디(ID)</b>: 회원의 식별과 서비스 이용을 위해 회원이 등록한 전화번호 또는 카카오 계정 정보를 말합니다.</li>
   <li><b>AI 창작물</b>: 회원이 서비스를 이용해 생성한 텍스트·이미지·음악 등 모든 결과물을 말합니다.</li>
-  <li><b>이용권</b>: 회사가 유료로 제공하는 기간제 서비스 상품으로, 체험권(1개월)·정기권(3개월)·연간권(12개월)으로 구분됩니다.</li>
+  <li><b>이용권</b>: 회사가 제공하는 기간제 서비스 상품으로, 7일 무료 체험·정기권(1개월)·연간권(12개월)으로 구분됩니다. 정기권·연간권은 유료 상품이며, 7일 무료 체험은 신규 회원에게 한정 제공됩니다.</li>
   <li><b>선물 서비스</b>: 결제자가 타인(수취인)에게 이용권을 선물 형태로 구매하여 전달하는 서비스를 말합니다.</li>
   <li><b>결제자</b>: 선물 서비스에서 이용권을 구매·결제하는 자로, 수취인과 다를 수 있습니다.</li>
   <li><b>수취인(이용자)</b>: 선물 링크를 통해 이용권을 수령하고 서비스를 실제로 이용하는 자를 말합니다.</li>
@@ -12568,15 +12495,15 @@ function loadFalApiKeyToInput(){
 <p><b>① 이용권의 종류</b> — 회사는 다음과 같은 기간제 이용권을 제공합니다. 상세 내용은 요금제 페이지에서 확인할 수 있습니다.</p>
 
 <table>
-<thead><tr><th>이용권</th><th>이용 기간</th><th>가격</th></tr></thead>
+<thead><tr><th>이용권</th><th>이용 기간</th><th>가격</th><th>월 사용 한도</th></tr></thead>
 <tbody>
-<tr><td><b>체험권</b></td><td>1개월</td><td>19,900원</td></tr>
-<tr><td><b>정기권</b></td><td>3개월</td><td>49,900원</td></tr>
-<tr><td><b>연간권</b></td><td>12개월</td><td>149,000원</td></tr>
+<tr><td><b>7일 무료 체험</b></td><td>7일</td><td>0원</td><td>글 5회 · 이미지 3장 (음악·사진 복원 미포함)</td></tr>
+<tr><td><b>정기권</b></td><td>1개월</td><td>18,900원</td><td>글 30회 · 이미지 30장 · 음악 3곡 · 사진 복원 15장</td></tr>
+<tr><td><b>연간권</b></td><td>12개월</td><td>169,000원</td><td>월 글 50회 · 이미지 50장 · 음악 5곡 · 사진 복원 25장 + 자서전 종이책 1권</td></tr>
 </tbody>
 </table>
 
-<p>이용권에 포함된 서비스 이용 한도(글쓰기·이미지·음악 등의 월간 제공량)는 서비스 내 요금제 페이지에 별도로 명시하며, 회사는 필요 시 이용 한도를 조정할 수 있습니다.</p>
+<p>월 사용 한도는 매월 1일에 리셋되며 미사용분은 다음 달로 이월되지 않습니다. 한도 도달 시 다음 달까지 해당 카테고리는 추가 사용이 제한됩니다. 회사는 운영상 필요에 따라 사용 한도를 조정할 수 있으며, 변경 시 시행 30일 전에 공지합니다.</p>
 
 <p><b>② 결제 수단</b></p>
 <ul>
@@ -12638,8 +12565,8 @@ function loadFalApiKeyToInput(){
 <p>활성화 후 7일이 초과된 경우의 환불 금액은 다음 산식으로 계산합니다.</p>
 <div class="callout">
 <b>환불 금액 = 결제 금액 × (이용 기간 - 실제 사용 일수) ÷ 이용 기간</b><br>
-예시: 정기권(3개월, 90일, 49,900원)을 30일 사용 후 환불 시<br>
-&nbsp;&nbsp;&nbsp;49,900원 × (90 − 30) ÷ 90 = <b>33,267원</b> 환불
+예시: 연간권(12개월, 365일, 169,000원)을 60일 사용 후 환불 시<br>
+&nbsp;&nbsp;&nbsp;169,000원 × (365 − 60) ÷ 365 = <b>141,219원</b> 환불
 </div>
 </div>
 
@@ -12653,7 +12580,7 @@ function loadFalApiKeyToInput(){
 
 <p><b>② 선물 구매 절차</b></p>
 <ol class="legal">
-  <li>결제자는 원하는 이용권(체험권·정기권·연간권)을 선택하고, 회사가 정한 결제 수단(토스페이먼츠 또는 카카오톡 선물하기)을 통해 결제합니다.</li>
+  <li>결제자는 원하는 이용권(정기권·연간권)을 선택하고, 회사가 정한 결제 수단(토스페이먼츠 또는 카카오톡 선물하기)을 통해 결제합니다. 7일 무료 체험은 본인 가입 시에만 제공되며 선물 대상이 아닙니다.</li>
   <li>결제 완료 시 회사는 결제자에게 고유한 <b>선물 링크(URL)</b>를 발급합니다.</li>
   <li>결제자는 해당 선물 링크를 카카오톡 등을 통해 수취인에게 전달합니다. 전달 방법은 결제자의 책임입니다.</li>
 </ol>
@@ -12669,8 +12596,7 @@ function loadFalApiKeyToInput(){
 <table>
 <thead><tr><th>이용권</th><th>선물 링크 유효기간<br>(결제일 기준)</th><th>이용 기간<br>(활성화일 기준)</th></tr></thead>
 <tbody>
-<tr><td>체험권</td><td>결제일로부터 <b>6개월</b></td><td>활성화 후 <b>30일</b></td></tr>
-<tr><td>정기권</td><td>결제일로부터 <b>6개월</b></td><td>활성화 후 <b>90일</b></td></tr>
+<tr><td>정기권</td><td>결제일로부터 <b>6개월</b></td><td>활성화 후 <b>30일</b></td></tr>
 <tr><td>연간권</td><td>결제일로부터 <b>1년</b></td><td>활성화 후 <b>365일</b></td></tr>
 </tbody>
 </table>

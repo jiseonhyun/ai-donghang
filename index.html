@@ -55,7 +55,7 @@ if(!db) {
   --node-done-shadow:0 7px 0 #1a4a3a, 0 9px 20px rgba(42,95,82,0.3);
   --node-start-shadow:0 8px 0 #cc6600, 0 10px 24px rgba(255,153,0,0.4);
   --node-idle-shadow:0 5px 0 rgba(28,26,23,0.2);
-  --serif:'Gowun Batang',serif;
+  --serif:'Noto Sans KR',-apple-system,sans-serif;
 
   /* ============================================ */
   /* Claude design v2 — Senior-friendly tokens    */
@@ -96,11 +96,13 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .nav-logo .g{color:var(--ac);}
 /* ── NAV (Claude design v2) ── */
 .nav{background:#fff;border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:200;padding:0 32px;height:auto;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;display:block;}
-.nav-inner{max-width:1400px;margin:0 auto;padding:14px 0;display:flex;align-items:center;gap:24px;}
+.nav-inner{max-width:1400px;margin:0 auto;padding:14px 0;display:flex;align-items:center;gap:24px;justify-content:space-between;}
+.nav-left{display:flex;align-items:center;gap:24px;flex-shrink:0;}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .nav-logo-icon{display:flex;align-items:center;}
 .nav-logo .g{color:var(--donghang);}
-.nav-links{display:flex;gap:30px;margin-left:24px;}
+.nav-links{display:flex;gap:30px;}
 .nav-link{font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;transition:color .15s;text-decoration:none;padding:6px 0;position:relative;}
 .nav-link:hover{color:var(--donghang);}
 .nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:2px;background:var(--ink);}
@@ -217,7 +219,7 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 /* ── 도장깨기 페이지 전면 재설계 ── */
 
 /* 헤더 단순화 */
-.dojo-header-title{font-family:'Gowun Batang',serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;letter-spacing:-0.02em;}
+.dojo-header-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;letter-spacing:-0.02em;}
 .dojo-header-sub{font-size:16px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:24px;}
 
 /* 전체 진행바 (헤더 안) */
@@ -308,7 +310,7 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .dpath-section-bar{position:sticky;top:0;z-index:50;padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .dpath-section-back{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);cursor:pointer;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:10px;font-family:inherit;padding:8px 14px;transition:all .15s;}
 .dpath-section-back:hover{background:rgba(255,255,255,.2);}
-.dpath-section-title{font-family:'Gowun Batang',serif;font-size:17px;font-weight:700;color:#fff;flex:1;text-align:center;}
+.dpath-section-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:17px;font-weight:700;color:#fff;flex:1;text-align:center;}
 .dpath-guide-btn{display:flex;align-items:center;gap:7px;padding:8px 14px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.35);border-radius:12px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .dpath-guide-btn:hover{background:rgba(255,255,255,.28);}
 
@@ -365,7 +367,7 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .guide-modal-backdrop.hide{display:none;}
 .guide-modal{background:#fff;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:520px;}
 .guide-modal-handle{width:40px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 20px;}
-.guide-modal-title{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.02em;}
+.guide-modal-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.02em;}
 .guide-modal-sub{font-size:14px;color:var(--i3);margin-bottom:20px;line-height:1.7;}
 .guide-tip{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--al);border-radius:12px;margin-bottom:10px;}
 .guide-tip-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
@@ -1433,7 +1435,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .ob-dot{width:8px;height:8px;border-radius:50%;background:#e0ddd6;transition:all .3s;}
 .ob-dot.active{width:24px;border-radius:4px;background:var(--ac);}
 .ob-dot.done{background:var(--ab);}
-.ob-title{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center;line-height:1.4;}
+.ob-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center;line-height:1.4;}
 .ob-desc{font-size:15px;color:var(--i3);text-align:center;line-height:1.75;margin-bottom:20px;}
 
 /* 선택지 버튼 */
@@ -1474,7 +1476,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .ob-dot{width:8px;height:8px;border-radius:50%;background:#e0ddd6;transition:all .3s;}
 .ob-dot.active{width:24px;border-radius:4px;background:#E8A020;}
 .ob-dot.done{background:#c8a030;}
-.ob-title{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;text-align:center;line-height:1.35;}
+.ob-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;text-align:center;line-height:1.35;}
 .ob-desc{font-size:16px;color:var(--i3);text-align:center;line-height:1.8;margin-bottom:24px;}
 
 /* 선택지 버튼 (Duolingo 스타일) */
@@ -1516,7 +1518,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 /* 도장 모달 개선 */
 .stamp-modal{background:#fff;border-radius:28px 28px 0 0;padding:30px;width:100%;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .stamp-modal-icon{font-size:56px;margin-bottom:10px;display:block;text-align:center;animation:bounce .5s ease;}
-.stamp-modal-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center;letter-spacing:-0.02em;}
+.stamp-modal-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center;letter-spacing:-0.02em;}
 .stamp-modal-sub{font-size:15px;color:var(--i3);text-align:center;margin-bottom:18px;line-height:1.7;}
 .stamp-date{font-size:13px;color:var(--i3);text-align:center;margin-bottom:18px;}
 
@@ -1565,7 +1567,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 
 /* dojo-prog-summary */
 .dojo-prog-summary{padding:16px 20px 0;max-width:520px;margin:0 auto;}
-.dojo-prog-text{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.dojo-prog-text{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;}
 .dojo-prog-bar-wrap{height:10px;background:var(--wm);border-radius:100px;overflow:hidden;margin-bottom:6px;}
 .dojo-prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--ac),#58cc02);border-radius:100px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .dojo-prog-sub{font-size:14px;color:var(--i3);margin-bottom:8px;}
@@ -1671,7 +1673,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 }
 .dojo-cat-banner-info{flex:1;}
 .dojo-cat-banner-step{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:2px;}
-.dojo-cat-banner-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:#fff;line-height:1.3;}
+.dojo-cat-banner-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:26px;font-weight:700;color:#fff;line-height:1.3;}
 .dojo-cat-banner-count{
   font-size:15px;font-weight:800;
   padding:8px 18px;border-radius:100px;
@@ -1737,7 +1739,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .guide-modal-backdrop.hide{display:none;}
 .guide-modal{background:#fff;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:520px;}
 .guide-modal-handle{width:40px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 20px;}
-.guide-modal-title{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.guide-modal-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;}
 .guide-modal-sub{font-size:15px;color:var(--i3);margin-bottom:20px;line-height:1.7;}
 .guide-tip{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--al);border-radius:12px;margin-bottom:10px;}
 .guide-tip-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
@@ -1750,7 +1752,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .dmission-back:hover{opacity:.7;}
 .dmission-hdr{text-align:center;margin-bottom:24px;}
 .dmission-icon{font-size:48px;width:80px;height:80px;background:var(--al);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
-.dmission-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.dmission-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
 .dmission-sub{font-size:16px;color:var(--i3);line-height:1.65;}
 .dmission-progress{background:#fff;border:1.5px solid var(--bd);border-radius:18px;padding:20px;margin-bottom:20px;}
 .dprog-label{font-size:15px;font-weight:600;color:var(--ac);margin-bottom:10px;}
@@ -1804,7 +1806,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .dojo-sidebar-card:hover .dojo-sidebar-big{transform:scale(1.1);color:var(--ad);}
 .dojo-sidebar-card:hover .dojo-sidebar-sub{color:var(--ac);}
 .dojo-sidebar-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.dojo-sidebar-big{font-family:'Gowun Batang',serif;font-size:28px;font-weight:800;color:var(--ac);margin-bottom:4px;transition:transform .3s ease,color .3s ease;}
+.dojo-sidebar-big{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:28px;font-weight:800;color:var(--ac);margin-bottom:4px;transition:transform .3s ease,color .3s ease;}
 .dojo-sidebar-sub{font-size:14px;color:var(--i3);line-height:1.6;transition:color .3s ease;}
 
 /* 온보딩 모달 (하단 슬라이드업) */
@@ -1813,7 +1815,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .dojo-onboard{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 36px;width:100%;max-width:480px;animation:slideUp .4s ease-out;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 .dojo-onboard-dong{text-align:center;margin-bottom:12px;}
-.dojo-onboard-title{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;}
+.dojo-onboard-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:24px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;}
 .dojo-onboard-sub{font-size:16px;color:var(--i3);text-align:center;margin-bottom:20px;line-height:1.6;}
 .dojo-onboard-options{display:flex;flex-direction:column;gap:10px;}
 .dojo-onboard-opt{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg);border:2px solid var(--bd);border-radius:16px;cursor:pointer;font-family:inherit;font-size:17px;font-weight:700;color:var(--ink);transition:all .15s;min-height:60px;}
@@ -2133,7 +2135,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .legal-modal-body{overflow-y:auto;padding:0;flex:1;background:var(--cr);}
 .legal-modal-body .wrap{padding:32px 28px 40px;}
 .legal-modal-body .hero{text-align:center;margin-bottom:28px;}
-.legal-modal-body .hero h1{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.legal-modal-body .hero h1{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;}
 .legal-modal-body .hero .lead{font-size:14px;color:var(--i3);margin-bottom:12px;}
 .legal-modal-body .hero .meta{display:inline-flex;align-items:center;gap:10px;font-size:11px;color:var(--i3);background:var(--al);border:1px solid var(--ab);border-radius:100px;padding:4px 12px;}
 .legal-modal-body .hero .meta b{color:var(--ac);}
@@ -2148,7 +2150,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 .legal-modal-body .intro b{color:var(--ac);font-weight:700;}
 .legal-modal-body .sec{margin-bottom:28px;}
 .legal-modal-body .sec-label{display:inline-block;font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.08em;background:var(--al);padding:2px 8px;border-radius:100px;margin-bottom:6px;}
-.legal-modal-body .sec h2{font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--ab);}
+.legal-modal-body .sec h2{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--ab);}
 .legal-modal-body .sec p{font-size:13px;color:var(--i2);margin-bottom:10px;line-height:1.75;}
 .legal-modal-body .sec ul{padding-left:4px;margin-bottom:10px;}
 .legal-modal-body .sec ul li{font-size:13px;color:var(--i2);padding:5px 0 5px 18px;position:relative;line-height:1.7;}
@@ -2351,6 +2353,15 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   .steps-v3-wrap,.gift-sec,.reviews-sec,.cta-v3{padding:64px 20px;}
   .footer-v3{padding:56px 20px 32px;}
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Font unification override — catches dynamically injected
+   inline styles from JS that still reference 'Gowun Batang'.
+   The brand logo (Noto Serif KR) is preserved separately.
+   ───────────────────────────────────────────────────────────── */
+[style*="Gowun Batang"]{
+  font-family:'Noto Sans KR',-apple-system,sans-serif !important;
+}
 </style>
   <!-- 카카오 SDK -->
   <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
@@ -2362,6 +2373,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 <!-- NAV (Claude design v2) -->
 <nav class="nav" id="globalNav">
   <div class="nav-inner">
+  <div class="nav-left">
   <a href="#" onclick="showView('home');return false;" class="nav-logo">
     <svg width="38" height="38" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="nv_svg1" viewBox="0 0 200 200"  ><defs>
             <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
@@ -2411,6 +2423,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" href="#" onclick="showView('portfolio');return false;">내 작품함</a>
     <a class="nav-link" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
+  </div><!-- /.nav-left -->
+  <div class="nav-right">
   <div class="nav-row" id="navBtnsGuest">
     <button class="btn-nav-login" onclick="showView('login')">로그인</button>
     <button class="btn-nav-signup" onclick="location.href='/gift.html'"><span>🎁</span> 부모님께 선물하기</button>
@@ -2419,6 +2433,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <button class="btn-nav-user" onclick="showView('mypage')">👤 <span id="navUserName">마이페이지</span></button>
     <button class="btn-nav-signup" onclick="location.href='/gift.html'"><span>🎁</span> 부모님께 선물하기</button>
   </div>
+  </div><!-- /.nav-right -->
   </div>
 </nav>
 <div class="nav-spacer"></div>
@@ -3295,7 +3310,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <div style="width:4px;height:44px;background:var(--ac);border-radius:2px;flex-shrink:0;"></div>
       <div>
         <div style="font-size:13px;color:var(--i3);font-weight:500;margin-bottom:3px;">지금 만들고 있어요</div>
-        <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);" id="courseHeaderTitle">블로그 글쓰기</div>
+        <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:24px;font-weight:700;color:var(--ink);" id="courseHeaderTitle">블로그 글쓰기</div>
       </div>
     </div>
 
@@ -3434,7 +3449,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
         <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
       </svg>
     </div>
-    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;" id="loadingTitle">열심히 쓰고 있어요...</div>
+    <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;" id="loadingTitle">열심히 쓰고 있어요...</div>
     <div style="font-size:15px;color:var(--i3);margin-bottom:28px;" id="loadingSubtitle">동동이가 AI에게 부탁했어요. 잠깐만요! 🙂</div>
     <!-- 점 로딩 애니메이션 -->
     <div style="display:flex;justify-content:center;gap:8px;">
@@ -3468,7 +3483,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
         <div style="font-size:12px;color:rgba(255,255,255,.7);" id="aiResultCharCount"></div>
       </div>
       <!-- 본문 -->
-      <div id="aiResultText" style="padding:20px;font-size:16px;color:var(--i2);line-height:2;font-family:'Gowun Batang',serif;white-space:pre-wrap;max-height:360px;overflow-y:auto;background:#fff;"></div>
+      <div id="aiResultText" style="padding:20px;font-size:16px;color:var(--i2);line-height:2;font-family:'Noto Sans KR',-apple-system,sans-serif;white-space:pre-wrap;max-height:360px;overflow-y:auto;background:#fff;"></div>
     </div>
 
     <!-- 버튼들 -->
@@ -3494,7 +3509,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <!-- 에러 화면 -->
   <div id="aiErrorScreen" style="display:none;text-align:center;padding:40px 24px;">
     <div style="font-size:48px;margin-bottom:16px;">😥</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:10px;">잠깐, 문제가 생겼어요</div>
+    <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:10px;">잠깐, 문제가 생겼어요</div>
     <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:28px;" id="aiErrorMsg">네트워크 연결을 확인하고 다시 시도해 주세요</div>
     <button onclick="retryGeneration()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">다시 시도하기</button>
     <button onclick="copyPromptSilent();window.open('https://wrtn.ai','_blank');" style="width:100%;padding:14px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">뤼튼에서 직접 해보기</button>
@@ -4122,7 +4137,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <!-- 동행+ 아닌 경우 CS 섹션 안내 -->
   <div id="csChatLock" style="margin-top:32px;background:#fff;border:2px solid var(--bd);border-radius:20px;padding:28px 24px;text-align:center;">
     <div style="font-size:36px;margin-bottom:12px;">🤖</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">동동이 CS 도우미</div>
+    <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">동동이 CS 도우미</div>
     <div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:18px;">동행+ 멤버에게 제공되는 24시간 AI 상담 서비스예요.<br>궁금한 점을 바로바로 해결해드려요 🙂</div>
     <button onclick="showView('pricing')" style="padding:12px 24px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;">동행+ 시작하기</button>
   </div>
@@ -4272,7 +4287,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <div style="background:linear-gradient(135deg,var(--al),#e8f8f4);border:2px solid var(--ab);border-radius:20px;padding:28px 24px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
         <span style="font-size:28px;">✨</span>
-        <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ac);">AI 툴 사용법 — 아주 쉬워요!</div>
+        <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:20px;font-weight:700;color:var(--ac);">AI 툴 사용법 — 아주 쉬워요!</div>
       </div>
       <div style="font-size:15px;color:var(--i2);line-height:1.8;margin-bottom:20px;">
         AI 동행에서 만든 <b style="color:var(--ac);">프롬프트</b>를 AI 툴에 붙여넣기만 하면 글, 그림, 노래가 완성돼요.<br>
@@ -4386,7 +4401,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 <div style="background:linear-gradient(135deg,var(--ad),#1a5c48);padding:32px 40px 24px;">
   <div style="max-width:860px;margin:0 auto;">
     <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">AI 동행 커뮤니티 💬</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;">우리들의 AI 작품 모음</div>
+    <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;">우리들의 AI 작품 모음</div>
     <div style="font-size:15px;color:rgba(255,255,255,.75);">어르신들이 AI로 직접 만든 작품이에요. 응원하고 이야기 나눠요 💕</div>
   </div>
 </div>
@@ -4426,7 +4441,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 <div class="modal-backdrop" id="uploadWorkModal" style="display:none;">
   <div style="background:#fff;border-radius:24px;padding:30px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;">
     <!-- 헤더 -->
-    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:18px;">📤 작품 올리기</div>
+    <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:18px;">📤 작품 올리기</div>
     <!-- 나이대 -->
     <div style="margin-bottom:14px;">
       <div style="font-size:14px;font-weight:700;color:var(--i2);margin-bottom:8px;">나이대 <span style="font-weight:400;color:var(--i3);">(선택)</span></div>
@@ -5277,7 +5292,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </svg>
       <!-- 말풍선 -->
       <div style="flex:1;background:#f0faf5;border:1.5px solid var(--ab);border-radius:18px 18px 18px 4px;padding:14px 16px;">
-        <div style="font-family:'Gowun Batang',serif;font-size:17px;font-weight:700;color:var(--ad);line-height:1.55;margin-bottom:5px;" id="completionDongMsg">나중에 필요할 때 언제든지 다시 볼 수 있어요 😊</div>
+        <div style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:17px;font-weight:700;color:var(--ad);line-height:1.55;margin-bottom:5px;" id="completionDongMsg">나중에 필요할 때 언제든지 다시 볼 수 있어요 😊</div>
         <div style="font-size:14px;color:var(--i3);line-height:1.65;" id="completionDongSub">소중한 작품이에요. 가족에게 지금 바로 전달해보세요!</div>
       </div>
     </div>
@@ -12367,7 +12382,7 @@ function loadFalApiKeyToInput(){
         </svg>
       </div>
       <div style="flex:1;background:linear-gradient(135deg,var(--al),#e8f8f4);border:2px solid var(--ab);border-radius:20px 20px 20px 6px;padding:14px 18px;position:relative;">
-        <div id="dongPopupMsg" style="font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.55;margin-bottom:6px;">
+        <div id="dongPopupMsg" style="font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.55;margin-bottom:6px;">
           처음 오셨군요! 반가워요 😊
         </div>
         <div id="dongPopupSub" style="font-size:14px;color:var(--i3);line-height:1.6;">

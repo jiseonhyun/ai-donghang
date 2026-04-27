@@ -45,9 +45,10 @@ if(!db) {
 </script>
 <style>
 :root{
-  --bg:#FAF8F4;--wm:#F4F0E8;--ink:#1C1A17;--i2:#3D3A33;--i3:#5C5A54;
-  --ac:#2A5F52;--al:#EBF5F2;--ab:#B8DDD6;--ad:#1E4840;
-  --gd:#A07C30;--gl:#FBF4E4;--gb:#DEC98A;
+  /* Brand (kept for backward compat) */
+  --bg:#FAF8F4;--wm:#F4F0E8;--ink:#2a2a2a;--i2:#3D3A33;--i3:#6a6a6a;
+  --ac:#2a6b57;--al:#eaf2ee;--ab:#B8DDD6;--ad:#1e4f3f;
+  --gd:#A07C30;--gl:#fbf2dc;--gb:#d8a54a;
   --bd:rgba(28,26,23,0.12);--r:14px;
   --shadow:0 2px 20px rgba(28,26,23,0.10);
   --shadow-lg:0 8px 40px rgba(28,26,23,0.14);
@@ -55,9 +56,36 @@ if(!db) {
   --node-start-shadow:0 8px 0 #cc6600, 0 10px 24px rgba(255,153,0,0.4);
   --node-idle-shadow:0 5px 0 rgba(28,26,23,0.2);
   --serif:'Gowun Batang',serif;
+
+  /* ============================================ */
+  /* Claude design v2 — Senior-friendly tokens    */
+  /* Source: Claude designed standalone mockup    */
+  /* ============================================ */
+  --donghang: #2a6b57;
+  --donghang-deep: #1e4f3f;
+  --donghang-soft: #eaf2ee;
+  --gold: #d8a54a;
+  --gold-soft: #fbf2dc;
+  --ash: #6a6a6a;
+  --mute: #929292;
+  --hairline: #dddddd;
+  --canvas: #ffffff;
+  --cloud: #f7f5f1;
+  --cream: #fff8ea;
+  --shadow-1: 0 4px 14px rgba(0,0,0,0.06);
+  --shadow-2: rgba(0,0,0,0.02) 0 0 0 1px,
+              rgba(0,0,0,0.04) 0 2px 6px 0,
+              rgba(0,0,0,0.10) 0 8px 20px 0;
+
+  /* Type scale — generous for 60–80 age cohort */
+  --fs-hero: clamp(40px, 6vw, 76px);
+  --fs-h1: clamp(28px, 3.4vw, 44px);
+  --fs-h2: clamp(22px, 2.4vw, 32px);
+  --fs-body: 18px;
+  --fs-body-lg: 20px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.7;}
+body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:var(--fs-body);font-weight:500;line-height:1.5;}
 .view{display:none;}.view.active{display:block;}
 .pv{display:none;}.pv.active{display:block;}
 
@@ -66,17 +94,31 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .nav-logo{display:flex;align-items:center;text-decoration:none;}
 .nav-logo-icon{display:flex;align-items:center;}
 .nav-logo .g{color:var(--ac);}
-.nav-links{display:flex;gap:24px;}
-.nav-link{font-size:15px;font-weight:500;color:var(--i3);cursor:pointer;transition:color .15s;text-decoration:none;padding:4px 0;}
-.nav-link-gift{color:#E8725A !important;font-weight:600;position:relative;}
-.nav-link-gift:hover{color:#D65A3F !important;}
-.nav-link:hover,.nav-link.active{color:var(--ac);}
-.nav-row{display:flex;align-items:center;gap:8px;}
-.btn-nav-login{font-size:15px;color:var(--i3);cursor:pointer;border:none;background:none;font-family:inherit;font-weight:500;padding:10px 14px;min-height:48px;}
-.btn-nav-signup{padding:11px 26px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;min-height:48px;box-shadow:0 3px 0 var(--ad);letter-spacing:-.01em;}
-.btn-nav-signup:hover{background:var(--ad);}
-.btn-nav-user{display:flex;align-items:center;gap:7px;padding:10px 18px;background:var(--al);border:1.5px solid var(--ab);border-radius:100px;font-size:15px;font-weight:600;color:var(--ac);cursor:pointer;font-family:inherit;min-height:48px;}
-.nav-spacer{height:64px;}
+/* ── NAV (Claude design v2) ── */
+.nav{background:#fff;border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:200;padding:0 32px;height:auto;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;display:block;}
+.nav-inner{max-width:1400px;margin:0 auto;padding:14px 0;display:flex;align-items:center;gap:24px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.nav-logo-icon{display:flex;align-items:center;}
+.nav-logo .g{color:var(--donghang);}
+.nav-links{display:flex;gap:30px;margin-left:24px;}
+.nav-link{font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;transition:color .15s;text-decoration:none;padding:6px 0;position:relative;}
+.nav-link:hover{color:var(--donghang);}
+.nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:2px;background:var(--ink);}
+.nav-link-gift{display:none;} /* deprecated — moved to right-side CTA */
+.nav-row{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.btn-nav-login{background:transparent;color:var(--ink);border:1px solid var(--hairline);border-radius:12px;padding:14px 22px;font-weight:700;font-size:16px;font-family:inherit;cursor:pointer;transition:all .12s;min-height:auto;}
+.btn-nav-login:hover{border-color:var(--ink);}
+.btn-nav-signup{padding:14px 22px;background:linear-gradient(90deg,var(--gold) 0%,#c48b32 100%);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .12s;min-height:auto;box-shadow:none;letter-spacing:0;white-space:nowrap;}
+.btn-nav-signup:hover{filter:brightness(1.05);background:linear-gradient(90deg,var(--gold) 0%,#c48b32 100%);}
+.btn-nav-signup:active{transform:scale(0.97);}
+.btn-nav-user{display:flex;align-items:center;gap:7px;padding:12px 20px;background:var(--donghang-soft);border:1px solid var(--donghang-soft);border-radius:12px;font-size:16px;font-weight:700;color:var(--donghang-deep);cursor:pointer;font-family:inherit;min-height:auto;}
+.nav-spacer{height:0;} /* sticky nav, no spacer needed */
+@media (max-width: 900px){
+  .nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .nav-inner{padding:12px 0;gap:12px;}
+  .btn-nav-login,.btn-nav-signup{padding:10px 16px;font-size:14px;}
+}
 
 /* ── 공통 버튼 ── */
 .btn-p{display:inline-flex;align-items:center;gap:8px;padding:15px 32px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s;min-height:52px;}
@@ -84,46 +126,66 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .btn-g{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;background:transparent;color:var(--i2);border:2px solid var(--bd);border-radius:100px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .18s;min-height:52px;}
 .btn-g:hover{border-color:var(--ab);color:var(--ac);background:var(--al);}
 
-/* ── SECTIONS ── */
-.sec{padding:80px 40px;max-width:1100px;margin:0 auto;}
-.sec-w{padding:80px 40px;background:#fff;}.sec-w-in{max-width:1100px;margin:0 auto;}
-.sec-d{padding:80px 40px;background:var(--ad);}.sec-d-in{max-width:1100px;margin:0 auto;}
-.sec-c{padding:80px 40px;background:var(--wm);}.sec-c-in{max-width:1100px;margin:0 auto;}
-.eyebrow{font-size:12px;font-weight:700;color:var(--ac);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
-.eyebrow::before{content:'';width:18px;height:2px;background:var(--ac);display:inline-block;}
-.eyebrow-d{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
-.sec-title{font-family:var(--serif,serif);font-size:38px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:14px;}
-.sec-title-d{font-family:var(--serif,serif);font-size:38px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:14px;}
-.sec-sub{font-size:18px;color:var(--i3);line-height:1.85;margin-bottom:44px;max-width:500px;}
+/* ── SECTIONS (Airbnb-inspired) ── */
+.sec{padding:96px 32px;max-width:1400px;margin:0 auto;}
+.sec-w{padding:96px 32px;background:var(--cloud);}.sec-w-in{max-width:1400px;margin:0 auto;}
+.sec-d{padding:96px 32px;background:var(--donghang-deep);}.sec-d-in{max-width:1400px;margin:0 auto;}
+.sec-c{padding:96px 32px;background:#fff;}.sec-c-in{max-width:1400px;margin:0 auto;}
+.eyebrow{font-size:14px;font-weight:700;color:var(--donghang);letter-spacing:.02em;text-transform:none;margin-bottom:12px;display:inline-flex;align-items:center;gap:8px;background:var(--donghang-soft);border:1px solid var(--donghang-soft);border-radius:999px;padding:6px 14px;width:auto;}
+.eyebrow::before{content:'';width:6px;height:6px;background:var(--donghang);border-radius:50%;display:inline-block;}
+.eyebrow-d{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.02em;margin-bottom:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:6px 14px;width:auto;}
+.sec-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.02em;margin-bottom:16px;word-break:keep-all;}
+.sec-title-d{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:16px;word-break:keep-all;}
+.sec-sub{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:16px;color:#2a2a2a;line-height:1.5;margin-bottom:48px;max-width:640px;font-weight:500;word-break:keep-all;}
 
-/* ── HERO ── */
-.hero{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;padding:72px 40px 64px;max-width:1100px;margin:0 auto;}
-.hero-pill{display:inline-flex;align-items:center;gap:7px;background:var(--al);color:var(--ac);border:1px solid var(--ab);border-radius:100px;font-size:13px;font-weight:600;padding:6px 16px;margin-bottom:18px;}
-.hero-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite;}
+/* ── HERO (Claude design v2) ── */
+.hero{background:linear-gradient(180deg,var(--cream) 0%,#fff 100%);padding:72px 32px 56px;position:relative;overflow:hidden;max-width:none;margin:0;display:block;}
+.hero-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--hairline);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--donghang);white-space:nowrap;margin-bottom:20px;}
+.hero-dot{width:8px;height:8px;border-radius:50%;background:var(--donghang);box-shadow:0 0 0 4px rgba(42,107,87,0.15);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-.hero-title{font-family:var(--serif,serif);font-size:46px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:16px;word-break:keep-all;}
-.hero-title em{font-style:normal;color:var(--ac);}
-.hero-sub{font-size:18px;color:var(--i3);line-height:1.9;margin-bottom:28px;word-break:keep-all;min-height:5em;}
-.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
-.hero-reassure{font-size:13px;color:var(--i3);margin-top:14px;display:flex;align-items:center;gap:6px;}
+.hero h1,.hero-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:var(--fs-hero);font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-top:20px;margin-bottom:0;color:var(--ink);word-break:keep-all;}
+.hero h1 em,.hero-title em{font-style:normal;color:var(--donghang);position:relative;white-space:nowrap;display:inline-block;}
+.hero h1 em::after,.hero-title em::after{content:"";position:absolute;left:0;right:0;bottom:4px;height:12px;background:rgba(216,165,74,0.35);z-index:-1;border-radius:6px;}
+.hero p.lead,.hero-sub{font-size:var(--fs-body-lg);color:var(--ash);margin-top:20px;margin-bottom:0;max-width:520px;line-height:1.6;font-weight:500;min-height:auto;word-break:keep-all;}
+.hero-ctas,.hero-cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;align-items:center;}
+.btn-hero{padding:18px 28px;font-size:18px;border-radius:14px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:transform .12s,background .12s,box-shadow .12s;}
+.btn-hero:active{transform:scale(0.97);}
+.btn-primary,.btn-p{background:var(--donghang);color:#fff;border:none;border-radius:14px;padding:18px 28px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .12s;box-shadow:none;min-height:auto;}
+.btn-primary:hover,.btn-p:hover{background:var(--donghang-deep);transform:none;box-shadow:none;}
+.btn-secondary,.btn-g{background:#fff;color:var(--ink);border:1px solid var(--hairline);border-radius:14px;padding:18px 28px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .12s;min-height:auto;}
+.btn-secondary:hover,.btn-g:hover{border-color:var(--ink);color:var(--ink);background:#fff;}
+.trust-row,.hero-reassure{display:flex;gap:28px;margin-top:36px;flex-wrap:wrap;font-size:15px;color:var(--ink);font-weight:600;align-items:center;}
+.trust{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink);font-weight:600;}
+.trust-dot{width:28px;height:28px;border-radius:50%;background:var(--donghang-soft);color:var(--donghang);display:grid;place-items:center;flex-shrink:0;font-size:14px;}
 
-/* HERO CARD */
-.hero-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(28,26,23,.1);border:1px solid var(--bd);height:420px;display:flex;flex-direction:column;}
-.hero-card-hdr{background:var(--ad);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
-.hero-card-title{font-size:14px;font-weight:600;color:rgba(255,255,255,.9);}
-.hero-card-badge{font-size:11px;background:rgba(255,255,255,.2);color:#fff;border-radius:100px;padding:4px 12px;font-weight:600;}
-.hero-card-body{padding:20px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
-.anim-q{font-size:13px;color:var(--i3);margin-bottom:9px;font-weight:600;transition:opacity .4s;}
-.anim-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px;}
-.anim-chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;color:var(--i2);transition:all .3s;cursor:default;min-height:38px;display:flex;align-items:center;}
-.anim-chip.selecting{border-color:var(--ab);background:var(--al);color:var(--ac);}
-.anim-chip.selected{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700;}
-.anim-prompt-box{background:var(--al);border:1.5px solid var(--ab);border-radius:11px;padding:14px 16px;min-height:80px;transition:opacity .4s;}
-.anim-prompt-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
-.anim-prompt-text{font-size:13px;color:var(--i2);line-height:1.8;}
-.cursor{display:inline-block;width:2px;height:14px;background:var(--ac);margin-left:1px;vertical-align:middle;animation:blink .7s infinite;}
-@keyframes dongBounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+/* Hero demo panel (interactive) */
+.demo{background:#fff;border-radius:24px;box-shadow:var(--shadow-2);padding:28px;position:relative;}
+.demo-header{display:flex;align-items:center;gap:10px;padding-bottom:16px;border-bottom:1px solid var(--hairline);flex-wrap:wrap;}
+.demo-header .pill{background:var(--donghang-soft);color:var(--donghang);font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;}
+.demo-title{font-size:16px;font-weight:700;color:var(--ink);}
+.demo-body{padding-top:20px;}
+.demo-q{font-size:16px;color:var(--ash);font-weight:600;margin-bottom:10px;margin-top:0;}
+.demo-q:not(:first-child){margin-top:18px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0;}
+.chip{background:#fff;border:1.5px solid var(--hairline);border-radius:999px;padding:10px 16px;font-size:15px;font-weight:600;color:var(--ink);transition:all .15s;font-family:inherit;cursor:pointer;}
+.chip:hover{border-color:var(--donghang);color:var(--donghang);}
+.chip.selected{background:var(--donghang);border-color:var(--donghang);color:#fff;}
+.prompt-box{background:var(--cloud);border-radius:14px;padding:18px 20px;font-size:16px;line-height:1.6;min-height:96px;color:var(--ink);font-weight:500;border:1px dashed var(--hairline);position:relative;margin-top:18px;}
+.prompt-box .ph{color:var(--mute);font-weight:500;}
+.prompt-box .filled{background:var(--gold-soft);padding:2px 8px;border-radius:6px;font-weight:700;color:var(--donghang-deep);margin:0 2px;}
+.prompt-box .cursor{display:inline-block;width:2px;height:18px;background:var(--donghang);vertical-align:middle;animation:blink 1s infinite;}
+@keyframes blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+.demo-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:13px;color:var(--ash);gap:12px;flex-wrap:wrap;}
+.demo-cta{background:var(--donghang);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer;transition:background .12s;}
+.demo-cta:hover{background:var(--donghang-deep);}
+@media (max-width: 900px){
+  .hero{padding:40px 20px;}
+  .hero-inner{grid-template-columns:1fr;gap:32px;}
+}
+
+/* (Legacy - 기존 애니메이션 카드 숨김 처리) */
+.hero-card,.hero-card-hdr,.hero-card-body,.anim-q,.anim-chips,.anim-chip,.anim-prompt-box{/* deprecated - replaced by .demo */}
 
 /* ── 도장깨기 홈 미리보기 ── */
 .dojo-preview{background:linear-gradient(135deg,var(--ad) 0%,#1a5c48 100%);border-radius:20px;padding:36px;overflow:hidden;position:relative;}
@@ -392,10 +454,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .dcc-btn-skip{flex:1;padding:15px;background:#fff;color:var(--i3);border:1.5px solid var(--bd);border-radius:100px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;}
 
 /* ── 빌더 ── */
-.page-hdr{padding:28px 40px 0;max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;}
-.page-hdr-logo{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:900;color:var(--ink);}
-.page-hdr-logo span{color:var(--ac);}
-.page-hdr-badge{background:var(--al);border:1.5px solid var(--ab);color:var(--ac);font-size:14px;font-weight:600;padding:6px 16px;border-radius:100px;}
+.page-hdr{padding:32px 32px 0;max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+.page-hdr-logo{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:900;color:var(--ink);letter-spacing:-0.02em;}
+.page-hdr-logo span{color:var(--donghang);}
+.page-hdr-badge{background:var(--donghang-soft);border:1px solid var(--donghang-soft);color:var(--donghang);font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;}
 .cat-wrap{padding:20px 40px 0;max-width:1100px;margin:0 auto;}
 .cat-tabs{display:flex;gap:4px;border-bottom:2px solid var(--bd);}
 .cat-tab{display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px 10px 0 0;font-size:16px;font-weight:600;color:var(--i3);cursor:pointer;border:none;background:none;font-family:inherit;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;min-height:48px;}
@@ -494,44 +556,99 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .tool-name{font-weight:700;font-size:13px;color:var(--ink);}
 .tool-sub{font-size:11px;color:var(--i3);margin-top:1px;}
 
-/* ── 예시 섹션 ── */
-.example-tabs{display:flex;gap:9px;margin-bottom:26px;flex-wrap:wrap;}
-.example-tab{padding:10px 22px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;color:var(--i3);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;min-height:48px;}
-.example-tab.active{background:var(--ac);color:#fff;border-color:var(--ac);}
-.example-card{background:#fff;border:1.5px solid var(--bd);border-radius:18px;padding:30px;display:none;}
+/* ── 예시 섹션 (Airbnb) ── */
+.example-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.example-tab{padding:12px 20px;border-radius:999px;border:1px solid var(--hairline);background:#fff;color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;min-height:auto;}
+.example-tab:hover{border-color:var(--ink);}
+.example-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.example-card{background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:32px;display:none;}
 .example-card.active{display:block;}
-.example-badge{display:inline-block;font-size:12px;font-weight:700;padding:5px 14px;border-radius:100px;background:var(--al);color:var(--ac);margin-bottom:16px;}
-.example-card-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
-.example-card-emoji{font-size:30px;}
-.example-card-title{font-size:18px;font-weight:700;color:var(--ink);}
-.example-card-sub{font-size:13px;color:var(--i3);margin-top:3px;}
-.example-cta{display:flex;align-items:center;justify-content:space-between;margin-top:20px;flex-wrap:wrap;gap:12px;}
-.example-cta-text{font-size:14px;color:var(--i3);}
+.example-badge{display:inline-block;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--donghang-soft);color:var(--donghang);margin-bottom:18px;}
+.example-card-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.example-card-emoji{font-size:32px;}
+.example-card-title{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;}
+.example-card-sub{font-size:14px;color:var(--ash);margin-top:4px;font-weight:500;}
+.example-cta{display:flex;align-items:center;justify-content:space-between;margin-top:22px;flex-wrap:wrap;gap:14px;padding-top:22px;border-top:1px solid var(--hairline);}
+.example-cta-text{font-size:15px;color:var(--ash);font-weight:500;}
 
-/* ── PHOTO CARDS ── */
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px;}
-.photo-card{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:#2a2622;transition:transform .25s,box-shadow .25s;border:1px solid rgba(28,26,23,.08);}
-.photo-card:hover{transform:translateY(-4px);box-shadow:0 16px 44px rgba(28,26,23,.14);}
+/* ── EXAMPLES v2 — 선택 없이 한눈에 보는 결과물 (2컬럼 + 2x2 컬러 카드) ── */
+.examples-grid-v2{display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:center;}
+.examples-text .sec-sub{margin-bottom:36px;}
+.examples-points{display:flex;flex-direction:column;gap:22px;}
+.ex-point{display:flex;align-items:flex-start;gap:14px;}
+.ex-point-icon{width:40px;height:40px;border-radius:12px;background:var(--donghang-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ex-point-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3;letter-spacing:-0.01em;}
+.ex-point-desc{font-size:15px;color:var(--ash);line-height:1.55;font-weight:500;word-break:keep-all;}
+.examples-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.example-preview-card{aspect-ratio:3/4;border-radius:22px;padding:26px 24px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;cursor:pointer;position:relative;overflow:hidden;transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s ease;box-shadow:0 4px 14px rgba(0,0,0,0.08);}
+.example-preview-card:hover{transform:translateY(-8px);box-shadow:0 20px 42px rgba(0,0,0,0.22);}
+.example-preview-card:active{transform:translateY(-2px);transition-duration:.12s;}
+.epc-eyebrow{font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);letter-spacing:-0.01em;}
+.epc-body{}
+.epc-title{font-size:21px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:10px;letter-spacing:-0.02em;word-break:keep-all;}
+.epc-meta{font-size:13px;color:rgba(255,255,255,0.78);line-height:1.45;font-weight:500;word-break:keep-all;}
+@media (max-width: 900px){
+  .examples-grid-v2{grid-template-columns:1fr;gap:40px;}
+  .examples-cards{gap:14px;}
+  .example-preview-card{padding:22px 20px;border-radius:18px;}
+  .epc-title{font-size:18px;}
+  .ex-point-icon{width:36px;height:36px;font-size:18px;}
+}
+
+/* ── PHOTO CARDS (Airbnb-inspired) ── */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:18px;}
+.photo-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:#2a2622;transition:transform .25s,box-shadow .25s;border:none;}
+.photo-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.14);}
 .photo-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;position:absolute;inset:0;z-index:0;}
-.photo-card:hover img{transform:scale(1.06);}
+.photo-card:hover img{transform:scale(1.04);}
 .photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.05) 100%);z-index:1;}
-.photo-content{position:absolute;bottom:0;left:0;right:0;padding:20px 22px;z-index:2;}
-.photo-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;background:rgba(255,255,255,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:5px 11px;border-radius:100px;margin-bottom:10px;border:1px solid rgba(255,255,255,.25);}
-.photo-badge.gold{background:rgba(222,201,138,.95);color:#3a2800;border-color:transparent;}
-.photo-title{font-family:var(--serif,serif);font-size:22px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3;text-shadow:0 2px 10px rgba(0,0,0,.4);}
-.photo-tags{display:flex;flex-wrap:wrap;gap:5px;}
-.photo-tag{font-size:12px;color:#fff;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:100px;font-weight:500;letter-spacing:-.01em;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.photo-content{position:absolute;bottom:0;left:0;right:0;padding:22px 24px;z-index:2;}
+.photo-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.02em;background:rgba(255,255,255,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;padding:5px 12px;border-radius:999px;margin-bottom:12px;border:1px solid rgba(255,255,255,.25);}
+.photo-badge.gold{background:var(--gold);color:var(--ink);border-color:transparent;}
+.photo-title{font-family:'Noto Sans KR',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;text-shadow:0 2px 10px rgba(0,0,0,.4);letter-spacing:-0.01em;}
+.photo-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.photo-tag{font-size:13px;color:#fff;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:999px;font-weight:600;letter-spacing:-.01em;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 .photo-coming{opacity:.45;cursor:default;}
 .photo-coming:hover{transform:none!important;box-shadow:none!important;}
 .photo-coming:hover img{transform:none!important;}
 
-/* ── STEPS ── */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-.step{background:var(--wm);border:1.5px solid var(--bd);border-radius:16px;padding:32px 26px;position:relative;overflow:hidden;}
-.step-icon{width:54px;height:54px;border-radius:14px;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;}
-.step-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;}
-.step-desc{font-size:14px;color:var(--i3);line-height:1.75;}
-.step-num{position:absolute;bottom:-10px;right:12px;font-family:var(--serif,serif);font-size:88px;font-weight:700;color:rgba(42,95,82,.06);line-height:1;pointer-events:none;}
+/* ── INTEREST CARDS (오늘은 무엇을 만들어 볼까요?) ── */
+.interest-sec{padding:96px 32px;background:var(--cloud);}
+.interest-sec-in{max-width:1400px;margin:0 auto;}
+.interest-head{text-align:center;margin-bottom:44px;}
+.interest-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:var(--ink);letter-spacing:-0.02em;line-height:1.2;margin-bottom:12px;word-break:keep-all;}
+.interest-sub{font-size:var(--fs-body-lg);color:var(--ash);font-weight:500;line-height:1.5;word-break:keep-all;}
+.interest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.interest-card{background:#fff;border:1px solid var(--hairline);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .2s ease;display:flex;flex-direction:column;position:relative;}
+.interest-card:hover{transform:translateY(-6px);box-shadow:rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px 0, rgba(0,0,0,0.12) 0 12px 28px 0;border-color:transparent;}
+.interest-card:active{transform:translateY(-2px);transition-duration:.1s;}
+.interest-illus{aspect-ratio:16/10;position:relative;overflow:hidden;}
+.interest-illus svg{width:100%;height:100%;display:block;transition:transform .55s cubic-bezier(.2,.8,.2,1);}
+.interest-card:hover .interest-illus svg{transform:scale(1.06);}
+.interest-body{padding:22px 24px 26px;}
+.interest-name{font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;margin-bottom:6px;line-height:1.3;}
+.interest-desc{font-size:15px;color:var(--ash);line-height:1.55;font-weight:500;word-break:keep-all;}
+.interest-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink);font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;z-index:2;border:1px solid rgba(0,0,0,0.06);letter-spacing:-0.01em;}
+.interest-badge.pop{color:#B88000;}
+.interest-badge.soon{background:rgba(40,40,40,0.85);color:#fff;border-color:transparent;}
+.interest-card.soon{opacity:.72;cursor:default;}
+.interest-card.soon:hover{transform:none;box-shadow:none;border-color:var(--hairline);}
+.interest-card.soon:hover .interest-illus svg{transform:none;}
+@media (max-width:900px){
+  .interest-grid{grid-template-columns:repeat(2,1fr);gap:16px;}
+  .interest-sec{padding:40px 20px 56px;}
+}
+@media (max-width:560px){
+  .interest-grid{grid-template-columns:1fr;}
+}
+
+/* ── STEPS (Airbnb) ── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.step{background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;}
+.step-icon{width:56px;height:56px;border-radius:14px;background:var(--donghang-soft);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:18px;}
+.step-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;}
+.step-desc{font-size:15px;color:var(--ash);line-height:1.6;font-weight:500;}
+.step-num{position:absolute;bottom:-10px;right:12px;font-family:'Noto Sans KR',sans-serif;font-size:88px;font-weight:800;color:rgba(42,107,87,.06);line-height:1;pointer-events:none;letter-spacing:-0.02em;}
 
 /* ── PARTNER ── */
 .partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;}
@@ -550,44 +667,45 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 /* ── REVIEWS ── */
 .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.review-card{background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:26px;}
-.review-stars{font-size:14px;color:var(--gd);margin-bottom:11px;}
-.review-text{font-size:15px;color:var(--i2);line-height:1.85;margin-bottom:20px;font-style:italic;}
-.review-author{display:flex;align-items:center;gap:11px;}
-.review-avatar{width:42px;height:42px;border-radius:50%;background:var(--wm);display:flex;align-items:center;justify-content:center;font-size:20px;}
-.review-name{font-size:14px;font-weight:600;color:var(--ink);}
-.review-meta{font-size:12px;color:var(--i3);margin-top:2px;}
+.review-card{background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:28px;}
+.review-stars{font-size:14px;color:var(--gold);margin-bottom:12px;}
+.review-text{font-size:16px;color:var(--ink);line-height:1.6;margin-bottom:22px;font-style:normal;font-weight:500;}
+.review-author{display:flex;align-items:center;gap:12px;}
+.review-avatar{width:40px;height:40px;border-radius:50%;background:var(--donghang-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.review-name{font-size:15px;font-weight:600;color:var(--ink);}
+.review-meta{font-size:13px;color:var(--ash);margin-top:2px;font-weight:500;}
 
-/* ── CTA SECTION ── */
-.cta-sec{background:var(--ac);padding:80px 40px;display:flex;align-items:center;justify-content:space-between;gap:36px;}
-.cta-title{font-family:var(--serif,serif);font-size:38px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:8px;}
-.cta-sub{font-size:15px;color:rgba(255,255,255,.8);}
-.cta-btns{display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
-.btn-cta-w{padding:15px 36px;background:#fff;color:var(--ac);border:none;border-radius:100px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;min-height:52px;}
-.btn-cta-w:hover{background:var(--al);}
-.btn-cta-o{padding:13px 28px;background:transparent;color:rgba(255,255,255,.88);border:2px solid rgba(255,255,255,.4);border-radius:100px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;text-align:center;min-height:52px;}
-.btn-cta-o:hover{border-color:#fff;color:#fff;}
+/* ── CTA SECTION (Airbnb) ── */
+.cta-sec{background:var(--donghang);padding:96px 32px;display:flex;align-items:center;justify-content:space-between;gap:40px;max-width:none;}
+.cta-sec-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:40px;width:100%;}
+.cta-title{font-family:'Noto Sans KR',sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:10px;word-break:keep-all;}
+.cta-sub{font-size:17px;color:rgba(255,255,255,.85);font-weight:500;line-height:1.5;}
+.cta-btns{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap;}
+.btn-cta-w{padding:16px 28px;background:#fff;color:var(--donghang);border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;min-height:auto;transition:all .12s;}
+.btn-cta-w:hover{background:var(--donghang-soft);}
+.btn-cta-o{padding:16px 28px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;text-align:center;min-height:auto;transition:all .12s;}
+.btn-cta-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
 
-/* ── FOOTER ── */
-.footer{background:#fff;border-top:1px solid var(--bd);padding:24px 20px 20px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;}
-.footer-logo{font-family:var(--serif,serif);font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--ink);}
-.footer-logo b{color:var(--ac);}
-.footer-links{display:flex;gap:20px;}
-.footer-link{font-size:13px;color:var(--i3);cursor:pointer;}
-.footer-link:hover{color:var(--ac);}
-.business-info{font-size:11px;color:var(--i3);line-height:1.8;padding:12px 0 0;border-top:1px solid var(--bd);width:100%;margin-top:6px;}
-.business-info b{font-weight:700;color:var(--i2);margin-right:4px;}
-.business-info-row{margin-bottom:3px;}
-.business-info a{color:var(--i3);text-decoration:none;}
-.business-info a:hover{color:var(--ac);text-decoration:underline;}
+/* ── FOOTER (Airbnb) ── */
+.footer{background:var(--cloud);border-top:1px solid var(--hairline);padding:48px 32px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:20px;max-width:none;margin:0;}
+.footer-logo{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;color:var(--ink);letter-spacing:-0.02em;}
+.footer-logo b{color:var(--donghang);}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;}
+.footer-link{font-size:14px;color:var(--ash);cursor:pointer;font-weight:500;transition:color .12s;}
+.footer-link:hover{color:var(--ink);text-decoration:underline;}
+.business-info{font-size:13px;color:var(--ash);line-height:1.7;padding:20px 0 0;border-top:1px solid var(--hairline);width:100%;margin-top:8px;font-weight:500;}
+.business-info b{font-weight:700;color:var(--ink);margin-right:4px;}
+.business-info-row{margin-bottom:4px;}
+.business-info a{color:var(--ash);text-decoration:none;}
+.business-info a:hover{color:var(--donghang);text-decoration:underline;}
 
 /* ── PORTFOLIO ── */
 .portfolio-wrap{max-width:900px;margin:0 auto;padding:40px 40px 100px;}
 
 /* ── PRICING ── */
-.pricing-hero{padding:60px 40px 0;max-width:860px;margin:0 auto;text-align:center;}
-.pricing-title{font-family:var(--serif,serif);font-size:38px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:12px;}
-.pricing-sub{font-size:16px;color:var(--i3);line-height:1.75;margin-bottom:52px;}
+.pricing-hero{padding:80px 32px 0;max-width:1400px;margin:0 auto;text-align:center;}
+.pricing-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.02em;margin-bottom:14px;word-break:keep-all;}
+.pricing-sub{font-size:var(--fs-body-lg);color:var(--ash);line-height:1.6;margin-bottom:56px;font-weight:500;}
 .pricing-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;max-width:1060px;margin:0 auto;padding:0 40px 64px;align-items:stretch;}
 .pc{background:#fff;border:2px solid var(--bd);border-radius:22px;padding:32px 28px;position:relative;display:flex;flex-direction:column;}
 .pc.featured{border-color:var(--ac);box-shadow:0 8px 44px rgba(42,95,82,.13);}
@@ -671,24 +789,25 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .modal-btn-save{flex:2;padding:13px;border:none;border-radius:100px;background:var(--ac);color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;min-height:50px;}
 
 /* ── FAQ ── */
-.faq-item{border-bottom:1px solid var(--bd);}
+.faq-item{border-bottom:1px solid var(--hairline);}
 .faq-item:last-child{border-bottom:none;}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px;background:none;border:none;font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;font-family:inherit;text-align:left;gap:12px;min-height:60px;}
-.faq-q:hover{color:var(--ac);}
-.faq-arr{font-size:18px;color:var(--i3);transition:transform .2s;flex-shrink:0;}
-.faq-item.open .faq-arr{transform:rotate(90deg);color:var(--ac);}
-.faq-a{font-size:15px;color:var(--i3);line-height:1.85;padding:0 18px 18px;display:none;}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:22px 4px;background:none;border:none;font-size:17px;font-weight:600;color:var(--ink);cursor:pointer;font-family:inherit;text-align:left;gap:12px;min-height:auto;letter-spacing:-0.01em;}
+.faq-q:hover{color:var(--donghang);}
+.faq-arr{font-size:18px;color:var(--ash);transition:transform .2s;flex-shrink:0;}
+.faq-item.open .faq-arr{transform:rotate(90deg);color:var(--donghang);}
+.faq-a{font-size:16px;color:var(--ash);line-height:1.6;padding:0 4px 22px;display:none;font-weight:500;}
 .faq-item.open .faq-a{display:block;}
 
 /* ── LEARN ── */
-.learn-cat-tab{padding:10px 24px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;font-size:15px;font-weight:600;color:var(--i3);cursor:pointer;font-family:inherit;transition:all .15s;min-height:48px;}
-.learn-cat-tab.active{background:var(--ac);color:#fff;border-color:var(--ac);}
+.learn-cat-tab{padding:12px 22px;border-radius:999px;border:1px solid var(--hairline);background:#fff;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;font-family:inherit;transition:all .15s;min-height:auto;}
+.learn-cat-tab:hover{border-color:var(--ink);}
+.learn-cat-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
 .learn-cat-content{display:none;}.learn-cat-content.active{display:block;}
-.learn-tool-card{background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;margin-bottom:16px;display:flex;gap:18px;}
-.learn-tool-icon{font-size:34px;flex-shrink:0;width:64px;height:64px;background:var(--wm);border-radius:16px;display:flex;align-items:center;justify-content:center;}
+.learn-tool-card{background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:26px;margin-bottom:16px;display:flex;gap:20px;}
+.learn-tool-icon{font-size:34px;flex-shrink:0;width:64px;height:64px;background:var(--donghang-soft);border-radius:14px;display:flex;align-items:center;justify-content:center;}
 .learn-tool-body{flex:1;}
-.learn-tool-name{font-family:var(--serif,serif);font-size:19px;font-weight:700;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.learn-tool-tag{font-size:12px;font-weight:700;padding:3px 11px;border-radius:100px;}
+.learn-tool-name{font-family:var(--serif,serif);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;letter-spacing:-0.01em;}
+.learn-tool-tag{font-size:12px;font-weight:700;padding:3px 11px;border-radius:999px;}
 .learn-tool-tag.free{background:var(--al);color:var(--ac);}
 .learn-tool-tag.paid{background:var(--gl);color:var(--gd);}
 .learn-tool-tag.best{background:var(--ac);color:#fff;}
@@ -754,25 +873,56 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .share-step-num{width:26px;height:26px;border-radius:50%;background:var(--al);color:var(--ac);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .share-close-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;}
 
-/* ── 오늘의 질문 카드 (D2 · 동동이 + 말풍선 리디자인) ── */
+/* ── 오늘의 질문 모달 (v2 · 동동이 팝업 메시지창) ── */
+/* JS가 #dailyQuestionCard.style.display = 'block'|'none'으로 토글하므로
+   오버레이 자체에 block/none이 걸리고, 중앙 정렬은 내부 modal-card에서 처리 */
 .daily-q-card{
-  margin:24px auto 0;
-  max-width:1040px;
-  padding:34px 40px 30px;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:1000;
+  padding:20px;
+  overflow-y:auto;
+  background:rgba(10,20,18,0.58);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  animation:dqFadeIn .2s ease-out;
+}
+@keyframes dqFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dqSlideIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.daily-q-modal-card{
+  position:relative;
+  max-width:680px;
+  margin:40px auto;
   background:
     radial-gradient(circle at 85% -10%, rgba(42,95,82,.06) 0%, transparent 45%),
     radial-gradient(circle at 10% 110%, rgba(160,124,48,.05) 0%, transparent 40%),
     linear-gradient(135deg,#FBF8F0 0%,#F4EFE3 100%);
   border:1px solid rgba(28,26,23,.07);
   border-radius:22px;
-  box-shadow:0 4px 28px rgba(28,26,23,.06), 0 1px 0 rgba(255,255,255,.8) inset;
-  position:relative;overflow:hidden;
+  padding:34px 40px 30px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.35),0 1px 0 rgba(255,255,255,.8) inset;
+  overflow:hidden;
+  animation:dqSlideIn .28s cubic-bezier(.2,.8,.2,1);
 }
-.daily-q-card::before{
+.daily-q-modal-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
   background:linear-gradient(90deg,transparent 0%,var(--ac) 20%,#3d7a6a 50%,var(--ac) 80%,transparent 100%);
   opacity:.75;
 }
+.daily-q-modal-close{
+  position:absolute;top:14px;right:14px;
+  width:36px;height:36px;
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(28,26,23,.08);
+  border-radius:50%;
+  font-size:15px;color:var(--i3);
+  cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .18s,background .15s,color .15s;
+  z-index:2;
+  padding:0;line-height:1;
+}
+.daily-q-modal-close:hover{background:#fff;color:var(--ink);transform:rotate(90deg);}
 .daily-q-head{
   display:flex;align-items:center;justify-content:space-between;
   margin-bottom:22px;gap:12px;flex-wrap:wrap;
@@ -875,7 +1025,9 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 }
 
 @media(max-width:780px){
-  .daily-q-card{margin:16px 14px 0;padding:24px 22px 22px;border-radius:18px;}
+  .daily-q-card{padding:12px;}
+  .daily-q-modal-card{margin:16px auto;padding:28px 22px 22px;border-radius:18px;}
+  .daily-q-modal-close{top:10px;right:10px;width:32px;height:32px;font-size:14px;}
   .daily-q-head{margin-bottom:18px;}
   .daily-q-scene{grid-template-columns:1fr;gap:14px;margin-bottom:22px;}
   .daily-q-dong{flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;}
@@ -2034,6 +2186,171 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   .legal-modal-body .toc ol{grid-template-columns:1fr;}
   .legal-modal-body table{display:block;overflow-x:auto;}
 }
+/* ╔══════════════════════════════════════════════════╗
+   ║  Claude design v2 — Hero + Demo (chd- prefix)   ║
+   ║  Scoped with chd- prefix to avoid breaking      ║
+   ║  existing .hero styles used elsewhere.          ║
+   ╚══════════════════════════════════════════════════╝ */
+.chd-hero{background:linear-gradient(180deg, var(--cream) 0%, #fff 100%);padding:72px 32px 56px;position:relative;overflow:hidden;}
+.chd-hero-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center;}
+.chd-eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--hairline);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--donghang);white-space:nowrap;}
+.chd-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--donghang);box-shadow:0 0 0 4px rgba(42,107,87,0.15);}
+.chd-hero h1{font-size:var(--fs-hero);font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-top:20px;color:var(--ink);font-family:'Noto Sans KR',-apple-system,sans-serif;}
+.chd-hero h1 em{font-style:normal;color:var(--donghang);position:relative;white-space:nowrap;}
+.chd-hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:4px;height:12px;background:rgba(216,165,74,0.35);z-index:-1;border-radius:6px;}
+.chd-hero p.lead{font-size:var(--fs-body-lg);color:var(--ash);margin-top:20px;max-width:520px;line-height:1.6;font-weight:500;}
+.chd-hero-ctas{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;}
+.chd-btn{border:none;border-radius:12px;padding:14px 22px;font-weight:700;font-size:16px;font-family:inherit;cursor:pointer;transition:transform .12s, background .12s, box-shadow .12s;white-space:nowrap;}
+.chd-btn:active{transform:scale(0.97);}
+.chd-btn-primary{background:var(--donghang);color:#fff;}
+.chd-btn-primary:hover{background:var(--donghang-deep);}
+.chd-btn-secondary{background:#fff;color:var(--ink);border:1px solid var(--hairline);}
+.chd-btn-secondary:hover{border-color:var(--ink);}
+.chd-btn-hero{padding:18px 28px;font-size:18px;border-radius:14px;}
+.chd-trust-row{display:flex;gap:28px;margin-top:36px;flex-wrap:wrap;}
+.chd-trust{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink);font-weight:600;}
+.chd-trust-dot{width:28px;height:28px;border-radius:50%;background:var(--donghang-soft);color:var(--donghang);display:grid;place-items:center;font-size:14px;}
+/* Hero demo panel */
+.chd-demo{background:#fff;border-radius:24px;box-shadow:var(--shadow-2);padding:28px;position:relative;}
+.chd-demo-header{display:flex;align-items:center;gap:10px;padding-bottom:16px;border-bottom:1px solid var(--hairline);flex-wrap:wrap;}
+.chd-demo-header .chd-pill{background:var(--donghang-soft);color:var(--donghang);font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;}
+.chd-demo-title{font-size:16px;font-weight:700;color:var(--ink);}
+.chd-demo-body{padding-top:20px;}
+.chd-demo-q{font-size:16px;color:var(--ash);font-weight:600;margin-bottom:10px;margin-top:14px;}
+.chd-demo-q:first-child{margin-top:0;}
+.chd-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+.chd-chip{background:#fff;border:1.5px solid var(--hairline);border-radius:999px;padding:10px 16px;font-size:15px;font-weight:600;color:var(--ink);transition:all .15s;cursor:pointer;font-family:inherit;}
+.chd-chip:hover{border-color:var(--donghang);color:var(--donghang);}
+.chd-chip.selected{background:var(--donghang);border-color:var(--donghang);color:#fff;}
+.chd-prompt-box{background:var(--cloud);border-radius:14px;padding:18px 20px;font-size:16px;line-height:1.6;min-height:96px;color:var(--ink);font-weight:500;border:1px dashed var(--hairline);position:relative;margin-top:14px;}
+.chd-prompt-box .ph{color:var(--mute);font-weight:500;}
+.chd-prompt-box .filled{background:var(--gold-soft);padding:2px 8px;border-radius:6px;font-weight:700;color:var(--donghang-deep);margin:0 2px;}
+.chd-cursor{display:inline-block;width:2px;height:18px;background:var(--donghang);vertical-align:middle;animation:chd-blink 1s infinite;}
+@keyframes chd-blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+.chd-demo-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:13px;color:var(--ash);gap:12px;flex-wrap:wrap;}
+.chd-demo-cta{background:var(--donghang);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer;}
+.chd-demo-cta:hover{background:var(--donghang-deep);}
+@media (max-width: 900px){
+  .chd-hero{padding:40px 20px;}
+  .chd-hero-inner{grid-template-columns:1fr;gap:32px;}
+  .chd-demo{padding:22px;}
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* LANDING v3 — Home page per attached design references        */
+/* ═══════════════════════════════════════════════════════════ */
+
+/* ── 3단계 (v3, Image 1) ── */
+.steps-v3-wrap{background:var(--cream);padding:96px 32px;}
+.steps-v3-in{max-width:1400px;margin:0 auto;}
+.steps-v3-head{margin-bottom:44px;}
+.steps-v3-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.02em;margin-bottom:16px;word-break:keep-all;}
+.steps-v3-sub{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:16px;color:#2a2a2a;font-weight:500;line-height:1.5;word-break:keep-all;max-width:640px;}
+.steps-v3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.step-v3{background:#fff;border-radius:20px;padding:36px 30px 32px;box-shadow:0 4px 14px rgba(0,0,0,0.05);position:relative;display:flex;flex-direction:column;}
+.step-v3-num{width:56px;height:56px;border-radius:50%;background:var(--donghang-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:22px;}
+.step-v3-title{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:12px;line-height:1.3;word-break:keep-all;}
+.step-v3-desc{font-size:16px;color:var(--ash);line-height:1.65;margin-bottom:24px;font-weight:500;word-break:keep-all;}
+.step-v3-demo{background:var(--cream);border-radius:14px;padding:18px 20px;min-height:72px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:auto;}
+.step-chip{display:inline-flex;align-items:center;padding:8px 16px;border-radius:999px;background:var(--donghang);color:#fff;font-size:14px;font-weight:600;}
+.step-chip-o{display:inline-flex;align-items:center;padding:8px 16px;border-radius:999px;background:#fff;border:1px solid var(--hairline);color:var(--ink);font-size:14px;font-weight:600;}
+.step-prompt{font-size:14px;line-height:1.75;color:var(--ink);font-weight:500;}
+.step-check{color:var(--donghang-deep);font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:6px;}
+
+/* ── Gift Section v3 (Image 2) ── */
+.gift-sec{background:var(--cream);padding:96px 32px;}
+.gift-sec-in{max-width:1400px;margin:0 auto;}
+.gift-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:72px;align-items:center;}
+.gift-badge{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--donghang-deep);color:#fff;font-size:13px;font-weight:600;margin-bottom:24px;letter-spacing:-0.01em;}
+.gift-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(30px,3.6vw,46px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.025em;margin-bottom:20px;word-break:keep-all;}
+.gift-desc{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:16px;color:var(--ash);line-height:1.7;margin-bottom:28px;max-width:520px;word-break:keep-all;font-weight:500;}
+.gift-quote{border-left:3px solid var(--donghang);padding:6px 18px;margin-bottom:32px;font-size:17px;font-weight:700;color:var(--ink);line-height:1.55;word-break:keep-all;}
+.gift-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;max-width:560px;}
+.gift-plan{background:#fff;border:1.5px solid var(--hairline);border-radius:14px;padding:16px 14px;position:relative;text-align:left;transition:border-color .15s,transform .15s;cursor:pointer;}
+.gift-plan:hover{border-color:var(--donghang);transform:translateY(-2px);}
+.gift-plan.pick{border-color:var(--donghang);border-width:2px;}
+.gift-plan-label{font-size:13px;color:var(--ash);font-weight:600;margin-bottom:8px;}
+.gift-plan-price{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:6px;line-height:1.1;}
+.gift-plan-meta{font-size:12px;color:var(--ash);font-weight:500;}
+.gift-plan-pick{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--donghang-deep);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:-0.01em;white-space:nowrap;}
+.gift-ctas{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-gift-p{padding:14px 24px;background:var(--donghang);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:filter .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-gift-p:hover{filter:brightness(1.08);}
+.btn-gift-o{padding:14px 24px;background:#fff;color:var(--ink);border:1.5px solid var(--hairline);border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:border-color .15s;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-gift-o:hover{border-color:var(--ink);}
+.gift-card-preview{background:linear-gradient(160deg,var(--donghang) 0%,var(--donghang-deep) 100%);border-radius:24px;padding:36px 32px;color:#fff;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 14px 40px rgba(30,79,63,0.28);position:relative;overflow:hidden;max-width:420px;margin:0 auto;}
+.gift-card-preview::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06);}
+.gift-card-preview::after{content:'';position:absolute;bottom:-80px;left:-80px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.04);}
+.gcp-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;align-self:flex-start;position:relative;z-index:1;}
+.gcp-body{text-align:center;position:relative;z-index:1;}
+.gcp-eyebrow{font-size:14px;color:rgba(255,255,255,0.82);margin-bottom:4px;font-weight:500;}
+.gcp-title{font-size:clamp(40px,4.5vw,56px);font-weight:800;line-height:1.08;letter-spacing:-0.03em;margin-bottom:0;font-family:'Noto Sans KR',sans-serif;}
+.gcp-foot{border-top:1px solid rgba(255,255,255,.18);padding-top:14px;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5;position:relative;z-index:1;}
+.gcp-foot b{display:block;color:#fff;font-weight:700;margin-bottom:2px;}
+
+/* ── Reviews v3 (Image 3) ── */
+.reviews-sec{background:var(--cloud);padding:96px 32px;}
+.reviews-sec-in{max-width:1400px;margin:0 auto;}
+.reviews-head{text-align:center;margin-bottom:44px;}
+.reviews-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:-0.02em;margin-bottom:14px;word-break:keep-all;}
+.reviews-sub{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:16px;color:#2a2a2a;font-weight:500;line-height:1.5;word-break:keep-all;}
+.reviews-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.rv-card{background:#fff;border:1px solid var(--hairline);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 10px rgba(0,0,0,0.03);transition:transform .2s,box-shadow .2s;}
+.rv-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,0.08);}
+.rv-stars{color:var(--gold);font-size:15px;letter-spacing:2px;line-height:1;}
+.rv-text{font-size:15px;color:var(--ink);line-height:1.65;font-weight:500;word-break:keep-all;flex-grow:1;}
+.rv-author{display:flex;align-items:center;gap:12px;margin-top:auto;}
+.rv-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.rv-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.rv-meta{font-size:12px;color:var(--ash);font-weight:500;}
+
+/* ── CTA v3 (Image 3/4, dark green) ── */
+.cta-v3{background:linear-gradient(135deg,var(--donghang) 0%,var(--donghang-deep) 100%);padding:96px 32px;text-align:center;position:relative;overflow:hidden;}
+.cta-v3::before{content:'';position:absolute;top:-120px;left:-120px;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.04);}
+.cta-v3::after{content:'';position:absolute;bottom:-100px;right:-100px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04);}
+.cta-v3-in{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+.cta-v3-title{font-family:'Noto Sans KR',-apple-system,sans-serif;font-size:clamp(28px,3.6vw,46px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.025em;margin-bottom:18px;word-break:keep-all;}
+.cta-v3-desc{font-size:17px;color:rgba(255,255,255,0.88);line-height:1.65;margin-bottom:34px;max-width:560px;margin-left:auto;margin-right:auto;word-break:keep-all;font-weight:500;}
+.cta-v3-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-cta-v3-p{padding:16px 30px;background:#fff;color:var(--ink);border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s;display:inline-flex;align-items:center;gap:8px;}
+.btn-cta-v3-p:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.18);}
+.btn-cta-v3-o{padding:16px 30px;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.55);border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px;}
+.btn-cta-v3-o:hover{background:rgba(255,255,255,0.1);border-color:#fff;}
+
+/* ── Footer v3 (Image 4, dark) ── */
+.footer-v3{background:#1a1a1a;color:#b8b8b8;padding:72px 32px 40px;}
+.footer-v3-in{max-width:1400px;margin:0 auto;}
+.footer-v3-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.footer-v3-brand{display:flex;flex-direction:column;gap:14px;}
+.footer-v3-logo{display:flex;align-items:center;gap:8px;font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.02em;}
+.footer-v3-logo .g{color:var(--donghang);margin-left:4px;}
+.footer-v3-brand-desc{font-size:14px;color:#7a7a7a;line-height:1.65;font-weight:500;margin-top:4px;}
+.footer-v3-col-head{font-size:14px;font-weight:700;color:#fff;margin-bottom:20px;letter-spacing:-0.01em;}
+.footer-v3-link{display:block;font-size:14px;color:#9a9a9a;padding:6px 0;cursor:pointer;text-decoration:none;transition:color .15s;font-weight:500;background:none;border:none;text-align:left;font-family:inherit;}
+.footer-v3-link:hover{color:#fff;}
+.footer-v3-biz{font-size:12px;color:#6a6a6a;line-height:1.9;font-weight:500;}
+.footer-v3-biz a{color:#9a9a9a;text-decoration:none;}
+.footer-v3-copy{margin-top:14px;font-size:12px;color:#6a6a6a;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.btn-admin-v3{background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:4px 10px;font-size:11px;color:#9a9a9a;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-admin-v3:hover{border-color:rgba(255,255,255,0.3);color:#fff;}
+
+@media (max-width: 900px){
+  .steps-v3{grid-template-columns:1fr;}
+  .gift-grid{grid-template-columns:1fr;gap:40px;}
+  .gift-plans{max-width:100%;}
+  .reviews-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-v3-grid{grid-template-columns:1fr;gap:32px;}
+  .footer-v3-brand{margin-bottom:8px;}
+  .cta-v3-btns{flex-direction:column;}
+  .cta-v3-btns button{width:100%;justify-content:center;}
+  .gift-card-preview{max-width:360px;}
+}
+@media (max-width: 560px){
+  .reviews-grid{grid-template-columns:1fr;}
+  .gift-plans{grid-template-columns:1fr;max-width:100%;}
+  .steps-v3-wrap,.gift-sec,.reviews-sec,.cta-v3{padding:64px 20px;}
+  .footer-v3{padding:56px 20px 32px;}
+}
 </style>
   <!-- 카카오 SDK -->
   <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
@@ -2042,8 +2359,9 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<!-- NAV -->
+<!-- NAV (Claude design v2) -->
 <nav class="nav" id="globalNav">
+  <div class="nav-inner">
   <a href="#" onclick="showView('home');return false;" class="nav-logo">
     <svg width="38" height="38" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="nv_svg1" viewBox="0 0 200 200"  ><defs>
             <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
@@ -2078,13 +2396,12 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
                     <!-- 하단 점 (Dot) -->
                     <circle cx="100" cy="162" r="11" fill="url(#nv_bulbWhite3D)"/>
                 </g>
-            </svg><span style="font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:var(--ink);margin-left:8px;letter-spacing:-.02em;">AI<span style="color:#2D6A59;margin-left:4px;">동행</span></span>
+            </svg><span style="font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:var(--ink);margin-left:8px;letter-spacing:-.02em;">AI<span style="color:var(--donghang);margin-left:4px;">동행</span></span>
   </a>
   <div class="nav-links" id="navLinksGuest">
     <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder');return false;">만들기</a>
     <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" id="nav-community" href="#" onclick="showView('community');return false;">커뮤니티</a>
-    <a class="nav-link nav-link-gift" href="/gift.html">🎁 선물하기</a>
     <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-links" id="navLinksUser" style="display:none;">
@@ -2092,15 +2409,16 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     <a class="nav-link" href="#" onclick="showView('dojo');return false;">도장깨기</a>
     <a class="nav-link" href="#" onclick="showView('community');return false;">커뮤니티</a>
     <a class="nav-link" href="#" onclick="showView('portfolio');return false;">내 작품함</a>
-    <a class="nav-link nav-link-gift" href="/gift.html">🎁 선물하기</a>
     <a class="nav-link" href="#" onclick="showView('faq');return false;">고객센터</a>
   </div>
   <div class="nav-row" id="navBtnsGuest">
     <button class="btn-nav-login" onclick="showView('login')">로그인</button>
-    <button class="btn-nav-signup" onclick="showView('auth')">무료 가입 →</button>
+    <button class="btn-nav-signup" onclick="location.href='/gift.html'"><span>🎁</span> 부모님께 선물하기</button>
   </div>
   <div class="nav-row" id="navBtnsUser" style="display:none;">
     <button class="btn-nav-user" onclick="showView('mypage')">👤 <span id="navUserName">마이페이지</span></button>
+    <button class="btn-nav-signup" onclick="location.href='/gift.html'"><span>🎁</span> 부모님께 선물하기</button>
+  </div>
   </div>
 </nav>
 <div class="nav-spacer"></div>
@@ -2109,8 +2427,10 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 <div class="view active" id="homeView">
 <div style="background:var(--bg);position:relative;">
 
-  <!-- 🌟 동동이 오늘의 질문 카드 (D2) — 회원 전용 -->
-  <section id="dailyQuestionCard" class="daily-q-card" aria-label="동동이 오늘의 질문" style="display:none;">
+  <!-- 🌟 동동이 오늘의 질문 — 회원 전용 팝업 모달 -->
+  <section id="dailyQuestionCard" class="daily-q-card" aria-label="동동이 오늘의 질문" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+    <div class="daily-q-modal-card">
+    <button type="button" class="daily-q-modal-close" aria-label="닫기" onclick="document.getElementById('dailyQuestionCard').style.display='none'">✕</button>
     <div class="daily-q-head">
       <div class="daily-q-eyebrow">오늘의 질문</div>
       <div class="daily-q-counter" id="dailyQuestionCounter" style="display:none;"></div>
@@ -2159,470 +2479,560 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     </div>
 
     <div class="daily-q-cta">
-      <button class="daily-q-btn" id="dailyQuestionBtn" onclick="openStoryModal()">
+      <button class="daily-q-btn" id="dailyQuestionBtn" onclick="document.getElementById('dailyQuestionCard').style.display='none';openStoryModal()">
         <span>✍️</span><span id="dailyQuestionBtnLabel">이야기 들려주기</span>
       </button>
       <button class="daily-q-skip" onclick="refreshDailyQuestion()">다른 질문 보기</button>
     </div>
+    </div><!-- /.daily-q-modal-card -->
   </section>
 
   <!-- 히어로 슬라이더 wrapper - 고정 높이로 두 버전 높이 통일 -->
-  <div id="heroSliderWrap" style="position:relative;">
-
-    <!-- 히어로 페이지네이션 dots -->
-    <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;">
-      <button id="hero-dot-0" onclick="switchHero(0)" style="width:36px;height:10px;border-radius:100px;background:var(--ac);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-      <button id="hero-dot-1" onclick="switchHero(1)" style="width:10px;height:10px;border-radius:100px;background:var(--bd);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-      <button id="hero-dot-2" onclick="switchHero(2)" style="width:10px;height:10px;border-radius:100px;background:var(--bd);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-    </div>
-
-    <!-- ── 히어로 버전1: 텍스트 애니메이션 ── -->
-    <div id="heroV1" style="position:absolute;inset:0;opacity:1;pointer-events:auto;transition:opacity .5s;">
-    <div class="hero">
+  <!-- ═══ HERO (Claude design v2) ═══ -->
+  <section class="chd-hero">
+    <div class="chd-hero-inner">
       <div>
-        <div class="hero-pill"><span class="hero-dot"></span>AI로 만든 실제 작품들</div>
-        <h1 class="hero-title">내 손으로<br><em>직접 만든</em><br>작품이에요</h1>
-        <p class="hero-sub">어르신들이 AI 동행으로 만든<br>실제 작품들이에요. 나도 5분이면 만들 수 있어요.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="goToBuilder()">✨ 무료로 체험해보기 →</button>
-          
+        <span class="chd-eyebrow"><span class="dot"></span>시니어를 위한 AI 창작 플랫폼</span>
+        <h1>버튼만 눌러도<br>내 이야기가<br><em>작품이 됩니다</em></h1>
+        <p class="lead">타이핑 없이 몇 번의 버튼 클릭만으로 AI가 자서전·그림·음악을 만들어 드려요. 완성된 작품은 바로 카카오톡으로 가족에게 보낼 수 있어요.</p>
+        <div class="chd-hero-ctas">
+          <button class="chd-btn chd-btn-primary chd-btn-hero" onclick="goToBuilder()">바로 시작하기 →</button>
+          <button class="chd-btn chd-btn-secondary chd-btn-hero" onclick="showView('about')">체험 영상 보기</button>
         </div>
-        <div class="hero-reassure">✅ 모두 어르신이 직접 만든 작품 &nbsp;·&nbsp; ✅ AI 동행으로 5분 만에</div>
+        <div class="chd-trust-row">
+          <div class="chd-trust"><span class="chd-trust-dot">⏱</span> 3분이면 첫 작품</div>
+          <div class="chd-trust"><span class="chd-trust-dot">✓</span> 타이핑 없이 버튼만</div>
+          <div class="chd-trust"><span class="chd-trust-dot">♥</span> 무료로 체험</div>
+        </div>
       </div>
-      <div>
-        <!-- 이미지 슬라이드 카드 -->
-        <div style="position:relative;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(28,26,23,.12);background:#fff;height:420px;display:flex;flex-direction:column;">
-          <!-- 슬라이드 컨테이너 -->
-          <div style="position:relative;flex:1;overflow:hidden;background:var(--wm);" id="heroImgSlider">
 
-            <!-- 슬라이드 1: 고향 그림 -->
-            <div class="hero-img-slide active" id="hslide-0"
-              style="position:absolute;inset:0;transition:opacity .7s;">
-              <img src="images/andong_watercolor.png"
-                alt="고향 마을 가을 풍경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <!-- 따뜻한 세피아 오버레이 -->
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(120,70,20,.35) 0%,rgba(0,0,0,.0) 40%,rgba(0,0,0,.72) 100%);"></div>
-              <!-- AI 그림 느낌 수채화 테두리 효과 -->
-              <div style="position:absolute;inset:0;box-shadow:inset 0 0 60px rgba(160,100,40,.3);"></div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:24px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(255,220,150,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;">🎨 AI 이미지 생성 · 수채화</div>
-                <div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;text-shadow:0 2px 8px rgba(0,0,0,.4);">경북 안동 고향 마을</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.8);">박철수(68세)님 · 수채화 스타일 · 5분 소요</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 2: 트로트 -->
-            <div class="hero-img-slide" id="hslide-1"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 따뜻한 무대 조명 느낌 배경 -->
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=85"
-                alt="음악 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(20,50,40,.6) 0%,rgba(0,0,0,.75) 100%);"></div>
-              <!-- 중앙 콘텐츠 -->
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;">
-                <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(4px);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.3);">🎵</div>
-                <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5);">어머니 생각</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:22px;text-align:center;">박철수 작사 · Suno AI 작곡 · 트로트</div>
-                <!-- 음악 진행바 -->
-                <div style="background:rgba(255,255,255,.15);border-radius:100px;height:5px;width:200px;overflow:hidden;margin-bottom:7px;backdrop-filter:blur(2px);">
-                  <div id="heroMusicBar" style="width:0%;height:100%;background:linear-gradient(90deg,#5ee7d0,#fff);border-radius:100px;transition:width .1s linear;"></div>
-                </div>
-                <div style="font-size:12px;color:rgba(255,255,255,.45);">▶ Suno AI가 실제 노래로 완성했어요</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(180,255,220,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">🎵 Suno AI · 음악 생성</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.4);">나만의 트로트 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">김순자(72세)님 · 가사 10분 + 노래 생성 1분</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 3: 자서전 -->
-            <div class="hero-img-slide" id="hslide-2"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 냇가·여름 느낌 자연 배경 -->
-              <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85"
-                alt="여름 자연 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <!-- 위쪽은 밝게, 아래로 짙게 -->
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,.82) 100%);"></div>
-              <!-- 자서전 텍스트 카드 (중앙 살짝 위) -->
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:calc(100% - 48px);background:rgba(255,252,245,.92);backdrop-filter:blur(6px);border-radius:12px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.25);">
-                <div style="font-size:10px;font-weight:700;color:var(--gd);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">📖 제 1장</div>
-                <div style="font-family:var(--serif,serif);font-size:19px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.3;">냇가의 여름</div>
-                <div style="font-family:var(--serif,serif);font-size:13px;color:var(--i2);line-height:1.95;">그 여름, 냇가는 우리들의 세상이었다. 발밑으로 차가운 물이 흘렀고, 돌 틈에서 피라미들이 반짝였다…</div>
-                <div style="margin-top:10px;font-size:11px;color:var(--ac);font-weight:700;">✓ ChatGPT가 완성했어요 · 1 / 12챕터</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(200,240,220,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">📖 ChatGPT · 자서전</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.5);">자서전 첫 챕터 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">이경숙(75세)님 · 기억 5줄 입력 → 완성</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 4: 편지 -->
-            <div class="hero-img-slide" id="hslide-3"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 감성적인 창가·꽃 배경 -->
-              <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=85"
-                alt="편지 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(80,30,10,.25) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.80) 100%);"></div>
-              <!-- 편지 카드 (중앙) -->
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:calc(100% - 48px);background:rgba(255,252,245,.9);backdrop-filter:blur(6px);border-radius:12px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.2);border-left:4px solid var(--gd);">
-                <div style="font-size:12px;color:var(--gd);font-weight:700;margin-bottom:10px;">💌 사랑하는 딸 지영에게</div>
-                <div style="font-family:var(--serif,serif);font-size:13px;color:var(--i2);line-height:2;">말은 잘 못했지만, 언제나 네 편이었단다.<br>이제라도 말할게.<br><b style="color:var(--ink);">고맙다, 지영아. 사랑한다.</b> — 엄마</div>
-                <div style="margin-top:10px;font-size:11px;color:var(--ac);font-weight:700;">✓ 뤼튼이 완성했어요 · 3분 소요</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(255,220,180,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">💌 뤼튼 · 편지</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.5);">딸에게 편지 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">최영희(81세)님 · 3분 만에 완성</div>
-              </div>
-            </div>
+      <!-- Interactive demo panel -->
+      <div class="chd-demo" id="chdDemo">
+        <div class="chd-demo-header">
+          <span class="chd-pill">📖 자서전 쓰기</span>
+          <span class="chd-demo-title">첫 장을 함께 써볼까요?</span>
+        </div>
+        <div class="chd-demo-body">
+          <div class="chd-demo-q">1. 어떤 시절의 이야기인가요?</div>
+          <div class="chd-chips" data-group="era">
+            <button class="chd-chip" data-val="어린 시절">어린 시절</button>
+            <button class="chd-chip" data-val="결혼하던 해">결혼하던 해</button>
+            <button class="chd-chip" data-val="첫 직장">첫 직장</button>
+            <button class="chd-chip" data-val="자식이 태어나던 날">자식이 태어나던 날</button>
           </div>
-
-          <!-- 슬라이드 하단 썸네일 -->
-          <div style="display:flex;gap:0;background:#fff;">
-            <button id="hthumb-0" onclick="goHeroSlide(0)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid var(--ac);background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">🎨</button>
-            <button id="hthumb-1" onclick="goHeroSlide(1)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">🎵</button>
-            <button id="hthumb-2" onclick="goHeroSlide(2)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">📖</button>
-            <button id="hthumb-3" onclick="goHeroSlide(3)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">💌</button>
+          <div class="chd-demo-q">2. 어떤 감정이 떠오르세요?</div>
+          <div class="chd-chips" data-group="emotion">
+            <button class="chd-chip" data-val="따뜻한">따뜻한</button>
+            <button class="chd-chip" data-val="그리운">그리운</button>
+            <button class="chd-chip" data-val="벅찬">벅찬</button>
+            <button class="chd-chip" data-val="슬픈">슬픈</button>
+          </div>
+          <div class="chd-demo-q">3. 누구에게 들려주고 싶으세요?</div>
+          <div class="chd-chips" data-group="who">
+            <button class="chd-chip" data-val="손주에게">손주에게</button>
+            <button class="chd-chip" data-val="자녀에게">자녀에게</button>
+            <button class="chd-chip" data-val="배우자에게">배우자에게</button>
+          </div>
+          <div class="chd-prompt-box" id="chdPrompt">
+            <span class="ph">버튼을 누르면 프롬프트가 자동으로 완성돼요.</span>
+            <span class="chd-cursor"></span>
+          </div>
+          <div class="chd-demo-foot">
+            <span>✨ AI가 이 프롬프트로 자서전의 첫 장을 써 드려요</span>
+            <button class="chd-demo-cta" onclick="goToBuilder()">이대로 만들기</button>
           </div>
         </div>
       </div>
     </div>
-    </div>
-    <div id="heroV3" style="position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;">
-    <div class="hero">
-      <div>
-        <div class="hero-pill"><span class="hero-dot"></span>어르신도 AI를 직접 써보는 날</div>
-        <h1 class="hero-title">뤼튼, ChatGPT…<br>나도 <em>직접</em><br>써볼 수 있어요</h1>
-        <p class="hero-sub">요즘 사람들이 쓰는 AI 툴을 하나씩 배워요.<br>도장 하나 깰 때마다 손자에게 자랑할 수 있어요.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="showView('builder')">✍️ 프롬프트 만들어보기 →</button>
-        </div>
-        <div class="hero-reassure">✅ 회원가입 없이 바로 체험 &nbsp;·&nbsp; ✅ 어렵지 않아요</div>
-      </div>
-      <div>
-        <div class="hero-card">
-          <div class="hero-card-hdr"><span class="hero-card-title">자서전 쓰기 · AI 동행</span><span class="hero-card-badge">프롬프트 완성</span></div>
-          <div class="hero-card-body">
-            <div class="anim-q" id="aq1">어떤 시절 이야기인가요?</div>
-            <div class="anim-chips" id="ac1">
-              <span class="anim-chip" id="chip-youth">유년 시절</span><span class="anim-chip" id="chip-school">학창 시절</span><span class="anim-chip" id="chip-work">청년·직장 시절</span><span class="anim-chip" id="chip-family">결혼 이야기</span>
-            </div>
-            <div class="anim-q" id="aq2" style="opacity:.35;">어떤 감정을 담고 싶으세요?</div>
-            <div class="anim-chips" id="ac2">
-              <span class="anim-chip" id="chip-longing" style="opacity:.35;">그리움과 추억</span><span class="anim-chip" id="chip-thanks" style="opacity:.35;">감사한 마음</span><span class="anim-chip" id="chip-love" style="opacity:.35;">가족에 대한 사랑</span>
-            </div>
-            <div class="anim-prompt-box" id="prompt-box" style="opacity:.25;">
-              <div class="anim-prompt-label">✨ 완성된 프롬프트 (AI에게 하는 부탁 문장)</div>
-              <div class="anim-prompt-text" id="prompt-text"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
+  </section>
 
-    <!-- ── 히어로 버전2: 자서전 소구 ── -->
-    <div id="heroV2" style="position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;">
-    <div class="hero">
-      <div>
-        <div class="hero-pill"><span class="hero-dot"></span>내 삶을 책으로 남겨요</div>
-        <h1 class="hero-title">당신의 이야기를<br><em>자서전으로</em><br>남겨드릴게요</h1>
-        <p class="hero-sub" style="min-height:5em;">3챕터만 완성하면<br>실제 종이책으로 출판할 수 있어요.<br>가족에게 드리는 세상에 하나뿐인 선물.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="goToCourse('자서전 쓰기')">📖 자서전 쓰기 시작하기 →</button>
-        </div>
-        <div class="hero-reassure">✅ 3챕터 완성 시 종이책 출판 가능 &nbsp;·&nbsp; ✅ 동행+ 연 1권 무료</div>
+<!-- ══ 오늘은 무엇을 만들어 볼까요? (히어로 바로 아래) ══ -->
+<section class="interest-sec" id="interestSection">
+  <div class="interest-sec-in">
+  <div class="interest-head">
+    <h2 class="interest-title">오늘은 무엇을 만들어 볼까요?</h2>
+    <p class="interest-sub">여섯 가지 창작 코스 중 하나만 골라 주세요. 나머지는 AI 동행이 도와드려요.</p>
+  </div>
+  <div class="interest-grid">
+
+    <!-- 1. 블로그 글쓰기 -->
+    <div class="interest-card" onclick="goToCategory('writing')">
+      <div class="interest-illus" style="background:#F0E3CC;">
+        <span class="interest-badge pop">★ 가장 인기</span>
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect x="80" y="60" width="210" height="150" rx="4" fill="#fdfaf3" stroke="#d9c8a5" stroke-width="1.5"/>
+          <line x1="100" y1="92" x2="260" y2="92" stroke="#e5d6b0" stroke-width="1.3"/>
+          <line x1="100" y1="112" x2="250" y2="112" stroke="#e5d6b0" stroke-width="1.3"/>
+          <line x1="100" y1="132" x2="255" y2="132" stroke="#e5d6b0" stroke-width="1.3"/>
+          <line x1="100" y1="152" x2="240" y2="152" stroke="#e5d6b0" stroke-width="1.3"/>
+          <line x1="100" y1="172" x2="245" y2="172" stroke="#e5d6b0" stroke-width="1.3"/>
+          <line x1="100" y1="192" x2="230" y2="192" stroke="#e5d6b0" stroke-width="1.3"/>
+          <g transform="translate(275 45) rotate(30)">
+            <rect width="80" height="9" rx="3" fill="#2a6b57"/>
+            <polygon points="80,0 92,4.5 80,9" fill="#1a4a3d"/>
+            <rect width="14" height="9" rx="3" fill="#d8a54a"/>
+          </g>
+          <g transform="translate(298 148)">
+            <path d="M0,0 L40,0 L36,38 L4,38 Z" fill="#fdfaf3" stroke="#c9b48a" stroke-width="1.5"/>
+            <ellipse cx="20" cy="2" rx="18" ry="4" fill="#6B3E1E"/>
+            <path d="M40,10 Q50,10 50,19 Q50,28 40,28" fill="none" stroke="#c9b48a" stroke-width="1.5"/>
+            <path d="M10,-8 Q13,-18 7,-26" stroke="#b39966" stroke-width="1.5" fill="none" opacity="0.55"/>
+            <path d="M22,-8 Q25,-18 19,-26" stroke="#b39966" stroke-width="1.5" fill="none" opacity="0.55"/>
+          </g>
+        </svg>
       </div>
-      <div>
-        <!-- 자서전 챕터 프리뷰 카드 -->
-        <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(28,26,23,.1);border:1.5px solid var(--bd);">
-          <div style="background:var(--ad);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:15px;font-weight:700;color:rgba(255,255,255,.85);">📖 내 자서전 · AI 동행</span>
-            <span style="font-size:13px;background:rgba(255,255,255,.2);color:#fff;border-radius:100px;padding:3px 10px;font-weight:600;">3챕터 완성 시 출판</span>
-          </div>
-          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
-            <div style="background:var(--al);border:1.5px solid var(--ac);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">✅</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--ac);">1챕터. 내가 자란 곳</div><div style="font-size:14px;color:var(--ac);margin-top:3px;">고향과 유년 시절 이야기</div></div>
-            </div>
-            <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">✏️</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--ink);">2챕터. 내 삶의 전환점</div><div style="font-size:14px;color:var(--i3);margin-top:3px;">결혼·직업·도전의 순간들</div></div>
-            </div>
-            <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">🔒</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--i3);">3챕터. 가족에게 전하는 말</div><div style="font-size:14px;color:var(--i3);margin-top:3px;">소중한 분들께 남기는 말</div></div>
-            </div>
-            <div style="background:linear-gradient(135deg,#7a5c1e,var(--gd));border-radius:12px;padding:14px 16px;text-align:center;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">📚 3챕터 완성 → 종이책 출판!</div>
-              <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:4px;">동행+ 멤버 연 1권 무료</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-
-    <!-- ── 히어로 버전3: 프롬프트 애니메이션 ── -->
-
-    <div id="heroV3Placeholder" style="visibility:hidden;pointer-events:none;" aria-hidden="true">
-      <div class="hero">
-        <div>
-          <div class="hero-pill" style="opacity:0;">placeholder</div>
-          <h1 class="hero-title" style="opacity:0;">뤼튼, ChatGPT…<br>나도 직접<br>써볼 수 있어요</h1>
-          <p class="hero-sub" style="opacity:0;">placeholder placeholder placeholder</p>
-          <div class="hero-cta" style="opacity:0;"><button class="btn-p">placeholder</button></div>
-          <div class="hero-reassure" style="opacity:0;">placeholder</div>
-        </div>
-        <div id="heroImgPlaceholder" style="height:420px;border-radius:20px;background:transparent;"></div>
+      <div class="interest-body">
+        <div class="interest-name">블로그 글쓰기</div>
+        <div class="interest-desc">오늘 있었던 일, 텃밭 이야기, 손주 자랑 — 주제만 고르면 글이 됩니다.</div>
       </div>
     </div>
 
-  </div><!-- /슬라이더 wrapper -->
-
-<!-- 도장깨기 홈 미리보기 -->
-<div class="sec-w" id="dojoHomePreview"><div class="sec-w-in">
-  <div class="eyebrow">새로 나왔어요</div>
-  <h2 class="sec-title">AI 툴 도장깨기 🏆</h2>
-  <p class="sec-sub" style="margin-bottom:28px;">뤼튼, ChatGPT, Suno AI... 하나씩 직접 써보고 도장을 받아요.<br>"나 ChatGPT 써봤어!" 손자한테 자랑하는 그 날을 위해.</p>
-  <div class="dojo-preview">
-    <div class="dojo-preview-title">나의 AI 도장 여권</div>
-    <div class="dojo-preview-sub">6개의 AI 툴을 하나씩 정복해보세요. 처음엔 어렵지 않아요!</div>
-    <div class="dojo-stamps-row">
-      <div class="dojo-stamp-mini done"><span class="si">🤖</span></div>
-      <div class="dojo-stamp-mini done"><span class="si">💬</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎨</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎵</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">📸</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎬</span></div>
-    </div>
-    <div class="dojo-preview-cta">
-      <div class="dojo-preview-stat"><b>2</b>/6 도장 완성 예시</div>
-      <button class="btn-dojo" onclick="goToDojo()">도장깨기 시작하기 →</button>
-    </div>
-  </div>
-</div></div>
-
-<!-- 예시 섹션 -->
-<div class="sec" id="examplesSection">
-  <div class="eyebrow">이런 작품이 나와요</div>
-  <h2 class="sec-title">직접 써보면<br>이런 결과가 나와요</h2>
-  <p class="sec-sub">어렵지 않아요. AI에게 부탁하면 이런 감동적인 결과물이 나와요.</p>
-  <div class="example-tabs">
-    <button class="example-tab active" onclick="switchExample(this,'ex-image')">🎨 고향 그림</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-trot')">🎵 트로트 노래</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-memoir')">📖 자서전</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-letter')">💌 편지</button>
-  </div>
-  <div class="example-card active" id="ex-image">
-    <div class="example-badge">고향·마을 풍경 · Adobe Firefly로 생성</div>
-    <div class="example-card-header"><div class="example-card-emoji">🎨</div><div><div class="example-card-title">경북 안동 고향 마을, 가을 감나무</div><div class="example-card-sub">회원 박철수(68세)님이 AI로 만든 그림 · 5분 소요</div></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
-      <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:var(--wm);"><img src="images/andong_watercolor.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:10px 12px;"><div style="font-size:12px;color:#fff;font-weight:600;">수채화 스타일</div></div></div>
-      <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:var(--wm);"><img src="images/andong_ink.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:10px 12px;"><div style="font-size:12px;color:#fff;font-weight:600;">동양화 스타일</div></div></div>
-    </div>
-    <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:var(--i3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">입력한 이야기</div><div style="font-size:14px;color:var(--i2);line-height:1.75;font-style:italic;">경북 안동 시골. 가을에 감이 빨갛게 익어 있었어. 흙길에 닭이 돌아다니고. 수채화로 그려줘.</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 프롬프트를 만들고 Adobe Firefly에 붙여넣기 하면 이런 그림이 나와요</span><button class="btn-p" onclick="goToCourse('고향·마을 풍경')" style="padding:11px 24px;font-size:15px;">나도 만들기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-trot">
-    <div class="example-badge">트로트 만들기 · Suno AI로 실제 노래 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">🎵</div><div><div class="example-card-title">어머니 생각 — 박철수 작사, Suno AI 작곡</div><div class="example-card-sub">회원 박철수(68세)님 · 가사 작성 10분 + 노래 생성 1분</div></div></div>
-    <div style="background:linear-gradient(135deg,var(--ad),#2d7a68);border-radius:14px;padding:22px;margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;"><div style="width:58px;height:58px;border-radius:13px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;">🎤</div><div><div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">어머니 생각</div><div style="font-size:13px;color:rgba(255,255,255,.7);">박철수 작사 · 트로트 · 3분 24초</div></div></div>
-      <div style="background:rgba(255,255,255,.15);border-radius:100px;height:7px;margin-bottom:9px;"><div style="width:35%;height:100%;border-radius:100px;background:#fff;"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px;"><span>1:12</span><span>3:24</span></div>
-      <div style="font-size:12px;color:rgba(255,255,255,.65);text-align:center;">🎵 Suno AI가 실제 노래로 만들어줍니다</div>
-    </div>
-    <div style="background:var(--bg);border-radius:12px;padding:16px;font-size:14px;color:var(--i2);line-height:1.9;margin-bottom:16px;font-family:var(--serif,serif);">1절<br>새벽빛이 물드는 부엌에서 / 손이 거칠어도 따뜻했던 어머니<br>보리밥 한 공기에 담긴 사랑 / 지금도 그 냄새가 그리워요<br><br>후렴<br>어머니~ 어머니~ 보고 싶어요 / 하늘 어딘가에서 웃고 계시죠</div>
-    <div class="example-cta"><span class="example-cta-text">💡 가사 프롬프트 완성 → Suno AI 붙여넣기 → 진짜 노래 완성!</span><button class="btn-p" onclick="goToCourse('트로트 만들기')" style="padding:11px 24px;font-size:15px;">나도 만들기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-memoir">
-    <div class="example-badge">자서전 쓰기 · ChatGPT로 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">📖</div><div><div class="example-card-title">제 1장. 냇가의 여름</div><div class="example-card-sub">회원 김순자(72세)님 · 기억 조각 5줄 입력 → 완성</div></div></div>
-    <div style="background:linear-gradient(135deg,#f5f0e8,#ede5d5);border-radius:14px;padding:26px;margin-bottom:16px;border-left:5px solid var(--gd);position:relative;"><div style="font-family:var(--serif,serif);font-size:19px;font-weight:700;color:var(--ink);margin-bottom:14px;">제 1장. 냇가의 여름</div><div style="font-family:var(--serif,serif);font-size:15px;color:var(--i2);line-height:2;font-style:italic;">그 여름, 냇가는 우리들의 세상이었다.<br><br>발밑으로 차가운 물이 흘렀고, 돌 틈에서 피라미들이 반짝였다. 어머니가 싸주신 보리밥 도시락을 가운데 놓고 친구 셋이 둘러앉아 먹던 그 맛을, 나는 지금도 잊지 못한다.</div><div style="position:absolute;top:16px;right:18px;font-size:12px;color:var(--i3);">1 / 12쪽</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 기억 조각만 적으면 이런 자서전이 완성돼요</span><button class="btn-p" onclick="goToCourse('자서전 쓰기')" style="padding:11px 24px;font-size:15px;">나도 써보기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-letter">
-    <div class="example-badge">편지 쓰기 · 뤼튼으로 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">💌</div><div><div class="example-card-title">사랑하는 딸 지영에게</div><div class="example-card-sub">회원 이경숙(75세)님 · 3분 만에 완성</div></div></div>
-    <div style="background:#fff9f0;border:1px solid #e8d5b0;border-radius:14px;padding:26px;margin-bottom:16px;position:relative;"><div style="position:absolute;top:18px;right:22px;font-size:24px;opacity:.12;">💌</div><div style="font-family:var(--serif,serif);font-size:15px;color:var(--i2);line-height:2;">사랑하는 딸 지영에게<br><br>말은 잘 못했지만, 언제나 네 편이었단다. 힘들다고 했던 날 밤에 전화 끊고 얼마나 울었는지 모른다.<br><br>이제라도 말할게. 고맙다, 지영아. 그 어떤 딸보다 자랑스럽다.<br>사랑한다. — 엄마</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 완성된 편지를 카카오톡으로 바로 전달할 수 있어요</span><button class="btn-p" onclick="goToCourse('편지 쓰기')" style="padding:11px 24px;font-size:15px;">편지 쓰기 →</button></div>
-  </div>
-</div>
-
-<!-- 카테고리 -->
-<div class="sec-c"><div class="sec-c-in">
-  <div class="eyebrow">무엇을 만들까요?</div>
-  <h2 class="sec-title">관심사를 고르면<br>바로 시작할 수 있어요</h2>
-  <p class="sec-sub">클릭하면 해당 과정으로 바로 이동해요.</p>
-  <div class="photo-grid">
-    <div class="photo-card" onclick="goToCategory('writing')"><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-badge gold">가장 인기</div><div class="photo-title">글쓰기</div><div class="photo-tags"><span class="photo-tag">블로그</span><span class="photo-tag">자서전</span><span class="photo-tag">편지</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('image')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">이미지 만들기</div><div class="photo-tags"><span class="photo-tag">풍경</span><span class="photo-tag">꽃</span><span class="photo-tag">고향</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('music')"><img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">음악 만들기</div><div class="photo-tags"><span class="photo-tag">트로트</span><span class="photo-tag">발라드</span><span class="photo-tag">동요</span></div></div></div>
-  </div>
-</div></div>
-
-<!-- 3단계 -->
-<div class="sec">
-  <div class="eyebrow">이렇게 해요</div>
-  <h2 class="sec-title">3단계면 충분해요</h2>
-  <p class="sec-sub">어렵지 않아요. 처음에는 뤼튼 하나만 알면 돼요.</p>
-  <div class="steps">
-    <div class="step"><div class="step-icon">👆</div><div class="step-title">관심사 선택</div><div class="step-desc">만들고 싶은 것을 버튼으로 골라요. 타이핑 없어요.</div><div class="step-num">01</div></div>
-    <div class="step"><div class="step-icon">📋</div><div class="step-title">프롬프트 완성</div><div class="step-desc">분위기, 스타일을 고르면 AI에게 부탁하는 문장이 완성돼요.</div><div class="step-num">02</div></div>
-    <div class="step"><div class="step-icon">✨</div><div class="step-title">붙여넣기 하면 끝</div><div class="step-desc">뤼튼 입력창에 Ctrl+V 하면 결과물이 바로 나와요!</div><div class="step-num">03</div></div>
-  </div>
-</div>
-
-<!-- 프롬프트 설명 섹션 -->
-<div class="sec-w"><div class="sec-w-in">
-  <div class="eyebrow">꼭 알아두세요</div>
-  <h2 class="sec-title">프롬프트가 뭔가요?</h2>
-  <div style="display:flex;flex-direction:column;gap:16px;">
-    <div style="background:var(--al);border:1.5px solid var(--ab);border-radius:16px;padding:28px;">
-      <div style="font-size:16px;font-weight:700;color:var(--ac);margin-bottom:10px;">🗣️ 프롬프트 = AI에게 하는 부탁</div>
-      <div style="font-size:15px;color:var(--i2);line-height:1.85;">AI는 아주 똑똑한 심부름꾼이에요.<br>"이런 글 써줘"라고 부탁하는 문장을<br><b style="color:var(--ac);">프롬프트</b>라고 해요.<br><br>어떻게 부탁하느냐에 따라<br>결과가 완전히 달라져요!</div>
-    </div>
-    <div style="background:var(--gl);border:1.5px solid var(--gb);border-radius:16px;padding:24px;">
-      <div style="font-size:15px;font-weight:700;color:var(--gd);margin-bottom:10px;">💡 이렇게 쓰면 더 좋아요</div>
-      <div style="font-size:14px;color:var(--i2);line-height:1.85;"><div style="margin-bottom:8px;">❌ 나쁜 예: "자서전 써줘"</div><div>✅ 좋은 예: "경북 안동 시골에서 자란 유년 시절 이야기를, 그리움이 담긴 따뜻한 문체로 700자로 써줘"</div></div>
-    </div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;">
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;">🤖 AI 동행이 하는 일</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">어떤 이야기를 할지 <b>버튼으로 선택</b>하게 도와드려요</div></div>
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">좋은 결과를 위한 <b>프롬프트를 자동으로 완성</b>해드려요</div></div>
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">어떤 AI 툴에 붙여넣을지 <b>바로 안내</b>해드려요</div></div>
+    <!-- 2. 자서전 쓰기 -->
+    <div class="interest-card" onclick="goToCategory('writing')">
+      <div class="interest-illus" style="background:#E8D5BA;">
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect x="115" y="35" width="170" height="200" rx="3" fill="#6b4028"/>
+          <rect x="120" y="40" width="160" height="190" rx="2" fill="#7a4a2e"/>
+          <rect x="128" y="50" width="144" height="170" rx="2" fill="none" stroke="#d8a54a" stroke-width="1.8"/>
+          <rect x="133" y="55" width="134" height="160" rx="1" fill="none" stroke="#d8a54a" stroke-width="0.8"/>
+          <text x="200" y="118" text-anchor="middle" font-family="'Noto Serif KR',serif" font-size="26" font-weight="700" fill="#f5e6d4">나의</text>
+          <text x="200" y="152" text-anchor="middle" font-family="'Noto Serif KR',serif" font-size="26" font-weight="700" fill="#f5e6d4">이야기</text>
+          <line x1="165" y1="172" x2="235" y2="172" stroke="#d8a54a" stroke-width="1"/>
+          <text x="200" y="195" text-anchor="middle" font-family="serif" font-size="12" font-weight="600" fill="#d8a54a" letter-spacing="3">A MEMOIR</text>
+          <rect x="115" y="35" width="6" height="200" fill="#4a2a18"/>
+        </svg>
+      </div>
+      <div class="interest-body">
+        <div class="interest-name">자서전 쓰기</div>
+        <div class="interest-desc">내 삶의 장면들을 한 장씩. 완성하면 한 권의 책이 돼요.</div>
       </div>
     </div>
-  </div>
-</div></div>
 
-<!-- 동반자 -->
-<div class="sec-d"><div class="sec-d-in">
-  <div class="partner-grid">
-    <div>
-      <div class="eyebrow-d">왜 "동행"인가요?</div>
-      <h2 class="sec-title-d">AI 시대를<br>함께 걸어요</h2>
-      <p style="font-size:16px;color:rgba(255,255,255,.7);line-height:1.85;margin-bottom:34px;">단순한 앱이 아니에요. 변해가는 AI 세상을 어르신도 함께할 수 있도록 손잡아 드려요.</p>
-      <div class="ppoints">
-        <div class="pp"><div class="pp-icon">🏆</div><div><div class="pp-title">직접 써보는 경험</div><div class="pp-desc">"나 ChatGPT 써봤어!" 말할 수 있는 그 경험을 드려요</div></div></div>
-        <div class="pp"><div class="pp-icon">💌</div><div><div class="pp-title">가족에게 전달</div><div class="pp-desc">완성된 작품을 카카오톡으로 바로 가족에게 보낼 수 있어요</div></div></div>
-        <div class="pp"><div class="pp-icon">📖</div><div><div class="pp-title">나의 이야기가 역사가 돼요</div><div class="pp-desc">작품함에 모아두면 나만의 창작 아카이브가 완성돼요</div></div></div>
-      </div>
-    </div>
-    <div class="partner-preview">
-      <div class="pp-item" onclick="showView('dojo')"><span class="pp-item-icon">🏆</span><div style="flex:1;"><div class="pp-item-title">AI 도장깨기 시작</div><div class="pp-item-sub">관심 있는 미션 골라서 시작</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('자서전 쓰기')"><span class="pp-item-icon">✍️</span><div style="flex:1;"><div class="pp-item-title">자서전 첫 장 써보기</div><div class="pp-item-sub">유년 시절 · 그리움 담아</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('트로트 만들기')"><span class="pp-item-icon">🎵</span><div style="flex:1;"><div class="pp-item-title">트로트 가사 만들기</div><div class="pp-item-sub">Suno AI로 실제 노래 완성</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('편지 쓰기')"><span class="pp-item-icon">💌</span><div style="flex:1;"><div class="pp-item-title">가족에게 편지 쓰기</div><div class="pp-item-sub">감사한 마음 · 따뜻하게</div></div><span class="pp-item-arr">›</span></div>
-    </div>
-  </div>
-</div></div>
-
-<!-- 후기 -->
-<div class="sec-w"><div class="sec-w-in">
-  <div class="eyebrow">함께한 분들</div>
-  <h2 class="sec-title">"나도 AI 써봤어!"</h2>
-  <div style="margin-bottom:36px;"></div>
-  <div class="review-grid">
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"딸이 AI로 쓴 편지라고 하니까 오히려 더 감동받았어요. 나도 이제 AI 쓸 줄 안다고 자랑했죠!"</div><div class="review-author"><div class="review-avatar">👩‍🦳</div><div><div class="review-name">김순자 님</div><div class="review-meta">72세 · 서울</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"아내 환갑에 트로트 만들어줬더니 펑펑 울었어요. Suno AI 첫 사용이었는데 손자한테 자랑했어요!"</div><div class="review-author"><div class="review-avatar">👴</div><div><div class="review-name">박철수 님</div><div class="review-meta">68세 · 부산</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"뤼튼이 뭔지도 몰랐는데 이제는 매일 써요. 복지관에서 제일 잘 쓰는 사람이 됐어요."</div><div class="review-author"><div class="review-avatar">👩</div><div><div class="review-name">이경숙 님</div><div class="review-meta">75세 · 대구</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"도장 6개 다 깼어요! ChatGPT, Firefly, Suno까지. 손녀가 할머니 대단하다고 했어요."</div><div class="review-author"><div class="review-avatar">👩‍🦳</div><div><div class="review-name">최영희 님</div><div class="review-meta">81세 · 인천</div></div></div></div>
-  </div>
-</div></div>
-
-<!-- CTA -->
-<div class="cta-sec">
-  <div><div class="cta-title">오늘 AI와<br>첫 만남을 시작해요</div><div class="cta-sub">회원가입 없이 바로 체험 · 어렵지 않아요</div></div>
-  <div class="cta-btns">
-    <button class="btn-cta-w" onclick="showView('dojo')">🏆 5분이면 첫 도장 완성 →</button>
-    <button class="btn-cta-o" onclick="showView('builder')">프롬프트 빌더 바로가기</button>
-    <button class="btn-cta-o" onclick="showView('b2g')">🏛️ 기관 도입 문의</button>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-logo">
-<svg width="28" height="28" style="display:block;flex-shrink:0;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="ft_svg1" viewBox="0 0 200 200"  ><defs>
-            <!-- 배경 입체 그라데이션 (차분한 다크 틸) -->
-            <radialGradient id="ft_bg3D" cx="30%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#4B9D83"/>
-                <stop offset="50%" stop-color="#2D6A59"/>
-                <stop offset="100%" stop-color="#14362D"/>
-            </radialGradient>
-
-            <!-- 전구(유리) 부분 화이트 3D 그라데이션 -->
-            <radialGradient id="ft_bulbWhite3D" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stop-color="#FFFFFF"/>
-                <stop offset="60%" stop-color="#F2F5F4"/>
-                <stop offset="100%" stop-color="#C5D1CE"/>
-            </radialGradient>
-
-            <!-- 소켓 부분 그레이 3D 그라데이션 -->
-            <linearGradient id="ft_socket3D" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#E8EFED"/>
-                <stop offset="100%" stop-color="#A9B8B5"/>
+    <!-- 3. 이미지 만들기 -->
+    <div class="interest-card" onclick="goToCategory('image')">
+      <div class="interest-illus" style="background:#F5C9A8;">
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFD9A8"/>
+              <stop offset="1" stop-color="#F5A880"/>
             </linearGradient>
+            <linearGradient id="water1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#D99A80"/>
+              <stop offset="1" stop-color="#B37A66"/>
+            </linearGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#sky1)"/>
+          <circle cx="295" cy="85" r="28" fill="#FFE8C6" opacity="0.95"/>
+          <polygon points="0,155 90,90 170,155" fill="#9B7E9C"/>
+          <polygon points="130,155 210,75 290,155" fill="#8A6B8D" opacity="0.92"/>
+          <polygon points="240,155 320,105 400,155" fill="#785E7B" opacity="0.9"/>
+          <rect y="155" width="400" height="95" fill="url(#water1)"/>
+          <line x1="40" y1="178" x2="110" y2="178" stroke="#fff" stroke-width="1.2" opacity="0.45"/>
+          <line x1="200" y1="192" x2="270" y2="192" stroke="#fff" stroke-width="1.2" opacity="0.45"/>
+          <line x1="70" y1="208" x2="150" y2="208" stroke="#fff" stroke-width="1.2" opacity="0.3"/>
+          <g transform="translate(265 172)">
+            <polygon points="0,0 12,-28 16,0" fill="#fff"/>
+            <rect x="-4" y="0" width="22" height="5" rx="1" fill="#5B3E2D"/>
+          </g>
+          <path d="M75,65 Q83,55 91,65 Q96,60 101,65" stroke="#fff" stroke-width="2" fill="none" opacity="0.85"/>
+          <path d="M160,50 Q166,43 172,50 Q175,47 178,50" stroke="#fff" stroke-width="1.8" fill="none" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="interest-body">
+        <div class="interest-name">이미지 만들기</div>
+        <div class="interest-desc">수채화, 지브리 풍, 유화 — 원하는 풍경을 그림으로.</div>
+      </div>
+    </div>
 
-            <!-- 부드러운 그림자 효과 -->
-            <filter id="ft_shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
-            </filter>
-        </defs>
-                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#ft_bg3D)"/>
-                <g filter="url(#ft_shadow)">
-                    <!-- 하단이 자연스럽게 좁아지는 전구 실루엣 -->
-                    <path d="M100,36&#10;                             C72,36 58,58 58,82&#10;                             C58,105 70,118 85,132&#10;                             C92,138 95,142 100,142&#10;                             C105,142 108,138 115,132&#10;                             C130,118 142,105 142,82&#10;                             C142,58 128,36 100,36 Z" fill="url(#ft_bulbWhite3D)"/>
-                    <!-- 하단 점 (Dot) -->
-                    <circle cx="100" cy="162" r="11" fill="url(#ft_bulbWhite3D)"/>
-                </g>
-            </svg><span class="ft-logo-txt"><span>AI&nbsp;<b>동행</b></span><span class="ft-logo-tag">어르신의 이야기, AI와 함께</span></span></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="openLegalModal('terms')">이용약관</span><span class="footer-link" onclick="openLegalModal('privacy')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div class="business-info">
-    <div class="business-info-row"><b>상호</b>에듀그린 &nbsp;|&nbsp; <b>대표자</b>박소중 &nbsp;|&nbsp; <b>사업자등록번호</b>715-04-01808</div>
-    <div class="business-info-row"><b>통신판매업 신고번호</b>2023-화성동탄-1451</div>
-    <div class="business-info-row"><b>사업장 주소</b>경기도 화성시 동탄기흥로 590, B동 1118호 (영천동, 동탄센트럴에이스타워)</div>
-    <div class="business-info-row"><b>고객센터</b><a href="mailto:edu-green@naver.com">edu-green@naver.com</a> &nbsp;|&nbsp; <b>전화</b>031-608-6132 (평일 10:00~18:00)</div>
-    <div class="business-info-row"><b>개인정보책임자</b>박소중 &nbsp;|&nbsp; 점심시간 12:00~13:00 제외, 주말·공휴일 휴무</div>
+    <!-- 4. 사진 보정·복원 -->
+    <div class="interest-card" onclick="goToCategory('image')">
+      <div class="interest-illus" style="background:#D7B89C;">
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <g transform="translate(75 55) rotate(-7)" filter="">
+            <rect width="130" height="150" fill="#fdfaf3" stroke="#d9c8a5" stroke-width="1"/>
+            <rect x="12" y="12" width="106" height="96" fill="#8B7560"/>
+            <circle cx="42" cy="56" r="13" fill="#5B4835"/>
+            <path d="M29,92 L29,78 Q29,67 42,67 Q55,67 55,78 L55,92 Z" fill="#5B4835"/>
+            <circle cx="86" cy="56" r="13" fill="#5B4835"/>
+            <path d="M73,92 L73,78 Q73,67 86,67 Q99,67 99,78 L99,92 Z" fill="#5B4835"/>
+            <line x1="22" y1="123" x2="108" y2="123" stroke="#c8b89e" stroke-width="2.5"/>
+            <line x1="32" y1="133" x2="98" y2="133" stroke="#c8b89e" stroke-width="2"/>
+          </g>
+          <g transform="translate(205 45) rotate(6)">
+            <rect width="130" height="150" fill="#fdfaf3" stroke="#d9c8a5" stroke-width="1"/>
+            <rect x="12" y="12" width="106" height="96" fill="#a89680"/>
+            <circle cx="45" cy="56" r="11" fill="#C85A4C"/>
+            <path d="M34,92 L34,80 Q34,70 45,70 Q56,70 56,80 L56,92 Z" fill="#C85A4C"/>
+            <circle cx="80" cy="56" r="11" fill="#5A7CAC"/>
+            <path d="M69,92 L69,80 Q69,70 80,70 Q91,70 91,80 L91,92 Z" fill="#5A7CAC"/>
+            <text x="65" y="128" text-anchor="middle" font-family="'Noto Serif KR',serif" font-size="11" fill="#8a7a65" font-weight="600">복원 완료</text>
+          </g>
+          <text x="115" y="225" font-family="monospace" font-size="12" fill="#6B5847" font-weight="700">1962</text>
+        </svg>
+      </div>
+      <div class="interest-body">
+        <div class="interest-name">사진 보정·복원</div>
+        <div class="interest-desc">빛바랜 옛 사진을 선명하게, 흑백 사진에 색을 입혀 드려요.</div>
+      </div>
+    </div>
+
+    <!-- 5. 음악 만들기 -->
+    <div class="interest-card" onclick="goToCategory('music')">
+      <div class="interest-illus" style="background:#F5D4AC;">
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <circle cx="200" cy="130" r="95" fill="#1a1a1a"/>
+          <circle cx="200" cy="130" r="85" fill="none" stroke="#3a3a3a" stroke-width="0.6"/>
+          <circle cx="200" cy="130" r="75" fill="none" stroke="#3a3a3a" stroke-width="0.6"/>
+          <circle cx="200" cy="130" r="65" fill="none" stroke="#3a3a3a" stroke-width="0.6"/>
+          <circle cx="200" cy="130" r="55" fill="none" stroke="#3a3a3a" stroke-width="0.6"/>
+          <circle cx="200" cy="130" r="45" fill="none" stroke="#3a3a3a" stroke-width="0.6"/>
+          <circle cx="200" cy="130" r="36" fill="#d8a54a"/>
+          <text x="200" y="127" text-anchor="middle" font-family="'Noto Sans KR',sans-serif" font-size="13" font-weight="800" fill="#fff" letter-spacing="2">TROT</text>
+          <text x="200" y="143" text-anchor="middle" font-family="'Noto Sans KR',sans-serif" font-size="7" font-weight="600" fill="#8B5A2B">동행레코드</text>
+          <circle cx="200" cy="130" r="3.5" fill="#1a1a1a"/>
+          <g fill="#2a2a2a">
+            <g transform="translate(310 55)">
+              <ellipse cx="0" cy="12" rx="6" ry="5" transform="rotate(-20)"/>
+              <rect x="5" y="-5" width="2" height="18" rx="1"/>
+              <path d="M7,-5 L16,-10 L16,0 L7,5 Z"/>
+            </g>
+            <g transform="translate(55 75)">
+              <ellipse cx="0" cy="12" rx="5" ry="4" transform="rotate(-20)"/>
+              <rect x="3" y="-3" width="2" height="15" rx="1"/>
+            </g>
+            <g transform="translate(335 180)">
+              <ellipse cx="0" cy="8" rx="4" ry="3.5" transform="rotate(-20)"/>
+              <rect x="2.5" y="-2" width="1.5" height="11" rx="1"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="interest-body">
+        <div class="interest-name">음악 만들기</div>
+        <div class="interest-desc">트로트, 발라드, 동요. 나와 가족을 위한 단 하나의 노래.</div>
+      </div>
+    </div>
+
+    <!-- 6. 영상 만들기 (출시 예정) -->
+    <div class="interest-card soon">
+      <div class="interest-illus" style="background:#A8A8A8;">
+        <span class="interest-badge soon">출시 예정</span>
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="250" fill="#9a9a9a"/>
+          <rect y="55" width="400" height="135" fill="#2a2a2a"/>
+          <g fill="#9a9a9a">
+            <rect x="15" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="45" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="75" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="105" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="135" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="165" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="195" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="225" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="255" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="285" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="315" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="345" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="375" y="65" width="12" height="12" rx="1.5"/>
+            <rect x="15" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="45" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="75" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="105" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="135" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="165" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="195" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="225" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="255" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="285" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="315" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="345" y="168" width="12" height="12" rx="1.5"/>
+            <rect x="375" y="168" width="12" height="12" rx="1.5"/>
+          </g>
+          <rect x="70" y="88" width="80" height="70" fill="#F5C588"/>
+          <circle cx="110" cy="123" r="14" fill="#E89550"/>
+          <path d="M78,145 L95,130 L108,138 L140,115 L140,158 L78,158 Z" fill="#D47A3E" opacity="0.7"/>
+          <rect x="160" y="88" width="80" height="70" fill="#E85A4C"/>
+          <circle cx="200" cy="123" r="19" fill="#fff"/>
+          <polygon points="194,112 194,134 212,123" fill="#E85A4C"/>
+          <rect x="250" y="88" width="80" height="70" fill="#5A9BC8"/>
+          <path d="M258,145 L275,125 L290,135 L318,110 L318,158 L258,158 Z" fill="#4680A8"/>
+          <circle cx="278" cy="108" r="7" fill="#FFE88C"/>
+        </svg>
+      </div>
+      <div class="interest-body">
+        <div class="interest-name">영상 만들기</div>
+        <div class="interest-desc">사진과 이야기로 짧은 영상을. 곧 만나요.</div>
+      </div>
+    </div>
+
   </div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
-</div>
-
-<!-- 🎁 선물 유도 배너 (푸터 직전) -->
-<section class="gift-cta-banner" style="background:linear-gradient(135deg,#FFF0EC 0%,#FFE8DC 100%);padding:40px 24px;text-align:center;border-top:1px solid #F5D4C6;">
-  <div style="max-width:640px;margin:0 auto;">
-    <div style="font-size:28px;margin-bottom:8px;">🎁</div>
-    <h2 style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;line-height:1.45;margin-bottom:10px;color:#1C1A17;word-break:keep-all;">
-      부모님께 <em style="color:#E8725A;font-style:normal;">AI 세상</em>을 선물하세요
-    </h2>
-    <p style="font-size:14px;color:#7A7669;line-height:1.8;margin-bottom:20px;word-break:keep-all;">
-      꽃다발은 시들지만, AI 동행으로 만든 자서전은 평생 남습니다.<br>
-      카톡 한 번으로 부모님께 바로 전달됩니다.
-    </p>
-    <a href="/gift.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:#E8725A;color:#fff;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;transition:all .15s;">
-      선물하기 자세히 보기 →
-    </a>
   </div>
 </section>
+
+<!-- 3단계 (v3 — Image 1 디자인) -->
+<section class="steps-v3-wrap">
+  <div class="steps-v3-in">
+    <div class="steps-v3-head">
+      <h2 class="steps-v3-title">이렇게 쉽게, 세 단계면 끝이에요</h2>
+      <p class="steps-v3-sub">컴퓨터를 처음 만지는 분도 금방 하세요. 자녀 분이 옆에서 같이 하시면 더 즐거워요.</p>
+    </div>
+    <div class="steps-v3">
+      <div class="step-v3">
+        <div class="step-v3-num">1</div>
+        <div class="step-v3-title">관심사를 골라요</div>
+        <div class="step-v3-desc">시절, 감정, 주제를 버튼으로 답하세요. 타이핑은 하지 않으셔도 돼요.</div>
+        <div class="step-v3-demo">
+          <span class="step-chip">어린 시절</span>
+          <span class="step-chip">따뜻한</span>
+          <span class="step-chip-o">자녀에게</span>
+          <span class="step-chip-o">바닷가</span>
+        </div>
+      </div>
+      <div class="step-v3">
+        <div class="step-v3-num">2</div>
+        <div class="step-v3-title">프롬프트가 완성돼요</div>
+        <div class="step-v3-desc">어려운 말은 AI 동행이 대신 써 드려요. 마음에 안 들면 다시 눌러 주세요.</div>
+        <div class="step-v3-demo">
+          <div class="step-prompt">" 어린 시절 의 따뜻한 기억을 자녀에게 들려주는 편지…"</div>
+        </div>
+      </div>
+      <div class="step-v3">
+        <div class="step-v3-num">3</div>
+        <div class="step-v3-title">작품이 태어나요</div>
+        <div class="step-v3-desc">AI가 글·그림·음악을 완성해요. 바로 카카오톡으로 가족에게 보내세요.</div>
+        <div class="step-v3-demo">
+          <span class="step-check">✓ 작품 완성</span>
+          <span class="step-chip" onclick="event.stopPropagation();">카톡으로 보내기</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 예시 섹션 (v2 — 선택 없이 한눈에) -->
+<div class="sec" id="examplesSection">
+  <div class="examples-grid-v2">
+    <!-- 왼쪽: 설명 -->
+    <div class="examples-text">
+      <div class="eyebrow">이런 작품이 나와요</div>
+      <h2 class="sec-title">직접 써보면<br>이런 결과가 나와요</h2>
+      <p class="sec-sub">어렵지 않아요. AI동행에게 부탁하면 이런 감동적인 결과물이 나와요.</p>
+      <div class="examples-points">
+        <div class="ex-point">
+          <div class="ex-point-icon">🖋️</div>
+          <div>
+            <div class="ex-point-title">첫 문장만 떠올려도 돼요</div>
+            <div class="ex-point-desc">기억 조각 몇 줄만 넣으면 자서전 한 장이 완성돼요.</div>
+          </div>
+        </div>
+        <div class="ex-point">
+          <div class="ex-point-icon">🎨</div>
+          <div>
+            <div class="ex-point-title">말로 설명해도 그림이 돼요</div>
+            <div class="ex-point-desc">"고향 감나무" 한 마디면 수채화 한 장으로 나와요.</div>
+          </div>
+        </div>
+        <div class="ex-point">
+          <div class="ex-point-icon">🎵</div>
+          <div>
+            <div class="ex-point-title">진짜 노래로 완성돼요</div>
+            <div class="ex-point-desc">내 기억을 1분짜리 곡으로 만들어줘요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 오른쪽: 2×2 컬러 미리보기 카드 -->
+    <div class="examples-cards">
+      <div class="example-preview-card" style="background:#A0713D;" onclick="goToCourse('자서전 쓰기')">
+        <div class="epc-eyebrow">자서전 · 1장</div>
+        <div class="epc-body">
+          <div class="epc-title">"일곱 살, 외갓집 마당의 감나무 아래서…"</div>
+          <div class="epc-meta">어린 시절 · 따뜻한 · 손주에게</div>
+        </div>
+      </div>
+      <div class="example-preview-card" style="background:#5E7048;" onclick="goToCourse('고향·마을 풍경')">
+        <div class="epc-eyebrow">수채화</div>
+        <div class="epc-body">
+          <div class="epc-title">고향 마을의 봄</div>
+          <div class="epc-meta">지브리 풍 · 1024×1024</div>
+        </div>
+      </div>
+      <div class="example-preview-card" style="background:#8B3E46;" onclick="goToCourse('트로트 만들기')">
+        <div class="epc-eyebrow">음악 · 발라드</div>
+        <div class="epc-body">
+          <div class="epc-title">금혼식 축하곡</div>
+          <div class="epc-meta">3분 · 부부에게 헌정</div>
+        </div>
+      </div>
+      <div class="example-preview-card" style="background:#3B5863;" onclick="goToCourse('편지 쓰기')">
+        <div class="epc-eyebrow">편지</div>
+        <div class="epc-body">
+          <div class="epc-title">막내에게 보내는 마음</div>
+          <div class="epc-meta">2026년 봄 · 어머니로부터</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 부모님께 선물하세요 (v3 — Image 2 참조) -->
+<section class="gift-sec">
+  <div class="gift-sec-in">
+    <div class="gift-grid">
+      <div>
+        <span class="gift-badge">NEW · 디지털 효도</span>
+        <h2 class="gift-title">부모님께 선물하세요.<br>가장 오래 남는 선물을.</h2>
+        <p class="gift-desc">자녀가 부모님께 이용권을 선물하는 효도 모델. 설치부터 첫 작품까지, 동행이 도와드립니다.</p>
+        <div class="gift-quote">"꽃다발은 시들지만,<br>자서전은 평생 남습니다."</div>
+        <div class="gift-plans">
+          <div class="gift-plan" onclick="location.href='/gift.html?plan=trial'">
+            <div class="gift-plan-label">체험권</div>
+            <div class="gift-plan-price">₩19,900</div>
+            <div class="gift-plan-meta">1개월 · 3작품</div>
+          </div>
+          <div class="gift-plan pick" onclick="location.href='/gift.html?plan=regular'">
+            <span class="gift-plan-pick">추천</span>
+            <div class="gift-plan-label">정기권</div>
+            <div class="gift-plan-price">₩49,900</div>
+            <div class="gift-plan-meta">3개월 · 무제한</div>
+          </div>
+          <div class="gift-plan" onclick="location.href='/gift.html?plan=annual'">
+            <div class="gift-plan-label">연간권</div>
+            <div class="gift-plan-price">₩149,000</div>
+            <div class="gift-plan-meta">12개월 · 자서전 출간</div>
+          </div>
+        </div>
+        <div class="gift-ctas">
+          <a class="btn-gift-p" href="/gift.html">선물 보러 가기 →</a>
+          <a class="btn-gift-o" href="/gift.html">상품 자세히 보기</a>
+        </div>
+      </div>
+      <div>
+        <div class="gift-card-preview">
+          <div class="gcp-badge">🎁 기프트 카드</div>
+          <div class="gcp-body">
+            <div class="gcp-eyebrow">부모님께 드리는</div>
+            <div class="gcp-title">3개월<br>동행권</div>
+          </div>
+          <div class="gcp-foot">
+            <b>— 사랑하는 엄마, 아빠께.</b>
+            이제 AI로 자서전을 써 보세요.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 먼저 써보신 분들의 이야기 (v3 — Image 3 디자인) -->
+<section class="reviews-sec">
+  <div class="reviews-sec-in">
+    <div class="reviews-head">
+      <h2 class="reviews-title">먼저 써보신 분들의 이야기</h2>
+      <p class="reviews-sub">전국의 어르신들이 손주에게, 자녀에게, 자신에게 이야기를 선물하고 계세요.</p>
+    </div>
+    <div class="reviews-grid">
+      <div class="rv-card">
+        <div class="rv-stars">★★★★★</div>
+        <div class="rv-text">"손주한테 자랑할 게 생겼어요. 내가 AI로 그림을 그렸다니까 눈이 휘둥그레지더라고."</div>
+        <div class="rv-author">
+          <div class="rv-avatar" style="background:#8B5A2B;">김</div>
+          <div>
+            <div class="rv-name">김순자 (72세)</div>
+            <div class="rv-meta">강원 춘천 · 수채화 12점</div>
+          </div>
+        </div>
+      </div>
+      <div class="rv-card">
+        <div class="rv-stars">★★★★★</div>
+        <div class="rv-text">"자서전 1장을 딸한테 보냈더니 울면서 전화가 왔어요. 이런 걸 내가 했다는 게 믿기지 않아요."</div>
+        <div class="rv-author">
+          <div class="rv-avatar" style="background:#5E7048;">박</div>
+          <div>
+            <div class="rv-name">박철수 (68세)</div>
+            <div class="rv-meta">부산 해운대 · 자서전 3장 완성</div>
+          </div>
+        </div>
+      </div>
+      <div class="rv-card">
+        <div class="rv-stars">★★★★★</div>
+        <div class="rv-text">"영감 기일에 부를 노래를 만들었어요. 트로트로요. 가족들이 다 한 자리에서 울었어요."</div>
+        <div class="rv-author">
+          <div class="rv-avatar" style="background:#8B3E46;">이</div>
+          <div>
+            <div class="rv-name">이경숙 (75세)</div>
+            <div class="rv-meta">서울 은평 · 음악 5곡</div>
+          </div>
+        </div>
+      </div>
+      <div class="rv-card">
+        <div class="rv-stars">★★★★★</div>
+        <div class="rv-text">"컴퓨터 못 해요. 근데 이건 되더라고. 버튼만 누르면 돼서."</div>
+        <div class="rv-author">
+          <div class="rv-avatar" style="background:#3B5863;">최</div>
+          <div>
+            <div class="rv-name">최영희 (81세)</div>
+            <div class="rv-meta">전남 목포 · 블로그 글 28편</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA (v3 — Image 3/4 디자인) -->
+<section class="cta-v3">
+  <div class="cta-v3-in">
+    <h2 class="cta-v3-title">오늘, 첫 장을 시작해 볼까요?</h2>
+    <p class="cta-v3-desc">어려운 건 AI 동행이, 이야기만 당신이. 3분이면 손주에게 자랑할 작품이 완성됩니다.</p>
+    <div class="cta-v3-btns">
+      <button class="btn-cta-v3-p" onclick="goToBuilder()">바로 시작하기 →</button>
+      <button class="btn-cta-v3-o" onclick="location.href='/gift.html'">🎁 부모님께 선물하기</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER v3 (Image 4 디자인 — 관리자 버튼 유지) -->
+<footer class="footer-v3">
+  <div class="footer-v3-in">
+    <div class="footer-v3-grid">
+      <div class="footer-v3-brand">
+        <div class="footer-v3-logo">AI<span class="g">동행</span></div>
+        <div class="footer-v3-brand-desc">시니어를 위한 AI 창작 플랫폼.<br>당신의 이야기를 작품으로.</div>
+      </div>
+      <div>
+        <div class="footer-v3-col-head">서비스</div>
+        <a class="footer-v3-link" onclick="showView('builder');return false;" href="#">만들기</a>
+        <a class="footer-v3-link" onclick="showView('dojo');return false;" href="#">도장깨기</a>
+        <a class="footer-v3-link" onclick="showView('community');return false;" href="#">커뮤니티</a>
+        <a class="footer-v3-link" onclick="showView('portfolio');return false;" href="#">내 작품함</a>
+      </div>
+      <div>
+        <div class="footer-v3-col-head">지원</div>
+        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">고객센터</a>
+        <a class="footer-v3-link" onclick="showView('faq');return false;" href="#">자주 묻는 질문</a>
+        <a class="footer-v3-link" onclick="showView('about');return false;" href="#">이용 안내</a>
+        <a class="footer-v3-link" onclick="showView('b2g');return false;" href="#">기관 도입 문의</a>
+      </div>
+      <div>
+        <div class="footer-v3-col-head">약관</div>
+        <a class="footer-v3-link" onclick="openLegalModal('terms');return false;" href="#">이용약관</a>
+        <a class="footer-v3-link" onclick="openLegalModal('privacy');return false;" href="#">개인정보처리방침</a>
+        <a class="footer-v3-link" href="#">청소년 보호정책</a>
+      </div>
+    </div>
+    <div class="footer-v3-biz">
+      <div>(주)에듀그린 · 대표 박소중 · 경기도 화성시 동탄기흥로 590, B동 1118호 · 사업자등록번호 715-04-01808</div>
+      <div>통신판매업 신고 제 2023-화성동탄-1451호 · 고객센터 <a href="mailto:edu-green@naver.com">edu-green@naver.com</a> · 전화 031-608-6132 (평일 10:00~18:00)</div>
+    </div>
+    <div class="footer-v3-copy">
+      <span>© 2026 AI 동행. All rights reserved.</span>
+      <button onclick="adminLogin()" class="btn-admin-v3">🔐 관리자</button>
+    </div>
+  </div>
+</footer>
+</div>
 
 </div><!-- /homeView -->
 
@@ -8352,37 +8762,58 @@ function startHeroSlideAuto(){
 }
 function switchLearnCat(btn,id){document.querySelectorAll('.learn-cat-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.learn-cat-content').forEach(function(c){c.classList.remove('active');});btn.classList.add('active');var el=g(id);if(el)el.classList.add('active');}
 
-// ── 히어로 애니메이션 ──
-var PROMPT_FULL='유년 시절, 그리움과 추억을 담은 자서전을 써주세요. 경상도 시골 마을에서 자란 어린 시절 이야기를 따뜻하고 진솔하게 작성해주세요.';
+// ── 구 히어로 애니메이션 (Claude 디자인 v2로 교체, no-op로 비활성화) ──
+var PROMPT_FULL=''; // deprecated
 var animRunning=false;
 async function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-async function runAnim(){
-  if(animRunning)return;animRunning=true;
-  ['chip-youth','chip-school','chip-work','chip-family'].forEach(id=>{var el=g(id);if(el){el.className='anim-chip';el.style.opacity='1';}});
-  ['chip-longing','chip-thanks','chip-love'].forEach(id=>{var el=g(id);if(el){el.className='anim-chip';el.style.opacity='0.35';}});
-  var aq2=g('aq2');if(aq2)aq2.style.opacity='0.35';
-  var pb=g('prompt-box');if(pb)pb.style.opacity='0.25';
-  var pt=g('prompt-text');if(pt)pt.innerHTML='';
-  await sleep(900);
-  var cy=g('chip-youth');if(cy){cy.className='anim-chip selecting';}
-  await sleep(500);if(cy){cy.className='anim-chip selected';}
-  await sleep(700);
-  if(aq2)aq2.style.opacity='1';
-  ['chip-longing','chip-thanks','chip-love'].forEach(id=>{var el=g(id);if(el)el.style.opacity='1';});
-  await sleep(500);
-  var cl=g('chip-longing');if(cl){cl.className='anim-chip selecting';}
-  await sleep(500);if(cl){cl.className='anim-chip selected';}
-  await sleep(600);
-  if(pb)pb.style.opacity='1';
-  if(pt){pt.innerHTML='<span id="typed"></span><span class="cursor"></span>';}
-  var t=g('typed');
-  if(t){for(var i=0;i<PROMPT_FULL.length;i++){t.textContent+=PROMPT_FULL[i];await sleep(i<10?60:26);}}
-  await sleep(300);if(pt)pt.innerHTML=PROMPT_FULL;
-  await sleep(3500);animRunning=false;await sleep(800);runAnim();
-}
-setTimeout(runAnim,1000);
-setTimeout(startHeroAuto, 2000);
-setTimeout(startHeroSlideAuto, 1500);
+async function runAnim(){/* deprecated — see chdDemoInit */}
+/* setTimeout(runAnim,1000);  -- disabled */
+/* setTimeout(startHeroAuto, 2000);  -- disabled */
+/* setTimeout(startHeroSlideAuto, 1500);  -- disabled */
+
+// ── Claude design v2 — Hero demo interaction ──
+(function chdDemoInit(){
+  var groups = { era: "", emotion: "", who: "" };
+  function renderPrompt(){
+    var p = document.getElementById('chdPrompt');
+    if(!p) return;
+    var era = groups.era, emotion = groups.emotion, who = groups.who;
+    if(!era && !emotion && !who){
+      p.innerHTML = '<span class="ph">버튼을 누르면 프롬프트가 자동으로 완성돼요.</span><span class="chd-cursor"></span>';
+      return;
+    }
+    var parts = [];
+    parts.push(era ? '<span class="filled">'+era+'</span>' : '<span class="ph">[시절]</span>');
+    parts.push('의');
+    parts.push(emotion ? '<span class="filled">'+emotion+'</span>' : '<span class="ph">[감정]</span>');
+    parts.push('기억을');
+    parts.push(who ? '<span class="filled">'+who+'</span>' : '<span class="ph">[대상]</span>');
+    parts.push('들려주는 자서전의 첫 장을 써 주세요. 따뜻한 말투로, 편지처럼요.<span class="chd-cursor"></span>');
+    p.innerHTML = parts.join(' ');
+  }
+  function bindChips(){
+    var chipGroups = document.querySelectorAll('.chd-chips');
+    if(!chipGroups.length) return false;
+    chipGroups.forEach(function(group){
+      group.addEventListener('click', function(e){
+        var btn = e.target.closest('.chd-chip');
+        if(!btn) return;
+        var key = group.dataset.group;
+        group.querySelectorAll('.chd-chip').forEach(function(c){c.classList.remove('selected');});
+        btn.classList.add('selected');
+        groups[key] = btn.dataset.val;
+        renderPrompt();
+      });
+    });
+    return true;
+  }
+  // DOM 준비 후 바인딩 (이미 준비됐으면 바로, 아니면 대기)
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindChips);
+  } else {
+    bindChips();
+  }
+})();
 
 // ── 빌더 ──
 var catLabels={writing:{label:'내 이야기를 글로 남겨요',count:6},image:{label:'나만의 이미지를 만들어요',count:6},music:{label:'나만의 노래를 만들어요',count:6},video:{label:'추억을 영상으로 만들어요',count:3}};
@@ -12794,6 +13225,47 @@ function loadFalApiKeyToInput(){
   };
   function _escCloseLegal(e){
     if (e.key === 'Escape') window.closeLegalModal();
+  }
+})();
+</script>
+
+<!-- ═══ Claude 히어로 데모 카드 인터랙션 ═══ -->
+<script>
+(function(){
+  'use strict';
+  var chdState = { era: '', emotion: '', who: '' };
+  var chdGroups = document.querySelectorAll('.chd-chips');
+  if(!chdGroups.length) return; // 홈뷰 없거나 아직 로드 전
+
+  chdGroups.forEach(function(group){
+    group.addEventListener('click', function(e){
+      var btn = e.target.closest('.chd-chip');
+      if(!btn) return;
+      var key = group.getAttribute('data-group');
+      // 같은 그룹 내 선택 초기화
+      group.querySelectorAll('.chd-chip').forEach(function(c){ c.classList.remove('selected'); });
+      btn.classList.add('selected');
+      chdState[key] = btn.getAttribute('data-val');
+      renderChdPrompt();
+    });
+  });
+
+  function renderChdPrompt(){
+    var p = document.getElementById('chdPrompt');
+    if(!p) return;
+    var era = chdState.era, emotion = chdState.emotion, who = chdState.who;
+    if(!era && !emotion && !who){
+      p.innerHTML = '<span class="ph">버튼을 누르면 프롬프트가 자동으로 완성돼요.</span><span class="chd-cursor"></span>';
+      return;
+    }
+    var parts = [];
+    parts.push(era ? '<span class="filled">' + era + '</span>' : '<span class="ph">[시절]</span>');
+    parts.push('의');
+    parts.push(emotion ? '<span class="filled">' + emotion + '</span>' : '<span class="ph">[감정]</span>');
+    parts.push('기억을');
+    parts.push(who ? '<span class="filled">' + who + '</span>' : '<span class="ph">[대상]</span>');
+    parts.push('들려주는 자서전의 첫 장을 써 주세요. 따뜻한 말투로, 편지처럼요.<span class="chd-cursor"></span>');
+    p.innerHTML = parts.join(' ');
   }
 })();
 </script>

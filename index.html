@@ -4965,49 +4965,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 <div class="view" id="adminView">
 <div style="max-width:1100px;margin:0 auto;padding:32px 40px 100px;">
 
-  <!-- Claude API 키 설정 -->
-  <div style="background:#fff;border:2px solid var(--ac);border-radius:16px;padding:24px;margin-bottom:16px;">
-    <div style="font-size:16px;font-weight:700;color:var(--ac);margin-bottom:4px;">🔑 Claude API 키 설정</div>
-    <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">AI 글쓰기 결과 생성에 사용됩니다. <a href="https://console.anthropic.com" target="_blank" style="color:var(--ac);">Anthropic Console</a>에서 발급하세요.</div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <input type="password" id="claudeApiKeyInput" placeholder="sk-ant-..." 
-        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;"
-        onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'"/>
-      <button onclick="saveClaudeApiKey()" 
-        style="padding:12px 20px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">
-        저장
-      </button>
-      <button onclick="clearClaudeApiKey()"
-        style="padding:12px 16px;background:var(--wm);color:var(--i3);border:1px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;">
-        초기화
-      </button>
-    </div>
-    <div id="apiKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
-  </div>
-
-  <!-- fal.ai API 키 설정 (이미지 생성) -->
-  <div style="background:#fff;border:2px solid #8B5CF6;border-radius:16px;padding:24px;margin-bottom:28px;">
-    <div style="font-size:16px;font-weight:700;color:#8B5CF6;margin-bottom:4px;">🎨 fal.ai API 키 설정 (이미지 생성)</div>
-    <div style="font-size:13px;color:var(--i3);margin-bottom:14px;">
-      사진 보정·복원, 지브리 스타일 변환에 사용됩니다.<br>
-      <a href="https://fal.ai/dashboard/keys" target="_blank" style="color:#8B5CF6;font-weight:600;">fal.ai/dashboard/keys</a>에서 발급하세요.
-      <span style="background:#EDE9FE;color:#7C3AED;font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:6px;">이미지당 ~$0.03</span>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <input type="password" id="falApiKeyInput" placeholder="fal-..." 
-        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;"
-        onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='var(--bd)'"/>
-      <button onclick="saveFalApiKey()" 
-        style="padding:12px 20px;background:#8B5CF6;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">
-        저장
-      </button>
-      <button onclick="clearFalApiKey()"
-        style="padding:12px 16px;background:var(--wm);color:var(--i3);border:1px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;">
-        초기화
-      </button>
-    </div>
-    <div id="falApiKeyStatus" style="margin-top:10px;font-size:13px;font-weight:600;"></div>
-  </div>
 
 
   <!-- ── 관리자 대시보드 ── -->
@@ -5514,11 +5471,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
-// ── Claude API 키 설정 ──
-// window._claudeApiKey 에 키를 넣어두면 사용
-// Claude.ai 환경에서는 자동 처리됨
-// API 키 로드 (localStorage 우선)
-window._claudeApiKey = localStorage.getItem('aiDonghang_claudeKey') || '';
+// ── API 호출은 Supabase Edge Functions 프록시를 통해 처리 ──
 // 카카오 SDK 초기화 (lazy - 버튼 클릭 시 실행)
 var KAKAO_KEY = '5c95d732ad7d1f1905583749ef4788ef';
 function initKakaoSdk(){
@@ -6054,8 +6007,6 @@ function showView(view, _skipHash){
         if(typeof loadCommunityFromSupabase==='function') loadCommunityFromSupabase();
       }
       else if(view==='admin'){
-        setTimeout(function(){ try{ if(typeof loadApiKeyToAdmin==='function') loadApiKeyToAdmin(); }catch(e){} }, 100);
-        setTimeout(function(){ try{ if(typeof loadReplicateKeyToAdmin==='function') loadReplicateKeyToAdmin(); }catch(e){} }, 100);
         setTimeout(function(){ try{ if(typeof loadAdminDashboard==='function') loadAdminDashboard(); }catch(e){} }, 300);
       }
     }catch(initErr){
@@ -8303,9 +8254,9 @@ async function _showEmpathyFeedback(question, answer){
 
   var empathyText = '';
   try{
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    var resp = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
       method:'POST',
-      headers:{'Content-Type':'application/json', 'anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 350,
@@ -8435,9 +8386,9 @@ async function generateMemoirFromStory(){
 
   var memoirText = '';
   try{
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    var resp = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
       method:'POST',
-      headers:{'Content-Type':'application/json', 'anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: maxTokens,
@@ -10140,9 +10091,9 @@ async function generateMemoirTitles(){
   var d = getMemoirData();
   var summary = (d.ch1+d.ch2+d.ch3).slice(0, 600);
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key': window._claudeApiKey||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-5',
         max_tokens:400,
@@ -10887,14 +10838,7 @@ async function generateWithAI(){
 
       // 사진 업로드 있으면 fal.ai image-to-image (준비 중 안내)
       if(_uploadedPhotoBase64){
-        if(!window._falApiKey){
-          // fal.ai 키 없으면 안내 모달
-          showToast('사진 변환은 fal.ai API 키가 필요해요. 관리자 페이지에서 설정해주세요 🔑');
-          // 일단 Pollinations로 진행 (사진 없이)
-          imageUrl = await generateImageWithPollinations(imgPrompt);
-        } else {
-          imageUrl = await generateImageWithFal(_uploadedPhotoBase64, _uploadedPhotoMime, imgPrompt);
-        }
+        imageUrl = await generateImageWithFal(_uploadedPhotoBase64, _uploadedPhotoMime, imgPrompt);
       } else {
         imageUrl = await generateImageWithPollinations(imgPrompt);
       }
@@ -10925,17 +10869,11 @@ async function generateWithAI(){
 
     } else {
       // ── 글쓰기 생성: Claude API ──
-      if(!window._claudeApiKey){
-        throw new Error('글쓰기 AI가 준비 중이에요. 잠시 후 다시 시도해주세요 🙂');
-      }
       var systemPrompt = '당신은 어르신들을 위한 따뜻한 글쓰기 도우미입니다. 지시에 따라 진심 어린 글을 작성해주세요. 글은 한국어로, 이해하기 쉬운 표현을 사용하세요.';
-      var response = await fetch('https://api.anthropic.com/v1/messages', {
+      var response = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': window._claudeApiKey || '',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
@@ -11112,47 +11050,6 @@ function goToPromptScreen(){
   window.scrollTo(0,0);
 }
 
-// ── Claude API 키 관리 ──
-function saveClaudeApiKey(){
-  var input = g('claudeApiKeyInput');
-  var status = g('apiKeyStatus');
-  if(!input) return;
-  var key = input.value.trim();
-  if(!key){
-    if(status){ status.textContent = '❌ 키를 입력해주세요'; status.style.color = 'var(--danger, #e24b4a)'; }
-    return;
-  }
-  if(!key.startsWith('sk-ant-')){
-    if(status){ status.textContent = '⚠️ 올바른 형식이 아니에요 (sk-ant-로 시작해야 해요)'; status.style.color = '#e8a020'; }
-    return;
-  }
-  localStorage.setItem('aiDonghang_claudeKey', key);
-  window._claudeApiKey = key;
-  input.value = key.slice(0,12) + '...';
-  if(status){ status.textContent = '✅ 저장됐어요! 이제 AI 글쓰기가 작동해요.'; status.style.color = 'var(--ac)'; }
-}
-
-function clearClaudeApiKey(){
-  localStorage.removeItem('aiDonghang_claudeKey');
-  window._claudeApiKey = '';
-  var input = g('claudeApiKeyInput');
-  var status = g('apiKeyStatus');
-  if(input) input.value = '';
-  if(status){ status.textContent = 'API 키가 삭제됐어요.'; status.style.color = 'var(--i3)'; }
-}
-
-function loadApiKeyToAdmin(){
-  var input = g('claudeApiKeyInput');
-  var status = g('apiKeyStatus');
-  var key = window._claudeApiKey || '';
-  if(input){
-    input.value = key ? key.slice(0,12)+'...' : '';
-  }
-  if(status && key){
-    status.textContent = '✅ API 키가 설정되어 있어요.';
-    status.style.color = 'var(--ac)';
-  }
-}
 
 // ── AI 결과 저장 + 커뮤니티 공유 ──
 function saveAIResult(){
@@ -11322,15 +11219,10 @@ function loadReplicateKeyToAdmin(){
 
 // ── Replicate 이미지 생성 (FLUX Schnell) ──
 async function generateImageWithReplicate(prompt){
-  var key = window._replicateApiKey;
-  if(!key){ showToast('관리자 페이지에서 Replicate API 키를 먼저 설정해주세요 🔑'); return null; }
-
-  var response = await fetch('https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions', {
+  var response = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/replicate-proxy', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ' + key,
-      'Content-Type': 'application/json',
-      'Prefer': 'wait'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       input: { prompt: prompt, num_outputs: 1, output_format: 'webp', output_quality: 80 }
@@ -11351,8 +11243,8 @@ async function generateImageWithReplicate(prompt){
   var predId = data.id;
   for(var i=0; i<20; i++){
     await new Promise(function(r){setTimeout(r, 2000);});
-    var poll = await fetch('https://api.replicate.com/v1/predictions/'+predId, {
-      headers:{'Authorization':'Bearer '+key}
+    var poll = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/replicate-proxy/poll/'+predId, {
+      headers:{'Content-Type':'application/json'}
     });
     var pd = await poll.json();
     if(pd.status==='succeeded') return pd.output[0];
@@ -11616,16 +11508,10 @@ async function sendCsMessage(){
   appendCsTyping(typingId);
 
   try{
-    if(!window._claudeApiKey){
-      throw new Error('잠시 후 다시 시도해주세요');
-    }
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': window._claudeApiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
@@ -12074,20 +11960,16 @@ function checkRequiresUpload(){
 
 // ── fal.ai 이미지-to-이미지 (사진 업로드 변환) ──
 async function generateImageWithFal(base64, mime, prompt){
-  var key = window._falApiKey || '';
-  if(!key){ throw new Error('fal.ai API 키를 설정해주세요 🔑'); }
-
-  // fal.ai REST API (CORS 지원)
-  var endpoint = 'https://fal.run/fal-ai/flux/dev/image-to-image';
+  // fal.ai REST API via Supabase proxy
   var dataUrl = 'data:' + mime + ';base64,' + base64;
 
-  var response = await fetch(endpoint, {
+  var response = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/fal-proxy', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Key ' + key
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
+      endpoint: 'fal-ai/flux/dev/image-to-image',
       image_url: dataUrl,
       prompt: prompt,
       strength: 0.75,
@@ -12114,49 +11996,6 @@ async function generateImageWithFal(base64, mime, prompt){
   throw new Error('사진 변환 결과를 받지 못했어요. 다시 시도해주세요 🙂');
 }
 
-// ── fal.ai API 키 관리 ──
-window._falApiKey = localStorage.getItem('aiDonghang_falKey') || '';
-
-// 관리자 페이지 진입 시 키 복원
-(function(){
-  var orig = window.onload;
-  // adminView 진입 시 처리
-})();
-
-function saveFalApiKey(){
-  var input = g('falApiKeyInput');
-  var status = g('falApiKeyStatus');
-  if(!input) return;
-  var key = input.value.trim();
-  if(!key){ showToast('API 키를 입력해주세요'); return; }
-  if(!key.startsWith('fal-')){
-    showToast('fal.ai 키는 fal- 로 시작해야 해요');
-    return;
-  }
-  window._falApiKey = key;
-  localStorage.setItem('aiDonghang_falKey', key);
-  input.value = key.slice(0,12) + '...';
-  if(status){ status.textContent = '✅ fal.ai 키 저장 완료!'; status.style.color = '#8B5CF6'; }
-  showToast('🎨 fal.ai API 키가 저장됐어요!');
-}
-
-function clearFalApiKey(){
-  window._falApiKey = '';
-  localStorage.removeItem('aiDonghang_falKey');
-  var input = g('falApiKeyInput');
-  var status = g('falApiKeyStatus');
-  if(input) input.value = '';
-  if(status){ status.textContent = ''; }
-  showToast('fal.ai 키가 초기화됐어요');
-}
-
-function loadFalApiKeyToInput(){
-  var key = localStorage.getItem('aiDonghang_falKey') || '';
-  var input = g('falApiKeyInput');
-  var status = g('falApiKeyStatus');
-  if(input && key) input.value = key.slice(0,12) + '...';
-  if(status && key){ status.textContent = '✅ fal.ai 키 설정됨'; status.style.color = '#8B5CF6'; }
-}
 </script>
 
 <!-- ══ 온보딩 오버레이 ══ -->
@@ -13040,7 +12879,6 @@ function loadFalApiKeyToInput(){
   <li><code>aiDonghang_profile</code>: 이용자 프로필 정보</li>
   <li><code>aiDonghang_dojo</code>: 도장깨기 진행 현황</li>
   <li><code>aiDonghang_portfolio</code>: 작품함 임시 데이터</li>
-  <li><code>aiDonghang_claudeKey</code>, <code>aiDonghang_falKey</code>: API 키(관리자만, 일반 이용자는 해당 없음)</li>
 </ul>
 <p><b>③ 거부 방법</b>: 이용자는 브라우저 설정을 통해 쿠키·localStorage 저장을 거부할 수 있습니다. 다만 거부 시 로그인 유지, 작품 저장 등 일부 기능 이용이 제한됩니다.</p>
 </div>

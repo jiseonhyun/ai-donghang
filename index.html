@@ -3282,7 +3282,11 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       </div>
 
       <textarea class="ws-textarea" id="storyInput" placeholder="" oninput="onStoryInput()"></textarea>
-      <div class="ws-footer">
+      <div class="ws-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button type="button" class="story-voice-btn" id="wizardVoiceBtn" onclick="toggleVoiceInputWizard()">
+          <span id="wizardVoiceIcon">🎤</span>
+          <span id="wizardVoiceLabel">음성으로 말하기</span>
+        </button>
         <span class="ws-charcount" id="charCount">0자</span>
       </div>
     </div>
@@ -8126,6 +8130,77 @@ function _updateStoryCharCount(){
   var ta = document.getElementById('storyAnswerTextarea');
   var cc = document.getElementById('storyCharCount');
   if(ta && cc) cc.textContent = ta.value.length;
+}
+
+// ── 음성 입력: 만들기 위자드 (이미지/음악/글쓰기 공통) ──
+function toggleVoiceInputWizard(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('이 브라우저에서는 음성 입력이 지원되지 않아요. 직접 적어주세요.');
+    return;
+  }
+  var btn = document.getElementById('wizardVoiceBtn');
+  var icon = document.getElementById('wizardVoiceIcon');
+  var label = document.getElementById('wizardVoiceLabel');
+  var ta = document.getElementById('storyInput');
+  if(!btn || !ta) return;
+
+  if(_voiceListening){
+    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
+    _resetWizardVoiceUI();
+    return;
+  }
+
+  try{
+    _voiceRecognition = new SR();
+    _voiceRecognition.lang = 'ko-KR';
+    _voiceRecognition.continuous = true;
+    _voiceRecognition.interimResults = true;
+
+    var baseText = ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
+    var finalText = baseText;
+
+    _voiceRecognition.onresult = function(ev){
+      var interim = '';
+      for(var i=ev.resultIndex; i<ev.results.length; i++){
+        var t = ev.results[i][0].transcript;
+        if(ev.results[i].isFinal){
+          finalText += t + ' ';
+        } else {
+          interim += t;
+        }
+      }
+      ta.value = finalText + interim;
+      if(typeof onStoryInput === 'function') onStoryInput();
+    };
+    _voiceRecognition.onerror = function(ev){
+      console.warn('voice error:', ev && ev.error);
+      _resetWizardVoiceUI();
+      if(ev && ev.error === 'not-allowed'){
+        alert('마이크 권한을 허용해주세요.');
+      }
+    };
+    _voiceRecognition.onend = function(){ _resetWizardVoiceUI(); };
+    _voiceRecognition.start();
+    _voiceListening = true;
+    icon.textContent = '🔴';
+    label.textContent = '녹음 중 · 누르면 중지';
+    btn.classList.add('listening');
+  }catch(e){
+    console.warn('voice start failed:', e.message);
+    alert('음성 입력을 시작할 수 없어요. 직접 적어주세요.');
+    _resetWizardVoiceUI();
+  }
+}
+
+function _resetWizardVoiceUI(){
+  _voiceListening = false;
+  var btn = document.getElementById('wizardVoiceBtn');
+  var icon = document.getElementById('wizardVoiceIcon');
+  var label = document.getElementById('wizardVoiceLabel');
+  if(btn) btn.classList.remove('listening');
+  if(icon) icon.textContent = '🎤';
+  if(label) label.textContent = '음성으로 말하기';
 }
 
 function _escapeStoryHtml(s){

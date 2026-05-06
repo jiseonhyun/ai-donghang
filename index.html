@@ -9150,37 +9150,68 @@ function goSignupFromSave(){
   showView('auth');
 }
 
+// ── 카카오 공유 통합 함수 ──
+function _shareViaKakao(opts){
+  // opts: { title, description, imageUrl, shareUrl, text }
+  var siteUrl = SHARE_BASE_URL;
+  var linkUrl = opts.shareUrl || siteUrl;
+  var desc = opts.description || '';
+  var btnLabel = opts.imageUrl && opts.imageUrl.startsWith('http') && !opts.imageUrl.includes('unsplash') ? '작품 보러가기' : '작품 전문 보기';
+
+  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+    try {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: opts.title || 'AI 동행 작품',
+          description: desc,
+          imageUrl: opts.imageUrl || 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
+          link: { mobileWebUrl: linkUrl, webUrl: linkUrl }
+        },
+        buttons: [
+          { title: btnLabel, link: { mobileWebUrl: linkUrl, webUrl: linkUrl } },
+          { title: '나도 만들어보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } }
+        ]
+      });
+    } catch(e){
+      console.warn('Kakao share error:', e);
+      _kakaoFallback(opts.text || desc, linkUrl);
+    }
+  } else {
+    _kakaoFallback(opts.text || desc, linkUrl);
+  }
+}
+
+function _kakaoFallback(text, url){
+  var shareText = (text||'').slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + (url || SHARE_BASE_URL);
+  if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
+  var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if(isMobile){
+    showToast('복사됐어요! 카카오톡으로 이동해요 💬');
+    setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
+  } else {
+    showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
+  }
+}
+
 async function shareKakao(){
   if(!completionWork) return;
   var text = completionWork.text || '';
-  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
+  var cat = COURSE_CAT[courseName] || 'writing';
+  var isImg = cat === 'image' && text && (text.startsWith('http') || text.startsWith('data:'));
   var title = (courseName || 'AI 동행') + ' — ' + _getCatLabel(courseName) + ' 작품';
+  var desc = isImg ? (courseName + '으로 만든 작품이에요') : (text.slice(0, 150) + (text.length > 150 ? '...' : ''));
 
   var shareId = portfolio.length > 0 ? await _ensureShareId(0) : null;
   var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
 
-  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
-    Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: title,
-        description: preview,
-        imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
-        link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-      },
-      buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
-    });
-  } else {
-    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
-    var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
-    if(isMobile){
-      window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000));
-      setTimeout(function(){ showShareModal(shareText); }, 1500);
-    } else {
-      showShareModal(shareText);
-    }
-  }
+  _shareViaKakao({
+    title: title,
+    description: desc,
+    imageUrl: isImg ? text : undefined,
+    shareUrl: shareUrl,
+    text: text
+  });
 }
 function showShareModal(text){
   if(g('shareModalText'))g('shareModalText').textContent=text.slice(0,200)+(text.length>200?'...(전체 복사됨)':'');
@@ -9374,51 +9405,20 @@ async function sharePfItem(idx){
   var item=portfolio[idx]; if(!item)return;
   var text = ((item.result&&item.result.trim())?item.result:(item.prompt||''));
   var cat = COURSE_CAT[item.course] || 'writing';
-  var catLabel = _getCatLabel(item.course);
-  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
-  var title = (item.course || 'AI 동행') + ' — ' + catLabel + ' 작품';
+  var isImg = cat === 'image' && text && (text.startsWith('http') || text.startsWith('data:'));
+  var title = (item.course || 'AI 동행') + ' — ' + _getCatLabel(item.course) + ' 작품';
+  var desc = isImg ? (item.course + '으로 만든 작품이에요') : (text.slice(0, 150) + (text.length > 150 ? '...' : ''));
 
-  // share_id 자동 발급
   var shareId = await _ensureShareId(idx);
   var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
 
-  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
-    var isImg = cat === 'image' && text && (text.startsWith('http') || text.startsWith('data:'));
-    if(isImg){
-      Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: title,
-          description: item.course + '으로 만든 작품이에요',
-          imageUrl: text,
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-        },
-        buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
-      });
-    } else {
-      Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: title,
-          description: preview,
-          imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-        },
-        buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
-      });
-    }
-  } else {
-    // fallback
-    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
-    if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
-    var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(isMobile){
-      showToast('복사됐어요! 카카오톡으로 이동해요 💬');
-      setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
-    } else {
-      showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
-    }
-  }
+  _shareViaKakao({
+    title: title,
+    description: desc,
+    imageUrl: isImg ? text : undefined,
+    shareUrl: shareUrl,
+    text: text
+  });
 }
 function togglePfText(idx){
   var item=portfolio[idx]; if(!item)return;
@@ -9979,23 +9979,14 @@ async function _loadSharePage(shareId){
     if(reShareBtn){
       reShareBtn.onclick = function(){
         var url = _getShareUrl(shareId);
-        var desc = isImg ? (w.course + '으로 만든 작품이에요') : ((w.result||'').slice(0,80) + '...');
-        if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
-          Kakao.Share.sendDefault({
-            objectType: 'feed',
-            content: {
-              title: (w.course||'AI 동행') + ' — ' + catLabel + ' 작품',
-              description: desc,
-              imageUrl: isImg ? w.result : 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
-              link: { mobileWebUrl: url, webUrl: url }
-            },
-            buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: url, webUrl: url } }]
-          });
-        } else {
-          var text = (w.result||'').slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + url;
-          if(navigator.clipboard) navigator.clipboard.writeText(text);
-          showToast('링크가 복사됐어요! 💬');
-        }
+        var desc = isImg ? (w.course + '으로 만든 작품이에요') : ((w.result||'').slice(0,150) + '...');
+        _shareViaKakao({
+          title: (w.course||'AI 동행') + ' — ' + catLabel + ' 작품',
+          description: desc,
+          imageUrl: isImg ? w.result : undefined,
+          shareUrl: url,
+          text: w.result || ''
+        });
       };
     }
 
@@ -11325,71 +11316,30 @@ function copyAIResult(){
 async function shareKakaoResult(){
   var rt = g('aiResultText');
   var isImage = rt && rt.querySelector('img');
-  var catLabel = _getCatLabel(courseName);
-  var title = (courseName || 'AI 동행') + ' — ' + catLabel + ' 작품';
+  var title = (courseName || 'AI 동행') + ' — ' + _getCatLabel(courseName) + ' 작품';
 
-  // 가장 최근 포트폴리오 아이템으로 share_id 발급
   var shareId = portfolio.length > 0 ? await _ensureShareId(0) : null;
   var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
 
   if(isImage){
     var imgUrl = rt.querySelector('img').src;
-    if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
-      Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: title,
-          description: courseName + '으로 만든 작품이에요',
-          imageUrl: imgUrl,
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-        },
-        buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
-      });
-    } else {
-      var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-      if(isMobile){
-        showToast('카카오톡으로 이동해요 💬');
-        window.location.href = 'kakaotalk://launch';
-      } else { showToast('카카오톡 앱에서 이미지를 직접 공유해주세요 📱'); }
-    }
+    _shareViaKakao({
+      title: title,
+      description: courseName + '으로 만든 작품이에요',
+      imageUrl: imgUrl,
+      shareUrl: shareUrl,
+      text: courseName + ' 작품'
+    });
     return;
   }
 
-  // 텍스트 결과
   var text = (rt ? rt.textContent : (_aiLastResult||'')).trim();
-  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
-
-  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
-    Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: title,
-        description: preview,
-        imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
-        link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-      },
-      buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
-    });
-  } else {
-    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
-    var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(shareText).then(function(){
-        if(isMobile){
-          showToast('복사됐어요! 카카오톡으로 이동해요 💬');
-          setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
-        } else {
-          showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
-        }
-      }).catch(function(){
-        fallbackCopy(shareText);
-        showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
-      });
-    } else {
-      fallbackCopy(shareText);
-      if(isMobile) window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000));
-    }
-  }
+  _shareViaKakao({
+    title: title,
+    description: text.slice(0, 150) + (text.length > 150 ? '...' : ''),
+    shareUrl: shareUrl,
+    text: text
+  });
 }
 
 function copyPromptSilent(){

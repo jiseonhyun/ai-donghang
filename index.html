@@ -5217,6 +5217,58 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
 
 <!-- ── 자서전 챕터 선택 모달 ── -->
 <!-- ── 자서전 챕터 선택 페이지 뷰 ── -->
+<!-- ══ 작품 공유 페이지 ══ -->
+<div id="sharePageView" style="display:none;position:fixed;inset:0;z-index:9999;background:#FAF8F4;overflow-y:auto;">
+  <div style="max-width:520px;margin:0 auto;padding:32px 20px 60px;">
+    <!-- 로고 -->
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-family:var(--serif,serif);font-size:22px;font-weight:900;color:var(--ac,#2A5F52);">AI 동행</div>
+      <div style="font-size:13px;color:var(--i3,#888);margin-top:2px;">어르신을 위한 AI 창작 플랫폼</div>
+    </div>
+    <!-- 작품 카드 -->
+    <div id="shareCard" style="background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden;">
+      <!-- 카테고리 헤더 -->
+      <div id="shareCardHeader" style="padding:18px 24px 14px;border-bottom:1px solid #f0ece6;">
+        <span id="shareCardCat" style="font-size:13px;font-weight:700;padding:5px 14px;border-radius:100px;background:var(--al,#E8F0ED);color:var(--ac,#2A5F52);"></span>
+        <span id="shareCardDate" style="float:right;font-size:13px;color:#aaa;line-height:28px;"></span>
+      </div>
+      <!-- 본문 -->
+      <div id="shareCardBody" style="padding:24px;font-size:16px;color:#1C1A17;line-height:2;white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif;min-height:120px;"></div>
+      <!-- 이미지 (이미지 작품일 때만) -->
+      <div id="shareCardImage" style="display:none;padding:0 24px 24px;">
+        <img id="shareCardImg" style="width:100%;border-radius:14px;object-fit:contain;" />
+      </div>
+      <!-- 작성자 -->
+      <div id="shareCardAuthor" style="padding:14px 24px 18px;border-top:1px solid #f0ece6;font-size:13px;color:#999;text-align:right;"></div>
+    </div>
+    <!-- CTA 버튼들 -->
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:10px;">
+      <button onclick="window.location.href=SHARE_BASE_URL" style="width:100%;padding:16px;background:var(--ac,#2A5F52);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 0 #1e4a3e;">나도 만들어보기</button>
+      <button id="shareReShareBtn" style="width:100%;padding:14px;background:#FEE500;color:#191919;border:none;border-radius:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;">💬 다른 사람에게 공유</button>
+    </div>
+    <!-- 푸터 -->
+    <div style="text-align:center;margin-top:32px;font-size:12px;color:#bbb;">
+      AI 동행 — 버튼만 눌러도 내 이야기가 작품이 됩니다
+    </div>
+  </div>
+  <!-- 로딩 -->
+  <div id="sharePageLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#FAF8F4;">
+    <div style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">📖</div>
+      <div style="font-size:16px;color:var(--i2,#555);font-weight:600;">작품을 불러오고 있어요...</div>
+    </div>
+  </div>
+  <!-- 에러 -->
+  <div id="sharePageError" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:#FAF8F4;">
+    <div style="text-align:center;padding:40px;">
+      <div style="font-size:48px;margin-bottom:16px;">😢</div>
+      <div style="font-size:18px;font-weight:700;color:var(--ink,#1C1A17);margin-bottom:8px;">작품을 찾을 수 없어요</div>
+      <div style="font-size:14px;color:#888;margin-bottom:24px;">삭제되었거나 공유가 해제된 작품이에요.</div>
+      <button onclick="window.location.href=SHARE_BASE_URL" style="padding:14px 28px;background:var(--ac,#2A5F52);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;">AI 동행 홈으로</button>
+    </div>
+  </div>
+</div>
+
 <div class="view" id="memoirView" style="background:var(--bg,#FAF8F4);min-height:100vh;">
   <div style="max-width:560px;margin:0 auto;padding:24px 20px 100px;">
 
@@ -9098,26 +9150,35 @@ function goSignupFromSave(){
   showView('auth');
 }
 
-function shareKakao(){
+async function shareKakao(){
   if(!completionWork) return;
-  var text = completionWork.text + '\n\n— AI 동행으로 만든 작품';
-  // 카카오 SDK로 채팅방 선택 팝업 (친구/대화 목록)
+  var text = completionWork.text || '';
+  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
+  var title = (courseName || 'AI 동행') + ' — ' + _getCatLabel(courseName) + ' 작품';
+
+  var shareId = portfolio.length > 0 ? await _ensureShareId(0) : null;
+  var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
+
   if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
     Kakao.Share.sendDefault({
-      objectType: 'text',
-      text: text.slice(0, 200),
-      link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' },
-      buttons: [{ title: 'AI 동행에서 만들기', link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' } }]
+      objectType: 'feed',
+      content: {
+        title: title,
+        description: preview,
+        imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
+        link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
+      },
+      buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
     });
   } else {
-    // fallback: 모바일 앱 링크 또는 복사
+    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
     var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){ fallbackCopy(text); });
+    if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
     if(isMobile){
-      window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(text.slice(0,1000));
-      setTimeout(function(){ showShareModal(text); }, 1500);
+      window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000));
+      setTimeout(function(){ showShareModal(shareText); }, 1500);
     } else {
-      showShareModal(text);
+      showShareModal(shareText);
     }
   }
 }
@@ -9127,21 +9188,94 @@ function showShareModal(text){
 }
 function closeShareModal(){if(g('shareModal'))g('shareModal').classList.remove('show');}
 
+// ── 작품 링크 공유 시스템 ──
+var SHARE_BASE_URL = 'https://jiseonhyun.github.io/ai-donghang/';
+
+function _generateUUID(){
+  if(typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+    var r = Math.random()*16|0; return (c==='x' ? r : (r&0x3|0x8)).toString(16);
+  });
+}
+
+async function _ensureShareId(pfIdx){
+  var item = portfolio[pfIdx];
+  if(!item) return null;
+  // 이미 shareId가 있으면 바로 반환
+  if(item.shareId) return item.shareId;
+  // DB ID가 없으면 course+date로 찾기 시도
+  var uid = userProfile && userProfile.id ? userProfile.id : null;
+  if(!uid || !db) return null;
+  try {
+    if(!item.dbId){
+      var find = await db.from('works')
+        .select('id,share_id')
+        .eq('user_id', uid)
+        .eq('course', item.course || '')
+        .eq('is_saved', true)
+        .order('created_at', {ascending: false})
+        .limit(5);
+      if(find.data && find.data.length > 0){
+        // result 매칭으로 정확한 항목 찾기
+        item.dbId = find.data[0].id;
+        if(find.data[0].share_id){
+          item.shareId = find.data[0].share_id;
+          localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio));
+          return item.shareId;
+        }
+      }
+    }
+    if(!item.dbId) return null;
+    // 새 share_id 발급
+    var newShareId = _generateUUID();
+    var upd = await db.from('works')
+      .update({ share_id: newShareId })
+      .eq('id', item.dbId)
+      .select('share_id')
+      .single();
+    if(upd.data && upd.data.share_id){
+      item.shareId = upd.data.share_id;
+    } else {
+      item.shareId = newShareId;
+    }
+    localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio));
+    return item.shareId;
+  } catch(e){
+    console.warn('share_id 발급 실패:', e);
+    return null;
+  }
+}
+
+function _getShareUrl(shareId){
+  return SHARE_BASE_URL + '?share=' + shareId;
+}
+
+function _getCatLabel(course){
+  var cat = COURSE_CAT[course] || 'writing';
+  if(cat === 'image') return '그림';
+  if(cat === 'music') return '음악';
+  return '글';
+}
+
 async function saveToPortfolio(cName,prompt,result){
-  var item={id:Date.now(),course:cName,emoji:(COURSE_CONFIG[cName]||{}).emoji||'📝',prompt:prompt,result:result,date:new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'})};
+  var item={id:Date.now(),course:cName,emoji:(COURSE_CONFIG[cName]||{}).emoji||'📝',prompt:prompt,result:result,date:new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'}),dbId:null,shareId:null};
   portfolio.unshift(item);if(portfolio.length>50)portfolio=portfolio.slice(0,50);
   localStorage.setItem('aiDonghang_portfolio',JSON.stringify(portfolio));
   // Supabase 저장
   try{
     var uid=userProfile&&userProfile.id?userProfile.id:null;
     if(uid && db){
-      await db.from('works').insert([{
+      var res = await db.from('works').insert([{
         user_id:uid, course:cName,
         final_prompt:prompt,
         result: (result||'').slice(0,5000),
         date_label: item.date,
         is_saved:true
-      }]);
+      }]).select('id').single();
+      if(res.data && res.data.id){
+        item.dbId = res.data.id;
+        localStorage.setItem('aiDonghang_portfolio',JSON.stringify(portfolio));
+      }
     }
   } catch(e){ console.warn('DB save work:', e); }
 }
@@ -9204,7 +9338,10 @@ function renderPortfolioList(){
 var cardId = 'pf-text-'+idx;
     card.innerHTML=
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+      +'<div style="display:flex;align-items:center;gap:6px;">'
       +'<span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:'+courseBg+';color:'+courseCol+';">'+courseEmoji+' '+courseLabel+'</span>'
+      +(item.shareId ? '<span style="font-size:11px;padding:3px 8px;border-radius:100px;background:#EEF6FF;color:#2563EB;font-weight:600;">🔗 공유중</span>' : '')
+      +'</div>'
       +'<span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span>'
       +'</div>'
       // 본문 (접기/펼치기)
@@ -9212,11 +9349,12 @@ var cardId = 'pf-text-'+idx;
       +(isLong
         ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'
         : '<div style="margin-bottom:12px;"></div>')
-            // CTA 버튼
-      +'<div style="display:flex;gap:8px;">'
-      +'<button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button>'
-      +'<button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:14px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;">💬 카카오</button>'
-      +'<button onclick="communitySharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:14px;font-weight:700;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;">🏆 자랑</button>'
+      // CTA 버튼
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      +'<button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;min-width:70px;">📋 복사</button>'
+      +'<button onclick="sharePfItem('+idx+')" style="flex:1;padding:10px;background:#FEE500;border:1.5px solid #E6CE00;border-radius:9px;font-size:14px;font-weight:700;color:#191919;cursor:pointer;font-family:inherit;min-height:46px;min-width:70px;">💬 카카오</button>'
+      +'<button onclick="communitySharePfItem('+idx+')" style="flex:1;padding:10px;background:var(--gl);border:1.5px solid var(--gb);border-radius:9px;font-size:14px;font-weight:700;color:var(--gd);cursor:pointer;font-family:inherit;min-height:46px;min-width:70px;">🏆 자랑</button>'
+      +(item.shareId ? '<button onclick="unsharePfItem('+idx+')" style="padding:10px 12px;background:#EEF6FF;border:1.5px solid #BFDBFE;border-radius:9px;font-size:13px;font-weight:600;color:#2563EB;cursor:pointer;font-family:inherit;min-height:46px;" title="공유 해제">🔗</button>' : '')
       +'<button onclick="deletePfItem('+idx+')" style="padding:10px 14px;background:none;border:1.5px solid #f0c0c0;border-radius:9px;font-size:16px;color:#c44;cursor:pointer;font-family:inherit;min-height:46px;">🗑</button>'
       +'</div>';
     list.appendChild(card);
@@ -9232,10 +9370,55 @@ var cardId = 'pf-text-'+idx;
   });
 }
 function copyPfItem(idx){var item=portfolio[idx];if(!item)return;var text=(item.result&&item.result.trim())?item.result:item.prompt;if(navigator.clipboard)navigator.clipboard.writeText(text).then(function(){showToast('복사됐어요! AI에 붙여넣기 하세요 🙂');});else{fallbackCopy(text);showToast('복사됐어요! 🙂');}}
-function sharePfItem(idx){
+async function sharePfItem(idx){
   var item=portfolio[idx]; if(!item)return;
-  var text = ((item.result&&item.result.trim())?item.result:(item.prompt||'')) + '\n\n— AI 동행으로 만든 작품';
-  _sendKakaoMsg(text);
+  var text = ((item.result&&item.result.trim())?item.result:(item.prompt||''));
+  var cat = COURSE_CAT[item.course] || 'writing';
+  var catLabel = _getCatLabel(item.course);
+  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
+  var title = (item.course || 'AI 동행') + ' — ' + catLabel + ' 작품';
+
+  // share_id 자동 발급
+  var shareId = await _ensureShareId(idx);
+  var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
+
+  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+    var isImg = cat === 'image' && text && (text.startsWith('http') || text.startsWith('data:'));
+    if(isImg){
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: title,
+          description: item.course + '으로 만든 작품이에요',
+          imageUrl: text,
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
+        },
+        buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
+      });
+    } else {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: title,
+          description: preview,
+          imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
+        },
+        buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
+      });
+    }
+  } else {
+    // fallback
+    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
+    if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
+    var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(isMobile){
+      showToast('복사됐어요! 카카오톡으로 이동해요 💬');
+      setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
+    } else {
+      showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
+    }
+  }
 }
 function togglePfText(idx){
   var item=portfolio[idx]; if(!item)return;
@@ -9254,6 +9437,24 @@ function togglePfText(idx){
   }
 }
 function deletePfItem(idx){portfolio.splice(idx,1);localStorage.setItem('aiDonghang_portfolio',JSON.stringify(portfolio));renderPortfolioList();}
+
+async function unsharePfItem(idx){
+  var item = portfolio[idx];
+  if(!item || !item.shareId) return;
+  if(!confirm('공유를 해제하면 링크가 더 이상 작동하지 않아요. 해제할까요?')) return;
+  try {
+    if(db && item.dbId){
+      await db.from('works').update({ share_id: null }).eq('id', item.dbId);
+    }
+    item.shareId = null;
+    localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio));
+    renderPortfolioList();
+    showToast('공유가 해제됐어요');
+  } catch(e){
+    console.warn('공유 해제 실패:', e);
+    showToast('잠시 후 다시 시도해주세요');
+  }
+}
 
 // ── 페이월 ──
 function showPaywall(type){
@@ -9708,11 +9909,106 @@ window.addEventListener('popstate', function(e){
   showView(view, true); // _skipHash=true (pushState 안 함)
 });
 
-// 최초 로드: 해시에 맞는 뷰로
+// 최초 로드: 공유 링크 감지 또는 해시에 맞는 뷰로
 (function(){
+  var params = new URLSearchParams(window.location.search);
+  var shareId = params.get('share');
+  if(shareId){
+    _loadSharePage(shareId);
+    return;
+  }
   var initView = _hashToView(window.location.hash);
   showView(initView, true);
 })();
+
+// ── 작품 공유 페이지 로드 ──
+async function _loadSharePage(shareId){
+  var page = document.getElementById('sharePageView');
+  if(!page) return;
+  page.style.display = 'block';
+  // 앱 본체 숨기기
+  document.querySelectorAll('.view').forEach(function(v){ v.style.display = 'none'; });
+  var nav = document.querySelector('.bottom-nav');
+  if(nav) nav.style.display = 'none';
+  var topNav = document.querySelector('.nav-bar');
+  if(topNav) topNav.style.display = 'none';
+
+  var loading = document.getElementById('sharePageLoading');
+  var errDiv = document.getElementById('sharePageError');
+  if(loading) loading.style.display = 'flex';
+  if(errDiv) errDiv.style.display = 'none';
+
+  try {
+    if(!db) throw new Error('DB 없음');
+    var res = await db.from('works')
+      .select('course,result,date_label,created_at')
+      .eq('share_id', shareId)
+      .eq('is_saved', true)
+      .maybeSingle();
+    if(!res.data) throw new Error('작품 없음');
+
+    var w = res.data;
+    var cat = COURSE_CAT[w.course] || 'writing';
+    var catLabel = _getCatLabel(w.course);
+    var emoji = (COURSE_CONFIG[w.course]||{}).emoji || '📝';
+    var isImg = cat === 'image' && w.result && (w.result.startsWith('http') || w.result.startsWith('data:'));
+
+    // 카드 렌더링
+    var catEl = document.getElementById('shareCardCat');
+    if(catEl) catEl.textContent = emoji + ' ' + (w.course || '작품');
+    var dateEl = document.getElementById('shareCardDate');
+    if(dateEl) dateEl.textContent = w.date_label || '';
+    var bodyEl = document.getElementById('shareCardBody');
+    var imgWrap = document.getElementById('shareCardImage');
+    var imgEl = document.getElementById('shareCardImg');
+
+    if(isImg){
+      if(bodyEl) bodyEl.style.display = 'none';
+      if(imgWrap){ imgWrap.style.display = 'block'; }
+      if(imgEl) imgEl.src = w.result;
+    } else {
+      if(bodyEl){ bodyEl.style.display = 'block'; bodyEl.textContent = w.result || ''; }
+      if(imgWrap) imgWrap.style.display = 'none';
+    }
+
+    var authorEl = document.getElementById('shareCardAuthor');
+    if(authorEl) authorEl.textContent = 'AI 동행으로 만든 ' + catLabel + ' 작품';
+
+    // 재공유 버튼
+    var reShareBtn = document.getElementById('shareReShareBtn');
+    if(reShareBtn){
+      reShareBtn.onclick = function(){
+        var url = _getShareUrl(shareId);
+        var desc = isImg ? (w.course + '으로 만든 작품이에요') : ((w.result||'').slice(0,80) + '...');
+        if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+          Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+              title: (w.course||'AI 동행') + ' — ' + catLabel + ' 작품',
+              description: desc,
+              imageUrl: isImg ? w.result : 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
+              link: { mobileWebUrl: url, webUrl: url }
+            },
+            buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: url, webUrl: url } }]
+          });
+        } else {
+          var text = (w.result||'').slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + url;
+          if(navigator.clipboard) navigator.clipboard.writeText(text);
+          showToast('링크가 복사됐어요! 💬');
+        }
+      };
+    }
+
+    // OG 태그 동적 업데이트 (카카오 봇이 JS를 실행하진 않지만 브라우저 탭 제목 등에 유용)
+    document.title = (w.course || 'AI 동행') + ' — ' + catLabel + ' 작품';
+
+    if(loading) loading.style.display = 'none';
+  } catch(e){
+    console.warn('공유 페이지 로드 실패:', e);
+    if(loading) loading.style.display = 'none';
+    if(errDiv) errDiv.style.display = 'flex';
+  }
+}
 
 // ── 기타 ──
 function toggleFaqById(id){var item=g(id);if(item)item.classList.toggle('open');}
@@ -11026,49 +11322,59 @@ function copyAIResult(){
   }
 }
 
-function shareKakaoResult(){
+async function shareKakaoResult(){
   var rt = g('aiResultText');
   var isImage = rt && rt.querySelector('img');
+  var catLabel = _getCatLabel(courseName);
+  var title = (courseName || 'AI 동행') + ' — ' + catLabel + ' 작품';
 
-  // 이미지 결과인 경우
+  // 가장 최근 포트폴리오 아이템으로 share_id 발급
+  var shareId = portfolio.length > 0 ? await _ensureShareId(0) : null;
+  var shareUrl = shareId ? _getShareUrl(shareId) : SHARE_BASE_URL;
+
   if(isImage){
     var imgUrl = rt.querySelector('img').src;
     if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: 'AI 동행으로 만든 그림',
-          description: courseName + ' — AI 동행',
+          title: title,
+          description: courseName + '으로 만든 작품이에요',
           imageUrl: imgUrl,
-          link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' }
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
         },
-        buttons: [{ title: 'AI 동행에서 나도 만들기', link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' } }]
+        buttons: [{ title: '작품 보러가기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
       });
     } else {
-      // 모바일 fallback
       var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-      if(isMobile){ window.location.href = 'kakaotalk://launch'; }
-      else { showToast('카카오톡 앱에서 이미지를 직접 공유해주세요 📱'); }
+      if(isMobile){
+        showToast('카카오톡으로 이동해요 💬');
+        window.location.href = 'kakaotalk://launch';
+      } else { showToast('카카오톡 앱에서 이미지를 직접 공유해주세요 📱'); }
     }
     return;
   }
 
-  // 텍스트 결과인 경우
+  // 텍스트 결과
   var text = (rt ? rt.textContent : (_aiLastResult||'')).trim();
-  var shareText = text.slice(0, 400) + (text.length > 400 ? '...' : '') + '\n\n— AI 동행으로 만든 작품';
+  var preview = text.slice(0, 80) + (text.length > 80 ? '...' : '');
 
   if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
     Kakao.Share.sendDefault({
-      objectType: 'text',
-      text: shareText,
-      link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' },
-      buttons: [{ title: 'AI 동행에서 나도 만들기', link: { mobileWebUrl: 'https://jiseonhyun.github.io/ai-donghang/', webUrl: 'https://jiseonhyun.github.io/ai-donghang/' } }]
+      objectType: 'feed',
+      content: {
+        title: title,
+        description: preview,
+        imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80',
+        link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
+      },
+      buttons: [{ title: '작품 전문 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }]
     });
   } else {
-    // fallback: 클립보드 복사 + 모바일이면 카카오 앱 오픈
+    var shareText = text.slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + shareUrl;
     var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
     if(navigator.clipboard){
-      navigator.clipboard.writeText(text).then(function(){
+      navigator.clipboard.writeText(shareText).then(function(){
         if(isMobile){
           showToast('복사됐어요! 카카오톡으로 이동해요 💬');
           setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
@@ -11076,11 +11382,11 @@ function shareKakaoResult(){
           showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
         }
       }).catch(function(){
-        fallbackCopy(text);
+        fallbackCopy(shareText);
         showToast('복사됐어요! 카카오톡을 열고 붙여넣기 해주세요 💬');
       });
     } else {
-      fallbackCopy(text);
+      fallbackCopy(shareText);
       if(isMobile) window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000));
     }
   }
@@ -11345,6 +11651,8 @@ async function loadUserDataFromSupabase(userId){
       var serverWorks = wRes.data.map(function(w){
         return {
           id: w.id || Date.now(),
+          dbId: w.id || null,
+          shareId: w.share_id || null,
           course: w.course || '',
           emoji: (COURSE_CONFIG[w.course]||{}).emoji || '📝',
           prompt: w.final_prompt || '',

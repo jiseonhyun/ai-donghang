@@ -837,6 +837,22 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .btn-make-more{width:100%;padding:13px;background:#fff;color:var(--i2);border:1.5px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;min-height:50px;}
 .btn-make-more:hover{border-color:var(--ab);color:var(--ac);}
 
+/* ── 약관 동의 모달 (한국 개보법 준수) ── */
+.terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
+.terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
+.terms-row:hover{background:var(--wm);}
+.terms-row input[type="checkbox"]{width:24px;height:24px;flex-shrink:0;cursor:pointer;accent-color:var(--ac);margin:0;}
+.terms-row .terms-row-label{flex:1;font-size:16px;color:var(--ink);line-height:1.5;}
+.terms-row.terms-all{background:var(--al);border:1.5px solid var(--ab);}
+.terms-row.terms-all .terms-row-label{font-size:17px;font-weight:700;color:var(--ad);}
+.terms-view-btn{background:none;border:none;color:var(--ac);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;padding:6px 8px;text-decoration:underline;min-height:36px;}
+.terms-view-btn:hover{color:var(--ad);}
+.terms-viewer-card{background:#fff;border-radius:18px;width:100%;max-width:560px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.24);}
+.terms-viewer-card p{margin-bottom:12px;}
+@media(min-width:520px){
+  .terms-agree-card{border-radius:24px;}
+}
+
 /* 도장 획득 모달 */
 /* ── 컨페티 ── */
 .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
@@ -9538,11 +9554,11 @@ async function authPhone(){
     if(ins.error)throw ins.error;
     userProfile={id:ins.data[0].id,name:rawName,phone:phone,plan:'free'};
     localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
-    showAuthSuccess(rawName,true);
+    _gateAuthSuccess(rawName,true,null);
   }catch(e){
     userProfile={name:rawName,phone:phone,plan:'free'};
     localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
-    showAuthSuccess(rawName,true);
+    _gateAuthSuccess(rawName,true,null);
   }
 }
 async function authLoginPhone(){
@@ -9556,8 +9572,9 @@ async function authLoginPhone(){
     if(!r.data){showToast('가입된 전화번호가 없어요.\n회원가입을 먼저 해주세요!');return;}
     // 비밀번호 검증 (pw_hash 없는 기존 계정은 통과)
     if(r.data.pw_hash && r.data.pw_hash !== pwHash){showToast('비밀번호가 틀렸어요. 다시 확인해주세요 🙁');return;}
-    userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));showAuthSuccess(r.data.name,false);
-  }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;showAuthSuccess(saved.name,false);}else showToast('로그인 중 오류가 발생했어요.');}
+    userProfile={id:r.data.id,name:r.data.name,phone:r.data.phone,plan:r.data.plan||'free'};localStorage.setItem('aiDonghang_profile',JSON.stringify(userProfile));
+    _gateAuthSuccess(r.data.name,false,{agreed_terms_at:r.data.agreed_terms_at,agreed_privacy_at:r.data.agreed_privacy_at});
+  }catch(e){var saved=JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');if(saved&&saved.name){userProfile=saved;_gateAuthSuccess(saved.name,false,{agreed_terms_at:saved.agreed_terms_at,agreed_privacy_at:saved.agreed_privacy_at});}else showToast('로그인 중 오류가 발생했어요.');}
 }
 // ── 비밀번호 찾기 ──
 function showFindPw(){
@@ -9606,12 +9623,11 @@ function authKakao(){
       // 사용자 정보 가져오기
       Kakao.API.request({
         url: '/v2/user/me',
-        success: function(res){
+        success: async function(res){
           var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
             || (res.properties && res.properties.nickname)
             || '카카오 사용자';
-          var isNew = !localStorage.getItem('aiDonghang_profile') ||
-                      !JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name;
+          var kakaoIdStr = String(res.id);
           userProfile = {
             name: kakaoName,
             phone: '',
@@ -9620,33 +9636,36 @@ function authKakao(){
             loginType: 'kakao'
           };
           localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-          // Supabase에 카카오 회원 저장/업데이트
-          if(isNew && db){
-            (async function(){
-              try{
-                var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
-                if(!exist.data){
-                  var ki = await db.from('Users').insert([{
-                    name: kakaoName,
-                    kakao_id: String(res.id),
-                    plan: 'free',
-                    created_at: new Date().toISOString()
-                  }]).select();
-                  if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
-                } else {
-                  userProfile.id = exist.data.id;
-                }
-                localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-              }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
-            })();
+
+          // Supabase: 회원 조회/생성 + 약관 동의 상태 확인
+          var isNew = false;
+          var dbAgreed = null;
+          if(db){
+            try{
+              var exist = await db.from('Users').select('id, agreed_terms_at, agreed_privacy_at').eq('kakao_id', kakaoIdStr).maybeSingle();
+              if(!exist.data){
+                isNew = true;
+                var ki = await db.from('Users').insert([{
+                  name: kakaoName,
+                  kakao_id: kakaoIdStr,
+                  plan: 'free',
+                  created_at: new Date().toISOString()
+                }]).select();
+                if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
+              } else {
+                userProfile.id = exist.data.id;
+                dbAgreed = { agreed_terms_at: exist.data.agreed_terms_at, agreed_privacy_at: exist.data.agreed_privacy_at };
+              }
+              localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+            }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
           }
-          showAuthSuccess(kakaoName, isNew);
+          _gateAuthSuccess(kakaoName, isNew, dbAgreed);
         },
         fail: function(err){
           // 닉네임 못 받아도 로그인은 성공으로 처리
           userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
           localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-          showAuthSuccess('카카오 사용자', true);
+          _gateAuthSuccess('카카오 사용자', true, null);
         }
       });
     },
@@ -13423,5 +13442,210 @@ async function generateImageWithFal(base64, mime, prompt){
   }
 })();
 </script>
+
+<!-- ══ 약관 동의 모달 (한국 개보법 준수) ══ -->
+<div class="modal-backdrop" id="termsAgreeModal" style="z-index:1000;align-items:flex-end;">
+  <div class="terms-agree-card">
+    <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;">약관에 동의해 주세요</div>
+    <div style="font-size:15px;color:var(--i3);text-align:center;line-height:1.7;margin-bottom:22px;">AI 동행을 시작하기 전에<br>아래 항목을 읽고 동의해 주세요.</div>
+
+    <label class="terms-row terms-all" for="agreeAll">
+      <input type="checkbox" id="agreeAll" onchange="_toggleAgreeAll()">
+      <span class="terms-row-label">전체 동의</span>
+    </label>
+    <div style="height:1px;background:var(--bd);margin:8px 4px 4px;"></div>
+
+    <label class="terms-row" for="agreeAge">
+      <input type="checkbox" id="agreeAge" onchange="_updateAgreeFromIndividual()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 만 14세 이상입니다</span>
+    </label>
+
+    <label class="terms-row" for="agreeTerms">
+      <input type="checkbox" id="agreeTerms" onchange="_updateAgreeFromIndividual()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 이용약관 동의</span>
+      <button type="button" class="terms-view-btn" onclick="event.preventDefault();showTermsViewer('terms');">보기 →</button>
+    </label>
+
+    <label class="terms-row" for="agreePrivacy">
+      <input type="checkbox" id="agreePrivacy" onchange="_updateAgreeFromIndividual()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 개인정보 수집·이용 동의</span>
+      <button type="button" class="terms-view-btn" onclick="event.preventDefault();showTermsViewer('privacy');">보기 →</button>
+    </label>
+
+    <label class="terms-row" for="agreeMarketing">
+      <input type="checkbox" id="agreeMarketing" onchange="_updateAgreeFromIndividual()">
+      <span class="terms-row-label"><span style="color:var(--i3);font-weight:600;">[선택]</span> 마케팅 정보 수신 동의 (이벤트/할인 카톡)</span>
+      <button type="button" class="terms-view-btn" onclick="event.preventDefault();showTermsViewer('marketing');">보기 →</button>
+    </label>
+
+    <button id="agreeSubmitBtn" onclick="submitTermsAgreement()" disabled style="width:100%;padding:18px;background:#bbb;color:#fff;border:none;border-radius:14px;font-size:18px;font-weight:700;font-family:inherit;cursor:not-allowed;margin-top:22px;min-height:58px;transition:background .15s;">동의하고 시작하기</button>
+    <div style="font-size:12px;color:var(--i3);text-align:center;line-height:1.6;margin-top:14px;">필수 항목 3개에 동의하셔야 가입이 완료됩니다.</div>
+  </div>
+</div>
+
+<!-- ══ 약관 본문 보기 모달 ══ -->
+<div class="modal-backdrop" id="termsViewerModal" style="z-index:1100;">
+  <div class="terms-viewer-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd);flex-shrink:0;">
+      <div id="termsViewerTitle" style="font-size:18px;font-weight:700;color:var(--ink);"></div>
+      <button onclick="closeTermsViewer()" aria-label="닫기" style="background:none;border:none;font-size:28px;color:var(--i3);cursor:pointer;line-height:1;padding:0 4px;font-family:inherit;">×</button>
+    </div>
+    <div id="termsViewerBody" style="padding:20px 22px;font-size:16px;color:var(--i2);line-height:1.85;overflow-y:auto;flex:1;"></div>
+    <div style="padding:14px 20px;border-top:1px solid var(--bd);text-align:center;flex-shrink:0;">
+      <button onclick="closeTermsViewer()" style="padding:14px 36px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:50px;">확인했어요</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 약관 동의 시스템 (한국 개보법 준수) ──
+var TERMS_VERSION = '1.0';
+var _termsAgreedCallback = null;
+
+function _toggleAgreeAll(){
+  var allChecked = g('agreeAll') ? g('agreeAll').checked : false;
+  ['agreeAge','agreeTerms','agreePrivacy','agreeMarketing'].forEach(function(id){
+    var el = g(id);
+    if(el) el.checked = allChecked;
+  });
+  _updateAgreeSubmitBtn();
+}
+
+function _updateAgreeFromIndividual(){
+  var age = g('agreeAge') && g('agreeAge').checked;
+  var terms = g('agreeTerms') && g('agreeTerms').checked;
+  var privacy = g('agreePrivacy') && g('agreePrivacy').checked;
+  var marketing = g('agreeMarketing') && g('agreeMarketing').checked;
+  var all = g('agreeAll');
+  if(all) all.checked = age && terms && privacy && marketing;
+  _updateAgreeSubmitBtn();
+}
+
+function _updateAgreeSubmitBtn(){
+  var ok = (g('agreeAge') && g('agreeAge').checked)
+        && (g('agreeTerms') && g('agreeTerms').checked)
+        && (g('agreePrivacy') && g('agreePrivacy').checked);
+  var btn = g('agreeSubmitBtn');
+  if(btn){
+    btn.disabled = !ok;
+    btn.style.background = ok ? 'var(--ac)' : '#bbb';
+    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    btn.style.boxShadow = ok ? '0 4px 0 var(--ad)' : 'none';
+  }
+}
+
+function showTermsAgreementModal(onAgreed){
+  var modal = g('termsAgreeModal');
+  if(!modal){ if(onAgreed) onAgreed(); return; }
+  ['agreeAll','agreeAge','agreeTerms','agreePrivacy','agreeMarketing'].forEach(function(id){
+    var el = g(id);
+    if(el) el.checked = false;
+  });
+  _updateAgreeSubmitBtn();
+  _termsAgreedCallback = onAgreed || null;
+  modal.classList.add('show');
+}
+
+async function submitTermsAgreement(){
+  var ok = (g('agreeAge') && g('agreeAge').checked)
+        && (g('agreeTerms') && g('agreeTerms').checked)
+        && (g('agreePrivacy') && g('agreePrivacy').checked);
+  if(!ok){ if(typeof showToast==='function') showToast('필수 항목 3개를 모두 체크해주세요'); return; }
+  var marketing = g('agreeMarketing') && g('agreeMarketing').checked;
+  var now = new Date().toISOString();
+
+  // DB 저장 (userProfile.id 있을 때만)
+  try {
+    if(typeof db !== 'undefined' && db && userProfile && userProfile.id){
+      var payload = {
+        agreed_age_14: true,
+        agreed_terms_at: now,
+        agreed_privacy_at: now,
+        agreed_marketing: !!marketing,
+        terms_version: TERMS_VERSION
+      };
+      if(marketing) payload.agreed_marketing_at = now;
+      await db.from('Users').update(payload).eq('id', userProfile.id);
+    }
+  } catch(e){ console.warn('약관 동의 DB 저장 실패:', e); }
+
+  // 로컬 저장 (오프라인/DB 장애 폴백)
+  if(userProfile){
+    userProfile.agreed_age_14 = true;
+    userProfile.agreed_terms_at = now;
+    userProfile.agreed_privacy_at = now;
+    userProfile.agreed_marketing = !!marketing;
+    if(marketing) userProfile.agreed_marketing_at = now;
+    userProfile.terms_version = TERMS_VERSION;
+    localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+  }
+
+  var modal = g('termsAgreeModal');
+  if(modal) modal.classList.remove('show');
+
+  var cb = _termsAgreedCallback;
+  _termsAgreedCallback = null;
+  if(cb) cb();
+}
+
+function showTermsViewer(type){
+  var titleEl = g('termsViewerTitle');
+  var bodyEl = g('termsViewerBody');
+  if(!titleEl || !bodyEl) return;
+  var contents = {
+    terms: {
+      title: '이용약관 (v' + TERMS_VERSION + ')',
+      body: '<p style="color:var(--i3);font-size:14px;">※ 약관 전문이 들어갈 자리입니다. 정식 버전은 별도 파일로 제공될 예정입니다.</p>'
+          + '<p><b>제1조 (목적)</b><br>본 약관은 에듀그린(이하 "회사")이 제공하는 AI 동행 서비스의 이용에 관한 권리·의무·책임 사항을 규정합니다.</p>'
+          + '<p><b>제2조 (회원가입)</b><br>회원은 만 14세 이상이어야 하며, 본 약관과 개인정보 처리방침에 동의해야 가입할 수 있습니다.</p>'
+          + '<p><b>제3조 (서비스 이용)</b><br>회원은 본 약관과 운영 정책에 따라 서비스를 이용하며, 무료 기능과 유료 기능이 구분됩니다.</p>'
+          + '<p><b>제4조 (개인정보 보호)</b><br>회사는 「개인정보 보호법」을 준수하며, 자세한 사항은 개인정보 처리방침을 따릅니다.</p>'
+          + '<p style="margin-top:18px;"><a href="terms.html" target="_blank" rel="noopener" style="color:var(--ac);font-weight:700;text-decoration:underline;">전체 이용약관 보기 (새 창) →</a></p>'
+    },
+    privacy: {
+      title: '개인정보 수집·이용 동의 (v' + TERMS_VERSION + ')',
+      body: '<p style="color:var(--i3);font-size:14px;">※ 처리방침 전문이 들어갈 자리입니다. 정식 버전은 별도 파일로 제공될 예정입니다.</p>'
+          + '<p><b>1. 수집 항목</b><br>- 카카오 닉네임, 카카오 ID (또는 성함·전화번호)<br>- 서비스 이용 기록(작품, 도장 진행)</p>'
+          + '<p><b>2. 수집 목적</b><br>- 회원 식별 및 로그인 유지<br>- 작품 저장·공유 기능 제공<br>- 도장깨기 진행 추적</p>'
+          + '<p><b>3. 보유 기간</b><br>- 회원 탈퇴 시까지 (탈퇴 시 즉시 파기)</p>'
+          + '<p><b>4. 동의 거부 권리</b><br>동의를 거부할 수 있으며, 거부 시 회원 가입 및 서비스 이용이 제한됩니다.</p>'
+          + '<p style="margin-top:18px;"><a href="privacy.html" target="_blank" rel="noopener" style="color:var(--ac);font-weight:700;text-decoration:underline;">전체 개인정보 처리방침 보기 (새 창) →</a></p>'
+    },
+    marketing: {
+      title: '마케팅 정보 수신 동의 (선택)',
+      body: '<p><b>전송 채널</b><br>카카오톡 알림</p>'
+          + '<p><b>전송 내용</b><br>- 신규 강좌·기능 안내<br>- 이벤트·할인·프로모션 정보<br>- 도장깨기 진행 격려 메시지</p>'
+          + '<p><b>거부 권리</b><br>본 동의는 선택 사항이며, 동의를 거부하셔도 서비스 이용에 제한이 없습니다. 동의 후에도 마이페이지에서 언제든지 철회하실 수 있습니다.</p>'
+    }
+  };
+  var c = contents[type] || contents.terms;
+  titleEl.textContent = c.title;
+  bodyEl.innerHTML = c.body;
+  var modal = g('termsViewerModal');
+  if(modal) modal.classList.add('show');
+}
+
+function closeTermsViewer(){
+  var modal = g('termsViewerModal');
+  if(modal) modal.classList.remove('show');
+}
+
+// 인증 성공 후 약관 동의 게이트 — 모든 로그인/가입 경로에서 호출
+function _gateAuthSuccess(name, isNew, dbAgreed){
+  var needsTerms = true;
+  if(dbAgreed && dbAgreed.agreed_terms_at && dbAgreed.agreed_privacy_at){
+    needsTerms = false;
+  } else if(typeof db === 'undefined' || !db){
+    var saved = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
+    if(saved && saved.agreed_terms_at) needsTerms = false;
+  }
+  if(needsTerms){
+    showTermsAgreementModal(function(){ showAuthSuccess(name, isNew); });
+  } else {
+    showAuthSuccess(name, isNew);
+  }
+}
+</script>
+
 </body>
 </html>

@@ -967,6 +967,15 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-opt-emoji{font-size:26px;flex-shrink:0;line-height:1;}
 .autobio-opt-label{font-size:17px;font-weight:700;color:var(--ink);flex:1;}
 
+/* 마중물 4지선다 카드 (인터뷰 화면 내) */
+.autobio-iv-hint{margin-top:10px;background:#FFF7E6;border:1.5px solid #F5C842;border-radius:14px;padding:16px;animation:autobioFadeIn .25s ease-out;}
+.autobio-iv-hint-title{font-size:13px;font-weight:800;color:#7a5c1e;margin-bottom:4px;letter-spacing:.02em;}
+.autobio-iv-hint-q{font-size:16px;color:var(--ink);font-weight:700;margin-bottom:12px;line-height:1.55;}
+.autobio-iv-hint-options{display:flex;flex-direction:column;gap:8px;}
+.autobio-iv-hint-option{padding:14px 16px;background:#fff;border:1.5px solid var(--bd);border-radius:11px;font-size:15px;color:var(--ink);font-weight:600;text-align:left;cursor:pointer;font-family:inherit;line-height:1.55;min-height:50px;}
+.autobio-iv-hint-option:hover{border-color:#F5C842;background:#FFFDF5;}
+.autobio-iv-hint-option.is-other{background:none;border:1.5px dashed var(--bd);color:var(--i3);}
+
 /* ── 약관 동의 모달 (한국 개보법 준수) ── */
 .terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
@@ -5708,6 +5717,31 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     </div>
     <button onclick="_autobioResumeFromBreak()" class="autobio-btn-primary" style="margin-bottom:8px;">계속 이어가기 →</button>
     <button onclick="_autobioFinishSession()" class="autobio-btn-tertiary">오늘은 여기까지</button>
+  </div>
+</div>
+
+<!-- ── 위험 신호 감지 모달 (자살·자해·극도 우울 표현 시) ── -->
+<div class="modal-backdrop" id="autobioRiskModal" style="z-index:1200;">
+  <div style="background:#fff;border-radius:24px;padding:32px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.28);">
+    <div style="font-size:64px;margin-bottom:14px;">🤝</div>
+    <div style="font-family:var(--serif,serif);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:10px;">잠깐, 많이 힘드신 것 같아요</div>
+    <div style="font-size:15px;color:var(--i2);line-height:1.75;margin-bottom:20px;">혼자 견디지 마세요.<br>따뜻한 도움이 가까이 있어요 🌿</div>
+    <div style="background:var(--al);border-radius:14px;padding:18px;margin-bottom:18px;text-align:left;">
+      <div style="margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:var(--ad);margin-bottom:3px;">📞 자살예방상담전화 (24시간)</div>
+        <a href="tel:109" style="color:var(--ac);font-weight:800;font-size:22px;text-decoration:none;letter-spacing:.05em;">109</a>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:var(--ad);margin-bottom:3px;">📞 정신건강복지센터</div>
+        <a href="tel:1577-0199" style="color:var(--ac);font-weight:800;font-size:20px;text-decoration:none;letter-spacing:.03em;">1577-0199</a>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:var(--ad);margin-bottom:3px;">📞 어르신 전용 상담 (한국노인상담센터)</div>
+        <a href="tel:1661-2129" style="color:var(--ac);font-weight:800;font-size:20px;text-decoration:none;letter-spacing:.03em;">1661-2129</a>
+      </div>
+    </div>
+    <button onclick="_autobioRiskGoRest()" class="autobio-btn-primary" style="margin-bottom:8px;">상담 받고 다시 올게요</button>
+    <button onclick="_autobioRiskDismiss()" class="autobio-btn-tertiary">괜찮아요, 계속 진행할게요</button>
   </div>
 </div>
 
@@ -11170,10 +11204,178 @@ function _autobioInputChange(){
   var inp = g('autobioIvInput');
   var btn = g('autobioIvNextBtn');
   if(!inp || !btn) return;
-  var hasText = (inp.value || '').trim().length > 0;
+  var val = inp.value || '';
+  var hasText = val.trim().length > 0;
   btn.disabled = !hasText || _autobioSending;
   btn.style.opacity = btn.disabled ? '.5' : '1';
+
+  // 마중물 카드 — "기억 안 나" 패턴 감지 시 자동 노출
+  if(_autobioDetectMemoryGap(val)){
+    _autobioShowHintCard();
+  } else if(g('autobioHintCard')){
+    // 사용자가 답변을 보강했으면 카드 자동 닫음
+    if(val.trim().length > 30) _autobioHideHintCard();
+  }
 }
+
+// ══════════════════════════════════════════════
+// 마중물 4지선다 카드 (1960년대생 우선)
+// ══════════════════════════════════════════════
+var AUTOBIO_HINT_CARDS = [
+  // 1회차 — 내 이름 이야기
+  { key:'name', sessions:[1], trigger:/(이름|별명|지어)/,
+    q:'이름은 어떻게 지어졌나요?',
+    options:[
+      {label:'할아버지·할머니가 지어주셨어요',  text:'할아버지(또는 할머니)가 이름을 지어주셨어요.'},
+      {label:'아버지·어머니가 지어주셨어요',    text:'아버지(또는 어머니)가 이름을 지어주셨어요.'},
+      {label:'돌림자(항렬자)에 따라 지어졌어요', text:'집안 돌림자(항렬자)에 따라 이름이 지어졌어요.'},
+      {label:'다른 분이 지어주셨어요',          text:'다른 분이 이름을 지어주셨어요.'}
+    ]},
+  // 2회차 — 어린 시절 (집)
+  { key:'home_1960', sessions:[2], trigger:/(살던|집|동네|어디서)/,
+    q:'어떤 집에서 사셨나요?',
+    options:[
+      {label:'마당이 있는 한옥',         text:'마당이 있는 한옥에서 살았어요.'},
+      {label:'골목 안 작은 집',          text:'좁은 골목 안 작은 집에서 살았어요.'},
+      {label:'시골 초가집·농가',         text:'시골의 초가집(또는 농가)에서 살았어요.'},
+      {label:'아파트·연립주택',          text:'아파트나 연립주택에서 살았어요.'}
+    ]},
+  // 2회차 — 어린 시절 (음식)
+  { key:'food_1960', sessions:[2], trigger:/(먹|음식|반찬|맛|배고)/,
+    q:'어떤 음식이 가장 자주 떠오르세요?',
+    options:[
+      {label:'엄마가 끓여주신 된장찌개',  text:'엄마가 끓여주신 된장찌개가 가장 먼저 떠올라요.'},
+      {label:'잡곡밥·보리밥',             text:'잡곡밥(또는 보리밥)을 자주 먹었어요.'},
+      {label:'국수·수제비',               text:'국수나 수제비를 자주 먹었어요.'},
+      {label:'명절·잔치 때 먹은 떡·전',   text:'명절이나 잔치 때 먹은 떡과 전이 떠올라요.'}
+    ]},
+  // 2회차 — 어린 시절 (장소)
+  { key:'place_1960', sessions:[2], trigger:/(장소|놀았|놀던|갔|어디)/,
+    q:'자주 가던 장소가 있으셨나요?',
+    options:[
+      {label:'동네 골목·공터',            text:'동네 골목이나 공터에서 자주 놀았어요.'},
+      {label:'냇가·강가·들판',            text:'냇가나 들판에서 자주 놀았어요.'},
+      {label:'시장·장터',                 text:'시장이나 장터에 자주 갔어요.'},
+      {label:'이웃집·친척집',             text:'이웃집이나 친척집에 자주 갔어요.'}
+    ]},
+  // 3회차 — 학창 시절 (학교)
+  { key:'school_1960', sessions:[3], trigger:/(학교|선생|수업|교실|반|등교)/,
+    q:'학교는 어떤 모습이었나요?',
+    options:[
+      {label:'시골의 작은 분교·초등학교',  text:'시골의 작은 분교(또는 초등학교)에 다녔어요.'},
+      {label:'읍·면 소재지의 큰 학교',     text:'읍이나 면 소재지의 큰 학교에 다녔어요.'},
+      {label:'도시의 신식 학교',           text:'도시의 신식 학교에 다녔어요.'},
+      {label:'먼 거리를 걸어다녔어요',     text:'먼 거리를 걸어서 학교에 다녔어요.'}
+    ]},
+  // 다회차 공통 — 친구
+  { key:'friend', sessions:[2,3,4], trigger:/(친구|동무|친했|친한)/,
+    q:'친했던 친구는 어떤 분이었나요?',
+    options:[
+      {label:'같은 동네 또래',            text:'같은 동네에 살던 또래와 친했어요.'},
+      {label:'학교에서 만난 단짝',        text:'학교에서 만난 단짝과 친했어요.'},
+      {label:'먼 친척 또는 이웃집 형·누나', text:'먼 친척이나 이웃집 형(또는 누나)과 친했어요.'},
+      {label:'잘 떠오르지 않아요',         text:'친한 친구가 잘 떠오르지 않아요.'}
+    ]}
+];
+
+function _autobioDetectMemoryGap(text){
+  var t = (text||'').toLowerCase();
+  return /(기억[\s]*(이|도)?\s*안\s*(나|남|나요)|잘\s*모르|생각[\s]*(이|도)?\s*안\s*(나|남)|떠오르지\s*않|모르겠|글쎄|몰라요|가물가물)/.test(t);
+}
+
+function _autobioFindHintCard(userText){
+  var sessionNum = (_autobioCurrentSessionInfo && _autobioCurrentSessionInfo.session_number) || 1;
+  // 1) 회차 매칭 + trigger 매칭 우선
+  var cardWithTrigger = AUTOBIO_HINT_CARDS.find(function(card){
+    return card.sessions.indexOf(sessionNum) >= 0 && card.trigger.test(userText);
+  });
+  if(cardWithTrigger) return cardWithTrigger;
+  // 2) 회차 매칭만
+  var cardSessionOnly = AUTOBIO_HINT_CARDS.find(function(card){
+    return card.sessions.indexOf(sessionNum) >= 0;
+  });
+  if(cardSessionOnly) return cardSessionOnly;
+  // 3) trigger 매칭만
+  var cardTriggerOnly = AUTOBIO_HINT_CARDS.find(function(card){
+    return card.trigger.test(userText);
+  });
+  return cardTriggerOnly || null;
+}
+
+function _autobioShowHintCard(){
+  if(g('autobioHintCard')) return; // already shown
+  var inp = g('autobioIvInput');
+  var card = _autobioFindHintCard(inp ? inp.value : '');
+  if(!card) return;
+
+  var html = '<div id="autobioHintCard" class="autobio-iv-hint">' +
+             '<div class="autobio-iv-hint-title">💡 기억이 잘 안 나실 때 — 골라보세요</div>' +
+             '<div class="autobio-iv-hint-q">'+_escapeAutobioText(card.q)+'</div>' +
+             '<div class="autobio-iv-hint-options">';
+  card.options.forEach(function(o, i){
+    html += '<button type="button" class="autobio-iv-hint-option" onclick="_autobioPickHint('+i+')">'+_escapeAutobioText(o.label)+'</button>';
+  });
+  html += '<button type="button" class="autobio-iv-hint-option is-other" onclick="_autobioHideHintCard()">✏️ 다른 모습 — 직접 적을게요</button>' +
+          '</div></div>';
+
+  // textarea 다음, voice-row 앞에 삽입
+  var voiceRow = document.querySelector('.autobio-iv-voice-row');
+  if(voiceRow && voiceRow.parentNode){
+    var wrap = document.createElement('div');
+    wrap.innerHTML = html;
+    voiceRow.parentNode.insertBefore(wrap.firstChild, voiceRow);
+  }
+  window._autobioCurrentHint = card;
+}
+
+function _autobioHideHintCard(){
+  var c = g('autobioHintCard');
+  if(c) c.remove();
+  window._autobioCurrentHint = null;
+}
+
+function _autobioPickHint(idx){
+  var card = window._autobioCurrentHint;
+  if(!card || !card.options || !card.options[idx]) return;
+  var inp = g('autobioIvInput');
+  if(inp){
+    inp.value = card.options[idx].text;
+    inp.focus();
+  }
+  _autobioHideHintCard();
+  _autobioInputChange();
+}
+
+// ══════════════════════════════════════════════
+// 위험 신호 감지 (자살·자해·극도 우울)
+// ══════════════════════════════════════════════
+function _autobioDetectRiskSignal(text){
+  var t = (text||'').toLowerCase();
+  return /(죽고\s*싶|살기\s*싫|자살|자해|끝내고\s*싶|살\s*이유\s*없|더는\s*못\s*살|너무\s*힘들어\s*죽|차라리\s*죽)/.test(t);
+}
+
+function _autobioShowRiskModal(){
+  _autobioStopVoice();
+  var m = g('autobioRiskModal');
+  if(m) m.classList.add('show');
+}
+
+function _autobioRiskGoRest(){
+  var m = g('autobioRiskModal');
+  if(m) m.classList.remove('show');
+  _autobioFinishSession();
+}
+
+function _autobioRiskDismiss(){
+  var m = g('autobioRiskModal');
+  if(m) m.classList.remove('show');
+  // 사용자가 직접 dismiss → 다음 전송에서는 우회 (한 번만)
+  _autobioRiskBypassOnce = true;
+  // 즉시 재전송하지 않음 — 사용자가 다음으로 다시 누르도록 (의도 확인)
+  if(typeof showToast==='function') showToast('🌿 마음이 정리되시면 다시 "다음으로"를 눌러주세요');
+}
+
+var _autobioRiskBypassOnce = false;
 
 function _autobioBuildSystemPrompt(){
   var s = _autobioCurrentSessionInfo || {};
@@ -11217,6 +11419,15 @@ async function _autobioSendAnswer(){
   var text = (inp && inp.value || '').trim();
   if(!text) return;
   if(!_autobioCurrentEpisode) return;
+
+  // 위험 신호 감지 — 사용자가 직접 dismiss하지 않은 경우 모달 표시
+  if(!_autobioRiskBypassOnce && _autobioDetectRiskSignal(text)){
+    _autobioShowRiskModal();
+    return;
+  }
+  _autobioRiskBypassOnce = false; // 1회용 플래그 리셋
+
+  _autobioHideHintCard(); // 마중물 카드가 떠 있으면 닫음
 
   _autobioSending = true;
   if(btn){ btn.disabled = true; btn.textContent = '⏳ 동동이가 듣고 있어요...'; }

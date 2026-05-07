@@ -11252,6 +11252,26 @@ async function generateWithAI(){
     } else {
       // ── 글쓰기 생성: Claude API ──
       var systemPrompt = '당신은 어르신들을 위한 따뜻한 글쓰기 도우미입니다. 지시에 따라 진심 어린 글을 작성해주세요. 글은 한국어로, 이해하기 쉬운 표현을 사용하세요.';
+
+      // 일기/블로그: 현재 날짜·계절 컨텍스트 주입 (계절에 맞지 않는 묘사 방지)
+      // 자서전(과거 시점)·편지(상대 의존)는 의도적으로 제외
+      if(courseName === '일기 쓰기' || courseName === '블로그 글쓰기'){
+        var _today = new Date();
+        var _month = _today.getMonth() + 1;
+        var _day = _today.getDate();
+        var _dayName = ['일','월','화','수','목','금','토'][_today.getDay()];
+        var _season = (_month >= 3 && _month <= 5) ? '봄 (3-5월)'
+                    : (_month >= 6 && _month <= 8) ? '여름 (6-8월)'
+                    : (_month >= 9 && _month <= 11) ? '가을 (9-11월)'
+                    : '겨울 (12-2월)';
+        var _genre = (courseName === '일기 쓰기') ? '일기' : '블로그 글';
+        systemPrompt += '\n\n[중요: 오늘 날짜 정보]\n'
+          + '오늘은 ' + _month + '월 ' + _day + '일 ' + _dayName + '요일입니다.\n'
+          + '현재 계절: ' + _season + '\n'
+          + '이 날짜를 기준으로 자연스러운 ' + _genre + '을 작성해주세요.\n'
+          + '계절에 맞지 않는 내용(예: 5월에 눈/겨울 묘사, 12월에 벚꽃/매미 묘사)은 절대 쓰지 마세요.';
+      }
+
       var response = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
         method: 'POST',
         headers: {

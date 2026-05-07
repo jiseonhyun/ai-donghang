@@ -958,6 +958,15 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-preview-edit-title{font-size:16px;font-weight:700;color:var(--ad);margin-bottom:6px;}
 .autobio-preview-edit-sub{font-size:13px;color:var(--i3);line-height:1.6;margin-bottom:12px;}
 
+/* 선택장 picker (8회차) */
+.autobio-opt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.autobio-opt-item{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:16px;cursor:pointer;min-height:64px;transition:border-color .12s,background .12s;}
+.autobio-opt-item:hover{border-color:var(--ac);}
+.autobio-opt-item.selected{border-color:var(--ac);background:var(--al);}
+.autobio-opt-item input[type="checkbox"]{width:24px;height:24px;accent-color:var(--ac);cursor:pointer;flex-shrink:0;margin:0;}
+.autobio-opt-emoji{font-size:26px;flex-shrink:0;line-height:1;}
+.autobio-opt-label{font-size:17px;font-weight:700;color:var(--ink);flex:1;}
+
 /* ── 약관 동의 모달 (한국 개보법 준수) ── */
 .terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
@@ -5563,6 +5572,29 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <!-- 전체 회차 미리 보기 (펼치기) -->
       <button class="autobio-overview-toggle" id="autobioOverviewToggle" onclick="_autobioToggleOverview()">📋 전체 8회차 미리 보기 ▼</button>
       <div class="autobio-overview-list" id="autobioOverviewList" style="display:none;"></div>
+    </div>
+
+    <!-- ── Step F: 8회차 선택장 picker (페이스 적응형) ── -->
+    <div id="autobio-step-optional" class="autobio-step" style="display:none;">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="autobioBackToStart()">← 시작 화면</button>
+      </div>
+
+      <div class="autobio-session-greeting">
+        <div class="autobio-session-emoji">🎀</div>
+        <div class="autobio-session-num">8회차</div>
+        <div class="autobio-session-title">마무리와 헌사</div>
+        <div class="autobio-session-subtitle" id="autobioOptPaceLabel">선택장 1개 + 헌사</div>
+      </div>
+
+      <div class="autobio-section-sub" id="autobioOptDesc" style="margin-bottom:18px;">
+        내가 책에 꼭 담고 싶은 이야기를<br><b>1개</b> 골라주세요.
+      </div>
+
+      <div id="autobioOptList" class="autobio-opt-list"></div>
+
+      <button id="autobioOptSubmit" class="autobio-btn-primary" onclick="_autobioSubmitOptional()" disabled>선택 완료 →</button>
+      <button class="autobio-btn-tertiary" onclick="autobioBackToStart()">나중에 할게요</button>
     </div>
 
     <!-- ── Step E: 본문 미리보기 화면 (인터뷰 종료 후) ── -->
@@ -10634,11 +10666,127 @@ var _autobioCurrentCourse = null; // {id, course_type, current_session, ...}
 var _autobioPickedMode = null;    // 'classroom' | 'solo'
 
 function _autobioShowStep(stepId){
-  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session','autobio-step-interview','autobio-step-preview'].forEach(function(id){
+  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session','autobio-step-interview','autobio-step-preview','autobio-step-optional'].forEach(function(id){
     var el = g(id);
     if(el) el.style.display = (id === stepId) ? 'block' : 'none';
   });
   window.scrollTo(0, 0);
+}
+
+// ── 페이스 측정 ──
+function _autobioComputePaceScore(messages){
+  var userMsgs = (messages || []).filter(function(m){ return m.role === 'user'; });
+  if(userMsgs.length === 0) return 0.5;
+  var totalLen = userMsgs.reduce(function(sum, m){ return sum + ((m.content||'').length); }, 0);
+  var avg = totalLen / userMsgs.length;
+  // 한 문장 평균 길이 → 페이스 점수 (0=느림, 1=빠름)
+  if(avg < 25)  return 0.18;   // 매우 짧은 답변 (한 단어/단답)
+  if(avg < 50)  return 0.32;   // 짧은 답변 (느린 분)
+  if(avg < 90)  return 0.5;    // 보통
+  if(avg < 150) return 0.65;   // 약간 긴 답변
+  if(avg < 230) return 0.8;    // 긴 답변 (빠른 분)
+  return 0.9;                  // 매우 긴 답변
+}
+
+function _autobioGetPaceLabel(score){
+  if(score >= 0.65) return '빠른 페이스';
+  if(score >= 0.35) return '보통 페이스';
+  return '천천히 가는 페이스';
+}
+
+function _autobioGetOptionalSlots(score){
+  // 빠른 분: 2 / 보통·느린 분: 1
+  return score >= 0.65 ? 2 : 1;
+}
+
+// ── 8회차 선택장 picker ──
+function _autobioRenderOptionalPicker(){
+  var c = _autobioCurrentCourse || {};
+  var paceScore = c.pace_score || 0.5;
+  var slots = _autobioGetOptionalSlots(paceScore);
+  var paceLabel = _autobioGetPaceLabel(paceScore);
+
+  var subEl = g('autobioOptPaceLabel');
+  if(subEl) subEl.textContent = '선택장 ' + slots + '개 + 헌사 (' + paceLabel + ')';
+
+  var descEl = g('autobioOptDesc');
+  if(descEl) descEl.innerHTML = '내가 책에 꼭 담고 싶은 이야기를<br><b>' + slots + '개</b> 골라주세요.';
+
+  var emojis = {parenting:'👶', career:'💼', faith:'🙏', friendship:'👫', hobby:'🎨', activism:'✊'};
+  var list = g('autobioOptList');
+  if(list){
+    list.innerHTML = AUTOBIO_OPTIONAL_CHAPTERS.map(function(ch){
+      return '<label class="autobio-opt-item" data-key="'+ch.key+'">' +
+               '<input type="checkbox" value="'+ch.key+'" onchange="_autobioOptCheck()">' +
+               '<span class="autobio-opt-emoji">'+(emojis[ch.key]||'📖')+'</span>' +
+               '<span class="autobio-opt-label">'+ch.label+'</span>' +
+             '</label>';
+    }).join('');
+  }
+  // slots 정보를 list에 보관
+  var listEl = g('autobioOptList');
+  if(listEl) listEl.dataset.slots = String(slots);
+  _autobioOptCheck();
+  _autobioShowStep('autobio-step-optional');
+}
+
+function _autobioOptCheck(){
+  var listEl = g('autobioOptList');
+  var slots = parseInt((listEl && listEl.dataset.slots) || '1', 10);
+  var all = listEl ? listEl.querySelectorAll('input[type="checkbox"]') : [];
+  var checkedCount = 0;
+  all.forEach(function(cb){ if(cb.checked) checkedCount++; });
+
+  all.forEach(function(cb){
+    var label = cb.closest('.autobio-opt-item');
+    if(checkedCount >= slots && !cb.checked){
+      cb.disabled = true;
+      if(label) label.style.opacity = '.45';
+    } else {
+      cb.disabled = false;
+      if(label) label.style.opacity = '1';
+    }
+    if(label){
+      if(cb.checked) label.classList.add('selected');
+      else label.classList.remove('selected');
+    }
+  });
+
+  var btn = g('autobioOptSubmit');
+  if(btn){
+    var ok = (checkedCount === slots);
+    btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '.5';
+  }
+}
+
+async function _autobioSubmitOptional(){
+  var listEl = g('autobioOptList');
+  var checked = [];
+  if(listEl){
+    listEl.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){ checked.push(cb.value); });
+  }
+  if(checked.length === 0) return;
+
+  // courses에 selected_optional_chapters 저장
+  if(db && _autobioCurrentCourse && _autobioCurrentCourse.id){
+    try {
+      await db.from('autobiography_courses').update({
+        selected_optional_chapters: checked
+      }).eq('id', _autobioCurrentCourse.id);
+    } catch(e){ console.warn('[save optional]', e); }
+  }
+  _autobioCurrentCourse.selected_optional_chapters = checked;
+
+  // 인터뷰 시작
+  await autobioStartSession();
+}
+
+function _autobioGetOptionalLabels(keys){
+  return (keys || []).map(function(k){
+    var ch = AUTOBIO_OPTIONAL_CHAPTERS.find(function(c){ return c.key === k; });
+    return ch ? ch.label : k;
+  });
 }
 
 // 진입 시 호출 — showView('autobiography')에서 자동
@@ -10900,6 +11048,15 @@ async function autobioStartSession(){
   var courseId = _autobioCurrentCourse.id;
   var sessionNum = _autobioCurrentCourse.current_session || 1;
 
+  // 8회차 + 선택장 미선택 → picker 먼저
+  if(sessionNum === 8){
+    var picked = _autobioCurrentCourse.selected_optional_chapters || [];
+    if(picked.length === 0){
+      _autobioRenderOptionalPicker();
+      return;
+    }
+  }
+
   // 1) 현재 회차 정보 조회 (없으면 폴백 템플릿)
   var sessionInfo = null;
   try {
@@ -10943,6 +11100,11 @@ async function autobioStartSession(){
     // 첫 질문을 messages에 미리 넣고 신규 에피소드 생성
     var tpl2 = AUTOBIO_SESSION_TEMPLATE[sessionNum-1];
     var firstQ = (tpl2 && tpl2.firstQ) || '오늘 이야기를 시작해볼까요?';
+    // 8회차: 선택장 라벨로 첫 질문 동적 생성
+    if(sessionNum === 8 && _autobioCurrentCourse.selected_optional_chapters && _autobioCurrentCourse.selected_optional_chapters.length > 0){
+      var labels = _autobioGetOptionalLabels(_autobioCurrentCourse.selected_optional_chapters);
+      firstQ = '드디어 마지막 회차예요 🎀\n오늘은 골라주신 ' + labels.join(', ') + ' 이야기를 들려주시고,\n마지막에 받는 분께 짧은 헌사를 남겨요.\n\n먼저 ' + labels[0] + '에 대해, 가장 먼저 떠오르는 장면이 있으신가요?';
+    }
     var initialMessages = [{role:'assistant', content:firstQ, at:new Date().toISOString()}];
     try {
       var ins = await db.from('autobiography_episodes').insert([{
@@ -11403,10 +11565,16 @@ async function _autobioConfirmChapter(){
     } catch(e){ console.warn('[session complete]', e); }
   }
 
-  // 4) 코스 진행 상태 업데이트
+  // 4) 페이스 점수 측정 + 코스 진행 상태 업데이트
   if(db && c.id){
     var nextSession = (s.session_number || 1) + 1;
-    var update = { updated_at: new Date().toISOString() };
+    var observedPace = _autobioComputePaceScore((_autobioCurrentEpisode && _autobioCurrentEpisode.messages) || []);
+    var oldPace = (typeof c.pace_score === 'number') ? c.pace_score : 0.5;
+    // 가중 평균: 누적 페이스에 신규 회차 페이스 일부 반영
+    var newPace = Math.round((0.6 * oldPace + 0.4 * observedPace) * 100) / 100;
+    _autobioCurrentCourse.pace_score = newPace;
+
+    var update = { updated_at: new Date().toISOString(), pace_score: newPace };
     if(nextSession > 8){
       update.completed_at = new Date().toISOString();
     } else {

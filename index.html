@@ -2518,8 +2518,8 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   font-family:'Noto Sans KR',-apple-system,sans-serif !important;
 }
 </style>
-  <!-- 카카오 SDK (v1.43.5 — Kakao.Auth.login 호환 마지막 안정 버전; v2 마이그레이션은 후속 커밋) -->
-  <script src="https://t1.kakaocdn.net/kakao_js_sdk/1.43.5/kakao.min.js" crossorigin="anonymous"></script>
+  <!-- 카카오 SDK v2.7.4 — Kakao.Auth.authorize redirect 방식 사용 -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
   <!-- jsPDF + html2canvas (자서전 PDF 저장) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -10087,70 +10087,143 @@ async function findPwSubmit(){
     if(msg){msg.textContent='오류가 발생했어요. 다시 시도해주세요';msg.style.color='#E05050';}
   }
 }
+// 카카오 로그인 — SDK v2 redirect 방식 (Kakao.Auth.authorize)
 function authKakao(){
-  // SDK 없으면 로드 재시도
   if(!initKakaoSdk()){
     showToast('카카오 연결 중이에요. 잠시 후 다시 눌러주세요 🙂'); return;
   }
-  Kakao.Auth.login({
-    success: function(authObj){
-      // 사용자 정보 가져오기
-      Kakao.API.request({
-        url: '/v2/user/me',
-        success: async function(res){
-          var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
-            || (res.properties && res.properties.nickname)
-            || '카카오 사용자';
-          var kakaoIdStr = String(res.id);
-          userProfile = {
-            name: kakaoName,
-            phone: '',
-            plan: 'free',
-            kakaoId: res.id,
-            loginType: 'kakao'
-          };
-          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+  // 현재 hash를 state에 담아 인증 후 복원 가능하게
+  var stateData = '';
+  try {
+    stateData = btoa(unescape(encodeURIComponent(JSON.stringify({
+      hash: window.location.hash || '',
+      ts: Date.now()
+    }))));
+  } catch(e){ stateData = ''; }
+  var redirectUri = window.location.origin + window.location.pathname;
+  try {
+    Kakao.Auth.authorize({
+      redirectUri: redirectUri,
+      scope: 'profile_nickname',
+      state: stateData
+    });
+    // 이 시점부터 페이지가 카카오로 redirect됨 — 함수 본체는 종료
+  } catch(e){
+    console.warn('[kakao authorize]', e);
+    showToast('카카오 로그인을 시작할 수 없어요. 잠시 후 다시 시도해주세요.');
+  }
+}
 
-          // Supabase: 회원 조회/생성 + 약관 동의 상태 확인
-          var isNew = false;
-          var dbAgreed = null;
-          if(db){
-            try{
-              var exist = await db.from('Users').select('id, agreed_terms_at, agreed_privacy_at').eq('kakao_id', kakaoIdStr).maybeSingle();
-              if(!exist.data){
-                isNew = true;
-                var ki = await db.from('Users').insert([{
-                  name: kakaoName,
-                  kakao_id: kakaoIdStr,
-                  plan: 'free',
-                  created_at: new Date().toISOString()
-                }]).select();
-                if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
-              } else {
-                userProfile.id = exist.data.id;
-                dbAgreed = { agreed_terms_at: exist.data.agreed_terms_at, agreed_privacy_at: exist.data.agreed_privacy_at };
-              }
-              localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-            }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
-          }
-          _gateAuthSuccess(kakaoName, isNew, dbAgreed);
-        },
-        fail: function(err){
-          // 닉네임 못 받아도 로그인은 성공으로 처리
-          userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
-          localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-          _gateAuthSuccess('카카오 사용자', true, null);
-        }
-      });
-    },
-    fail: function(err){
-      if(err && err.error === 'access_denied'){
-        showToast('카카오 로그인을 취소하셨어요.');
-      } else {
-        showToast('카카오 로그인에 실패했어요. 잠시 후 다시 시도해주세요.');
+// 카카오 콜백 처리 — 페이지 로드 시 ?code= 감지하면 호출
+async function _handleKakaoCallback(code, stateRaw){
+  try {
+    if(!initKakaoSdk()){
+      // SDK 로드 대기 (최대 3초)
+      var waited = 0;
+      while(waited < 3000 && (typeof Kakao === 'undefined' || !Kakao.init)){
+        await new Promise(function(r){ setTimeout(r, 100); });
+        waited += 100;
       }
+      initKakaoSdk();
     }
+    var redirectUri = window.location.origin + window.location.pathname;
+    var token = await _kakaoExchangeCode(code, redirectUri);
+    if(!token) throw new Error('access_token 없음');
+
+    // SDK에 토큰 등록 — 이후 Kakao.API.request 사용 가능
+    if(typeof Kakao !== 'undefined' && Kakao.Auth && typeof Kakao.Auth.setAccessToken === 'function'){
+      Kakao.Auth.setAccessToken(token);
+    }
+
+    // URL에서 ?code=, ?state= 정리
+    history.replaceState({}, '', window.location.pathname + window.location.hash);
+
+    // state 복원 (이전 hash로 돌아갈 수 있게)
+    var savedHash = '';
+    try {
+      if(stateRaw){
+        var decoded = JSON.parse(decodeURIComponent(escape(atob(stateRaw))));
+        if(decoded && typeof decoded.hash === 'string') savedHash = decoded.hash;
+      }
+    } catch(e){ /* state 손상 무시 */ }
+    if(savedHash) window.location.hash = savedHash;
+
+    // 사용자 정보 가져오기
+    Kakao.API.request({
+      url: '/v2/user/me',
+      success: function(res){ _kakaoOnUserInfo(res); },
+      fail: function(err){
+        console.warn('[user/me]', err);
+        userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
+        localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+        if(typeof _gateAuthSuccess === 'function') _gateAuthSuccess('카카오 사용자', true, null);
+      }
+    });
+  } catch(e){
+    console.warn('[kakao callback]', e);
+    history.replaceState({}, '', window.location.pathname + window.location.hash);
+    showToast('카카오 로그인 처리 중 오류가 발생했어요. 다시 시도해주세요.');
+  }
+}
+
+// 카카오 OAuth /oauth/token — code → access_token 교환
+async function _kakaoExchangeCode(code, redirectUri){
+  var params = new URLSearchParams();
+  params.append('grant_type', 'authorization_code');
+  params.append('client_id', KAKAO_KEY);
+  params.append('redirect_uri', redirectUri);
+  params.append('code', code);
+  // ※ Kakao 디벨로퍼스 콘솔에서 'Client Secret 코드' = 사용 안 함 으로 설정 필요
+  var res = await fetch('https://kauth.kakao.com/oauth/token', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: params.toString()
   });
+  var data = await res.json();
+  if(!res.ok || data.error){
+    throw new Error('Kakao /oauth/token 실패: ' + (data.error_description || data.error || res.status));
+  }
+  return data.access_token;
+}
+
+// 사용자 정보 처리 — DB 조회/생성 + 약관 게이트 (popup·redirect 양쪽에서 재사용)
+async function _kakaoOnUserInfo(res){
+  var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
+    || (res.properties && res.properties.nickname)
+    || '카카오 사용자';
+  var kakaoIdStr = String(res.id);
+  userProfile = {
+    name: kakaoName,
+    phone: '',
+    plan: 'free',
+    kakaoId: res.id,
+    loginType: 'kakao'
+  };
+  localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+
+  // Supabase: 회원 조회/생성 + 약관 동의 상태 확인
+  var isNew = false;
+  var dbAgreed = null;
+  if(typeof db !== 'undefined' && db){
+    try{
+      var exist = await db.from('Users').select('id, agreed_terms_at, agreed_privacy_at').eq('kakao_id', kakaoIdStr).maybeSingle();
+      if(!exist.data){
+        isNew = true;
+        var ki = await db.from('Users').insert([{
+          name: kakaoName,
+          kakao_id: kakaoIdStr,
+          plan: 'free',
+          created_at: new Date().toISOString()
+        }]).select();
+        if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
+      } else {
+        userProfile.id = exist.data.id;
+        dbAgreed = { agreed_terms_at: exist.data.agreed_terms_at, agreed_privacy_at: exist.data.agreed_privacy_at };
+      }
+      localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+    }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
+  }
+  if(typeof _gateAuthSuccess === 'function') _gateAuthSuccess(kakaoName, isNew, dbAgreed);
 }
 function checkPwMatch(){
   var pw = g('authPw') ? g('authPw').value : '';
@@ -10423,14 +10496,33 @@ window.addEventListener('popstate', function(e){
   showView(view, true); // _skipHash=true (pushState 안 함)
 });
 
-// 최초 로드: 공유 링크 감지 또는 해시에 맞는 뷰로
+// 최초 로드: 카카오 OAuth 콜백 / 공유 링크 / 해시 분기
 (function(){
   var params = new URLSearchParams(window.location.search);
+  // 1) 카카오 OAuth 콜백 (?code=, ?error=)
+  var kakaoCode = params.get('code');
+  var kakaoError = params.get('error');
+  if(kakaoCode){
+    var initView = _hashToView(window.location.hash);
+    showView(initView, true); // 일단 기본 뷰 띄우고
+    _handleKakaoCallback(kakaoCode, params.get('state'));
+    return;
+  }
+  if(kakaoError){
+    history.replaceState({}, '', window.location.pathname + window.location.hash);
+    if(kakaoError === 'access_denied'){
+      if(typeof showToast === 'function') showToast('카카오 로그인을 취소하셨어요.');
+    } else {
+      if(typeof showToast === 'function') showToast('카카오 로그인 실패: ' + (params.get('error_description') || kakaoError));
+    }
+  }
+  // 2) 공유 링크 감지
   var shareId = params.get('share');
   if(shareId){
     _loadSharePage(shareId);
     return;
   }
+  // 3) 해시 기반 진입
   var initView = _hashToView(window.location.hash);
   showView(initView, true);
 })();

@@ -3425,7 +3425,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     </div>
 
     <!-- 버튼들 -->
-    <button class="btn-kakao" onclick="shareKakaoResult()" style="margin-bottom:10px;">
+    <button class="btn-kakao" onclick="sharePfItem(0)" style="margin-bottom:10px;">
       <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>
       카카오톡 전송
     </button>
@@ -5173,7 +5173,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
     </div>
 
     <!-- CTA 버튼들 -->
-    <button class="btn-kakao" onclick="shareKakao()" style="margin-bottom:10px;">
+    <button class="btn-kakao" onclick="sharePfItem(0)" style="margin-bottom:10px;">
       <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>
       카카오톡 전송
     </button>
@@ -9156,9 +9156,14 @@ function _shareViaKakao(opts){
   var siteUrl = SHARE_BASE_URL;
   var linkUrl = opts.shareUrl || siteUrl;
   var desc = opts.description || '';
-  var btnLabel = opts.imageUrl && opts.imageUrl.startsWith('http') && !opts.imageUrl.includes('unsplash') ? '작품 보러가기' : '작품 전문 보기';
+  var isMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
 
-  if(typeof Kakao !== 'undefined' && Kakao.isInitialized()){
+  // SDK 미초기화 시 lazy 초기화 시도
+  if(typeof Kakao !== 'undefined' && !Kakao.isInitialized() && typeof initKakaoSdk === 'function'){
+    initKakaoSdk();
+  }
+
+  if(typeof Kakao !== 'undefined' && Kakao.Share && Kakao.isInitialized()){
     try {
       Kakao.Share.sendDefault({
         objectType: 'feed',
@@ -9169,23 +9174,37 @@ function _shareViaKakao(opts){
           link: { mobileWebUrl: linkUrl, webUrl: linkUrl }
         },
         buttons: [
-          { title: btnLabel, link: { mobileWebUrl: linkUrl, webUrl: linkUrl } },
+          { title: '작품 보러가기', link: { mobileWebUrl: linkUrl, webUrl: linkUrl } },
           { title: '나도 만들어보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } }
         ]
       });
+      // PC: 카카오톡 PC 미설치/팝업 차단 대비 — 링크를 클립보드에 함께 복사
+      if(!isMobile){
+        if(navigator.clipboard){
+          navigator.clipboard.writeText(linkUrl).catch(function(){ fallbackCopy(linkUrl); });
+        } else {
+          fallbackCopy(linkUrl);
+        }
+        showToast('링크가 복사됐어요. 카카오톡 PC/모바일에 붙여넣어 보내세요 💬');
+      }
+      return;
     } catch(e){
       console.warn('Kakao share error:', e);
-      _kakaoFallback(opts.text || desc, linkUrl);
     }
-  } else {
-    _kakaoFallback(opts.text || desc, linkUrl);
   }
+  _kakaoFallback(opts.text || desc, linkUrl);
 }
 
 function _kakaoFallback(text, url){
-  var shareText = (text||'').slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + (url || SHARE_BASE_URL);
-  if(navigator.clipboard) navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
-  var isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  var linkUrl = url || SHARE_BASE_URL;
+  var isMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  // 메시지: 본문 + 작품 링크 (어르신이 카톡 입력창에 붙여넣어 그대로 전송)
+  var shareText = (text||'').slice(0,400) + '\n\n— AI 동행으로 만든 작품\n' + linkUrl;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(shareText).catch(function(){ fallbackCopy(shareText); });
+  } else {
+    fallbackCopy(shareText);
+  }
   if(isMobile){
     showToast('복사됐어요! 카카오톡으로 이동해요 💬');
     setTimeout(function(){ window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(shareText.slice(0,1000)); }, 500);
@@ -9220,7 +9239,8 @@ function showShareModal(text){
 function closeShareModal(){if(g('shareModal'))g('shareModal').classList.remove('show');}
 
 // ── 작품 링크 공유 시스템 ──
-var SHARE_BASE_URL = 'https://jiseonhyun.github.io/ai-donghang/';
+// ⚠️ 카카오 디벨로퍼스 콘솔에 등록된 사이트 도메인과 정확히 일치해야 함 (aitogether.co.kr)
+var SHARE_BASE_URL = 'https://aitogether.co.kr/';
 
 function _generateUUID(){
   if(typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();

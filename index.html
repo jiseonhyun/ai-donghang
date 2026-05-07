@@ -5720,6 +5720,41 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   </div>
 </div>
 
+<!-- ── 자서전 코스 시작 전 윤리·면책 동의 모달 ── -->
+<div class="modal-backdrop" id="autobioEthicsModal" style="z-index:1100;align-items:center;">
+  <div style="background:#fff;border-radius:24px;padding:28px 22px 30px;max-width:480px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.22);">
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:52px;margin-bottom:8px;">🤲</div>
+      <div style="font-family:var(--serif,serif);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px;">자서전 코스 시작 전 동의</div>
+      <div style="font-size:14px;color:var(--i3);line-height:1.7;">3가지 항목을 읽고 모두 체크해주세요.</div>
+    </div>
+
+    <label class="terms-row" for="autobioEthics1">
+      <input type="checkbox" id="autobioEthics1" onchange="_autobioUpdateEthicsBtn()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 인터뷰 중 감정적 어려움 발생 시 도움 요청 가능함을 이해합니다</span>
+    </label>
+    <label class="terms-row" for="autobioEthics2">
+      <input type="checkbox" id="autobioEthics2" onchange="_autobioUpdateEthicsBtn()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 본 코스가 의료·심리 치료를 대체하지 않음을 이해합니다</span>
+    </label>
+    <label class="terms-row" for="autobioEthics3">
+      <input type="checkbox" id="autobioEthics3" onchange="_autobioUpdateEthicsBtn()">
+      <span class="terms-row-label"><b style="color:var(--ac);">[필수]</b> 인터뷰 내용은 회원 본인의 자서전에만 사용됨을 동의합니다</span>
+    </label>
+
+    <div style="background:var(--al);border-radius:12px;padding:14px 16px;margin:14px 4px 18px;font-size:13px;color:var(--i2);line-height:1.7;">
+      <b style="color:var(--ad);">📞 도움 안내</b><br>
+      인터뷰 진행 중 감정이 올라오시면 '🕐 잠깐 쉬어가요' 버튼을 눌러주세요. 필요시 아래로 연락하실 수 있어요:<br><br>
+      • <b>자살예방상담전화</b> <a href="tel:109" style="color:var(--ac);font-weight:800;">109</a> (24시간)<br>
+      • <b>정신건강복지센터</b> <a href="tel:1577-0199" style="color:var(--ac);font-weight:800;">1577-0199</a><br>
+      • <b>어르신 전용 상담</b> <a href="tel:1661-2129" style="color:var(--ac);font-weight:800;">1661-2129</a>
+    </div>
+
+    <button id="autobioEthicsAgreeBtn" class="autobio-btn-primary" onclick="_autobioConfirmEthics()" disabled style="background:#bbb;cursor:not-allowed;box-shadow:none;margin-bottom:8px;">동의하고 시작하기 →</button>
+    <button onclick="_autobioCancelEthics()" class="autobio-btn-tertiary">취소</button>
+  </div>
+</div>
+
 <!-- ── 4회차 마일스톤: 디지털 미리 책 + 가족 카톡 ── -->
 <div class="modal-backdrop" id="autobioMilestoneModal" style="z-index:1100;">
   <div style="background:#fff;border-radius:24px;padding:30px 24px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.22);max-height:92vh;overflow-y:auto;">
@@ -10888,8 +10923,8 @@ function autobioPickMode(modeType){
     var msg = g('autobioClassCodeMsg');
     if(msg){ msg.textContent = ''; msg.className = 'autobio-input-msg'; }
   } else {
-    // 혼자 모드 → 즉시 코스 생성
-    _autobioStartCourse('solo', null);
+    // 혼자 모드 → 윤리 동의 → 코스 생성
+    _autobioRequireEthics(function(){ _autobioStartCourse('solo', null); });
   }
 }
 
@@ -10921,7 +10956,9 @@ async function autobioSubmitClassCode(){
       return;
     }
     if(msg){ msg.textContent = '✓ ' + r.data.instructor_name + '님의 강의실 — ' + (r.data.schedule || ''); msg.className = 'autobio-input-msg success'; }
-    setTimeout(function(){ _autobioStartCourse('classroom', code); }, 600);
+    setTimeout(function(){
+      _autobioRequireEthics(function(){ _autobioStartCourse('classroom', code); });
+    }, 600);
   } catch(e){
     console.warn('[class code]', e);
     if(msg){ msg.textContent = '확인 중 오류가 발생했어요'; msg.className = 'autobio-input-msg error'; }
@@ -10941,7 +10978,8 @@ async function _autobioStartCourse(modeType, classCode){
       class_code: classCode,
       current_session: 1,
       pace_score: 0.5,
-      selected_optional_chapters: []
+      selected_optional_chapters: [],
+      ethics_agreed_at: new Date().toISOString()
     }]).select('id, current_session').single();
     if(courseIns.error || !courseIns.data){ throw courseIns.error || new Error('코스 생성 실패'); }
     var courseId = courseIns.data.id;
@@ -11389,6 +11427,76 @@ function _autobioRiskDismiss(){
 }
 
 var _autobioRiskBypassOnce = false;
+
+// ══════════════════════════════════════════════
+// 자서전 코스 윤리·면책 동의 게이트
+// ══════════════════════════════════════════════
+var _autobioPendingAfterEthics = null;
+
+async function _autobioCheckEthicsAgreed(){
+  if(!userProfile || !userProfile.id) return false;
+  if(typeof db === 'undefined' || !db) return false;
+  try {
+    var r = await db.from('autobiography_courses')
+      .select('id')
+      .eq('user_id', userProfile.id)
+      .not('ethics_agreed_at', 'is', null)
+      .limit(1)
+      .maybeSingle();
+    return !!(r.data);
+  } catch(e){ return false; }
+}
+
+async function _autobioRequireEthics(callback){
+  // 이미 동의한 코스가 있으면 스킵
+  var ok = await _autobioCheckEthicsAgreed();
+  if(ok){ if(typeof callback === 'function') callback(); return; }
+  _autobioPendingAfterEthics = callback || null;
+  _autobioShowEthicsModal();
+}
+
+function _autobioShowEthicsModal(){
+  ['autobioEthics1','autobioEthics2','autobioEthics3'].forEach(function(id){
+    var el = g(id); if(el) el.checked = false;
+  });
+  _autobioUpdateEthicsBtn();
+  var m = g('autobioEthicsModal');
+  if(m) m.classList.add('show');
+}
+
+function _autobioUpdateEthicsBtn(){
+  var ok = ['autobioEthics1','autobioEthics2','autobioEthics3'].every(function(id){
+    var el = g(id);
+    return el && el.checked;
+  });
+  var btn = g('autobioEthicsAgreeBtn');
+  if(btn){
+    btn.disabled = !ok;
+    btn.style.background = ok ? 'var(--ac)' : '#bbb';
+    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    btn.style.boxShadow = ok ? '0 4px 0 var(--ad)' : 'none';
+  }
+}
+
+function _autobioConfirmEthics(){
+  var ok = ['autobioEthics1','autobioEthics2','autobioEthics3'].every(function(id){
+    var el = g(id);
+    return el && el.checked;
+  });
+  if(!ok){ if(typeof showToast==='function') showToast('필수 3개를 모두 체크해주세요'); return; }
+  var m = g('autobioEthicsModal');
+  if(m) m.classList.remove('show');
+  var cb = _autobioPendingAfterEthics;
+  _autobioPendingAfterEthics = null;
+  if(typeof cb === 'function') cb();
+}
+
+function _autobioCancelEthics(){
+  var m = g('autobioEthicsModal');
+  if(m) m.classList.remove('show');
+  _autobioPendingAfterEthics = null;
+  if(typeof showToast==='function') showToast('자서전 코스는 동의가 필요해요. 마음이 정리되시면 다시 시작해주세요.');
+}
 
 function _autobioBuildSystemPrompt(){
   var s = _autobioCurrentSessionInfo || {};

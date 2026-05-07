@@ -911,6 +911,38 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-overview-title{flex:1;line-height:1.5;}
 .autobio-overview-meta{font-size:12px;color:var(--i3);flex-shrink:0;}
 
+/* ── 인터뷰 채팅 화면 (Step D) ── */
+.autobio-iv-header{display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1.5px solid var(--bd);padding:14px 16px;margin:-18px -18px 0;position:sticky;top:0;z-index:10;}
+.autobio-iv-back{background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;padding:6px 10px;font-family:inherit;min-height:40px;flex-shrink:0;}
+.autobio-iv-info{flex:1;min-width:0;}
+.autobio-iv-num{font-size:12px;font-weight:800;color:var(--ac);letter-spacing:.08em;}
+.autobio-iv-title{font-size:17px;font-weight:700;color:var(--ink);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.autobio-iv-pause{background:var(--wm);border:1.5px solid var(--bd);border-radius:10px;font-size:18px;cursor:pointer;padding:6px 10px;font-family:inherit;min-height:40px;min-width:40px;flex-shrink:0;}
+.autobio-iv-pause:hover{border-color:var(--ac);}
+.autobio-iv-meta{display:flex;gap:6px;justify-content:center;font-size:13px;color:var(--i3);font-weight:600;padding:10px 0 12px;border-bottom:1px solid var(--bd);margin:0 -18px 14px;background:var(--bg);}
+.autobio-iv-chat{display:flex;flex-direction:column;gap:14px;padding:8px 2px 14px;min-height:200px;}
+.autobio-iv-bubble{max-width:88%;padding:14px 16px;border-radius:18px;font-size:17px;line-height:1.7;word-wrap:break-word;white-space:pre-wrap;animation:autobioFadeIn .25s ease-out;}
+.autobio-iv-bubble.ai{background:#f0faf5;border:1.5px solid var(--ab);color:var(--ink);border-radius:18px 18px 18px 4px;align-self:flex-start;}
+.autobio-iv-bubble.ai::before{content:'동동이';display:block;font-size:12px;font-weight:800;color:var(--ad);margin-bottom:6px;letter-spacing:.05em;}
+.autobio-iv-bubble.user{background:var(--ac);color:#fff;border-radius:18px 18px 4px 18px;align-self:flex-end;}
+.autobio-iv-bubble.user::before{content:'나';display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,.85);margin-bottom:6px;letter-spacing:.05em;}
+.autobio-iv-typing{display:flex;align-items:center;padding:12px 16px;background:#f0faf5;border:1.5px solid var(--ab);border-radius:18px 18px 18px 4px;align-self:flex-start;max-width:200px;margin-bottom:14px;}
+.autobio-iv-typing-dot{width:8px;height:8px;border-radius:50%;background:var(--ad);margin-right:5px;animation:autobioTypingPulse 1.2s ease-in-out infinite;}
+.autobio-iv-typing-dot:nth-child(2){animation-delay:.2s;}
+.autobio-iv-typing-dot:nth-child(3){animation-delay:.4s;margin-right:0;}
+@keyframes autobioTypingPulse{0%,80%,100%{opacity:.3;transform:scale(.85);}40%{opacity:1;transform:scale(1);}}
+.autobio-iv-input-wrap{position:sticky;bottom:0;background:var(--bg);border-top:1.5px solid var(--bd);padding:14px 0 16px;margin:14px -18px -60px;padding-left:18px;padding-right:18px;}
+.autobio-iv-input{width:100%;min-height:88px;padding:14px 16px;border:2px solid var(--bd);border-radius:14px;font-size:17px;line-height:1.7;font-family:inherit;outline:none;box-sizing:border-box;resize:vertical;}
+.autobio-iv-input:focus{border-color:var(--ac);}
+.autobio-iv-voice-row{margin-top:8px;}
+.autobio-iv-voice{width:100%;padding:14px;background:#fff;border:2px dashed var(--ac);color:var(--ac);border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;min-height:50px;}
+.autobio-iv-voice:hover{background:var(--al);}
+.autobio-iv-voice.recording{background:#FEE;border:2px solid #E05050;color:#C03030;animation:autobioRecPulse 1.2s ease-in-out infinite;}
+@keyframes autobioRecPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,80,80,.4);}50%{box-shadow:0 0 0 8px rgba(224,80,80,0);}}
+.autobio-iv-actions{display:flex;gap:8px;margin-top:10px;justify-content:space-between;}
+.autobio-iv-action-btn{flex:1;padding:11px 8px;background:none;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;color:var(--i3);font-family:inherit;cursor:pointer;min-height:42px;}
+.autobio-iv-action-btn:hover{border-color:var(--ac);color:var(--ac);}
+
 /* ── 약관 동의 모달 (한국 개보법 준수) ── */
 .terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
@@ -5518,6 +5550,70 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <div class="autobio-overview-list" id="autobioOverviewList" style="display:none;"></div>
     </div>
 
+    <!-- ── Step D: 인터뷰 채팅 화면 ⭐ 핵심 ── -->
+    <div id="autobio-step-interview" class="autobio-step" style="display:none;">
+
+      <!-- 헤더 -->
+      <div class="autobio-iv-header">
+        <button class="autobio-iv-back" onclick="_autobioPauseToSessionStart()" aria-label="회차 시작으로">←</button>
+        <div class="autobio-iv-info">
+          <div class="autobio-iv-num" id="autobioIvNum">1회차</div>
+          <div class="autobio-iv-title" id="autobioIvTitle">내 이름 이야기</div>
+        </div>
+        <button class="autobio-iv-pause" onclick="_autobioPauseSession()" title="잠깐 쉬어가요">🕐</button>
+      </div>
+
+      <!-- 질문 카운트 -->
+      <div class="autobio-iv-meta">
+        <span id="autobioIvQCount">질문 1/5</span>
+        <span id="autobioIvStageLabel">· 1단계: 장면</span>
+      </div>
+
+      <!-- 채팅 본문 -->
+      <div class="autobio-iv-chat" id="autobioIvChat" aria-live="polite"></div>
+
+      <!-- 동동이 입력 중 인디케이터 -->
+      <div class="autobio-iv-typing" id="autobioIvTyping" style="display:none;">
+        <span class="autobio-iv-typing-dot"></span>
+        <span class="autobio-iv-typing-dot"></span>
+        <span class="autobio-iv-typing-dot"></span>
+        <span style="margin-left:10px;color:var(--i3);font-size:14px;">동동이가 듣고 있어요...</span>
+      </div>
+
+      <!-- 입력 영역 -->
+      <div class="autobio-iv-input-wrap">
+        <textarea id="autobioIvInput" class="autobio-iv-input"
+          placeholder="답변을 적어주세요. 짧아도 괜찮아요 🌿"
+          rows="3" oninput="_autobioInputChange()"></textarea>
+        <div class="autobio-iv-voice-row">
+          <button id="autobioIvVoiceBtn" class="autobio-iv-voice" onclick="_autobioVoiceToggle()">
+            <span id="autobioIvVoiceLabel">🎙️ 음성으로 말하기</span>
+          </button>
+        </div>
+        <button id="autobioIvNextBtn" class="autobio-btn-primary" onclick="_autobioSendAnswer()" disabled style="margin-top:10px;">💚 다음으로 →</button>
+        <div class="autobio-iv-actions">
+          <button class="autobio-iv-action-btn" onclick="_autobioRetryQuestion()">💬 다른 답변하기</button>
+          <button class="autobio-iv-action-btn" onclick="_autobioFinishSession()">⏸️ 오늘 여기까지</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 잠깐 쉬어가요 모달 ── -->
+<div class="modal-backdrop" id="autobioBreakModal" style="z-index:1000;">
+  <div style="background:#fff;border-radius:24px;padding:32px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.22);">
+    <div style="font-size:64px;margin-bottom:14px;">☕</div>
+    <div style="font-family:var(--serif,serif);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:10px;">지금까지 정말 잘하셨어요</div>
+    <div style="font-size:15px;color:var(--i2);line-height:1.75;margin-bottom:22px;">차 한 잔 드시고 천천히 돌아오세요.<br>이야기는 여기 그대로 기다릴게요 🌿</div>
+    <div style="background:var(--al);border-radius:14px;padding:18px;margin-bottom:18px;font-size:14px;color:var(--i3);line-height:1.7;">
+      <b style="color:var(--ad);">감정이 많이 올라오시면</b><br>
+      정신건강복지센터 1577-0199<br>
+      어르신 전용 상담 1661-2129
+    </div>
+    <button onclick="_autobioResumeFromBreak()" class="autobio-btn-primary" style="margin-bottom:8px;">계속 이어가기 →</button>
+    <button onclick="_autobioFinishSession()" class="autobio-btn-tertiary">오늘은 여기까지</button>
   </div>
 </div>
 
@@ -10453,14 +10549,14 @@ function closeAdminModal(){var m=g('adminLoginModal');if(m)m.style.display='none
 // 자서전 v3 — 8주 인터뷰 시스템
 // ══════════════════════════════════════════════
 var AUTOBIO_SESSION_TEMPLATE = [
-  {num:1, title:'내 이름 이야기',         subtitle:'자신감 빌드업'},
-  {num:2, title:'어린 시절',               subtitle:'0-12세'},
-  {num:3, title:'학창 시절',               subtitle:'13-19세'},
-  {num:4, title:'청년기',                  subtitle:'20-29세'},
-  {num:5, title:'결혼·주요 관계',          subtitle:''},
-  {num:6, title:'인생의 한가운데',         subtitle:'40-50대'},
-  {num:7, title:'지금, 그리고 앞으로',     subtitle:'60대 이후'},
-  {num:8, title:'마무리와 헌사',           subtitle:'페이스 적응형 분기'}
+  {num:1, title:'내 이름 이야기',         subtitle:'자신감 빌드업',     firstQ:'만나서 반가워요 🌿\n오늘 첫 시간이라 가벼운 이야기부터 시작해볼까요?\n\n혹시 이름은 누가 지어주셨는지 기억나시나요?'},
+  {num:2, title:'어린 시절',               subtitle:'0-12세',            firstQ:'오늘은 어린 시절 이야기를 들려주세요 🌱\n\n혹시 어렸을 때 살던 동네나 집이 떠오르시나요?\n어떤 모습이었는지 말씀해주세요.'},
+  {num:3, title:'학창 시절',               subtitle:'13-19세',           firstQ:'학창 시절 이야기로 가볼까요 📚\n\n초등학교나 중학교 때, 가장 먼저 떠오르는 장면이 있으신가요?'},
+  {num:4, title:'청년기',                  subtitle:'20-29세',           firstQ:'스무 살 무렵을 떠올려보세요 🌟\n\n그때 ○○님은 어디에 있었고, 무엇을 하고 계셨나요?'},
+  {num:5, title:'결혼·주요 관계',          subtitle:'',                  firstQ:'오늘은 살면서 만난 소중한 사람 이야기예요 💑\n\n가장 먼저 떠오르는 분이 있으신가요?\n어떻게 만나게 되셨나요?'},
+  {num:6, title:'인생의 한가운데',         subtitle:'40-50대',           firstQ:'40-50대 시절을 떠올려보세요 🌳\n\n그 시기에 가장 많이 했던 일, 또는 가장 자주 갔던 곳이 있으셨나요?'},
+  {num:7, title:'지금, 그리고 앞으로',     subtitle:'60대 이후',         firstQ:'지금 ○○님의 일상을 들려주세요 🌅\n\n요즘 하루를 어떻게 보내시는지, 가장 소중하게 느껴지는 시간이 언제인지 말씀해주세요.'},
+  {num:8, title:'마무리와 헌사',           subtitle:'페이스 적응형 분기',firstQ:'드디어 마지막 회차예요 🎀\n\n지금까지 들려주신 이야기를 책으로 묶어요.\n받는 분께 짧은 헌사를 남긴다면, 누구에게 어떤 마음을 전하고 싶으세요?'}
 ];
 
 var AUTOBIO_OPTIONAL_CHAPTERS = [
@@ -10476,7 +10572,7 @@ var _autobioCurrentCourse = null; // {id, course_type, current_session, ...}
 var _autobioPickedMode = null;    // 'classroom' | 'solo'
 
 function _autobioShowStep(stepId){
-  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session'].forEach(function(id){
+  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session','autobio-step-interview'].forEach(function(id){
     var el = g(id);
     if(el) el.style.display = (id === stepId) ? 'block' : 'none';
   });
@@ -10717,9 +10813,356 @@ function _autobioToggleOverview(){
   btn.textContent = hidden ? '📋 전체 8회차 미리 보기 ▲' : '📋 전체 8회차 미리 보기 ▼';
 }
 
-// 회차 인터뷰 시작 — Step 4 (인터뷰 화면)에서 본격 구현
-function autobioStartSession(){
-  if(typeof showToast === 'function') showToast('🎙️ 인터뷰 화면은 다음 업데이트(Step 4)에서 만나요!');
+// ══════════════════════════════════════════════
+// 인터뷰 시스템 (Step D)
+// ══════════════════════════════════════════════
+var _autobioCurrentEpisode = null;  // {id, session_id, messages:[], six_stage_progress, completed}
+var _autobioCurrentSessionInfo = null; // {id, session_number, chapter_title, ...}
+var _autobioVoiceRec = null;
+var _autobioVoiceActive = false;
+var _autobioSending = false;
+
+var AUTOBIO_STAGES = [
+  {key:'scene',   label:'1단계: 장면',  hint:'어떤 모습이었나요?'},
+  {key:'sense',   label:'2단계: 감각',  hint:'어떤 소리·냄새가 났나요?'},
+  {key:'people',  label:'3단계: 사람',  hint:'누가 함께 있었나요?'},
+  {key:'event',   label:'4단계: 사건',  hint:'어떤 일이 있었나요?'},
+  {key:'emotion', label:'5단계: 감정',  hint:'어떤 마음이 드셨나요?'},
+  {key:'meaning', label:'6단계: 의미',  hint:'지금 돌아보면 어떤 의미인가요?'}
+];
+
+async function autobioStartSession(){
+  if(!_autobioCurrentCourse){ if(typeof showToast==='function') showToast('진행 중인 코스가 없어요'); return; }
+  if(typeof db === 'undefined' || !db){ if(typeof showToast==='function') showToast('서버 연결 오류'); return; }
+
+  var courseId = _autobioCurrentCourse.id;
+  var sessionNum = _autobioCurrentCourse.current_session || 1;
+
+  // 1) 현재 회차 정보 조회 (없으면 폴백 템플릿)
+  var sessionInfo = null;
+  try {
+    var r = await db.from('autobiography_sessions')
+      .select('id, session_number, chapter_title, status')
+      .eq('course_id', courseId)
+      .eq('session_number', sessionNum)
+      .maybeSingle();
+    sessionInfo = r.data;
+  } catch(e){ console.warn('[load session]', e); }
+  if(!sessionInfo){
+    var tpl = AUTOBIO_SESSION_TEMPLATE[sessionNum-1];
+    sessionInfo = {id:null, session_number:sessionNum, chapter_title:tpl.title};
+  }
+  _autobioCurrentSessionInfo = sessionInfo;
+
+  // 2) 회차 status를 in_progress로 (이미 그러면 noop)
+  if(sessionInfo.id && sessionInfo.status !== 'completed'){
+    try {
+      await db.from('autobiography_sessions').update({
+        status:'in_progress',
+        started_at: sessionInfo.started_at || new Date().toISOString()
+      }).eq('id', sessionInfo.id);
+    } catch(e){ /* silent */ }
+  }
+
+  // 3) 에피소드 조회 — 미완료 에피소드 있으면 이어가기, 없으면 신규 생성
+  var episode = null;
+  try {
+    var ep = await db.from('autobiography_episodes')
+      .select('id, messages, six_stage_progress, completed')
+      .eq('session_id', sessionInfo.id)
+      .eq('completed', false)
+      .order('created_at',{ascending:false})
+      .limit(1)
+      .maybeSingle();
+    episode = ep.data;
+  } catch(e){ console.warn('[load episode]', e); }
+
+  if(!episode && sessionInfo.id){
+    // 첫 질문을 messages에 미리 넣고 신규 에피소드 생성
+    var tpl2 = AUTOBIO_SESSION_TEMPLATE[sessionNum-1];
+    var firstQ = (tpl2 && tpl2.firstQ) || '오늘 이야기를 시작해볼까요?';
+    var initialMessages = [{role:'assistant', content:firstQ, at:new Date().toISOString()}];
+    try {
+      var ins = await db.from('autobiography_episodes').insert([{
+        session_id: sessionInfo.id,
+        messages: initialMessages,
+        completed: false
+      }]).select('id, messages, six_stage_progress, completed').single();
+      episode = ins.data || {id:null, messages:initialMessages, six_stage_progress:{}, completed:false};
+    } catch(e){
+      console.warn('[insert episode]', e);
+      episode = {id:null, messages:initialMessages, six_stage_progress:{}, completed:false};
+    }
+  } else if(!episode){
+    // DB id 없는 폴백 (오프라인)
+    var tpl3 = AUTOBIO_SESSION_TEMPLATE[sessionNum-1];
+    episode = {id:null, messages:[{role:'assistant', content:(tpl3 && tpl3.firstQ) || '오늘 이야기를 시작해볼까요?', at:new Date().toISOString()}], six_stage_progress:{}, completed:false};
+  }
+  _autobioCurrentEpisode = episode;
+
+  // 4) 화면 전환 + 렌더
+  _autobioShowStep('autobio-step-interview');
+  var numEl = g('autobioIvNum'); if(numEl) numEl.textContent = sessionNum + '회차';
+  var titEl = g('autobioIvTitle'); if(titEl) titEl.textContent = sessionInfo.chapter_title;
+  _autobioRenderChat();
+  _autobioUpdateMeta();
+  var inp = g('autobioIvInput'); if(inp){ inp.value=''; setTimeout(function(){ inp.focus(); }, 200); }
+  _autobioInputChange();
+}
+
+function _autobioRenderChat(){
+  var chat = g('autobioIvChat');
+  if(!chat || !_autobioCurrentEpisode) return;
+  var msgs = _autobioCurrentEpisode.messages || [];
+  chat.innerHTML = msgs.map(function(m){
+    var cls = m.role === 'assistant' ? 'autobio-iv-bubble ai' : 'autobio-iv-bubble user';
+    // [INTERVIEW_END] 토큰은 화면에서 숨김
+    var content = (m.content || '').replace(/\[INTERVIEW_END\]/g,'').trim();
+    return '<div class="'+cls+'">'+_escapeAutobioText(content)+'</div>';
+  }).join('');
+  // 자동 스크롤
+  setTimeout(function(){ chat.scrollIntoView({block:'end', behavior:'smooth'}); window.scrollTo(0, document.body.scrollHeight); }, 50);
+}
+
+function _escapeAutobioText(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function _autobioUpdateMeta(){
+  if(!_autobioCurrentEpisode) return;
+  var msgs = _autobioCurrentEpisode.messages || [];
+  // 사용자가 답변한 횟수 (질문 라운드 추정)
+  var userCount = msgs.filter(function(m){ return m.role==='user'; }).length;
+  var qEl = g('autobioIvQCount');
+  if(qEl) qEl.textContent = '질문 ' + Math.min(userCount+1, 7) + '/5-7';
+  var stageEl = g('autobioIvStageLabel');
+  if(stageEl){
+    var stage = AUTOBIO_STAGES[Math.min(userCount, 5)];
+    stageEl.textContent = '· ' + (stage ? stage.label : '마무리');
+  }
+}
+
+function _autobioInputChange(){
+  var inp = g('autobioIvInput');
+  var btn = g('autobioIvNextBtn');
+  if(!inp || !btn) return;
+  var hasText = (inp.value || '').trim().length > 0;
+  btn.disabled = !hasText || _autobioSending;
+  btn.style.opacity = btn.disabled ? '.5' : '1';
+}
+
+function _autobioBuildSystemPrompt(){
+  var s = _autobioCurrentSessionInfo || {};
+  var name = (userProfile && userProfile.name) || '어르신';
+  return [
+    '당신은 어르신 자서전 작가 동동이입니다.',
+    '지금 ' + name + '님과 ' + s.session_number + '회차 인터뷰를 진행하고 있습니다.',
+    '오늘의 주제: ' + (s.chapter_title || ''),
+    '',
+    '【인터뷰 원칙】',
+    '1. 한 번에 한 가지 질문만 (절대 2개 이상 X)',
+    '2. ' + name + '님 답변에서 가장 인상적인 한 가지를 더 깊이 파고드세요',
+    '3. 6단계 점진 심화: 장면(어떤 모습) → 감각(소리·냄새) → 사람(누가 함께) → 사건(어떤 일) → 감정(어떤 마음) → 의미(지금 돌아보면)',
+    '4. 5-7번 질문 후 자연스럽게 "오늘은 여기까지 어떠세요?" 같이 마무리 제안',
+    '5. ' + name + '님이 마무리에 동의하면 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰을 출력하세요',
+    '',
+    '【어르신 친화 언어】',
+    '- 존댓말, ' + name + '님 호칭 사용',
+    '- 한 문장은 30자 이내, 짧고 명확하게',
+    '- 한자어보다 순우리말',
+    '- "혹시 기억나시는 게 있나요?" 같은 부드러운 표현',
+    '- 답변이 짧아도 강요하지 말고, 다른 각도로 다시 묻기',
+    '',
+    '【절대 하지 말 것】',
+    '- 복잡한 단어, 외래어',
+    '- 한 번에 2개 이상 질문',
+    '- 사실 확인 강요 ("정확히 몇 년도였나요?" X)',
+    '- 정치·종교 같은 민감 주제 (' + name + '님이 먼저 꺼내면 OK)',
+    '',
+    '【출력 형식】',
+    '- 인터뷰 중: 다음 질문 한 줄만 (앞말·인사 없이 바로 질문)',
+    '- 마무리 시점: 부드러운 마무리 제안',
+    '- 종료 시: 따뜻한 마지막 말 후 마지막 줄에 [INTERVIEW_END] 토큰'
+  ].join('\n');
+}
+
+async function _autobioSendAnswer(){
+  if(_autobioSending) return;
+  var inp = g('autobioIvInput');
+  var btn = g('autobioIvNextBtn');
+  var text = (inp && inp.value || '').trim();
+  if(!text) return;
+  if(!_autobioCurrentEpisode) return;
+
+  _autobioSending = true;
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ 동동이가 듣고 있어요...'; }
+
+  // 1) 사용자 메시지 추가
+  _autobioCurrentEpisode.messages = _autobioCurrentEpisode.messages || [];
+  _autobioCurrentEpisode.messages.push({role:'user', content:text, at:new Date().toISOString()});
+  if(inp) inp.value = '';
+  _autobioRenderChat();
+
+  // 2) 입력 중 인디케이터
+  var typing = g('autobioIvTyping');
+  if(typing) typing.style.display = 'flex';
+
+  // 3) Claude 호출 — 시스템 프롬프트 + 누적 messages
+  try {
+    var apiMessages = _autobioCurrentEpisode.messages.map(function(m){ return {role:m.role, content:m.content}; });
+    var res = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens: 600,
+        system: _autobioBuildSystemPrompt(),
+        messages: apiMessages
+      })
+    });
+    if(!res.ok) throw new Error('API 오류 ('+res.status+')');
+    var data = await res.json();
+    var aiText = (data.content||[]).map(function(b){ return b.text || ''; }).join('').trim();
+    if(!aiText) throw new Error('응답이 비어있어요');
+
+    // 4) AI 메시지 추가
+    _autobioCurrentEpisode.messages.push({role:'assistant', content:aiText, at:new Date().toISOString()});
+
+    // 5) DB 저장 (messages JSONB UPDATE)
+    if(_autobioCurrentEpisode.id && db){
+      try {
+        await db.from('autobiography_episodes').update({
+          messages: _autobioCurrentEpisode.messages,
+          updated_at: new Date().toISOString()
+        }).eq('id', _autobioCurrentEpisode.id);
+      } catch(e){ console.warn('[update messages]', e); }
+    }
+
+    _autobioRenderChat();
+    _autobioUpdateMeta();
+
+    // 6) [INTERVIEW_END] 토큰 감지 → 회차 종료
+    if(/\[INTERVIEW_END\]/.test(aiText)){
+      setTimeout(function(){ _autobioOnInterviewEnd(); }, 800);
+    }
+  } catch(e){
+    console.warn('[send answer]', e);
+    if(typeof showToast==='function') showToast('잠시 연결이 불안정해요. 잠깐 후 다시 시도해주세요.');
+  } finally {
+    if(typing) typing.style.display = 'none';
+    _autobioSending = false;
+    if(btn){ btn.textContent = '💚 다음으로 →'; }
+    _autobioInputChange();
+    var inp2 = g('autobioIvInput'); if(inp2) inp2.focus();
+  }
+}
+
+function _autobioRetryQuestion(){
+  if(typeof showToast==='function') showToast('답변을 다시 적어주세요. 천천히요 🌿');
+  var inp = g('autobioIvInput');
+  if(inp){ inp.value = ''; inp.focus(); }
+  _autobioInputChange();
+}
+
+function _autobioPauseToSessionStart(){
+  // 회차 시작 화면으로 — 현재 답변은 유지
+  _autobioStopVoice();
+  _autobioShowStep('autobio-step-session');
+}
+
+function _autobioPauseSession(){
+  _autobioStopVoice();
+  var m = g('autobioBreakModal');
+  if(m) m.classList.add('show');
+}
+
+function _autobioResumeFromBreak(){
+  var m = g('autobioBreakModal');
+  if(m) m.classList.remove('show');
+  var inp = g('autobioIvInput'); if(inp) inp.focus();
+}
+
+async function _autobioFinishSession(){
+  // "오늘 여기까지" — 에피소드/세션은 미완료 그대로 두고 시작 화면으로
+  var m = g('autobioBreakModal'); if(m) m.classList.remove('show');
+  _autobioStopVoice();
+  if(typeof showToast==='function') showToast('🌿 잘하셨어요. 다음 시간에 또 봐요!');
+  _autobioShowStep('autobio-step-session');
+  await _autobioLoadSessionStart();
+}
+
+async function _autobioOnInterviewEnd(){
+  // 에피소드 완료 처리 — Step 5에서 본문 미리보기 화면으로 연결 예정
+  if(_autobioCurrentEpisode && _autobioCurrentEpisode.id && db){
+    try {
+      await db.from('autobiography_episodes').update({
+        completed: true,
+        updated_at: new Date().toISOString()
+      }).eq('id', _autobioCurrentEpisode.id);
+    } catch(e){ console.warn('[finish episode]', e); }
+  }
+  if(typeof showToast==='function') showToast('🌿 이번 회차 인터뷰가 끝났어요! 본문 미리보기는 다음 업데이트(Step 5)에서 만나요');
+  setTimeout(function(){
+    _autobioShowStep('autobio-step-session');
+    _autobioLoadSessionStart();
+  }, 1600);
+}
+
+// ── Web Speech API (음성 입력) ──
+function _autobioVoiceToggle(){
+  if(_autobioVoiceActive){ _autobioStopVoice(); return; }
+  _autobioStartVoice();
+}
+
+function _autobioStartVoice(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏'); return; }
+  try {
+    _autobioVoiceRec = new SR();
+    _autobioVoiceRec.lang = 'ko-KR';
+    _autobioVoiceRec.continuous = true;
+    _autobioVoiceRec.interimResults = true;
+    var inp = g('autobioIvInput');
+    var baseText = inp ? inp.value : '';
+    _autobioVoiceRec.onresult = function(ev){
+      var interim = '', final = '';
+      for(var i=ev.resultIndex; i<ev.results.length; i++){
+        var t = ev.results[i][0].transcript;
+        if(ev.results[i].isFinal) final += t;
+        else interim += t;
+      }
+      if(inp){
+        inp.value = (baseText + (baseText && (final||interim) ? ' ' : '') + final + interim).trim();
+        _autobioInputChange();
+      }
+      if(final) baseText = inp ? inp.value : baseText;
+    };
+    _autobioVoiceRec.onerror = function(e){
+      console.warn('[voice]', e);
+      _autobioStopVoice();
+    };
+    _autobioVoiceRec.onend = function(){
+      _autobioStopVoice();
+    };
+    _autobioVoiceRec.start();
+    _autobioVoiceActive = true;
+    var btn = g('autobioIvVoiceBtn');
+    var lbl = g('autobioIvVoiceLabel');
+    if(btn) btn.classList.add('recording');
+    if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
+  } catch(e){
+    console.warn('[voice start]', e);
+    if(typeof showToast==='function') showToast('음성 입력을 시작할 수 없어요');
+  }
+}
+
+function _autobioStopVoice(){
+  try { if(_autobioVoiceRec){ _autobioVoiceRec.stop(); _autobioVoiceRec = null; } } catch(e){}
+  _autobioVoiceActive = false;
+  var btn = g('autobioIvVoiceBtn');
+  var lbl = g('autobioIvVoiceLabel');
+  if(btn) btn.classList.remove('recording');
+  if(lbl) lbl.textContent = '🎙️ 음성으로 말하기';
 }
 
 // showView 라우팅 후크 — 자서전 진입 시 _autobioInit 호출

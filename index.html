@@ -943,6 +943,21 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-iv-action-btn{flex:1;padding:11px 8px;background:none;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;color:var(--i3);font-family:inherit;cursor:pointer;min-height:42px;}
 .autobio-iv-action-btn:hover{border-color:var(--ac);color:var(--ac);}
 
+/* 본문 미리보기 화면 (Step E) */
+.autobio-preview-header{text-align:center;padding:18px 14px;background:linear-gradient(180deg,var(--al),transparent);border-radius:18px;margin-bottom:18px;}
+.autobio-preview-num{font-size:12px;font-weight:800;color:var(--ac);letter-spacing:.1em;}
+.autobio-preview-title{font-family:var(--serif,serif);font-size:24px;font-weight:800;color:var(--ink);line-height:1.3;margin:4px 0 8px;}
+.autobio-preview-sub{font-size:14px;color:var(--i3);line-height:1.6;}
+.autobio-preview-loading{text-align:center;padding:60px 20px;background:#fff;border:1.5px solid var(--bd);border-radius:16px;margin-bottom:20px;}
+.autobio-preview-card{background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px 20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.04);}
+.autobio-preview-body{font-family:'Gowun Batang','Noto Serif KR',serif;font-size:17px;color:var(--ink);line-height:2;white-space:pre-wrap;word-wrap:break-word;}
+.autobio-preview-era{background:#FBF4E4;border:1.5px solid #E8D8A8;border-radius:14px;padding:18px 18px;margin-bottom:18px;}
+.autobio-preview-era-title{font-size:14px;font-weight:800;color:#7a5c1e;margin-bottom:8px;}
+.autobio-preview-era-body{font-size:15px;color:#5a4818;line-height:1.85;white-space:pre-wrap;}
+.autobio-preview-edit{background:#fff;border:1.5px solid var(--ac);border-radius:14px;padding:18px;margin-bottom:14px;}
+.autobio-preview-edit-title{font-size:16px;font-weight:700;color:var(--ad);margin-bottom:6px;}
+.autobio-preview-edit-sub{font-size:13px;color:var(--i3);line-height:1.6;margin-bottom:12px;}
+
 /* ── 약관 동의 모달 (한국 개보법 준수) ── */
 .terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
@@ -5548,6 +5563,53 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
       <!-- 전체 회차 미리 보기 (펼치기) -->
       <button class="autobio-overview-toggle" id="autobioOverviewToggle" onclick="_autobioToggleOverview()">📋 전체 8회차 미리 보기 ▼</button>
       <div class="autobio-overview-list" id="autobioOverviewList" style="display:none;"></div>
+    </div>
+
+    <!-- ── Step E: 본문 미리보기 화면 (인터뷰 종료 후) ── -->
+    <div id="autobio-step-preview" class="autobio-step" style="display:none;">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="_autobioPreviewBackToInterview()">← 인터뷰 더 하기</button>
+      </div>
+
+      <div class="autobio-preview-header">
+        <div class="autobio-preview-num" id="autobioPreviewNum">1회차</div>
+        <div class="autobio-preview-title" id="autobioPreviewTitle">내 이름 이야기</div>
+        <div class="autobio-preview-sub">동동이가 정리한 본문이에요. 천천히 읽어보세요 🌿</div>
+      </div>
+
+      <!-- 생성 중 인디케이터 -->
+      <div id="autobioPreviewLoading" class="autobio-preview-loading" style="display:none;">
+        <div style="font-size:48px;margin-bottom:12px;">📝</div>
+        <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px;">동동이가 정리하고 있어요</div>
+        <div style="font-size:14px;color:var(--i3);line-height:1.7;">방금 들려주신 이야기를 책 한 페이지로 옮기는 중이에요.<br>30초 정도 걸려요…</div>
+      </div>
+
+      <!-- 본문 카드 -->
+      <div id="autobioPreviewCard" class="autobio-preview-card" style="display:none;">
+        <div class="autobio-preview-body" id="autobioPreviewBody"></div>
+      </div>
+
+      <!-- 시대 박스 -->
+      <div id="autobioPreviewEra" class="autobio-preview-era" style="display:none;">
+        <div class="autobio-preview-era-title">🕰️ 시대 배경</div>
+        <div class="autobio-preview-era-body" id="autobioPreviewEraBody"></div>
+      </div>
+
+      <!-- 수정 입력 영역 -->
+      <div id="autobioPreviewEdit" class="autobio-preview-edit" style="display:none;">
+        <div class="autobio-preview-edit-title">어떤 부분을 수정할까요?</div>
+        <div class="autobio-preview-edit-sub">예: "이름은 영수가 아니라 영철이에요" / "여름이 아니라 가을이었어요"</div>
+        <textarea id="autobioPreviewEditInput" class="autobio-iv-input" rows="3" placeholder="수정하고 싶은 부분을 적어주세요"></textarea>
+        <button class="autobio-btn-primary" onclick="_autobioApplyEdit()" style="margin-top:10px;">🔄 다시 다듬기</button>
+        <button class="autobio-btn-tertiary" onclick="_autobioCancelEdit()">취소</button>
+      </div>
+
+      <!-- CTA -->
+      <div id="autobioPreviewActions" class="autobio-cta-group" style="display:none;">
+        <button class="autobio-btn-primary" onclick="_autobioConfirmChapter()">💚 마음에 들어요 — 이대로 저장</button>
+        <button class="autobio-btn-secondary" onclick="_autobioRequestEdit()">✏️ 수정할 부분 있어요</button>
+        <button class="autobio-btn-tertiary" onclick="_autobioPreviewBackToInterview()">⏪ 인터뷰 더 하기</button>
+      </div>
     </div>
 
     <!-- ── Step D: 인터뷰 채팅 화면 ⭐ 핵심 ── -->
@@ -10572,7 +10634,7 @@ var _autobioCurrentCourse = null; // {id, course_type, current_session, ...}
 var _autobioPickedMode = null;    // 'classroom' | 'solo'
 
 function _autobioShowStep(stepId){
-  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session','autobio-step-interview'].forEach(function(id){
+  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session','autobio-step-interview','autobio-step-preview'].forEach(function(id){
     var el = g(id);
     if(el) el.style.display = (id === stepId) ? 'block' : 'none';
   });
@@ -11092,7 +11154,7 @@ async function _autobioFinishSession(){
 }
 
 async function _autobioOnInterviewEnd(){
-  // 에피소드 완료 처리 — Step 5에서 본문 미리보기 화면으로 연결 예정
+  // 에피소드 완료 표시
   if(_autobioCurrentEpisode && _autobioCurrentEpisode.id && db){
     try {
       await db.from('autobiography_episodes').update({
@@ -11101,11 +11163,275 @@ async function _autobioOnInterviewEnd(){
       }).eq('id', _autobioCurrentEpisode.id);
     } catch(e){ console.warn('[finish episode]', e); }
   }
-  if(typeof showToast==='function') showToast('🌿 이번 회차 인터뷰가 끝났어요! 본문 미리보기는 다음 업데이트(Step 5)에서 만나요');
-  setTimeout(function(){
-    _autobioShowStep('autobio-step-session');
-    _autobioLoadSessionStart();
-  }, 1600);
+  // 본문 미리보기 화면으로 이동 + 본문 생성
+  _autobioShowStep('autobio-step-preview');
+  await _autobioGenerateChapter();
+}
+
+// ══════════════════════════════════════════════
+// 본문 생성·미리보기 (Step E)
+// ══════════════════════════════════════════════
+var _autobioPreviewData = null; // {body, era_box, sessionInfo}
+
+function _autobioBuildChapterPrompt(){
+  var s = _autobioCurrentSessionInfo || {};
+  var name = (userProfile && userProfile.name) || '어르신';
+  return [
+    '당신은 어르신 자서전 본문 작가입니다.',
+    '방금 ' + name + '님과 ' + s.session_number + '회차 "' + (s.chapter_title||'') + '" 인터뷰가 끝났습니다.',
+    '대화 내용을 자서전 본문 한 챕터로 정리해주세요.',
+    '',
+    '【핵심 원칙 — 절대 어기지 마세요】',
+    '1. ' + name + '님 답변에 **없는 사실은 절대 추가하지 마세요** (날짜·인물·사건 추가 X)',
+    '2. 본인 답변의 70% 이상 어휘·표현이 그대로 드러나야 합니다',
+    '3. AI 풍부화는 30% 이내 — 답변 키워드를 다른 한국어 표현으로 풀어내는 정도만',
+    '4. 답변에 없는 부분은 비워두거나 짧게 (지어내지 마세요)',
+    '5. 추측·해석·미화 금지',
+    '',
+    '【본문 작성 가이드】',
+    '- 1인칭 시점 ("나는", "내가")',
+    '- 한국 자서전 문체 (편안한 대화체, 시적 묘사 가능)',
+    '- 분량: 1500-2500자 (회차 크기에 맞춰)',
+    '- 시간 흐름이 있으면 자연스럽게 따라가기',
+    '- 큰따옴표·작은따옴표 등 마크다운 기호 사용 X',
+    '',
+    '【시대 박스 (별도 분리)】',
+    '본문에 시대 배경 정보를 직접 넣지 말고, 본문 아래 [시대 박스]에 따로 적으세요.',
+    '예: "1950-60년대 한국 농촌은 ~~한 일상이었다" 같은 일반 정보',
+    '인터뷰에서 언급된 시기·장소를 토대로만 작성하고, ' + name + '님이 직접 말씀하시지 않은 가족 사건 등은 절대 추가 X',
+    '시대 정보가 충분치 않으면 [시대 박스]는 비워두세요',
+    '',
+    '【출력 형식 — 정확히 따르세요】',
+    '[본문]',
+    '(본문 텍스트 — 1500-2500자)',
+    '',
+    '[시대 박스]',
+    '(없으면 비워두기)',
+    '',
+    '※ 위 두 마커([본문], [시대 박스])는 정확히 그대로 사용하세요.'
+  ].join('\n');
+}
+
+async function _autobioGenerateChapter(opts){
+  opts = opts || {};
+  var revisionInstr = opts.revisionInstr || null;
+  var card = g('autobioPreviewCard');
+  var era = g('autobioPreviewEra');
+  var actions = g('autobioPreviewActions');
+  var loading = g('autobioPreviewLoading');
+  if(card) card.style.display = 'none';
+  if(era) era.style.display = 'none';
+  if(actions) actions.style.display = 'none';
+  if(loading) loading.style.display = 'block';
+
+  // 헤더 정보
+  var s = _autobioCurrentSessionInfo || {};
+  var numEl = g('autobioPreviewNum'); if(numEl) numEl.textContent = (s.session_number || 1) + '회차';
+  var titEl = g('autobioPreviewTitle'); if(titEl) titEl.textContent = s.chapter_title || '';
+
+  // 인터뷰 메시지를 user/assistant 그대로 보내고, system은 본문 변환용
+  var msgs = (_autobioCurrentEpisode && _autobioCurrentEpisode.messages) || [];
+  // [INTERVIEW_END] 토큰은 메시지에서 제거 (Claude 혼동 방지)
+  var cleanMsgs = msgs.map(function(m){
+    return {role: m.role, content: (m.content||'').replace(/\[INTERVIEW_END\]/g,'').trim()};
+  }).filter(function(m){ return m.content; });
+
+  // 본문 변환 요청을 마지막 user 메시지로 추가
+  var convertReq = '위 인터뷰 내용을 자서전 한 챕터로 정리해주세요. [본문]과 [시대 박스] 마커를 정확히 사용해주세요.';
+  if(revisionInstr){
+    convertReq = '아래 수정 요청을 반영해서 자서전 본문을 다시 작성해주세요.\n\n[수정 요청]\n' + revisionInstr + '\n\n반드시 [본문]과 [시대 박스] 마커를 정확히 사용해주세요. 인터뷰에 없는 사실은 추가하지 마세요.';
+  }
+  cleanMsgs.push({role:'user', content: convertReq});
+
+  try {
+    var res = await fetch('https://gaibakqhdfdpnsdgpmya.supabase.co/functions/v1/claude-proxy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens: 3500,
+        system: _autobioBuildChapterPrompt(),
+        messages: cleanMsgs
+      })
+    });
+    if(!res.ok) throw new Error('API 오류 ('+res.status+')');
+    var data = await res.json();
+    var fullText = (data.content||[]).map(function(b){ return b.text||''; }).join('').trim();
+    if(!fullText) throw new Error('응답이 비어있어요');
+
+    // [본문] / [시대 박스] 파싱
+    var parsed = _autobioParseChapter(fullText);
+    _autobioPreviewData = {
+      body: parsed.body,
+      era_box: parsed.era_box,
+      sessionInfo: s
+    };
+
+    // 렌더
+    if(loading) loading.style.display = 'none';
+    var bodyEl = g('autobioPreviewBody');
+    if(bodyEl) bodyEl.textContent = parsed.body;
+    if(card) card.style.display = 'block';
+    if(parsed.era_box && parsed.era_box.trim()){
+      var eraEl = g('autobioPreviewEraBody');
+      if(eraEl) eraEl.textContent = parsed.era_box;
+      if(era) era.style.display = 'block';
+    } else if(era){
+      era.style.display = 'none';
+    }
+    if(actions) actions.style.display = 'flex';
+    var editPanel = g('autobioPreviewEdit'); if(editPanel) editPanel.style.display = 'none';
+  } catch(e){
+    console.warn('[generate chapter]', e);
+    if(loading) loading.style.display = 'none';
+    if(typeof showToast==='function') showToast('본문 생성 중 오류가 발생했어요. 다시 시도해주세요.');
+    // 본문 카드 숨기고 인터뷰 더 하기 옵션만 표시
+    if(actions){
+      actions.innerHTML = '<button class="autobio-btn-primary" onclick="_autobioGenerateChapter()">🔄 다시 시도하기</button>'
+                       + '<button class="autobio-btn-tertiary" onclick="_autobioPreviewBackToInterview()">⏪ 인터뷰 더 하기</button>';
+      actions.style.display = 'flex';
+    }
+  }
+}
+
+function _autobioParseChapter(text){
+  // [본문] ... [시대 박스] ... 형식 파싱
+  var bodyMatch = text.match(/\[본문\]\s*([\s\S]*?)(?=\[시대\s*박스\]|$)/);
+  var eraMatch = text.match(/\[시대\s*박스\]\s*([\s\S]*?)$/);
+  var body = bodyMatch ? bodyMatch[1].trim() : text.trim();
+  var era_box = eraMatch ? eraMatch[1].trim() : '';
+  return { body: body, era_box: era_box };
+}
+
+function _autobioRequestEdit(){
+  var actions = g('autobioPreviewActions'); if(actions) actions.style.display = 'none';
+  var edit = g('autobioPreviewEdit'); if(edit) edit.style.display = 'block';
+  var input = g('autobioPreviewEditInput');
+  if(input){ input.value = ''; setTimeout(function(){ input.focus(); }, 150); }
+}
+
+function _autobioCancelEdit(){
+  var edit = g('autobioPreviewEdit'); if(edit) edit.style.display = 'none';
+  var actions = g('autobioPreviewActions'); if(actions) actions.style.display = 'flex';
+}
+
+async function _autobioApplyEdit(){
+  var input = g('autobioPreviewEditInput');
+  var instr = (input && input.value || '').trim();
+  if(!instr){ if(typeof showToast==='function') showToast('수정 내용을 적어주세요'); return; }
+  var edit = g('autobioPreviewEdit'); if(edit) edit.style.display = 'none';
+  await _autobioGenerateChapter({revisionInstr: instr});
+}
+
+function _autobioPreviewBackToInterview(){
+  // 인터뷰 화면으로 복귀 — 에피소드를 다시 미완료 상태로 돌리지는 않음 (보존)
+  _autobioShowStep('autobio-step-interview');
+  _autobioRenderChat();
+  _autobioUpdateMeta();
+}
+
+async function _autobioConfirmChapter(){
+  if(!_autobioPreviewData || !_autobioPreviewData.body){
+    if(typeof showToast==='function') showToast('본문이 비어있어요');
+    return;
+  }
+  if(!_autobioCurrentCourse || !_autobioCurrentSessionInfo){
+    if(typeof showToast==='function') showToast('코스 정보가 없어요');
+    return;
+  }
+  var s = _autobioCurrentSessionInfo;
+  var c = _autobioCurrentCourse;
+  var body = _autobioPreviewData.body;
+  var era = _autobioPreviewData.era_box || null;
+
+  // 1) works 테이블에 거울 저장 (작품함 노출용)
+  var worksId = null;
+  if(db && userProfile && userProfile.id){
+    try {
+      var courseLabel = '자서전 — ' + s.session_number + '회차 ' + (s.chapter_title||'');
+      var dateLabel = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      var worksRes = await db.from('works').insert([{
+        user_id: userProfile.id,
+        course: courseLabel,
+        final_prompt: '(자서전 인터뷰)',
+        result: body.slice(0, 5000),
+        date_label: dateLabel,
+        is_saved: true
+      }]).select('id').single();
+      if(worksRes.data) worksId = worksRes.data.id;
+      // 로컬 portfolio에도 추가 (작품함 즉시 노출)
+      var item = {
+        id: Date.now(),
+        course: courseLabel,
+        emoji: '📖',
+        prompt: '(자서전 인터뷰)',
+        result: body,
+        date: dateLabel,
+        dbId: worksId,
+        shareId: null
+      };
+      if(typeof portfolio !== 'undefined' && Array.isArray(portfolio)){
+        portfolio.unshift(item);
+        if(portfolio.length > 50) portfolio = portfolio.slice(0, 50);
+        try { localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio)); } catch(e){}
+      }
+    } catch(e){ console.warn('[works mirror save]', e); }
+  }
+
+  // 2) autobiography_chapters INSERT
+  if(db){
+    try {
+      await db.from('autobiography_chapters').insert([{
+        course_id: c.id,
+        chapter_number: s.session_number,
+        chapter_title: s.chapter_title,
+        content: body,
+        era_box: era,
+        works_id: worksId
+      }]);
+    } catch(e){ console.warn('[chapters insert]', e); }
+  }
+
+  // 3) 회차 완료 처리
+  if(db && s.id){
+    try {
+      await db.from('autobiography_sessions').update({
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+        progress_rate: 1
+      }).eq('id', s.id);
+    } catch(e){ console.warn('[session complete]', e); }
+  }
+
+  // 4) 코스 진행 상태 업데이트
+  if(db && c.id){
+    var nextSession = (s.session_number || 1) + 1;
+    var update = { updated_at: new Date().toISOString() };
+    if(nextSession > 8){
+      update.completed_at = new Date().toISOString();
+    } else {
+      update.current_session = nextSession;
+      _autobioCurrentCourse.current_session = nextSession;
+    }
+    try { await db.from('autobiography_courses').update(update).eq('id', c.id); }
+    catch(e){ console.warn('[course advance]', e); }
+  }
+
+  if(typeof showToast==='function') showToast('🌿 ' + s.session_number + '회차 저장 완료! 작품함에서도 보실 수 있어요');
+
+  // 5) 다음 회차 안내 OR 코스 완료
+  if(s.session_number >= 8){
+    setTimeout(function(){
+      if(typeof showToast==='function') showToast('🎀 8회차 모두 완료하셨어요! 책 한 권이 완성됐어요');
+      _autobioShowStep('autobio-step-start');
+      _autobioRefreshContinueBtn();
+    }, 1400);
+  } else {
+    setTimeout(function(){
+      _autobioShowStep('autobio-step-session');
+      _autobioLoadSessionStart();
+    }, 1400);
+  }
 }
 
 // ── Web Speech API (음성 입력) ──

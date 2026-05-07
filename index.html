@@ -837,6 +837,50 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .btn-make-more{width:100%;padding:13px;background:#fff;color:var(--i2);border:1.5px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;min-height:50px;}
 .btn-make-more:hover{border-color:var(--ab);color:var(--ac);}
 
+/* ── 자서전 v3 — 8주 인터뷰 시스템 (어르신 친화) ── */
+/* display 제어는 전역 .view{display:none} + .view.active{display:block} 사용 */
+.autobio-wrap{max-width:520px;margin:0 auto;padding:18px 18px 60px;}
+.autobio-step{animation:autobioFadeIn .25s ease-out;}
+@keyframes autobioFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.autobio-back-row{margin-bottom:8px;}
+.autobio-back-btn{background:none;border:none;color:var(--i3);font-size:15px;cursor:pointer;padding:8px 4px;font-family:inherit;font-weight:600;min-height:40px;}
+.autobio-back-btn:hover{color:var(--ac);}
+.autobio-hero{text-align:center;padding:28px 16px 24px;background:linear-gradient(180deg,var(--al,#eaf2ee),transparent);border-radius:20px;margin-bottom:20px;}
+.autobio-hero-icon{font-size:64px;margin-bottom:10px;line-height:1;}
+.autobio-hero-title{font-family:var(--serif,serif);font-size:30px;font-weight:800;color:var(--ink,#2a2a2a);margin-bottom:6px;line-height:1.3;}
+.autobio-hero-sub{font-size:16px;color:var(--i2,#3D3A33);font-weight:500;line-height:1.6;}
+.autobio-features{background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:6px 4px;margin-bottom:24px;}
+.autobio-feature{display:flex;align-items:flex-start;gap:14px;padding:14px 14px;border-bottom:1px solid var(--bd);}
+.autobio-feature:last-child{border-bottom:none;}
+.autobio-feature b{font-size:16px;color:var(--ink);font-weight:700;}
+.autobio-feature-emoji{font-size:26px;flex-shrink:0;line-height:1.2;}
+.autobio-feature-desc{font-size:13px;color:var(--i3);margin-top:2px;line-height:1.55;}
+.autobio-cta-group{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.autobio-btn-primary{width:100%;padding:18px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;min-height:60px;box-shadow:0 4px 0 var(--ad);transition:transform .08s;}
+.autobio-btn-primary:hover{transform:translateY(-1px);}
+.autobio-btn-primary:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ad);}
+.autobio-btn-primary:disabled{background:#bbb;color:#fff;cursor:not-allowed;box-shadow:none;}
+.autobio-btn-secondary{width:100%;padding:16px;background:#fff;color:var(--ac);border:2px solid var(--ac);border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:54px;}
+.autobio-btn-tertiary{width:100%;padding:13px;background:none;color:var(--i3);border:none;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;min-height:46px;text-decoration:underline;}
+.autobio-btn-tertiary:hover{color:var(--ac);}
+.autobio-note{font-size:13px;color:var(--i3);text-align:center;line-height:1.7;background:var(--wm);border-radius:10px;padding:12px 14px;margin-top:8px;}
+.autobio-section-title{font-family:var(--serif,serif);font-size:24px;font-weight:800;color:var(--ink);margin-bottom:6px;text-align:center;}
+.autobio-section-sub{font-size:15px;color:var(--i3);text-align:center;line-height:1.7;margin-bottom:24px;}
+.autobio-mode-card{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--bd);border-radius:18px;padding:20px 18px;margin-bottom:14px;cursor:pointer;transition:border-color .12s,transform .08s,box-shadow .12s;min-height:96px;}
+.autobio-mode-card:hover{border-color:var(--ac);box-shadow:0 4px 16px rgba(42,107,87,.12);transform:translateY(-1px);}
+.autobio-mode-card:active{transform:translateY(0);}
+.autobio-mode-icon{font-size:42px;flex-shrink:0;line-height:1;}
+.autobio-mode-body{flex:1;}
+.autobio-mode-title{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:3px;}
+.autobio-mode-desc{font-size:14px;color:var(--i2);line-height:1.55;margin-bottom:6px;}
+.autobio-mode-meta{font-size:12px;color:var(--i3);font-weight:600;}
+.autobio-mode-arrow{font-size:24px;color:var(--ac);flex-shrink:0;font-weight:700;}
+.autobio-input{width:100%;padding:18px;border:2px solid var(--bd);border-radius:14px;font-size:22px;font-weight:700;letter-spacing:.08em;text-align:center;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px;text-transform:uppercase;}
+.autobio-input:focus{border-color:var(--ac);}
+.autobio-input-msg{font-size:14px;text-align:center;min-height:22px;margin-bottom:14px;line-height:1.6;}
+.autobio-input-msg.error{color:#E05050;font-weight:600;}
+.autobio-input-msg.success{color:var(--ac);font-weight:600;}
+
 /* ── 약관 동의 모달 (한국 개보법 준수) ── */
 .terms-agree-card{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 32px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.18);}
 .terms-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;min-height:54px;}
@@ -5320,6 +5364,111 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════ -->
+<!-- 자서전 v3 — 8주 인터뷰 시스템                    -->
+<!-- 진입점: showView('autobiography') 또는 #autobiography -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="view" id="autobiographyView" style="background:var(--bg,#FAF8F4);min-height:100vh;">
+  <div class="autobio-wrap">
+
+    <!-- ── Step A: 코스 시작 화면 ── -->
+    <div id="autobio-step-start" class="autobio-step">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="showView('builder')">← 뒤로</button>
+      </div>
+
+      <div class="autobio-hero">
+        <div class="autobio-hero-icon">📖</div>
+        <div class="autobio-hero-title">내 자서전 만들기</div>
+        <div class="autobio-hero-sub">8주에 책 한 권, 동동이와 함께</div>
+      </div>
+
+      <div class="autobio-features">
+        <div class="autobio-feature"><span class="autobio-feature-emoji">🗓️</span><div><b>주 1회 90분 × 8회</b><div class="autobio-feature-desc">총 약 12시간, 한 권 분량</div></div></div>
+        <div class="autobio-feature"><span class="autobio-feature-emoji">💬</span><div><b>6단계 심층 질문</b><div class="autobio-feature-desc">장면→감각→사람→사건→감정→의미</div></div></div>
+        <div class="autobio-feature"><span class="autobio-feature-emoji">🎙️</span><div><b>본인 목소리 70% 유지</b><div class="autobio-feature-desc">AI는 다듬을 뿐, 내 이야기 그대로</div></div></div>
+      </div>
+
+      <div class="autobio-cta-group">
+        <button id="autobioStartBtn" class="autobio-btn-primary" onclick="autobioGoToModeSelect()">처음 시작하기 →</button>
+        <button id="autobioContinueBtn" class="autobio-btn-secondary" style="display:none;" onclick="autobioContinue()">이어가기 (○회차) →</button>
+        <button class="autobio-btn-tertiary" onclick="showView('portfolio')">📁 내 작품함 보기</button>
+      </div>
+
+      <div class="autobio-note">시작하기 전 윤리·면책 동의가 필요해요. 인터뷰 중 언제든 잠깐 쉴 수 있어요 🌿</div>
+    </div>
+
+    <!-- ── Step B: 모드 선택 화면 ── -->
+    <div id="autobio-step-mode" class="autobio-step" style="display:none;">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="autobioBackToStart()">← 처음으로</button>
+      </div>
+
+      <div class="autobio-section-title">어떻게 진행하실까요?</div>
+      <div class="autobio-section-sub">두 가지 방법 중 하나를 골라주세요.</div>
+
+      <div class="autobio-mode-card" onclick="autobioPickMode('classroom')">
+        <div class="autobio-mode-icon">👩‍🏫</div>
+        <div class="autobio-mode-body">
+          <div class="autobio-mode-title">강의실 모드</div>
+          <div class="autobio-mode-desc">강사와 함께 정해진 시간에 진행해요</div>
+          <div class="autobio-mode-meta">📌 강사 코드 필요 · 매주 정해진 요일</div>
+        </div>
+        <div class="autobio-mode-arrow">→</div>
+      </div>
+
+      <div class="autobio-mode-card" onclick="autobioPickMode('solo')">
+        <div class="autobio-mode-icon">🌿</div>
+        <div class="autobio-mode-body">
+          <div class="autobio-mode-title">혼자 모드</div>
+          <div class="autobio-mode-desc">내 페이스로 천천히 진행해요</div>
+          <div class="autobio-mode-meta">⏰ 24시간 언제든 · 지금 바로 시작</div>
+        </div>
+        <div class="autobio-mode-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- ── Step B-1: 강사 코드 입력 화면 ── -->
+    <div id="autobio-step-classcode" class="autobio-step" style="display:none;">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="autobioBackToMode()">← 뒤로</button>
+      </div>
+
+      <div class="autobio-section-title">강사 코드를 입력해주세요</div>
+      <div class="autobio-section-sub">강사님께서 알려주신 코드예요.<br>(영문·숫자, 띄어쓰기 없이)</div>
+
+      <input id="autobioClassCodeInput" type="text" placeholder="예: TEST2026"
+        autocomplete="off" autocapitalize="characters"
+        oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');"
+        class="autobio-input" />
+      <div id="autobioClassCodeMsg" class="autobio-input-msg"></div>
+
+      <button id="autobioClassCodeSubmitBtn" class="autobio-btn-primary" onclick="autobioSubmitClassCode()">확인 →</button>
+      <button class="autobio-btn-tertiary" onclick="autobioPickMode('solo')">코드가 없으면 혼자 모드로</button>
+    </div>
+
+    <!-- ── Step C: 회차별 시작 화면 (Step 3에서 본격 구현 — 임시 placeholder) ── -->
+    <div id="autobio-step-session" class="autobio-step" style="display:none;">
+      <div class="autobio-back-row">
+        <button class="autobio-back-btn" onclick="autobioBackToStart()">← 시작 화면</button>
+      </div>
+      <div class="autobio-hero">
+        <div class="autobio-hero-icon">✨</div>
+        <div class="autobio-hero-title">코스가 시작됐어요!</div>
+        <div class="autobio-hero-sub" id="autobioSessionPlaceholder">곧 1회차가 열려요</div>
+      </div>
+      <div class="autobio-features">
+        <div class="autobio-feature"><span class="autobio-feature-emoji">📌</span><div><b>다음 단계 준비 중</b><div class="autobio-feature-desc">회차별 시작 화면 + 인터뷰 화면은 다음 업데이트에서 만나요</div></div></div>
+      </div>
+      <div class="autobio-cta-group">
+        <button class="autobio-btn-primary" onclick="showView('home')">🏠 홈으로</button>
+        <button class="autobio-btn-tertiary" onclick="showView('portfolio')">📁 내 작품함 보기</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ── 커스텀 챕터 제목 변경 모달 ── -->
 <div class="modal-backdrop" id="customChapterModal" style="display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:#fff;border-radius:20px;padding:24px;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);">
@@ -6015,7 +6164,7 @@ function showView(view, _skipHash){
         }
       }catch(e){ /* pushState 실패(샌드박스 등) 무시 */ }
     }
-    var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView'];
+    var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView','autobiographyView'];
     allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
     try{ window.scrollTo(0,0); }catch(e){}
     var bMap={dojo:'bnav-dojo',builder:'bnav-builder',portfolio:'bnav-portfolio',community:'bnav-community',faq:'bnav-faq'};
@@ -6035,7 +6184,7 @@ function showView(view, _skipHash){
       home:'homeView', dojo:'dojoView', builder:'builderView', portfolio:'portfolioView',
       pricing:'pricingView', auth:'authView', mypage:'mypageView', faq:'faqView',
       learn:'learnView', community:'communityView', about:'aboutView', b2g:'b2gView',
-      admin:'adminView', memoir:'memoirView', login:'authView'
+      admin:'adminView', memoir:'memoirView', autobiography:'autobiographyView', login:'authView'
     };
     // 회원 전용 가드 (먼저 체크, 리다이렉트 후 종료)
     if((view==='portfolio' || view==='mypage') && (!userProfile || !userProfile.name)){
@@ -8830,8 +8979,9 @@ var catLabels={writing:{label:'내 이야기를 글로 남겨요',count:6},image
 function goToCategory(cat){showView('builder');setTimeout(function(){document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});var tab=document.querySelector('.cat-tab[data-cat="'+cat+'"]');if(tab)tab.classList.add('active');currentCat=cat;filterCards(cat,'');},100);}
 function goToCourse(name){
   if(name === '자서전 쓰기'){
+    // v3 인터뷰 시스템으로 진입 (기존 챕터 모드 대체)
     localStorage.setItem('aiDonghang_memoirFrom','builder');
-    showView('memoir');
+    showView('autobiography');
     return;
   }
   showView('builder');setTimeout(function(){showPage3(name);},100);
@@ -8845,10 +8995,10 @@ function goToCourseDirectly(name){
 }
 function showPage2(){['page3View','page4View'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});var p2=g('page2View');if(p2)p2.classList.add('active');filterCards(currentCat,'');window.scrollTo(0,0);}
 function showPage3(name){
-  // 자서전 쓰기 → 챕터 선택 모달로
+  // 자서전 쓰기 → v3 인터뷰 시스템으로 (기존 챕터 모드 대체)
   if(name === '자서전 쓰기'){
     localStorage.setItem('aiDonghang_memoirFrom','builder');
-    showView('memoir');
+    showView('autobiography');
     return;
   }
   ['page2View','page4View'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
@@ -9937,7 +10087,8 @@ function _hashToView(hash){
     '#dojo':'dojo', '#builder':'builder', '#portfolio':'portfolio',
     '#pricing':'pricing', '#auth':'auth', '#mypage':'mypage',
     '#faq':'faq', '#learn':'learn', '#community':'community',
-    '#about':'about', '#b2g':'b2g', '#admin':'admin', '#memoir':'memoir'
+    '#about':'about', '#b2g':'b2g', '#admin':'admin', '#memoir':'memoir',
+    '#autobiography':'autobiography', '#autobio':'autobiography'
   };
   return map[hash] || 'home';
 }
@@ -10245,7 +10396,211 @@ async function loadAdminDashboard(){
   }
 }
 function closeAdminModal(){var m=g('adminLoginModal');if(m)m.style.display='none';}
-// ── 자서전 3챕터 시스템 ──
+
+// ══════════════════════════════════════════════
+// 자서전 v3 — 8주 인터뷰 시스템
+// ══════════════════════════════════════════════
+var AUTOBIO_SESSION_TEMPLATE = [
+  {num:1, title:'내 이름 이야기',         subtitle:'자신감 빌드업'},
+  {num:2, title:'어린 시절',               subtitle:'0-12세'},
+  {num:3, title:'학창 시절',               subtitle:'13-19세'},
+  {num:4, title:'청년기',                  subtitle:'20-29세'},
+  {num:5, title:'결혼·주요 관계',          subtitle:''},
+  {num:6, title:'인생의 한가운데',         subtitle:'40-50대'},
+  {num:7, title:'지금, 그리고 앞으로',     subtitle:'60대 이후'},
+  {num:8, title:'마무리와 헌사',           subtitle:'페이스 적응형 분기'}
+];
+
+var AUTOBIO_OPTIONAL_CHAPTERS = [
+  {key:'parenting',  label:'자녀 양육'},
+  {key:'career',     label:'직업 여정'},
+  {key:'faith',      label:'신앙·봉사'},
+  {key:'friendship', label:'친구들과의 우정'},
+  {key:'hobby',      label:'취미와 작품'},
+  {key:'activism',   label:'사회 운동'}
+];
+
+var _autobioCurrentCourse = null; // {id, course_type, current_session, ...}
+var _autobioPickedMode = null;    // 'classroom' | 'solo'
+
+function _autobioShowStep(stepId){
+  ['autobio-step-start','autobio-step-mode','autobio-step-classcode','autobio-step-session'].forEach(function(id){
+    var el = g(id);
+    if(el) el.style.display = (id === stepId) ? 'block' : 'none';
+  });
+  window.scrollTo(0, 0);
+}
+
+// 진입 시 호출 — showView('autobiography')에서 자동
+async function _autobioInit(){
+  _autobioShowStep('autobio-step-start');
+  // 진행 중 코스 있으면 "이어가기" 버튼 표시
+  await _autobioRefreshContinueBtn();
+}
+
+async function _autobioRefreshContinueBtn(){
+  var btn = g('autobioContinueBtn');
+  var startBtn = g('autobioStartBtn');
+  if(!btn) return;
+  btn.style.display = 'none';
+  if(!userProfile || !userProfile.id || typeof db === 'undefined' || !db) return;
+  try {
+    var r = await db.from('autobiography_courses')
+      .select('id, current_session, course_type')
+      .eq('user_id', userProfile.id)
+      .is('completed_at', null)
+      .order('started_at', {ascending:false})
+      .limit(1)
+      .maybeSingle();
+    if(r.data){
+      _autobioCurrentCourse = r.data;
+      btn.textContent = '이어가기 ('+r.data.current_session+'회차) →';
+      btn.style.display = 'block';
+      if(startBtn) startBtn.textContent = '새로 시작하기';
+    }
+  } catch(e){ console.warn('[autobio continue]', e); }
+}
+
+function autobioGoToModeSelect(){
+  // 비로그인 시 가입 유도
+  if(!userProfile || !userProfile.id){
+    if(typeof showToast === 'function') showToast('자서전 코스는 회원만 이용할 수 있어요. 가입을 먼저 진행해주세요!');
+    setTimeout(function(){ showView('auth'); }, 600);
+    return;
+  }
+  _autobioShowStep('autobio-step-mode');
+}
+
+function autobioBackToStart(){ _autobioShowStep('autobio-step-start'); }
+function autobioBackToMode(){  _autobioShowStep('autobio-step-mode');  }
+
+function autobioPickMode(modeType){
+  _autobioPickedMode = modeType;
+  if(modeType === 'classroom'){
+    _autobioShowStep('autobio-step-classcode');
+    var input = g('autobioClassCodeInput');
+    if(input){ input.value = ''; setTimeout(function(){ input.focus(); }, 150); }
+    var msg = g('autobioClassCodeMsg');
+    if(msg){ msg.textContent = ''; msg.className = 'autobio-input-msg'; }
+  } else {
+    // 혼자 모드 → 즉시 코스 생성
+    _autobioStartCourse('solo', null);
+  }
+}
+
+async function autobioSubmitClassCode(){
+  var input = g('autobioClassCodeInput');
+  var msg = g('autobioClassCodeMsg');
+  var btn = g('autobioClassCodeSubmitBtn');
+  var code = (input && input.value || '').trim().toUpperCase();
+  if(!code){
+    if(msg){ msg.textContent = '강사 코드를 입력해주세요'; msg.className = 'autobio-input-msg error'; }
+    return;
+  }
+  if(typeof db === 'undefined' || !db){
+    if(msg){ msg.textContent = '서버 연결 오류 — 잠시 후 다시 시도해주세요'; msg.className = 'autobio-input-msg error'; }
+    return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = '확인 중...'; }
+  try {
+    var r = await db.from('autobiography_class_codes')
+      .select('code, instructor_name, schedule, active')
+      .eq('code', code)
+      .maybeSingle();
+    if(!r.data){
+      if(msg){ msg.textContent = '코드를 찾을 수 없어요. 다시 확인해주세요'; msg.className = 'autobio-input-msg error'; }
+      return;
+    }
+    if(!r.data.active){
+      if(msg){ msg.textContent = '이 코드는 더 이상 활성화되어 있지 않아요'; msg.className = 'autobio-input-msg error'; }
+      return;
+    }
+    if(msg){ msg.textContent = '✓ ' + r.data.instructor_name + '님의 강의실 — ' + (r.data.schedule || ''); msg.className = 'autobio-input-msg success'; }
+    setTimeout(function(){ _autobioStartCourse('classroom', code); }, 600);
+  } catch(e){
+    console.warn('[class code]', e);
+    if(msg){ msg.textContent = '확인 중 오류가 발생했어요'; msg.className = 'autobio-input-msg error'; }
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = '확인 →'; }
+  }
+}
+
+async function _autobioStartCourse(modeType, classCode){
+  if(!userProfile || !userProfile.id){ if(typeof showToast==='function') showToast('회원 가입이 필요해요'); return; }
+  if(typeof db === 'undefined' || !db){ if(typeof showToast==='function') showToast('서버 연결 오류'); return; }
+  try {
+    // 1) 코스 row 생성
+    var courseIns = await db.from('autobiography_courses').insert([{
+      user_id: userProfile.id,
+      course_type: modeType,
+      class_code: classCode,
+      current_session: 1,
+      pace_score: 0.5,
+      selected_optional_chapters: []
+    }]).select('id, current_session').single();
+    if(courseIns.error || !courseIns.data){ throw courseIns.error || new Error('코스 생성 실패'); }
+    var courseId = courseIns.data.id;
+    _autobioCurrentCourse = courseIns.data;
+    _autobioCurrentCourse.course_type = modeType;
+
+    // 2) 8회차 row 일괄 생성
+    var sessionRows = AUTOBIO_SESSION_TEMPLATE.map(function(s){
+      return {
+        course_id: courseId,
+        session_number: s.num,
+        chapter_title: s.title,
+        status: (s.num === 1) ? 'in_progress' : 'not_started',
+        started_at: (s.num === 1) ? new Date().toISOString() : null,
+        progress_rate: 0
+      };
+    });
+    var sessIns = await db.from('autobiography_sessions').insert(sessionRows);
+    if(sessIns.error){ console.warn('[sessions insert]', sessIns.error); }
+
+    if(typeof showToast === 'function') showToast('🌿 자서전 코스가 시작됐어요!');
+
+    // 3) Step C(회차별 시작 화면 — Step 3에서 본격 구현)로 이동
+    var ph = g('autobioSessionPlaceholder');
+    if(ph){
+      var first = AUTOBIO_SESSION_TEMPLATE[0];
+      ph.innerHTML = '1회차 — ' + first.title + (first.subtitle ? ' <span style="color:var(--i3);font-size:14px;">('+first.subtitle+')</span>' : '');
+    }
+    _autobioShowStep('autobio-step-session');
+  } catch(e){
+    console.warn('[autobio start]', e);
+    if(typeof showToast === 'function') showToast('코스 시작 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
+  }
+}
+
+async function autobioContinue(){
+  if(!_autobioCurrentCourse){
+    await _autobioRefreshContinueBtn();
+    if(!_autobioCurrentCourse){ if(typeof showToast==='function') showToast('진행 중인 코스가 없어요'); return; }
+  }
+  // Step 3에서 회차별 시작 화면으로 이동 — 현재는 placeholder
+  var ph = g('autobioSessionPlaceholder');
+  if(ph){
+    var num = _autobioCurrentCourse.current_session || 1;
+    var tpl = AUTOBIO_SESSION_TEMPLATE[num-1] || AUTOBIO_SESSION_TEMPLATE[0];
+    ph.innerHTML = num + '회차 — ' + tpl.title + (tpl.subtitle ? ' <span style="color:var(--i3);font-size:14px;">('+tpl.subtitle+')</span>' : '');
+  }
+  _autobioShowStep('autobio-step-session');
+}
+
+// showView 라우팅 후크 — 자서전 진입 시 _autobioInit 호출
+(function(){
+  var _origShowView = window.showView;
+  if(typeof _origShowView !== 'function') return;
+  window.showView = function(view, _skipHash){
+    var ret = _origShowView.apply(this, arguments);
+    if(view === 'autobiography'){
+      try { _autobioInit(); } catch(e){ console.warn('[autobio init]', e); }
+    }
+    return ret;
+  };
+})();
+
+// ── 자서전 3챕터 시스템 (legacy — Step 4 이후 정리 예정) ──
 // ── 챕터 구성 템플릿 ──
 var MEMOIR_TEMPLATES = {
   5: [

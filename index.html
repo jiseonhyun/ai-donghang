@@ -10127,17 +10127,15 @@ async function _handleKakaoCallback(code, stateRaw){
     } catch(e){ /* state 손상 무시 */ }
     if(savedHash) window.location.hash = savedHash;
 
-    // 사용자 정보 가져오기
-    Kakao.API.request({
-      url: '/v2/user/me',
-      success: function(res){ _kakaoOnUserInfo(res); },
-      fail: function(err){
+    // 사용자 정보 가져오기 (SDK v2 — Promise 방식, success/fail 콜백 미지원)
+    Kakao.API.request({ url: '/v2/user/me' })
+      .then(function(res){ _kakaoOnUserInfo(res); })
+      .catch(function(err){
         console.warn('[user/me]', err);
         userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
         localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
         if(typeof _gateAuthSuccess === 'function') _gateAuthSuccess('카카오 사용자', true, null);
-      }
-    });
+      });
   } catch(e){
     console.warn('[kakao callback]', e);
     history.replaceState({}, '', window.location.pathname + window.location.hash);
@@ -15859,7 +15857,11 @@ function cancelTermsAgreement(){
   try {
     if(typeof Kakao !== 'undefined' && Kakao.Auth && typeof Kakao.Auth.getAccessToken === 'function'){
       if(Kakao.Auth.getAccessToken()){
-        Kakao.Auth.logout(function(){ /* silent */ });
+        // SDK v2 — Promise 반환, 콜백 인자 미지원
+        var _logoutP = Kakao.Auth.logout();
+        if(_logoutP && typeof _logoutP.catch === 'function'){
+          _logoutP.catch(function(){ /* silent */ });
+        }
       }
     }
   } catch(e){ /* silent */ }

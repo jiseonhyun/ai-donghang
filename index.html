@@ -975,6 +975,11 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-iv-hint-option{padding:14px 16px;background:#fff;border:1.5px solid var(--bd);border-radius:11px;font-size:15px;color:var(--ink);font-weight:600;text-align:left;cursor:pointer;font-family:inherit;line-height:1.55;min-height:50px;}
 .autobio-iv-hint-option:hover{border-color:#F5C842;background:#FFFDF5;}
 .autobio-iv-hint-option.is-other{background:none;border:1.5px dashed var(--bd);color:var(--i3);}
+.autobio-iv-hint-trigger{display:block;width:100%;padding:11px 12px;margin-top:8px;background:none;border:1px dashed var(--bd);border-radius:10px;font-size:14px;font-weight:600;color:var(--i3);cursor:pointer;font-family:inherit;min-height:42px;transition:border-color .12s,color .12s,background .12s;}
+.autobio-iv-hint-trigger:hover{border-color:#F5C842;color:#7a5c1e;background:#FFFDF5;}
+.autobio-iv-hint-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;}
+.autobio-iv-hint-close{background:none;border:none;font-size:22px;color:var(--i3);cursor:pointer;line-height:1;padding:2px 8px;font-family:inherit;min-height:32px;}
+.autobio-iv-hint-close:hover{color:#7a5c1e;}
 
 /* 내 자서전 보기 모달 */
 .autobio-chapters-card{background:#fff;border-radius:18px;width:100%;max-width:560px;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.24);}
@@ -5645,6 +5650,7 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
         <textarea id="autobioIvInput" class="autobio-iv-input"
           placeholder="답변을 적어주세요. 짧아도 괜찮아요 🌿"
           rows="3" oninput="_autobioInputChange()"></textarea>
+        <button id="autobioHintTriggerBtn" type="button" class="autobio-iv-hint-trigger" onclick="_autobioShowHintCard()">💭 답이 잘 떠오르지 않아요</button>
         <div class="autobio-iv-voice-row">
           <button id="autobioIvVoiceBtn" class="autobio-iv-voice" onclick="_autobioVoiceToggle()">
             <span id="autobioIvVoiceLabel">🎙️ 음성으로 말하기</span>
@@ -11267,6 +11273,9 @@ async function autobioStartSession(){
   if(!_autobioCurrentCourse){ if(typeof showToast==='function') showToast('진행 중인 코스가 없어요'); return; }
   if(typeof db === 'undefined' || !db){ if(typeof showToast==='function') showToast('서버 연결 오류'); return; }
 
+  // 이전 회차에서 떠 있던 마중물 카드 잔재 정리 (보조 버튼 자동 복원)
+  if(typeof _autobioHideHintCard === 'function') _autobioHideHintCard();
+
   var courseId = _autobioCurrentCourse.id;
   var sessionNum = _autobioCurrentCourse.current_session || 1;
 
@@ -11396,14 +11405,9 @@ function _autobioInputChange(){
   var hasText = val.trim().length > 0;
   btn.disabled = !hasText || _autobioSending;
   btn.style.opacity = btn.disabled ? '.5' : '1';
-
-  // 마중물 카드 — "기억 안 나" 패턴 감지 시 자동 노출
-  if(_autobioDetectMemoryGap(val)){
-    _autobioShowHintCard();
-  } else if(g('autobioHintCard')){
-    // 사용자가 답변을 보강했으면 카드 자동 닫음
-    if(val.trim().length > 30) _autobioHideHintCard();
-  }
+  // ⚠️ 마중물 카드 자동 노출 제거 — 작성 중 끊김 버그 방지 (2026-05-09)
+  // 사용자가 '💭 답이 잘 떠오르지 않아요' 버튼을 직접 눌러야 카드 표시됨
+  // _autobioDetectMemoryGap 함수는 보존 (Phase 2 하이브리드 옵션에서 재활용 가능)
 }
 
 // ══════════════════════════════════════════════
@@ -11471,6 +11475,17 @@ function _autobioDetectMemoryGap(text){
   return /(기억[\s]*(이|도)?\s*안\s*(나|남|나요)|잘\s*모르|생각[\s]*(이|도)?\s*안\s*(나|남)|떠오르지\s*않|모르겠|글쎄|몰라요|가물가물)/.test(t);
 }
 
+// 회차에 맞는 카드가 없을 때 폴백으로 사용하는 일반 카드
+var AUTOBIO_GENERIC_HINT_CARD = {
+  q: '어디서부터 떠올려볼까요?',
+  options: [
+    {label:'🏞️ 그때 그 장소부터',      text:'그때 장소를 떠올려보면, '},
+    {label:'👥 그때 그 사람부터',      text:'그때 함께 있던 사람을 떠올려보면, '},
+    {label:'💭 그때 그 느낌부터',      text:'그때 느낌은 '},
+    {label:'🎵 그때 들리던 소리·냄새부터', text:'그때 떠오르는 소리(또는 냄새)가 있어요. '}
+  ]
+};
+
 function _autobioFindHintCard(userText){
   var sessionNum = (_autobioCurrentSessionInfo && _autobioCurrentSessionInfo.session_number) || 1;
   // 1) 회차 매칭 + trigger 매칭 우선
@@ -11487,7 +11502,9 @@ function _autobioFindHintCard(userText){
   var cardTriggerOnly = AUTOBIO_HINT_CARDS.find(function(card){
     return card.trigger.test(userText);
   });
-  return cardTriggerOnly || null;
+  if(cardTriggerOnly) return cardTriggerOnly;
+  // 4) 폴백 — 회차 무관 일반 도움 카드 (5-8회차에서도 도움 버튼 동작 보장)
+  return AUTOBIO_GENERIC_HINT_CARD;
 }
 
 function _autobioShowHintCard(){
@@ -11497,13 +11514,16 @@ function _autobioShowHintCard(){
   if(!card) return;
 
   var html = '<div id="autobioHintCard" class="autobio-iv-hint">' +
-             '<div class="autobio-iv-hint-title">💡 기억이 잘 안 나실 때 — 골라보세요</div>' +
+             '<div class="autobio-iv-hint-title-row">' +
+               '<div class="autobio-iv-hint-title">💡 떠올려볼까요? — 골라보세요</div>' +
+               '<button type="button" class="autobio-iv-hint-close" onclick="_autobioHideHintCard()" aria-label="닫기">×</button>' +
+             '</div>' +
              '<div class="autobio-iv-hint-q">'+_escapeAutobioText(card.q)+'</div>' +
              '<div class="autobio-iv-hint-options">';
   card.options.forEach(function(o, i){
     html += '<button type="button" class="autobio-iv-hint-option" onclick="_autobioPickHint('+i+')">'+_escapeAutobioText(o.label)+'</button>';
   });
-  html += '<button type="button" class="autobio-iv-hint-option is-other" onclick="_autobioHideHintCard()">✏️ 다른 모습 — 직접 적을게요</button>' +
+  html += '<button type="button" class="autobio-iv-hint-option is-other" onclick="_autobioHideHintCard()">✏️ 직접 적을게요</button>' +
           '</div></div>';
 
   // textarea 다음, voice-row 앞에 삽입
@@ -11514,12 +11534,18 @@ function _autobioShowHintCard(){
     voiceRow.parentNode.insertBefore(wrap.firstChild, voiceRow);
   }
   window._autobioCurrentHint = card;
+  // 보조 버튼 숨김 (카드 떠 있는 동안 중복 방지)
+  var trigger = g('autobioHintTriggerBtn');
+  if(trigger) trigger.style.display = 'none';
 }
 
 function _autobioHideHintCard(){
   var c = g('autobioHintCard');
   if(c) c.remove();
   window._autobioCurrentHint = null;
+  // 보조 버튼 다시 노출
+  var trigger = g('autobioHintTriggerBtn');
+  if(trigger) trigger.style.display = '';
 }
 
 function _autobioPickHint(idx){

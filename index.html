@@ -5458,13 +5458,6 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
         <div class="autobio-progress-track" id="autobioProgressTrack" aria-label="회차 진행률"></div>
       </div>
 
-      <!-- 안내 카드 -->
-      <div class="autobio-features">
-        <div class="autobio-feature"><span class="autobio-feature-emoji">⏱️</span><div><b>약 60-90분 인터뷰</b><div class="autobio-feature-desc">힘들면 언제든 '잠깐 쉬어가요'</div></div></div>
-        <div class="autobio-feature"><span class="autobio-feature-emoji">💬</span><div><b>한 번에 한 가지 질문만</b><div class="autobio-feature-desc">차근차근 6단계로 깊이 들어가요</div></div></div>
-        <div class="autobio-feature"><span class="autobio-feature-emoji">🌿</span><div><b>막히면 4지선다 카드</b><div class="autobio-feature-desc">기억이 잘 안 나도 괜찮아요</div></div></div>
-      </div>
-
       <!-- CTA -->
       <div class="autobio-cta-group">
         <button class="autobio-btn-primary" onclick="autobioStartSession()">▶️ 이 회차 시작하기</button>
@@ -11192,9 +11185,9 @@ async function _autobioStartCourse(modeType, classCode){
 
     if(typeof showToast === 'function') showToast('🌿 자서전 코스가 시작됐어요!');
 
-    // 3) 회차별 시작 화면으로 이동 + 1회차 데이터 로드
-    _autobioShowStep('autobio-step-session');
+    // 3) 회차 시작 화면 건너뛰고 바로 인터뷰 시작 (시니어 클릭 1번 감소)
     await _autobioLoadSessionStart();
+    await autobioStartSession();
   } catch(e){
     console.warn('[autobio start]', e);
     if(typeof showToast === 'function') showToast('코스 시작 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
@@ -11206,8 +11199,9 @@ async function autobioContinue(){
     await _autobioRefreshContinueBtn();
     if(!_autobioCurrentCourse){ if(typeof showToast==='function') showToast('진행 중인 코스가 없어요'); return; }
   }
-  _autobioShowStep('autobio-step-session');
+  // 회차 시작 화면 건너뛰고 바로 인터뷰 시작
   await _autobioLoadSessionStart();
+  await autobioStartSession();
 }
 
 // 회차별 시작 화면 데이터 로드 — DB에서 sessions 가져와 인사·진행률·미리보기 렌더

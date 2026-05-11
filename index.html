@@ -12228,20 +12228,11 @@ function _autobioBuildAndStartRec(initialBaseText){
     }
     _autobioVoiceRestartTimes.push(now);
 
-    // 4) 기존 rec 폐기 + 350ms 후 새 인스턴스로 재시작
-    //    Galaxy는 오디오 세션 release에 100-300ms 필요 — 같은 rec.start() 재호출보다 fresh 인스턴스가 안정적
+    // 4) 기존 rec 폐기 + 재시작 시도 체인 (500ms → 1000ms → 2000ms)
+    //    이전엔 첫 시도 실패 시 즉시 _autobioStopVoice → 🔴 사라짐
+    //    이제는 최대 3회 재시도하고 그 동안 .recording 클래스 유지 (🔴 시각 유지)
     _autobioVoiceRec = null;
-    setTimeout(function(){
-      if(!_autobioVoiceIntent) return;          // 그 사이 사용자가 종료했으면 중단
-      var currentText = inp ? inp.value : baseText;
-      var freshRec = _autobioBuildAndStartRec(currentText);
-      if(freshRec){
-        _autobioVoiceRec = freshRec;
-      } else {
-        // 새 인스턴스 생성 실패 — 최종 폴백
-        _autobioStopVoice();
-      }
-    }, 350);
+    _autobioScheduleRestart(0);
   };
 
   try {
@@ -12251,6 +12242,37 @@ function _autobioBuildAndStartRec(initialBaseText){
     console.warn('[voice rec.start]', e);
     return null;
   }
+}
+
+// 재시작 시도 체인 — 500ms → 1000ms → 2000ms로 backoff
+// 시도 동안 .recording 클래스 유지(🔴 시각 유지). 모두 실패 시에만 _autobioStopVoice
+function _autobioScheduleRestart(attempt){
+  if(!_autobioVoiceIntent) return;
+  var delays = [500, 1000, 2000];
+  if(attempt >= delays.length){
+    console.warn('[voice] restart retries exhausted at attempt', attempt);
+    if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');
+    _autobioStopVoice();
+    return;
+  }
+  setTimeout(function(){
+    if(!_autobioVoiceIntent) return;
+    var inp = g('autobioIvInput');
+    var currentText = inp ? inp.value : '';
+    var freshRec = _autobioBuildAndStartRec(currentText);
+    if(freshRec){
+      _autobioVoiceRec = freshRec;
+      // 🔴 시각은 _autobioStartVoice가 한 번 set하고 _autobioStopVoice 외엔 안 풀림
+      // recording 라벨이 혹시 풀려 있으면 다시 강제 (방어적)
+      var btn = g('autobioIvVoiceBtn');
+      var lbl = g('autobioIvVoiceLabel');
+      if(btn) btn.classList.add('recording');
+      if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
+    } else {
+      // 생성/시작 실패 → 더 긴 딜레이로 다시 시도
+      _autobioScheduleRestart(attempt + 1);
+    }
+  }, delays[attempt]);
 }
 
 function _autobioStartVoice(){

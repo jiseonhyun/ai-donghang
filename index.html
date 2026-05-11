@@ -8467,157 +8467,206 @@ function refreshDailyQuestion(){
   }
 })();
 
-// ── 음성 입력 (Web Speech API) ──
+// ── 음성 입력 (Web Speech API) — 자서전 _autobioVoiceRec과 동일한 패턴: intent flag + retry chain ──
 var _voiceRecognition = null;
 var _voiceListening = false;
+var _voiceIntent = false;          // 사용자가 켠 상태 (한 번 더 누르기 전엔 true)
+var _voiceRestartTimes = [];        // 재시작 timestamps — 안전 가드
+var _voiceActiveConfig = null;      // 현재 활성 config (story / wizard)
 
-function toggleVoiceInput(){
+// 두 음성 입력 진입점의 ID·콜백 차이만 분리
+var _VOICE_CFG_STORY = {
+  taId: 'storyAnswerTextarea',
+  btnId: 'storyVoiceBtn',
+  iconId: 'storyVoiceIcon',
+  labelId: 'storyVoiceLabel',
+  onUpdate: function(){ _updateStoryCharCount(); }
+};
+var _VOICE_CFG_WIZARD = {
+  taId: 'storyInput',
+  btnId: 'wizardVoiceBtn',
+  iconId: 'wizardVoiceIcon',
+  labelId: 'wizardVoiceLabel',
+  onUpdate: function(){ if(typeof onStoryInput === 'function') onStoryInput(); }
+};
+
+function _setVoiceUIListening(cfg){
+  if(!cfg) return;
+  var btn = document.getElementById(cfg.btnId);
+  var icon = document.getElementById(cfg.iconId);
+  var label = document.getElementById(cfg.labelId);
+  if(btn) btn.classList.add('listening');
+  if(icon) icon.textContent = '🔴';
+  if(label) label.textContent = '녹음 중 · 누르면 중지';
+}
+function _setVoiceUIIdle(cfg){
+  if(!cfg) return;
+  var btn = document.getElementById(cfg.btnId);
+  var icon = document.getElementById(cfg.iconId);
+  var label = document.getElementById(cfg.labelId);
+  if(btn) btn.classList.remove('listening');
+  if(icon) icon.textContent = '🎤';
+  if(label) label.textContent = '음성으로 말하기';
+}
+
+// 새 SR 인스턴스 생성 + 시작 — 실패 시 null 반환
+function _buildAndStartVoiceRec(cfg){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  var rec;
+  try { rec = new SR(); } catch(e){ console.warn('[voice new SR]', e); return null; }
+  rec.lang = 'ko-KR';
+  rec.continuous = true;
+  rec.interimResults = true;
+
+  var ta = document.getElementById(cfg.taId);
+  var baseText = ta && ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
+  var finalText = baseText;
+
+  rec.onresult = function(ev){
+    var interim = '';
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      var t = ev.results[i][0].transcript;
+      if(ev.results[i].isFinal) finalText += t + ' ';
+      else interim += t;
+    }
+    if(ta){ ta.value = finalText + interim; if(cfg.onUpdate) cfg.onUpdate(); }
+  };
+  rec.onerror = function(ev){
+    console.warn('[voice]', ev && ev.error);
+    var errType = ev && ev.error;
+    if(errType === 'not-allowed' || errType === 'service-not-allowed'){
+      _voiceIntent = false;
+      alert('마이크 권한을 허용해주세요.');
+      _stopAndResetVoice();
+    }
+    // 그 외 에러(network/no-speech/audio-capture/aborted)는 onend가 자동 재시작 처리
+  };
+  rec.onend = function(){
+    // 1) 사용자가 명시적으로 종료 → 그대로
+    if(!_voiceIntent) return;
+    // 2) 더 새로운 rec이 active 상태 → 무시 (race)
+    if(_voiceRecognition !== rec) return;
+
+    // 3) 안전 가드: 10초 내 6회 이상 재시작 → 영구 에러 추정
+    var now = Date.now();
+    _voiceRestartTimes = _voiceRestartTimes.filter(function(t){ return now - t < 10000; });
+    if(_voiceRestartTimes.length >= 6){
+      console.warn('[voice] too many restarts in 10s — giving up');
+      if(typeof showToast === 'function') showToast('마이크가 자꾸 끊겨요. 직접 적어주세요 🙏');
+      _stopAndResetVoice();
+      return;
+    }
+    _voiceRestartTimes.push(now);
+
+    // 4) 기존 rec 폐기 + retry chain (500/1000/2000ms backoff)
+    _voiceRecognition = null;
+    _scheduleVoiceRebuild(cfg, 0);
+  };
+
+  try { rec.start(); return rec; }
+  catch(e){ console.warn('[voice rec.start]', e); return null; }
+}
+
+// 재시작 시도 체인 — Galaxy의 audio session release 지연 대응
+// .listening 클래스(🔴) 유지하면서 백그라운드로 retry
+function _scheduleVoiceRebuild(cfg, attempt){
+  if(!_voiceIntent) return;
+  var delays = [500, 1000, 2000];
+  if(attempt >= delays.length){
+    console.warn('[voice] restart retries exhausted at attempt', attempt);
+    if(typeof showToast === 'function') showToast('마이크가 자꾸 끊겨요. 직접 적어주세요 🙏');
+    _stopAndResetVoice();
+    return;
+  }
+  setTimeout(function(){
+    if(!_voiceIntent) return;
+    var rec = _buildAndStartVoiceRec(cfg);
+    if(rec){
+      _voiceRecognition = rec;
+      _setVoiceUIListening(cfg);   // 방어적: 🔴 시각 유지 강제
+    } else {
+      _scheduleVoiceRebuild(cfg, attempt + 1);
+    }
+  }, delays[attempt]);
+}
+
+// 명시 종료 — 자동 재시작 차단 + UI idle
+function _stopAndResetVoice(){
+  _voiceIntent = false;
+  _voiceRestartTimes = [];
+  try { if(_voiceRecognition) _voiceRecognition.stop(); } catch(e){}
+  _voiceRecognition = null;
+  _voiceListening = false;
+  _setVoiceUIIdle(_voiceActiveConfig);
+  _voiceActiveConfig = null;
+}
+
+function _startVoiceWithConfig(cfg){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
     alert('이 브라우저에서는 음성 입력이 지원되지 않아요. 직접 적어주세요.');
     return;
   }
-  var btn = document.getElementById('storyVoiceBtn');
-  var icon = document.getElementById('storyVoiceIcon');
-  var label = document.getElementById('storyVoiceLabel');
-  var ta = document.getElementById('storyAnswerTextarea');
+  var ta = document.getElementById(cfg.taId);
+  var btn = document.getElementById(cfg.btnId);
   if(!btn || !ta) return;
 
+  // 이미 녹음 중이면 종료
   if(_voiceListening){
-    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
-    _resetVoiceUI();
+    _stopAndResetVoice();
     return;
   }
 
-  try{
-    _voiceRecognition = new SR();
-    _voiceRecognition.lang = 'ko-KR';
-    _voiceRecognition.continuous = true;
-    _voiceRecognition.interimResults = true;
-
-    var baseText = ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
-    var finalText = baseText;
-
-    _voiceRecognition.onresult = function(ev){
-      var interim = '';
-      for(var i=ev.resultIndex; i<ev.results.length; i++){
-        var t = ev.results[i][0].transcript;
-        if(ev.results[i].isFinal){
-          finalText += t + ' ';
-        } else {
-          interim += t;
-        }
-      }
-      ta.value = finalText + interim;
-      _updateStoryCharCount();
-    };
-    _voiceRecognition.onerror = function(ev){
-      console.warn('voice error:', ev && ev.error);
-      _resetVoiceUI();
-      if(ev && ev.error === 'not-allowed'){
-        alert('마이크 권한을 허용해주세요.');
-      } else if(ev && ev.error === 'no-speech'){
-        // 침묵은 조용히 무시
-      }
-    };
-    _voiceRecognition.onend = function(){ _resetVoiceUI(); };
-    _voiceRecognition.start();
-    _voiceListening = true;
-    icon.textContent = '🔴';
-    label.textContent = '녹음 중 · 누르면 중지';
-    btn.classList.add('listening');
-  }catch(e){
-    console.warn('voice start failed:', e.message);
+  _voiceIntent = true;
+  _voiceRestartTimes = [];
+  _voiceActiveConfig = cfg;
+  var rec = _buildAndStartVoiceRec(cfg);
+  if(!rec){
+    _voiceIntent = false;
+    _voiceActiveConfig = null;
     alert('음성 입력을 시작할 수 없어요. 직접 적어주세요.');
-    _resetVoiceUI();
+    return;
   }
+  _voiceRecognition = rec;
+  _voiceListening = true;
+  _setVoiceUIListening(cfg);
 }
 
+function toggleVoiceInput(){
+  _startVoiceWithConfig(_VOICE_CFG_STORY);
+}
+
+function toggleVoiceInputWizard(){
+  _startVoiceWithConfig(_VOICE_CFG_WIZARD);
+}
+
+// 외부 호출 호환 — closeStoryModal / saveStory 등에서 호출
 function _resetVoiceUI(){
+  // 외부에서 명시적으로 끄는 경로 — 자동 재시작 중단
+  _voiceIntent = false;
+  _voiceRestartTimes = [];
   _voiceListening = false;
-  var btn = document.getElementById('storyVoiceBtn');
-  var icon = document.getElementById('storyVoiceIcon');
-  var label = document.getElementById('storyVoiceLabel');
-  if(btn) btn.classList.remove('listening');
-  if(icon) icon.textContent = '🎤';
-  if(label) label.textContent = '음성으로 말하기';
+  _setVoiceUIIdle(_VOICE_CFG_STORY);
+  // 활성 config가 wizard라도 storyModal close 흐름이면 강제로 둘 다 idle 처리
+  if(_voiceActiveConfig && _voiceActiveConfig !== _VOICE_CFG_STORY){
+    _setVoiceUIIdle(_voiceActiveConfig);
+  }
+  _voiceActiveConfig = null;
+}
+
+function _resetWizardVoiceUI(){
+  _voiceIntent = false;
+  _voiceRestartTimes = [];
+  _voiceListening = false;
+  _setVoiceUIIdle(_VOICE_CFG_WIZARD);
+  _voiceActiveConfig = null;
 }
 
 function _updateStoryCharCount(){
   var ta = document.getElementById('storyAnswerTextarea');
   var cc = document.getElementById('storyCharCount');
   if(ta && cc) cc.textContent = ta.value.length;
-}
-
-// ── 음성 입력: 만들기 위자드 (이미지/음악/글쓰기 공통) ──
-function toggleVoiceInputWizard(){
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){
-    alert('이 브라우저에서는 음성 입력이 지원되지 않아요. 직접 적어주세요.');
-    return;
-  }
-  var btn = document.getElementById('wizardVoiceBtn');
-  var icon = document.getElementById('wizardVoiceIcon');
-  var label = document.getElementById('wizardVoiceLabel');
-  var ta = document.getElementById('storyInput');
-  if(!btn || !ta) return;
-
-  if(_voiceListening){
-    try{ if(_voiceRecognition) _voiceRecognition.stop(); }catch(e){}
-    _resetWizardVoiceUI();
-    return;
-  }
-
-  try{
-    _voiceRecognition = new SR();
-    _voiceRecognition.lang = 'ko-KR';
-    _voiceRecognition.continuous = true;
-    _voiceRecognition.interimResults = true;
-
-    var baseText = ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
-    var finalText = baseText;
-
-    _voiceRecognition.onresult = function(ev){
-      var interim = '';
-      for(var i=ev.resultIndex; i<ev.results.length; i++){
-        var t = ev.results[i][0].transcript;
-        if(ev.results[i].isFinal){
-          finalText += t + ' ';
-        } else {
-          interim += t;
-        }
-      }
-      ta.value = finalText + interim;
-      if(typeof onStoryInput === 'function') onStoryInput();
-    };
-    _voiceRecognition.onerror = function(ev){
-      console.warn('voice error:', ev && ev.error);
-      _resetWizardVoiceUI();
-      if(ev && ev.error === 'not-allowed'){
-        alert('마이크 권한을 허용해주세요.');
-      }
-    };
-    _voiceRecognition.onend = function(){ _resetWizardVoiceUI(); };
-    _voiceRecognition.start();
-    _voiceListening = true;
-    icon.textContent = '🔴';
-    label.textContent = '녹음 중 · 누르면 중지';
-    btn.classList.add('listening');
-  }catch(e){
-    console.warn('voice start failed:', e.message);
-    alert('음성 입력을 시작할 수 없어요. 직접 적어주세요.');
-    _resetWizardVoiceUI();
-  }
-}
-
-function _resetWizardVoiceUI(){
-  _voiceListening = false;
-  var btn = document.getElementById('wizardVoiceBtn');
-  var icon = document.getElementById('wizardVoiceIcon');
-  var label = document.getElementById('wizardVoiceLabel');
-  if(btn) btn.classList.remove('listening');
-  if(icon) icon.textContent = '🎤';
-  if(label) label.textContent = '음성으로 말하기';
 }
 
 function _escapeStoryHtml(s){

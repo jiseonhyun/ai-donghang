@@ -12163,89 +12163,113 @@ function _autobioVoiceToggle(){
   _autobioStartVoice();
 }
 
-// 안드로이드 Chrome 등 Web Speech API가 사용자 의도와 무관하게 onend를 발화하는 문제 대응:
+// 안드로이드 Chrome (특히 갤럭시)의 Web Speech API 자동 종료 대응:
 // _autobioVoiceIntent = 사용자가 켠 상태인가 (버튼 한 번 더 누르기 전엔 true)
-// onend 시 의도가 true면 즉시 재시작. 단 3초 내 3회 이상 재시작되면 영구 에러로 추정하고 중단.
+// onend 시 의도 true면 → 기존 rec 폐기, 새 SR 인스턴스로 350ms 후 재시작
+// 안전 가드: 10초 내 6회 이상 재시작 시 영구 에러로 추정하고 중단
 var _autobioVoiceIntent = false;
 var _autobioVoiceRestartTimes = [];
+
+// SR 인스턴스 생성 + 시작 — 재시작 시 매번 새 인스턴스 사용 (Galaxy의 InvalidStateError 회피)
+function _autobioBuildAndStartRec(initialBaseText){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  var rec;
+  try { rec = new SR(); } catch(e){ console.warn('[voice new SR]', e); return null; }
+  rec.lang = 'ko-KR';
+  rec.continuous = true;
+  rec.interimResults = true;
+
+  var inp = g('autobioIvInput');
+  // 이 인스턴스 라이프사이클 동안 누적되는 텍스트 베이스 (초기값은 호출자가 넘김)
+  var baseText = (initialBaseText !== undefined) ? initialBaseText : (inp ? inp.value : '');
+
+  rec.onresult = function(ev){
+    var interim = '', final = '';
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      var t = ev.results[i][0].transcript;
+      if(ev.results[i].isFinal) final += t;
+      else interim += t;
+    }
+    if(inp){
+      inp.value = (baseText + (baseText && (final||interim) ? ' ' : '') + final + interim).trim();
+      _autobioInputChange();
+    }
+    if(final) baseText = inp ? inp.value : baseText;
+  };
+
+  rec.onerror = function(e){
+    console.warn('[voice]', e && e.error);
+    var errType = e && e.error;
+    // 영구 에러 — 사용자에게 알리고 종료
+    if(errType === 'not-allowed' || errType === 'service-not-allowed'){
+      if(typeof showToast==='function') showToast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
+      _autobioStopVoice();
+      return;
+    }
+    // 다른 에러(network/no-speech/aborted/audio-capture)는 onend에서 처리 위임
+    // — 명세상 error → end 순서이므로 onend가 재시작 트리거
+  };
+
+  rec.onend = function(){
+    // 1) 사용자가 명시적으로 종료(_autobioStopVoice 호출) → 그대로 종료
+    if(!_autobioVoiceIntent){ return; }
+    // 2) 이 rec이 이미 폐기되고 새 rec이 active 상태 → 무시 (race condition)
+    if(_autobioVoiceRec !== rec){ return; }
+
+    // 3) 안전 가드: 최근 10초 내 6회 이상 재시작 → 영구 에러 추정
+    var now = Date.now();
+    _autobioVoiceRestartTimes = _autobioVoiceRestartTimes.filter(function(t){ return now - t < 10000; });
+    if(_autobioVoiceRestartTimes.length >= 6){
+      console.warn('[voice] too many restarts in 10s — giving up');
+      if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');
+      _autobioStopVoice();
+      return;
+    }
+    _autobioVoiceRestartTimes.push(now);
+
+    // 4) 기존 rec 폐기 + 350ms 후 새 인스턴스로 재시작
+    //    Galaxy는 오디오 세션 release에 100-300ms 필요 — 같은 rec.start() 재호출보다 fresh 인스턴스가 안정적
+    _autobioVoiceRec = null;
+    setTimeout(function(){
+      if(!_autobioVoiceIntent) return;          // 그 사이 사용자가 종료했으면 중단
+      var currentText = inp ? inp.value : baseText;
+      var freshRec = _autobioBuildAndStartRec(currentText);
+      if(freshRec){
+        _autobioVoiceRec = freshRec;
+      } else {
+        // 새 인스턴스 생성 실패 — 최종 폴백
+        _autobioStopVoice();
+      }
+    }, 350);
+  };
+
+  try {
+    rec.start();
+    return rec;
+  } catch(e){
+    console.warn('[voice rec.start]', e);
+    return null;
+  }
+}
 
 function _autobioStartVoice(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏'); return; }
-  try {
-    _autobioVoiceRec = new SR();
-    _autobioVoiceRec.lang = 'ko-KR';
-    _autobioVoiceRec.continuous = true;
-    _autobioVoiceRec.interimResults = true;
-    var inp = g('autobioIvInput');
-    var baseText = inp ? inp.value : '';
-    _autobioVoiceRec.onresult = function(ev){
-      var interim = '', final = '';
-      for(var i=ev.resultIndex; i<ev.results.length; i++){
-        var t = ev.results[i][0].transcript;
-        if(ev.results[i].isFinal) final += t;
-        else interim += t;
-      }
-      if(inp){
-        inp.value = (baseText + (baseText && (final||interim) ? ' ' : '') + final + interim).trim();
-        _autobioInputChange();
-      }
-      if(final) baseText = inp ? inp.value : baseText;
-    };
-    _autobioVoiceRec.onerror = function(e){
-      console.warn('[voice]', e);
-      var errType = e && e.error;
-      // 영구 에러 — 즉시 사용자에게 알리고 종료
-      if(errType === 'not-allowed' || errType === 'service-not-allowed'){
-        if(typeof showToast==='function') showToast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
-        _autobioStopVoice();
-        return;
-      }
-      // network 에러는 일시적일 수 있음 — onend의 재시작 로직에 위임 (의도 유지)
-      // no-speech / audio-capture / aborted 등도 onend에서 처리
-    };
-    _autobioVoiceRec.onend = function(){
-      // 사용자가 명시적으로 종료(_autobioStopVoice 호출) → 의도 false → 그대로 종료
-      if(!_autobioVoiceIntent || !_autobioVoiceRec){
-        return;
-      }
-      // 안전 가드: 최근 3초 내 3번 이상 재시작 시 영구 에러 추정
-      var now = Date.now();
-      _autobioVoiceRestartTimes = _autobioVoiceRestartTimes.filter(function(t){ return now - t < 3000; });
-      if(_autobioVoiceRestartTimes.length >= 3){
-        console.warn('[voice] too many restarts in 3s — giving up');
-        if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');
-        _autobioStopVoice();
-        return;
-      }
-      _autobioVoiceRestartTimes.push(now);
-      // 의도 유지 — 즉시 재시작 시도 (Android Chrome이 침묵 시 자동으로 멈추는 문제 대응)
-      try {
-        _autobioVoiceRec.start();
-      } catch(e){
-        // 너무 빨리 재시작하면 InvalidStateError → 짧은 딜레이 후 재시도
-        setTimeout(function(){
-          if(!_autobioVoiceIntent || !_autobioVoiceRec) return;
-          try { _autobioVoiceRec.start(); }
-          catch(e2){
-            console.warn('[voice restart fail]', e2);
-            _autobioStopVoice();
-          }
-        }, 200);
-      }
-    };
-    _autobioVoiceRec.start();
-    _autobioVoiceActive = true;
-    _autobioVoiceIntent = true;
-    _autobioVoiceRestartTimes = [];
-    var btn = g('autobioIvVoiceBtn');
-    var lbl = g('autobioIvVoiceLabel');
-    if(btn) btn.classList.add('recording');
-    if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
-  } catch(e){
-    console.warn('[voice start]', e);
+  _autobioVoiceIntent = true;
+  _autobioVoiceRestartTimes = [];
+  var rec = _autobioBuildAndStartRec();
+  if(!rec){
+    _autobioVoiceIntent = false;
     if(typeof showToast==='function') showToast('음성 입력을 시작할 수 없어요');
+    return;
   }
+  _autobioVoiceRec = rec;
+  _autobioVoiceActive = true;
+  var btn = g('autobioIvVoiceBtn');
+  var lbl = g('autobioIvVoiceLabel');
+  if(btn) btn.classList.add('recording');
+  if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
 }
 
 function _autobioStopVoice(){

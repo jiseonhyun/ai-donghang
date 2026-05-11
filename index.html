@@ -8473,6 +8473,7 @@ var _voiceListening = false;
 var _voiceIntent = false;          // 사용자가 켠 상태 (한 번 더 누르기 전엔 true)
 var _voiceRestartTimes = [];        // 재시작 timestamps — 안전 가드
 var _voiceActiveConfig = null;      // 현재 활성 config (story / wizard)
+var _voiceLastFinalText = '';       // 직전 final transcript — cross-instance 중복 차단 (Galaxy 재시작 시 같은 단어 반복 방지)
 
 // 두 음성 입력 진입점의 ID·콜백 차이만 분리
 var _VOICE_CFG_STORY = {
@@ -8522,13 +8523,27 @@ function _buildAndStartVoiceRec(cfg){
   var ta = document.getElementById(cfg.taId);
   var baseText = ta && ta.value ? (ta.value.replace(/\s+$/, '') + ' ') : '';
   var finalText = baseText;
+  var lastFinalIndex = -1;  // 인스턴스 내 — 같은 result index 재처리 차단 (Galaxy가 같은 final을 반복 발화하는 사례 대응)
 
   rec.onresult = function(ev){
     var interim = '';
     for(var i=ev.resultIndex; i<ev.results.length; i++){
       var t = ev.results[i][0].transcript;
-      if(ev.results[i].isFinal) finalText += t + ' ';
-      else interim += t;
+      if(ev.results[i].isFinal){
+        // 인스턴스 내 dedup: 이미 더 큰 인덱스의 final을 처리했으면 skip
+        if(i <= lastFinalIndex) continue;
+        var normalized = (t || '').trim();
+        // 인스턴스 간 dedup: 직전 final과 동일한 문자열이면 skip (Galaxy 재시작 시 같은 단어 재합성 방지)
+        if(normalized && normalized === _voiceLastFinalText){
+          lastFinalIndex = i;
+          continue;
+        }
+        finalText += t + ' ';
+        if(normalized) _voiceLastFinalText = normalized;
+        lastFinalIndex = i;
+      } else {
+        interim += t;
+      }
     }
     if(ta){ ta.value = finalText + interim; if(cfg.onUpdate) cfg.onUpdate(); }
   };
@@ -8620,6 +8635,7 @@ function _startVoiceWithConfig(cfg){
 
   _voiceIntent = true;
   _voiceRestartTimes = [];
+  _voiceLastFinalText = '';     // 사용자가 새로 시작 → cross-instance dedup 상태 초기화
   _voiceActiveConfig = cfg;
   var rec = _buildAndStartVoiceRec(cfg);
   if(!rec){
@@ -12218,6 +12234,7 @@ function _autobioVoiceToggle(){
 // 안전 가드: 10초 내 6회 이상 재시작 시 영구 에러로 추정하고 중단
 var _autobioVoiceIntent = false;
 var _autobioVoiceRestartTimes = [];
+var _autobioVoiceLastFinalText = '';   // cross-instance dedup (Galaxy 재시작 시 같은 단어 반복 방지)
 
 // SR 인스턴스 생성 + 시작 — 재시작 시 매번 새 인스턴스 사용 (Galaxy의 InvalidStateError 회피)
 function _autobioBuildAndStartRec(initialBaseText){
@@ -12232,13 +12249,26 @@ function _autobioBuildAndStartRec(initialBaseText){
   var inp = g('autobioIvInput');
   // 이 인스턴스 라이프사이클 동안 누적되는 텍스트 베이스 (초기값은 호출자가 넘김)
   var baseText = (initialBaseText !== undefined) ? initialBaseText : (inp ? inp.value : '');
+  var lastFinalIndex = -1;   // 인스턴스 내 dedup — 같은 result index 재처리 차단
 
   rec.onresult = function(ev){
     var interim = '', final = '';
     for(var i=ev.resultIndex; i<ev.results.length; i++){
       var t = ev.results[i][0].transcript;
-      if(ev.results[i].isFinal) final += t;
-      else interim += t;
+      if(ev.results[i].isFinal){
+        if(i <= lastFinalIndex) continue;   // 같은 index 재처리 skip
+        var normalized = (t || '').trim();
+        if(normalized && normalized === _autobioVoiceLastFinalText){
+          // cross-instance dedup: 직전 final과 동일 → skip (Galaxy 재시작 시 같은 단어 재합성 방지)
+          lastFinalIndex = i;
+          continue;
+        }
+        final += t;
+        if(normalized) _autobioVoiceLastFinalText = normalized;
+        lastFinalIndex = i;
+      } else {
+        interim += t;
+      }
     }
     if(inp){
       inp.value = (baseText + (baseText && (final||interim) ? ' ' : '') + final + interim).trim();
@@ -12329,6 +12359,7 @@ function _autobioStartVoice(){
   if(!SR){ if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏'); return; }
   _autobioVoiceIntent = true;
   _autobioVoiceRestartTimes = [];
+  _autobioVoiceLastFinalText = '';   // 사용자가 새로 시작 → cross-instance dedup 초기화
   var rec = _autobioBuildAndStartRec();
   if(!rec){
     _autobioVoiceIntent = false;

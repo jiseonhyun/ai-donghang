@@ -940,6 +940,25 @@ body{font-family:'Noto Sans KR',-apple-system,"Apple SD Gothic Neo",system-ui,sa
 .autobio-iv-voice:hover{background:var(--al);}
 .autobio-iv-voice.recording{background:#FEE;border:2px solid #E05050;color:#C03030;animation:autobioRecPulse 1.2s ease-in-out infinite;}
 @keyframes autobioRecPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,80,80,.4);}50%{box-shadow:0 0 0 8px rgba(224,80,80,0);}}
+
+/* ── 시니어 음성 입력 마이크 버튼 (A안 — 96px 원형) ── */
+/* 패턴 F: 자서전 본문 다듬기 음성 입력 표준 — 재사용 가능 */
+.mic-btn-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin:16px 0 8px;}
+.mic-btn{position:relative;width:96px;height:96px;background:none;border:none;padding:0;cursor:pointer;border-radius:50%;-webkit-tap-highlight-color:transparent;}
+.mic-btn:active .mic-circle{transform:scale(.94);}
+.mic-circle{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#4A9A82 0%,#2a6b57 55%,#1e4f3f 100%);box-shadow:0 6px 16px rgba(42,107,87,.3);transition:transform .15s;z-index:2;}
+.mic-circle::before{content:'';position:absolute;top:14px;left:24px;width:40px;height:24px;border-radius:50%;background:rgba(255,255,255,.22);pointer-events:none;}
+.mic-pulse{position:absolute;top:50%;left:50%;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;border:2px solid #2a6b57;opacity:0;pointer-events:none;animation:micPulseRing 2.2s ease-out infinite;}
+.mic-pulse-2{animation-delay:.6s;}
+@keyframes micPulseRing{0%{transform:scale(1);opacity:.35;}100%{transform:scale(1.6);opacity:0;}}
+.mic-label{font-size:17px;font-weight:700;color:#2a6b57;text-align:center;}
+.mic-sub{font-size:13px;color:#5C5850;text-align:center;margin-top:-6px;}
+/* 녹음 중 — 빨간색 + 빠른 펄스 */
+.mic-btn.recording .mic-circle{background:radial-gradient(circle at 35% 28%,#E85555 0%,#B82A2A 55%,#8A1F1F 100%);}
+.mic-btn.recording .mic-pulse{border-color:#B82A2A;animation-duration:1s;}
+.mic-btn.recording + .mic-label{color:#B82A2A;}
+/* 접근성 — 모션 줄이기 */
+@media (prefers-reduced-motion: reduce){.mic-pulse{animation:none;opacity:0;}}
 .autobio-iv-actions{display:flex;gap:8px;margin-top:10px;justify-content:space-between;}
 .autobio-iv-action-btn{flex:1;padding:11px 8px;background:none;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;color:var(--i3);font-family:inherit;cursor:pointer;min-height:42px;}
 .autobio-iv-action-btn:hover{border-color:var(--ac);color:var(--ac);}
@@ -5563,10 +5582,20 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
           placeholder="답변을 적어주세요. 짧아도 괜찮아요 🌿"
           rows="3" oninput="_autobioInputChange()"></textarea>
         <button id="autobioHintTriggerBtn" type="button" class="autobio-iv-hint-trigger" onclick="_autobioShowHintCard()">💭 답이 잘 떠오르지 않아요</button>
-        <div class="autobio-iv-voice-row">
-          <button id="autobioIvVoiceBtn" class="autobio-iv-voice" onclick="_autobioVoiceToggle()">
-            <span id="autobioIvVoiceLabel">🎙️ 음성으로 말하기</span>
+        <div class="mic-btn-wrap">
+          <button id="autobioIvVoiceBtn" class="mic-btn" onclick="_autobioVoiceToggle()" aria-label="음성으로 말씀하기">
+            <span class="mic-pulse mic-pulse-1"></span>
+            <span class="mic-pulse mic-pulse-2"></span>
+            <span class="mic-circle">
+              <svg width="36" height="44" viewBox="0 0 36 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="9" y="2" width="18" height="24" rx="9" fill="#fff"/>
+                <path d="M 4,22 Q 4,38 18,38 Q 32,38 32,22" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <line x1="18" y1="38" x2="18" y2="42" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </span>
           </button>
+          <div class="mic-label" id="autobioIvVoiceLabel">음성으로 말하기</div>
+          <div class="mic-sub">살짝 누르시면 돼요</div>
         </div>
         <button id="autobioIvNextBtn" class="autobio-btn-primary" onclick="_autobioSendAnswer()" disabled style="margin-top:10px;">💚 다음으로 →</button>
         <div class="autobio-iv-actions">
@@ -12422,7 +12451,7 @@ function _autobioScheduleRestart(attempt){
       var btn = g('autobioIvVoiceBtn');
       var lbl = g('autobioIvVoiceLabel');
       if(btn) btn.classList.add('recording');
-      if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
+      if(lbl) lbl.textContent = '듣는 중... (한 번 더 누르면 멈춰요)';
     } else {
       // 생성/시작 실패 → 더 긴 딜레이로 다시 시도
       _autobioScheduleRestart(attempt + 1);
@@ -12448,7 +12477,7 @@ function _autobioStartVoice(){
   var btn = g('autobioIvVoiceBtn');
   var lbl = g('autobioIvVoiceLabel');
   if(btn) btn.classList.add('recording');
-  if(lbl) lbl.textContent = '🔴 듣는 중... (한 번 더 누르면 멈춰요)';
+  if(lbl) lbl.textContent = '듣는 중... (한 번 더 누르면 멈춰요)';
 }
 
 function _autobioStopVoice(){
@@ -12459,7 +12488,7 @@ function _autobioStopVoice(){
   var btn = g('autobioIvVoiceBtn');
   var lbl = g('autobioIvVoiceLabel');
   if(btn) btn.classList.remove('recording');
-  if(lbl) lbl.textContent = '🎙️ 음성으로 말하기';
+  if(lbl) lbl.textContent = '음성으로 말하기';
 }
 
 // showView 라우팅 후크 — 자서전 진입 시 _autobioInit 호출

@@ -6865,6 +6865,12 @@ function obSelect(el, key, val){
   obAnswers[key] = val;
   var btn = g('obNextBtn');
   if(btn) btn.className = 'ob-next-btn ready';
+
+  // 자동 다음 진행 — 시니어 클릭 횟수 감소 (3개 설문 × 1클릭 = 3클릭)
+  // 350ms 딜레이로 선택 표시(✓)를 보여준 뒤 자동으로 다음 설문으로
+  setTimeout(function(){
+    obNext();
+  }, 350);
 }
 
 function obNext(){

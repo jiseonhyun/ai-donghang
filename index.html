@@ -12266,6 +12266,12 @@ function _autobioVoiceToggle(){
   _autobioStartVoice();
 }
 
+// 안드로이드 Chrome 등 Web Speech API가 사용자 의도와 무관하게 onend를 발화하는 문제 대응:
+// _autobioVoiceIntent = 사용자가 켠 상태인가 (버튼 한 번 더 누르기 전엔 true)
+// onend 시 의도가 true면 즉시 재시작. 단 3초 내 3회 이상 재시작되면 영구 에러로 추정하고 중단.
+var _autobioVoiceIntent = false;
+var _autobioVoiceRestartTimes = [];
+
 function _autobioStartVoice(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏'); return; }
@@ -12291,13 +12297,50 @@ function _autobioStartVoice(){
     };
     _autobioVoiceRec.onerror = function(e){
       console.warn('[voice]', e);
-      _autobioStopVoice();
+      var errType = e && e.error;
+      // 영구 에러 — 즉시 사용자에게 알리고 종료
+      if(errType === 'not-allowed' || errType === 'service-not-allowed'){
+        if(typeof showToast==='function') showToast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
+        _autobioStopVoice();
+        return;
+      }
+      // network 에러는 일시적일 수 있음 — onend의 재시작 로직에 위임 (의도 유지)
+      // no-speech / audio-capture / aborted 등도 onend에서 처리
     };
     _autobioVoiceRec.onend = function(){
-      _autobioStopVoice();
+      // 사용자가 명시적으로 종료(_autobioStopVoice 호출) → 의도 false → 그대로 종료
+      if(!_autobioVoiceIntent || !_autobioVoiceRec){
+        return;
+      }
+      // 안전 가드: 최근 3초 내 3번 이상 재시작 시 영구 에러 추정
+      var now = Date.now();
+      _autobioVoiceRestartTimes = _autobioVoiceRestartTimes.filter(function(t){ return now - t < 3000; });
+      if(_autobioVoiceRestartTimes.length >= 3){
+        console.warn('[voice] too many restarts in 3s — giving up');
+        if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');
+        _autobioStopVoice();
+        return;
+      }
+      _autobioVoiceRestartTimes.push(now);
+      // 의도 유지 — 즉시 재시작 시도 (Android Chrome이 침묵 시 자동으로 멈추는 문제 대응)
+      try {
+        _autobioVoiceRec.start();
+      } catch(e){
+        // 너무 빨리 재시작하면 InvalidStateError → 짧은 딜레이 후 재시도
+        setTimeout(function(){
+          if(!_autobioVoiceIntent || !_autobioVoiceRec) return;
+          try { _autobioVoiceRec.start(); }
+          catch(e2){
+            console.warn('[voice restart fail]', e2);
+            _autobioStopVoice();
+          }
+        }, 200);
+      }
     };
     _autobioVoiceRec.start();
     _autobioVoiceActive = true;
+    _autobioVoiceIntent = true;
+    _autobioVoiceRestartTimes = [];
     var btn = g('autobioIvVoiceBtn');
     var lbl = g('autobioIvVoiceLabel');
     if(btn) btn.classList.add('recording');
@@ -12309,6 +12352,8 @@ function _autobioStartVoice(){
 }
 
 function _autobioStopVoice(){
+  _autobioVoiceIntent = false;           // 자동 재시작 차단
+  _autobioVoiceRestartTimes = [];
   try { if(_autobioVoiceRec){ _autobioVoiceRec.stop(); _autobioVoiceRec = null; } } catch(e){}
   _autobioVoiceActive = false;
   var btn = g('autobioIvVoiceBtn');

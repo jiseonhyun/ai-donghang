@@ -2543,6 +2543,21 @@ body:has(#builderView.active) #helpFloat{bottom:104px;}
   <!-- jsPDF + html2canvas (자서전 PDF 저장) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- 모바일 디버그 콘솔 (Eruda) — URL에 ?debug=1 붙이면 활성화 -->
+  <script>
+  (function(){
+    try{
+      if(!/[?&]debug=1/.test(window.location.search)) return;
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+      s.onload = function(){
+        try { eruda.init(); console.log('[eruda] activated — 모바일 디버그 콘솔 켜짐'); } catch(e){}
+      };
+      s.onerror = function(){ console.warn('[eruda] load failed'); };
+      document.head.appendChild(s);
+    }catch(e){}
+  })();
+  </script>
 </head>
 <body>
 <!-- NAV (Claude design v2) -->
@@ -8475,6 +8490,24 @@ var _voiceRestartTimes = [];        // 재시작 timestamps — 안전 가드
 var _voiceActiveConfig = null;      // 현재 활성 config (story / wizard)
 var _voiceLastFinalText = '';       // 직전 final transcript — cross-instance 중복 차단 (Galaxy 재시작 시 같은 단어 반복 방지)
 
+// 모바일 STT가 같은 발화에 대해 띄어쓰기·구두점·마침표가 다를 수 있어 정규화 비교
+// 예: '여러번' vs '여러 번' vs '여러번.' 모두 같은 키로 처리
+function _normalizeVoiceTranscript(s){
+  return (s || '').toLowerCase().trim().replace(/\s+/g, '').replace(/[.,!?。、！？·…]/g, '');
+}
+
+// ?debug=1 활성화 시 콘솔에 음성 인식 raw 결과 출력
+function _voiceDebugLog(prefix, ev){
+  if(!/[?&]debug=1/.test(window.location.search)) return;
+  try {
+    var parts = [];
+    for(var k=ev.resultIndex; k<ev.results.length; k++){
+      parts.push((ev.results[k].isFinal ? 'F' : 'i') + ':"' + ev.results[k][0].transcript + '"');
+    }
+    console.log('[' + prefix + '] idx=' + ev.resultIndex + ' len=' + ev.results.length + ' | ' + parts.join(' | '));
+  } catch(e){}
+}
+
 // 두 음성 입력 진입점의 ID·콜백 차이만 분리
 var _VOICE_CFG_STORY = {
   taId: 'storyAnswerTextarea',
@@ -8526,14 +8559,13 @@ function _buildAndStartVoiceRec(cfg){
   var lastFinalIndex = -1;  // 인스턴스 내 — 같은 result index 재처리 차단 (Galaxy가 같은 final을 반복 발화하는 사례 대응)
 
   rec.onresult = function(ev){
+    _voiceDebugLog('voice', ev);
     var interim = '';
     for(var i=ev.resultIndex; i<ev.results.length; i++){
       var t = ev.results[i][0].transcript;
       if(ev.results[i].isFinal){
-        // 인스턴스 내 dedup: 이미 더 큰 인덱스의 final을 처리했으면 skip
         if(i <= lastFinalIndex) continue;
-        var normalized = (t || '').trim();
-        // 인스턴스 간 dedup: 직전 final과 동일한 문자열이면 skip (Galaxy 재시작 시 같은 단어 재합성 방지)
+        var normalized = _normalizeVoiceTranscript(t);
         if(normalized && normalized === _voiceLastFinalText){
           lastFinalIndex = i;
           continue;
@@ -12252,14 +12284,16 @@ function _autobioBuildAndStartRec(initialBaseText){
   var lastFinalIndex = -1;   // 인스턴스 내 dedup — 같은 result index 재처리 차단
 
   rec.onresult = function(ev){
+    if(typeof _voiceDebugLog === 'function') _voiceDebugLog('autobio', ev);
     var interim = '', final = '';
     for(var i=ev.resultIndex; i<ev.results.length; i++){
       var t = ev.results[i][0].transcript;
       if(ev.results[i].isFinal){
-        if(i <= lastFinalIndex) continue;   // 같은 index 재처리 skip
-        var normalized = (t || '').trim();
+        if(i <= lastFinalIndex) continue;
+        var normalized = (typeof _normalizeVoiceTranscript === 'function')
+          ? _normalizeVoiceTranscript(t)
+          : (t || '').trim();
         if(normalized && normalized === _autobioVoiceLastFinalText){
-          // cross-instance dedup: 직전 final과 동일 → skip (Galaxy 재시작 시 같은 단어 재합성 방지)
           lastFinalIndex = i;
           continue;
         }

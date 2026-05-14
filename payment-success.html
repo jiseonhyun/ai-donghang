@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 완료 — AI 동행</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#FAF8F4;--ink:#1C1A17;--i2:#3D3A33;--i3:#5C5A54;--ac:#2A5F52;--al:#EBF5F2;--ab:#B8DDD6;--ad:#1E4840;--bd:#E8E2D5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;-webkit-text-size-adjust:100%;}
+  .card{background:#fff;border-radius:24px;padding:48px 36px;max-width:480px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.08);border:1px solid var(--bd);text-align:center;}
+  .icon{font-size:64px;margin-bottom:18px;line-height:1;}
+  .title{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+  .sub{font-size:16px;color:var(--i3);line-height:1.65;margin-bottom:28px;}
+  .info{background:var(--al);border:1.5px solid var(--ab);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:14px;}
+  .info-row + .info-row{border-top:1px dashed var(--bd);}
+  .info-label{color:var(--i3);}
+  .info-val{color:var(--ink);font-weight:600;word-break:break-all;text-align:right;margin-left:12px;}
+  .info-val.amount{font-size:18px;color:var(--ac);}
+  .btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:54px;margin-top:10px;text-decoration:none;text-align:center;}
+  .btn-primary{background:var(--ac);color:#fff;box-shadow:0 4px 0 var(--ad);}
+  .btn-secondary{background:#fff;color:var(--i2);border:1.5px solid var(--bd);}
+  .loading{display:inline-block;width:18px;height:18px;border:2px solid var(--ab);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .err-state .icon{color:#D85050;}
+  .err-state .title{color:#A23030;}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="icon" id="icon"><span class="loading"></span></div>
+  <div class="title" id="title">결제 확인 중…</div>
+  <div class="sub" id="sub">잠시만 기다려주세요. 결제 결과를 확인하고 있어요.</div>
+  <div class="info" id="info" style="display:none;"></div>
+  <div id="actions" style="display:none;">
+    <a href="/ai-donghang.html" class="btn btn-primary">앱으로 돌아가기</a>
+    <a href="/" class="btn btn-secondary">홈으로</a>
+  </div>
+</div>
+<script>
+(function(){
+  var SUPABASE_URL='https://gaibakqhdfdpnsdgpmya.supabase.co';
+  var SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
+  function q(n){var u=new URLSearchParams(location.search);return u.get(n);}
+  function show(ok, title, sub, rows){
+    document.getElementById('icon').textContent = ok ? '✅' : '⚠️';
+    document.getElementById('title').textContent = title;
+    document.getElementById('sub').textContent = sub;
+    if (!ok) document.getElementById('card').classList.add('err-state');
+    var info = document.getElementById('info');
+    if (rows && rows.length) {
+      info.innerHTML = rows.map(function(r){
+        return '<div class="info-row"><span class="info-label">'+r[0]+'</span><span class="info-val '+(r[2]||'')+'">'+r[1]+'</span></div>';
+      }).join('');
+      info.style.display='block';
+    }
+    document.getElementById('actions').style.display='block';
+  }
+  function fmtAmount(n){try{return Number(n).toLocaleString('ko-KR')+'원';}catch(e){return n+'원';}}
+  function fmtDate(s){if(!s)return '';try{var d=new Date(s);return d.toLocaleString('ko-KR');}catch(e){return s;}}
+  function methodLabel(m){return ({'카드':'신용/체크카드','간편결제':'간편결제','계좌이체':'계좌이체','가상계좌':'가상계좌','휴대폰':'휴대폰'})[m]||m||'-';}
+
+  var paymentKey = q('paymentKey');
+  var orderId = q('orderId');
+  var amount = q('amount');
+
+  if (!paymentKey || !orderId || !amount) {
+    show(false, '잘못된 접근이에요', '결제 정보가 충분하지 않아요. 다시 시도해주세요.', []);
+    return;
+  }
+
+  // 멱등 처리: 같은 paymentKey 재확인을 막기 위해 sessionStorage 사용
+  var cacheKey = 'aiDonghang_tossConfirmed_' + paymentKey;
+  var cached = null;
+  try { cached = JSON.parse(sessionStorage.getItem(cacheKey)||'null'); } catch(e){}
+  if (cached && cached.ok) {
+    renderSuccess(cached.payment);
+    return;
+  }
+
+  fetch(SUPABASE_URL + '/functions/v1/toss-confirm', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'apikey': SUPABASE_ANON,
+    },
+    body: JSON.stringify({ paymentKey: paymentKey, orderId: orderId, amount: Number(amount) })
+  }).then(function(r){ return r.json().then(function(d){return {status:r.status,data:d};}); })
+    .then(function(res){
+      if (res.status >= 200 && res.status < 300 && res.data && res.data.ok) {
+        try { sessionStorage.setItem(cacheKey, JSON.stringify(res.data)); } catch(e){}
+        renderSuccess(res.data.payment);
+      } else {
+        var msg = (res.data && res.data.error) || '결제 승인에 실패했어요.';
+        show(false, '결제 승인 실패', msg, [
+          ['주문번호', orderId],
+          ['결제 키', paymentKey]
+        ]);
+      }
+    })
+    .catch(function(e){
+      show(false, '네트워크 오류', '결제 확인 서버에 연결할 수 없어요. 잠시 후 다시 시도해주세요.', [
+        ['주문번호', orderId]
+      ]);
+    });
+
+  function renderSuccess(p){
+    var rows = [
+      ['주문번호', (p && p.orderId) || orderId],
+      ['상품명', (p && p.orderName) || '-'],
+      ['결제수단', methodLabel(p && p.method)],
+      ['결제 금액', fmtAmount((p && p.totalAmount) || amount), 'amount'],
+      ['승인 시각', fmtDate(p && p.approvedAt)]
+    ];
+    show(true, '결제가 완료되었어요 🎉', '구독이 즉시 활성화돼요. 앱으로 돌아가 이용해보세요.', rows);
+  }
+})();
+</script>
+</body>
+</html>

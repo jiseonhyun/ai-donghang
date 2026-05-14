@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 실패 — AI 동행</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#FAF8F4;--ink:#1C1A17;--i2:#3D3A33;--i3:#5C5A54;--ac:#2A5F52;--al:#EBF5F2;--ab:#B8DDD6;--ad:#1E4840;--bd:#E8E2D5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;-webkit-text-size-adjust:100%;}
+  .card{background:#fff;border-radius:24px;padding:48px 36px;max-width:480px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.08);border:1px solid var(--bd);text-align:center;}
+  .icon{font-size:64px;margin-bottom:18px;line-height:1;}
+  .title{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;color:#A23030;margin-bottom:10px;}
+  .sub{font-size:16px;color:var(--i3);line-height:1.65;margin-bottom:28px;}
+  .info{background:#FFF3F3;border:1.5px solid #F0C8C8;border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:14px;}
+  .info-row + .info-row{border-top:1px dashed #E5C5C5;}
+  .info-label{color:var(--i3);}
+  .info-val{color:var(--ink);font-weight:600;word-break:break-all;text-align:right;margin-left:12px;max-width:60%;}
+  .btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;min-height:54px;margin-top:10px;text-decoration:none;text-align:center;}
+  .btn-primary{background:var(--ac);color:#fff;box-shadow:0 4px 0 var(--ad);}
+  .btn-secondary{background:#fff;color:var(--i2);border:1.5px solid var(--bd);}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">😢</div>
+  <div class="title">결제가 완료되지 않았어요</div>
+  <div class="sub">결제 과정에서 문제가 생겼어요. 잠시 후 다시 시도해주세요.</div>
+  <div class="info" id="info"></div>
+  <a href="/ai-donghang.html" class="btn btn-primary">다시 시도하기</a>
+  <a href="/" class="btn btn-secondary">홈으로</a>
+</div>
+<script>
+(function(){
+  function q(n){var u=new URLSearchParams(location.search);return u.get(n);}
+  var rows = [];
+  var code = q('code'); var message = q('message'); var orderId = q('orderId');
+  if (message) rows.push(['사유', message]);
+  if (code) rows.push(['코드', code]);
+  if (orderId) rows.push(['주문번호', orderId]);
+  if (!rows.length) rows.push(['사유', '알 수 없는 오류가 발생했어요.']);
+  document.getElementById('info').innerHTML = rows.map(function(r){
+    return '<div class="info-row"><span class="info-label">'+r[0]+'</span><span class="info-val">'+r[1]+'</span></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

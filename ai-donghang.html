@@ -6982,12 +6982,49 @@ function _extractImageUrl(s){
   return candidates.length ? candidates[0] : null;
 }
 function _isImageResult(s){ return _extractImageUrl(s) !== null; }
+
+// 이미지 카테고리 코스인데 result 에 URL 이 없는 경우(외부 AI 결과를 텍스트로 받아 붙여넣은
+// 케이스 등), result 텍스트로 즉석에서 Pollinations 이미지를 만들어 그림으로 보여준다.
+// 같은 텍스트는 항상 같은 시드 → 같은 그림. 한 번 만든 URL 은 localStorage 에 캐시.
+function _imageCourseFallbackUrl(item){
+  if(!item) return null;
+  var course = item.course || '';
+  if(!course) return null;
+  // 자서전 챕터는 텍스트 결과가 정상 — 제외
+  if(course.indexOf('자서전 쓰기') === 0) return null;
+  var cat = (typeof COURSE_CAT !== 'undefined') ? COURSE_CAT[course] : null;
+  if(!cat){
+    // 이름에 이미지 코스 키워드가 있으면 이미지로 추정
+    if(/카드|엽서|그림|일러스트|풍경|초상화|보정|복원|지브리/.test(course)) cat = 'image';
+  }
+  if(cat !== 'image') return null;
+  if(item._fallbackImgUrl) return item._fallbackImgUrl;
+  var text = (item.result && String(item.result).trim()) || item.prompt || '';
+  if(!text || _looksLikeImageUrl(text)) return null;
+  var prompt = text.slice(0, 380);
+  // 텍스트 해시 → 안정적 시드 (같은 텍스트는 항상 같은 그림)
+  var seed = 0;
+  for(var i=0;i<prompt.length;i++){
+    seed = ((seed << 5) - seed + prompt.charCodeAt(i)) & 0x7fffffff;
+  }
+  var url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt)
+    + '?width=1024&height=1024&seed=' + seed + '&nologo=true&model=flux&safe=true';
+  item._fallbackImgUrl = url;
+  try{
+    var pf = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
+    for(var j=0;j<pf.length;j++){
+      if(pf[j] && pf[j].id === item.id){ pf[j]._fallbackImgUrl = url; break; }
+    }
+    localStorage.setItem('aiDonghang_portfolio', JSON.stringify(pf));
+  }catch(e){}
+  return url;
+}
 function _escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function _escHtmlSafe(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function openPfImage(idx){
   var item=portfolio[idx]; if(!item) return;
   var src=(item.result&&item.result.trim())?item.result:(item.prompt||'');
-  var url=_extractImageUrl(src);
+  var url=_extractImageUrl(src) || _imageCourseFallbackUrl(item);
   if(!url) return;
   // 큰 화면용 라이트박스 모달 — 새 탭 대신 인앱 미리보기 (어르신 친화)
   var existing=document.getElementById('pfImageLightbox'); if(existing) existing.remove();
@@ -7109,11 +7146,16 @@ function renderPortfolioList(){
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
     var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
     var imgUrl = _extractImageUrl(fullText);
+    var imgFromFallback = false;
+    if(!imgUrl){
+      imgUrl = _imageCourseFallbackUrl(item);
+      if(imgUrl) imgFromFallback = true;
+    }
     var isImg = !!imgUrl;
     // 이미지 URL 외 부가 텍스트가 있으면 이미지 아래에 같이 노출 (예: "카드 완성! ..." 같은 설명)
     var imgExtraText = '';
     if(isImg){
-      imgExtraText = fullText.replace(imgUrl, '').trim();
+      imgExtraText = imgFromFallback ? fullText : fullText.replace(imgUrl, '').trim();
       if(imgExtraText.length > 180) imgExtraText = imgExtraText.slice(0,180) + '...';
     }
     var isLong = !isImg && fullText.length > 120;

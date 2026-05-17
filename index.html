@@ -521,6 +521,308 @@
     .scroll-hint .down{ animation: none; }
   }
 
+  /* ─────────────────────────────────────────────────────────────
+     HERO ROTATOR — Hero #1 ↔ Hero #2 7초 자동 전환
+     ───────────────────────────────────────────────────────────── */
+  .hero-rotator{ position: relative; }
+  .hero-slide{ display: none; }
+  .hero-slide.active{ display: block; animation: heroFade .7s cubic-bezier(.2,.6,.2,1); }
+  @keyframes heroFade{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform: translateY(0);} }
+  .hero-dots{
+    position: absolute; left:0; right:0; bottom: 24px;
+    display: flex; justify-content: center; gap: 10px;
+    z-index: 5; pointer-events: none;
+  }
+  .hero-dot-btn{
+    width: 32px; height: 6px; border-radius: 3px;
+    border: none; padding: 0;
+    background: rgba(44,42,38,.22);
+    cursor: pointer;
+    transition: background .35s ease, width .35s ease;
+    pointer-events: auto;
+  }
+  .hero-dot-btn:hover{ background: rgba(44,42,38,.45); }
+  .hero-dot-btn.active{ background: var(--ink); width: 44px; }
+  .hero-rotator.on-dark .hero-dot-btn{ background: rgba(245,240,232,.25); }
+  .hero-rotator.on-dark .hero-dot-btn:hover{ background: rgba(245,240,232,.5); }
+  .hero-rotator.on-dark .hero-dot-btn.active{ background: #B8956A; }
+
+  /* ─────────────────────────────────────────────────────────────
+     HERO #2 — 가족의 책 (출판사 다크 톤)
+     본문 폭/타이포는 Hero #1과 호환되도록 같은 토큰 사용
+     ───────────────────────────────────────────────────────────── */
+  .hero-2{
+    position: relative;
+    overflow: hidden;
+    background: #1F1B17;
+    color: #F5F0E8;
+    padding: clamp(32px, 4vw, 56px) clamp(20px, 5vw, 64px) clamp(80px, 10vw, 144px);
+  }
+  /* 미세 비네팅 */
+  .hero-2::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(60% 70% at 75% 50%, rgba(184,149,106,.08), transparent 60%),
+      radial-gradient(120% 80% at 50% 100%, #15120F, transparent 70%);
+  }
+  /* 미세 종이 그레인 */
+  .hero-2::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.6'/></svg>");
+    mix-blend-mode: overlay;
+  }
+  .hero-2-inner{
+    position: relative; z-index: 1;
+    max-width: 1440px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(48px, 7vw, 88px);
+    align-items: center;
+  }
+  @media (min-width: 960px){
+    .hero-2-inner{
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+      gap: clamp(64px, 8vw, 120px);
+    }
+  }
+
+  /* hero-2 내부 카피 — Hero #1과 동일한 .eyebrow/.headline/.sub 클래스를 재사용하되 색만 어둠 톤으로 override */
+  .hero-2 .hero-copy{ max-width: 600px; }
+  .hero-2 .eyebrow{ color: #B8956A; }
+  .hero-2 .eyebrow::before{ background: #B8956A; }
+  .hero-2 .headline-mark{ color: #B8956A; }
+  .hero-2 .headline{ color: #F5F0E8; font-size: clamp(32px, 4.8vw, 56px); }
+  .hero-2 .headline .accent{ font-weight: 600; color: #B8956A; text-shadow: 0 1px 0 rgba(0,0,0,.4); }
+  .hero-2 .sub{ color: rgba(245,240,232,.55); }
+
+  /* 버튼 — Hero #2 전용 페이퍼 톤 (Hero #1의 teal과 구분) */
+  .hero-2 .btn-primary{
+    background: #F5F0E8;
+    color: #1F1B17;
+    border-color: #F5F0E8;
+  }
+  .hero-2 .btn-primary:hover{ background: #FFFAF1; border-color: #FFFAF1; }
+  .hero-2 .btn-ghost{ color: #F5F0E8; }
+  .hero-2 .btn-ghost::after{ background: #B8956A; }
+  .hero-2 .btn-ghost:hover{ color: #B8956A; }
+  .hero-2 .btn-ghost:hover::after{ background: #B8956A; }
+
+  /* 좌측 하단 출판 정보 — micro 대체 */
+  .hero-2 .imprint{
+    margin-top: clamp(40px, 5vw, 56px);
+    padding-top: 20px;
+    border-top: 1px solid rgba(245,240,232,.14);
+    display: flex; flex-wrap: wrap; gap: 6px 28px;
+    font-size: 14px;
+    color: rgba(245,240,232,.55);
+    letter-spacing: .02em;
+  }
+  .hero-2 .imprint .roman{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    color: #8A6F4F;
+  }
+
+  /* 우측 책 목업 — CSS 3D */
+  .hero-2 .stage{
+    position: relative;
+    padding: clamp(48px, 6vw, 80px) 0 clamp(64px, 7vw, 96px);
+    display: flex; justify-content: center;
+    perspective: 1600px;
+    opacity: 0; transform: translateY(12px);
+    animation: rise 1100ms cubic-bezier(.2,.6,.2,1) 280ms forwards;
+  }
+  .hero-2 .stage::after{
+    content:""; position: absolute;
+    left: 50%; bottom: clamp(24px, 4vw, 56px);
+    width: clamp(220px, 26vw, 380px);
+    height: 28px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(0,0,0,.5), transparent 75%);
+    filter: blur(8px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero-2 .book{
+    --book-w: clamp(220px, 28vw, 320px);
+    --book-h: calc(var(--book-w) * 1.42);
+    --book-d: 28px;
+    width: var(--book-w);
+    height: var(--book-h);
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(6deg) rotateY(-26deg);
+    transition: transform .8s cubic-bezier(.2,.6,.2,1);
+  }
+  .hero-2 .stage:hover .book{ transform: rotateX(4deg) rotateY(-22deg); }
+  .hero-2 .face{ position: absolute; inset: 0; background: #F5F0E8; }
+  .hero-2 .cover{
+    background: #F5F0E8;
+    border: 1px solid #ECE5D6;
+    box-shadow:
+      inset 12px 0 16px -10px rgba(0,0,0,.18),
+      inset 0 0 60px rgba(31,27,23,.06);
+    padding: clamp(28px, 3.2vw, 42px) clamp(24px, 2.8vw, 36px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: #1F1B17;
+  }
+  .hero-2 .cover-frame{
+    position: absolute; inset: clamp(14px, 1.6vw, 20px);
+    border: 1px solid #B8956A;
+    pointer-events: none;
+  }
+  .hero-2 .cover-frame::before{
+    content:""; position: absolute; inset: 4px;
+    border: 1px solid #8A6F4F;
+    opacity: .55;
+  }
+  .hero-2 .cover-meta{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    font-size: 12.5px;
+    letter-spacing: .06em;
+    color: #8A6F4F;
+    z-index: 1;
+  }
+  .hero-2 .cover-title{
+    font-family: "Noto Serif KR", serif;
+    font-weight: 600;
+    font-size: clamp(28px, 3.4vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -.01em;
+    color: #1F1B17;
+    margin: clamp(8px, 1vw, 14px) 0;
+    z-index: 1; position: relative;
+  }
+  .hero-2 .cover-ornament{
+    width: 36px; height: 1px;
+    background: #B8956A;
+    margin: clamp(10px, 1.4vw, 14px) 0 clamp(14px, 1.6vw, 18px);
+    position: relative; z-index: 1;
+  }
+  .hero-2 .cover-ornament::before, .hero-2 .cover-ornament::after{
+    content:""; position: absolute; top: -2px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #B8956A;
+  }
+  .hero-2 .cover-ornament::before{ left: -10px; }
+  .hero-2 .cover-ornament::after{ right: -10px; }
+  .hero-2 .cover-author{
+    font-family: "Noto Serif KR", serif;
+    font-weight: 400;
+    font-size: clamp(13px, 1.1vw, 15px);
+    color: #2A2520;
+    letter-spacing: .02em;
+    line-height: 1.5;
+    z-index: 1; position: relative;
+  }
+  .hero-2 .cover-foot{
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: auto;
+    z-index: 1;
+  }
+  .hero-2 .cover-mark{
+    font-family: "Noto Serif KR", serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: .14em;
+    color: #1F1B17;
+  }
+  .hero-2 .cover-edition{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: #8A6F4F;
+  }
+  .hero-2 .spine{
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    width: var(--book-d);
+    transform-origin: left center;
+    transform: translateX(0) rotateY(-90deg);
+    background: linear-gradient(90deg, #ECE5D6 0%, #DDD3BD 40%, #C9BFA5 100%);
+    box-shadow:
+      inset 0 0 12px rgba(0,0,0,.15),
+      inset 0 8px 16px -8px rgba(0,0,0,.25),
+      inset 0 -8px 16px -8px rgba(0,0,0,.25);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .hero-2 .spine-title{
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: "Noto Serif KR", serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .14em;
+    color: #1F1B17;
+    white-space: nowrap;
+    position: relative;
+  }
+  .hero-2 .spine-band{
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 60%; height: 1px;
+    background: #B8956A;
+    opacity: .7;
+  }
+  .hero-2 .spine-band.top{ top: 18%; }
+  .hero-2 .spine-band.bot{ bottom: 18%; }
+  .hero-2 .pages-right{
+    position: absolute;
+    top: 0; right: 0; height: 100%;
+    width: var(--book-d);
+    transform-origin: right center;
+    transform: rotateY(90deg);
+    background: repeating-linear-gradient(180deg, #ECE5D6 0px, #ECE5D6 1px, #DDD3BD 1px, #DDD3BD 2px);
+    box-shadow: inset 0 0 8px rgba(0,0,0,.15);
+  }
+  .hero-2 .pages-top, .hero-2 .pages-bottom{
+    position: absolute;
+    left: 0; width: 100%;
+    height: var(--book-d);
+    transform-style: preserve-3d;
+    background: repeating-linear-gradient(90deg, #ECE5D6 0px, #ECE5D6 1px, #DDD3BD 1px, #DDD3BD 2px);
+  }
+  .hero-2 .pages-top{ top: 0; transform-origin: top center; transform: rotateX(90deg); }
+  .hero-2 .pages-bottom{ bottom: 0; transform-origin: bottom center; transform: rotateX(-90deg); }
+  .hero-2 .back{ background: #ECE5D6; transform: translateZ(calc(-1 * var(--book-d))); }
+
+  /* 표지 제목 교차 애니메이션 (8초 주기) */
+  .hero-2 .swap{ display: inline-grid; grid-template-areas: "stack"; }
+  .hero-2 .swap > .t-a, .hero-2 .swap > .t-b{ grid-area: stack; }
+  .hero-2 .swap > .t-b{ opacity: 0; }
+  .hero-2 .swap > .t-a{ animation: bookSwapA 8s ease-in-out infinite; }
+  .hero-2 .swap > .t-b{ animation: bookSwapB 8s ease-in-out infinite; }
+  @keyframes bookSwapA{ 0%,42%{opacity:1;} 50%,92%{opacity:0;} 100%{opacity:1;} }
+  @keyframes bookSwapB{ 0%,42%{opacity:0;} 50%,92%{opacity:1;} 100%{opacity:0;} }
+
+  .hero-2 .book-caption{
+    position: relative; z-index: 1;
+    margin: clamp(20px, 2.5vw, 28px) auto 0;
+    max-width: 360px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(245,240,232,.55);
+    line-height: 1.6;
+    letter-spacing: .02em;
+  }
+  .hero-2 .book-caption .roman{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    color: #8A6F4F;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-slide.active{ animation: none; }
+    .hero-2 .stage{ animation: none; opacity:1; transform:none; }
+    .hero-2 .swap > .t-a, .hero-2 .swap > .t-b{ animation: none; }
+    .hero-2 .swap > .t-a{ opacity: 1; }
+    .hero-2 .swap > .t-b{ opacity: 0; }
+    .hero-2 .book{ transition: none; }
+  }
+
   /* ═════════════════════════════════════════════════════════════
      하단 섹션 공통 — 책 한 권의 챕터처럼 이어지는 톤
      ═════════════════════════════════════════════════════════════ */
@@ -1063,7 +1365,11 @@
   </aside>
 </div>
 
+<!-- HERO ROTATOR — Hero #1 ↔ Hero #2 7초 자동 전환 -->
+<div class="hero-rotator" id="heroRotator">
+
 <!-- HERO #1 — 감정 진입 (자녀 타겟) -->
+<div class="hero-slide active" id="heroSlide-0">
 <section class="hero" aria-label="AI동행 — 자서전 소개">
   <div class="hero-grid">
 
@@ -1123,6 +1429,100 @@
     <span class="down"></span>
   </div>
 </section>
+</div>
+
+<!-- HERO #2 — 결과물 진입 (책의 무게감) -->
+<div class="hero-slide" id="heroSlide-1">
+<section class="hero-2" aria-label="AI동행 — 가족의 책 샘플">
+  <div class="hero-2-inner">
+
+    <!-- 좌측: 출판사 페이지처럼 진중한 카피 -->
+    <div class="hero-copy">
+      <span class="eyebrow">AI동행 · 가족의 책</span>
+
+      <span class="headline-mark" aria-hidden="true">“</span>
+      <h2 class="headline">
+        <span class="accent">80년</span>의 이야기가,<br>
+        한 권의 책이 됩니다.
+      </h2>
+
+      <p class="sub">
+        AI동행이 어머니와 대화하며,<br>
+        살아오신 이야기를 한 권의 책으로 엮어 드립니다.
+      </p>
+
+      <div class="cta-row">
+        <a href="ai-donghang.html#builder" class="btn btn-primary">
+          <span>샘플 책 보기</span>
+          <span class="arrow" aria-hidden="true"></span>
+        </a>
+        <a href="#how" class="btn btn-ghost">어떻게 만들어지나요</a>
+      </div>
+
+      <div class="imprint">
+        <span><span class="roman">format</span> · 양장본 · 디지털</span>
+        <span><span class="roman">pages</span> · 약 220쪽</span>
+        <span><span class="roman">copies</span> · 가족 5권</span>
+      </div>
+    </div>
+
+    <!-- 우측: 책 목업 -->
+    <div class="hero-2-visual">
+      <div class="stage">
+        <div class="book" aria-label="자서전 샘플">
+          <!-- 앞표지 -->
+          <div class="face cover">
+            <div class="cover-frame" aria-hidden="true"></div>
+            <div class="cover-meta">i. 가족의 책</div>
+            <div>
+              <h3 class="cover-title swap">
+                <span class="t-a">엄마의<br>이야기</span>
+                <span class="t-b" aria-hidden="true">아버지의<br>이야기</span>
+              </h3>
+              <div class="cover-ornament" aria-hidden="true"></div>
+              <p class="cover-author swap">
+                <span class="t-a">박순자가 살아오신 80년<br>가족이 함께 엮음</span>
+                <span class="t-b" aria-hidden="true">김진형이 살아오신 80년<br>가족이 함께 엮음</span>
+              </p>
+            </div>
+            <div class="cover-foot">
+              <span class="cover-mark">AI동행</span>
+              <span class="cover-edition">first edition</span>
+            </div>
+          </div>
+          <!-- 뒷표지 -->
+          <div class="face back" aria-hidden="true"></div>
+          <!-- 스파인 -->
+          <div class="face spine" aria-hidden="true">
+            <span class="spine-band top"></span>
+            <span class="spine-title swap">
+              <span class="t-a">엄마의 이야기 · AI동행</span>
+              <span class="t-b" aria-hidden="true">아버지의 이야기 · AI동행</span>
+            </span>
+            <span class="spine-band bot"></span>
+          </div>
+          <!-- 페이지 단면 -->
+          <div class="face pages-right" aria-hidden="true"></div>
+          <div class="face pages-top" aria-hidden="true"></div>
+          <div class="face pages-bottom" aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="book-caption">
+        <span class="roman">fig. i</span> — 어머니 한 분의 80년이 220쪽의 양장본 한 권으로 묶입니다.
+      </p>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- 페이지 인디케이터 -->
+<div class="hero-dots" id="heroDots" role="tablist" aria-label="히어로 배너 전환">
+  <button class="hero-dot-btn active" type="button" onclick="goHero(0)" aria-label="히어로 1 — 자서전 소개"></button>
+  <button class="hero-dot-btn" type="button" onclick="goHero(1)" aria-label="히어로 2 — 가족의 책"></button>
+</div>
+
+</div>
 
 <!-- ═════════════════════════════════════════════════════════════
      II. 어머니가 만드실 수 있는 일곱 가지
@@ -1671,6 +2071,42 @@
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
     document.querySelectorAll('.sec').forEach((s) => io.observe(s));
+  })();
+</script>
+
+<!-- 히어로 자동 전환 (7초) -->
+<script>
+  (function(){
+    var heroIdx = 0;
+    var heroTotal = 2;
+    var heroTimer = null;
+
+    window.goHero = function(idx){
+      heroIdx = idx;
+      var slides = document.querySelectorAll('#heroRotator .hero-slide');
+      slides.forEach(function(el, i){ el.classList.toggle('active', i === idx); });
+      var dots = document.querySelectorAll('#heroDots .hero-dot-btn');
+      dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
+      var rot = document.getElementById('heroRotator');
+      if (rot) rot.classList.toggle('on-dark', idx === 1);
+    };
+
+    function startHeroAuto(){
+      stopHeroAuto();
+      heroTimer = setInterval(function(){
+        window.goHero((heroIdx + 1) % heroTotal);
+      }, 7000);
+    }
+    function stopHeroAuto(){
+      if (heroTimer){ clearInterval(heroTimer); heroTimer = null; }
+    }
+
+    var rot = document.getElementById('heroRotator');
+    if (rot){
+      startHeroAuto();
+      rot.addEventListener('mouseenter', stopHeroAuto);
+      rot.addEventListener('mouseleave', startHeroAuto);
+    }
   })();
 </script>
 

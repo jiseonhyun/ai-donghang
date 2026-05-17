@@ -6952,6 +6952,44 @@ function showShareModal(text){
 }
 function closeShareModal(){if(g('shareModal'))g('shareModal').classList.remove('show');}
 
+// 작품 결과가 이미지 URL 인지 판별 (작품함에서 <img> 로 렌더하기 위함)
+function _isImageResult(s){
+  if(!s||typeof s!=='string') return false;
+  s=s.trim();
+  if(!s) return false;
+  if(/^data:image\//i.test(s)) return true;
+  if(/^blob:/i.test(s)) return true;
+  if(!/^https?:\/\//i.test(s)) return false;
+  // 한 줄 + 공백 없는 URL 만 이미지로 간주 (긴 텍스트 안의 우연한 URL 제외)
+  if(/\s/.test(s)) return false;
+  if(/image\.pollinations\.ai/i.test(s)) return true;
+  if(/\.(png|jpe?g|webp|gif|bmp|svg|avif)(\?|$)/i.test(s)) return true;
+  if(/oaidalleapiprodscus\.blob\.core\.windows\.net/i.test(s)) return true; // OpenAI DALL-E
+  if(/cdn\.openai\.com/i.test(s)) return true;
+  return false;
+}
+function _escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function _escHtmlSafe(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function openPfImage(idx){
+  var item=portfolio[idx]; if(!item) return;
+  var url=(item.result&&item.result.trim())?item.result.trim():'';
+  if(!url||!_isImageResult(url)) return;
+  // 큰 화면용 라이트박스 모달 — 새 탭 대신 인앱 미리보기 (어르신 친화)
+  var existing=document.getElementById('pfImageLightbox'); if(existing) existing.remove();
+  var box=document.createElement('div');
+  box.id='pfImageLightbox';
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;';
+  box.onclick=function(e){ if(e.target===box) box.remove(); };
+  box.innerHTML='<div style="position:relative;max-width:96vw;max-height:96vh;">'
+    +'<img src="'+_escAttr(url)+'" alt="작품 이미지" style="max-width:96vw;max-height:88vh;border-radius:14px;display:block;box-shadow:0 20px 60px rgba(0,0,0,.4);background:#222;">'
+    +'<div style="position:absolute;top:-50px;right:0;display:flex;gap:10px;">'
+      +'<a href="'+_escAttr(url)+'" target="_blank" rel="noopener" style="padding:10px 16px;background:#fff;color:#333;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;font-family:inherit;">원본 열기</a>'
+      +'<button onclick="document.getElementById(\'pfImageLightbox\').remove()" style="padding:10px 16px;background:#fff;color:#333;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">닫기</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(box);
+}
+
 // 자서전 챕터(localStorage aiDonghang_memoir_N)를 portfolio에 누락 없이 동기화.
 // 멱등: 이미 같은 챕터 항목이 portfolio에 있으면 건너뜀.
 function _syncMemoirToPortfolio(){
@@ -7055,7 +7093,8 @@ function renderPortfolioList(){
     var card=document.createElement('div');
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
     var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
-    var isLong = fullText.length > 120;
+    var isImg = _isImageResult(fullText);
+    var isLong = !isImg && fullText.length > 120;
     var preview = isLong ? fullText.slice(0,120)+'...' : fullText;
     var _memoirBtn = '<button onclick="showMemoirComplete()" style="width:100%;padding:10px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:46px;margin-bottom:8px;">📚 자서전 합본 보기 · PDF 저장</button>';
     var courseLabel = item.course || '작품';
@@ -7066,18 +7105,26 @@ function renderPortfolioList(){
     }
     var courseBg  = isMemoirItem ? '#FBF4E4' : 'var(--al)';
     var courseCol = isMemoirItem ? 'var(--gd)' : 'var(--ac)';
-    var courseEmoji = isMemoirItem ? '📖' : (item.emoji||'📝');
+    var courseEmoji = isMemoirItem ? '📖' : (item.emoji|| (isImg?'🎨':'📝'));
 var cardId = 'pf-text-'+idx;
     card.innerHTML=
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
       +'<span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;background:'+courseBg+';color:'+courseCol+';">'+courseEmoji+' '+courseLabel+'</span>'
       +'<span style="font-size:13px;color:var(--i3);">'+(item.date||'')+'</span>'
       +'</div>'
-      // 본문 (접기/펼치기)
-      +'<div id="'+cardId+'" style="font-size:14px;color:var(--i2);line-height:1.8;margin-bottom:6px;white-space:pre-wrap;">'+preview+'</div>'
-      +(isLong
-        ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'
-        : '<div style="margin-bottom:12px;"></div>')
+      // 본문 (이미지면 <img>, 아니면 텍스트 접기/펼치기)
+      +(isImg
+        ? '<div style="margin:6px 0 14px;text-align:center;">'
+            +'<img src="'+_escAttr(fullText)+'" alt="'+_escAttr(item.course||'작품 이미지')+'" loading="lazy" '
+              +'style="max-width:100%;max-height:380px;border-radius:12px;display:inline-block;cursor:zoom-in;background:var(--wm);" '
+              +'onclick="openPfImage('+idx+')" '
+              +'onerror="this.style.display=\'none\';var n=this.nextElementSibling;if(n)n.style.display=\'block\';">'
+            +'<div style="display:none;font-size:13px;color:var(--i3);padding:18px;background:var(--wm);border-radius:10px;margin-top:6px;">⚠️ 이미지를 불러오지 못했어요<br><a href="'+_escAttr(fullText)+'" target="_blank" rel="noopener" style="color:var(--ac);font-weight:600;text-decoration:underline;">새 창에서 열어보기</a></div>'
+          +'</div>'
+        : '<div id="'+cardId+'" style="font-size:14px;color:var(--i2);line-height:1.8;margin-bottom:6px;white-space:pre-wrap;">'+preview+'</div>'
+          +(isLong
+            ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'
+            : '<div style="margin-bottom:12px;"></div>'))
             // CTA 버튼
       +'<div style="display:flex;gap:8px;">'
       +'<button onclick="copyPfItem('+idx+')" style="flex:1;padding:10px;background:var(--wm);border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-weight:600;color:var(--i2);cursor:pointer;font-family:inherit;min-height:46px;">📋 복사</button>'
@@ -7097,7 +7144,7 @@ var cardId = 'pf-text-'+idx;
     }
   });
 }
-function copyPfItem(idx){var item=portfolio[idx];if(!item)return;var text=(item.result&&item.result.trim())?item.result:item.prompt;if(navigator.clipboard)navigator.clipboard.writeText(text).then(function(){showToast('복사됐어요! AI에 붙여넣기 하세요 🙂');});else{fallbackCopy(text);showToast('복사됐어요! 🙂');}}
+function copyPfItem(idx){var item=portfolio[idx];if(!item)return;var text=(item.result&&item.result.trim())?item.result:item.prompt;var msg=_isImageResult(text)?'이미지 주소가 복사됐어요! 🖼️':'복사됐어요! AI에 붙여넣기 하세요 🙂';if(navigator.clipboard)navigator.clipboard.writeText(text).then(function(){showToast(msg);});else{fallbackCopy(text);showToast(msg);}}
 function sharePfItem(idx){
   var item=portfolio[idx]; if(!item)return;
   var text = ((item.result&&item.result.trim())?item.result:(item.prompt||'')) + '\n\n— AI 동행으로 만든 작품';

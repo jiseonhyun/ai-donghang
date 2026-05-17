@@ -6406,6 +6406,7 @@ function downloadCertificate(){
 
 // ── 창작 아카이브 렌더링 (엔진3) ──
 function renderArchive(){
+  if(typeof _syncMemoirToPortfolio==='function') _syncMemoirToPortfolio();
   var pfc = portfolio.length;
   var archiveLog = JSON.parse(localStorage.getItem('aiDonghang_archive')||'[]');
   var dojoCount = Object.keys(dojoProgress).filter(function(k){return dojoProgress[k];}).length;
@@ -6951,6 +6952,46 @@ function showShareModal(text){
 }
 function closeShareModal(){if(g('shareModal'))g('shareModal').classList.remove('show');}
 
+// 자서전 챕터(localStorage aiDonghang_memoir_N)를 portfolio에 누락 없이 동기화.
+// 멱등: 이미 같은 챕터 항목이 portfolio에 있으면 건너뜀.
+function _syncMemoirToPortfolio(){
+  try{
+    var pf=[];
+    try{ pf=JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]')||[]; }catch(e){ pf=[]; }
+    var changed=false;
+    for(var i=1;i<=12;i++){
+      var text=localStorage.getItem('aiDonghang_memoir_'+i);
+      if(!text||!text.trim()) continue;
+      var courseLabel='자서전 쓰기 '+i+'챕터';
+      var exists=pf.some(function(p){
+        if(!p||!p.course) return false;
+        if(p.course===courseLabel) return true;
+        if(p.memoirChapter===i) return true;
+        // 과거에 '자서전 쓰기' 라벨로 저장된 동일 본문도 중복으로 간주
+        if(p.course==='자서전 쓰기' && p.result===text) return true;
+        return false;
+      });
+      if(exists) continue;
+      var customTitle=localStorage.getItem('aiDonghang_memoir_custom_title_'+i);
+      pf.push({
+        id:'memoir_'+i+'_'+Date.now(),
+        course:courseLabel,
+        emoji:'📖',
+        prompt:customTitle||'',
+        result:text,
+        date:'자서전 챕터',
+        memoirChapter:i
+      });
+      changed=true;
+    }
+    if(changed){
+      if(pf.length>50) pf=pf.slice(0,50);
+      localStorage.setItem('aiDonghang_portfolio',JSON.stringify(pf));
+    }
+    portfolio=pf;
+  }catch(e){ console.warn('memoir->portfolio sync failed:',e); }
+}
+
 async function saveToPortfolio(cName,prompt,result){
   var item={id:Date.now(),course:cName,emoji:(COURSE_CONFIG[cName]||{}).emoji||'📝',prompt:prompt,result:result,date:new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'})};
   portfolio.unshift(item);if(portfolio.length>50)portfolio=portfolio.slice(0,50);
@@ -6996,6 +7037,7 @@ function renderPortfolioList(){
     list.appendChild(noAuthDiv);
     return;
   }
+  _syncMemoirToPortfolio();
   portfolio=JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
   if(portfolio.length===0){if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';

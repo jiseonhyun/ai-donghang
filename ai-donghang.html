@@ -6952,28 +6952,43 @@ function showShareModal(text){
 }
 function closeShareModal(){if(g('shareModal'))g('shareModal').classList.remove('show');}
 
-// 작품 결과가 이미지 URL 인지 판별 (작품함에서 <img> 로 렌더하기 위함)
-function _isImageResult(s){
+// URL 자체가 이미지로 보이는지 (도메인/확장자 기준)
+function _looksLikeImageUrl(s){
   if(!s||typeof s!=='string') return false;
-  s=s.trim();
-  if(!s) return false;
-  if(/^data:image\//i.test(s)) return true;
-  if(/^blob:/i.test(s)) return true;
-  if(!/^https?:\/\//i.test(s)) return false;
-  // 한 줄 + 공백 없는 URL 만 이미지로 간주 (긴 텍스트 안의 우연한 URL 제외)
-  if(/\s/.test(s)) return false;
   if(/image\.pollinations\.ai/i.test(s)) return true;
-  if(/\.(png|jpe?g|webp|gif|bmp|svg|avif)(\?|$)/i.test(s)) return true;
+  if(/\.(png|jpe?g|webp|gif|bmp|svg|avif)(\?|$|#)/i.test(s)) return true;
   if(/oaidalleapiprodscus\.blob\.core\.windows\.net/i.test(s)) return true; // OpenAI DALL-E
   if(/cdn\.openai\.com/i.test(s)) return true;
+  if(/fal\.media|fal\.ai\/files/i.test(s)) return true; // fal.ai
+  if(/replicate\.delivery/i.test(s)) return true;
+  if(/cloudinary\.com\/.+\/image\//i.test(s)) return true;
   return false;
 }
+// 작품 결과(텍스트/URL)에서 이미지 URL을 추출 (없으면 null).
+// 단독 URL 뿐 아니라 본문에 박힌 URL 도 잡아낸다 (예: '카드 완성! ... https://...?width=...').
+function _extractImageUrl(s){
+  if(!s||typeof s!=='string') return null;
+  s=s.trim();
+  if(!s) return null;
+  if(/^data:image\//i.test(s)) return s;
+  if(/^blob:/i.test(s)) return s;
+  // 본문 안 http(s) URL 후보 추출 (공백/따옴표/마크업 경계 기준)
+  var re = /https?:\/\/[^\s<>"'`]+/gi;
+  var m, candidates = [];
+  while((m = re.exec(s)) !== null){
+    var url = m[0].replace(/[.,;:!?)\]}>'"`]+$/, ''); // 끝의 구두점 정리
+    if(_looksLikeImageUrl(url)) candidates.push(url);
+  }
+  return candidates.length ? candidates[0] : null;
+}
+function _isImageResult(s){ return _extractImageUrl(s) !== null; }
 function _escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function _escHtmlSafe(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function openPfImage(idx){
   var item=portfolio[idx]; if(!item) return;
-  var url=(item.result&&item.result.trim())?item.result.trim():'';
-  if(!url||!_isImageResult(url)) return;
+  var src=(item.result&&item.result.trim())?item.result:(item.prompt||'');
+  var url=_extractImageUrl(src);
+  if(!url) return;
   // 큰 화면용 라이트박스 모달 — 새 탭 대신 인앱 미리보기 (어르신 친화)
   var existing=document.getElementById('pfImageLightbox'); if(existing) existing.remove();
   var box=document.createElement('div');
@@ -7093,7 +7108,14 @@ function renderPortfolioList(){
     var card=document.createElement('div');
     card.style.cssText='background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;border-left:4px solid var(--ac);';
     var fullText=(item.result&&item.result.trim())?item.result:(item.prompt||'');
-    var isImg = _isImageResult(fullText);
+    var imgUrl = _extractImageUrl(fullText);
+    var isImg = !!imgUrl;
+    // 이미지 URL 외 부가 텍스트가 있으면 이미지 아래에 같이 노출 (예: "카드 완성! ..." 같은 설명)
+    var imgExtraText = '';
+    if(isImg){
+      imgExtraText = fullText.replace(imgUrl, '').trim();
+      if(imgExtraText.length > 180) imgExtraText = imgExtraText.slice(0,180) + '...';
+    }
     var isLong = !isImg && fullText.length > 120;
     var preview = isLong ? fullText.slice(0,120)+'...' : fullText;
     var _memoirBtn = '<button onclick="showMemoirComplete()" style="width:100%;padding:10px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;min-height:46px;margin-bottom:8px;">📚 자서전 합본 보기 · PDF 저장</button>';
@@ -7114,13 +7136,16 @@ var cardId = 'pf-text-'+idx;
       +'</div>'
       // 본문 (이미지면 <img>, 아니면 텍스트 접기/펼치기)
       +(isImg
-        ? '<div style="margin:6px 0 14px;text-align:center;">'
-            +'<img src="'+_escAttr(fullText)+'" alt="'+_escAttr(item.course||'작품 이미지')+'" loading="lazy" '
+        ? '<div style="margin:6px 0 10px;text-align:center;">'
+            +'<img src="'+_escAttr(imgUrl)+'" alt="'+_escAttr(item.course||'작품 이미지')+'" loading="lazy" '
               +'style="max-width:100%;max-height:380px;border-radius:12px;display:inline-block;cursor:zoom-in;background:var(--wm);" '
               +'onclick="openPfImage('+idx+')" '
               +'onerror="this.style.display=\'none\';var n=this.nextElementSibling;if(n)n.style.display=\'block\';">'
-            +'<div style="display:none;font-size:13px;color:var(--i3);padding:18px;background:var(--wm);border-radius:10px;margin-top:6px;">⚠️ 이미지를 불러오지 못했어요<br><a href="'+_escAttr(fullText)+'" target="_blank" rel="noopener" style="color:var(--ac);font-weight:600;text-decoration:underline;">새 창에서 열어보기</a></div>'
+            +'<div style="display:none;font-size:13px;color:var(--i3);padding:18px;background:var(--wm);border-radius:10px;margin-top:6px;">⚠️ 이미지를 불러오지 못했어요<br><a href="'+_escAttr(imgUrl)+'" target="_blank" rel="noopener" style="color:var(--ac);font-weight:600;text-decoration:underline;">새 창에서 열어보기</a></div>'
           +'</div>'
+          +(imgExtraText
+            ? '<div style="font-size:13px;color:var(--i3);line-height:1.7;margin-bottom:12px;white-space:pre-wrap;">'+imgExtraText+'</div>'
+            : '<div style="margin-bottom:4px;"></div>')
         : '<div id="'+cardId+'" style="font-size:14px;color:var(--i2);line-height:1.8;margin-bottom:6px;white-space:pre-wrap;">'+preview+'</div>'
           +(isLong
             ? '<button id="pf-toggle-'+idx+'" onclick="togglePfText('+idx+')" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:12px;font-weight:600;">▼ 전체 보기</button>'

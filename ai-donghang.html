@@ -58,7 +58,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .view{display:none;}.view.active{display:block;}
 .pv{display:none;}.pv.active{display:block;}
 
-/* ── NAV ── */
+/* ── NAV (legacy — 호환용 유지) ── */
 .nav{height:64px;background:rgba(250,248,244,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(28,26,23,0.09);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:fixed;top:0;left:0;right:0;z-index:200;box-shadow:0 1px 12px rgba(28,26,23,0.06);}
 .nav-logo{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;}
 .nav-logo-icon{width:38px;height:38px;background:transparent;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -72,6 +72,51 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .btn-nav-signup:hover{background:var(--ad);}
 .btn-nav-user{display:flex;align-items:center;gap:7px;padding:10px 18px;background:var(--al);border:1.5px solid var(--ab);border-radius:100px;font-size:15px;font-weight:600;color:var(--ac);cursor:pointer;font-family:inherit;min-height:48px;}
 .nav-spacer{height:64px;}
+
+/* ── TOPBAR (홈페이지 통일 네비, fixed) ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(251,248,243,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:clamp(24px,4vw,48px);padding:14px clamp(20px,5vw,64px);border-bottom:1px solid rgba(28,26,23,.09);}
+.topbar .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:22px;letter-spacing:-.01em;color:var(--ink);text-decoration:none;}
+.topbar .brand-logo{display:block;height:28px;width:auto;}
+.topbar nav{display:flex;gap:28px;font-size:16px;color:var(--i3);}
+.topbar nav a{color:inherit;text-decoration:none;cursor:pointer;}
+.topbar nav a:hover{color:var(--ink);}
+.topbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.topbar-actions .login{font-size:14px;color:var(--i3);text-decoration:none;padding:6px 4px;cursor:pointer;}
+.topbar-actions .login:hover{color:var(--ink);}
+.topbar-actions .gift-link{display:inline-flex;align-items:center;font-size:14px;color:#FBF8F3;background:var(--ac);padding:8px 14px;border-radius:2px;text-decoration:none;transition:background-color .25s ease;}
+.topbar-actions .gift-link:hover{background:var(--ad);}
+.menu-toggle{display:none;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(28,26,23,.16);cursor:pointer;padding:0;margin-left:4px;transition:border-color .25s,background-color .25s;}
+.menu-toggle:hover{border-color:var(--i3);background:rgba(0,0,0,.02);}
+.menu-toggle .bars{display:inline-block;width:20px;height:12px;position:relative;}
+.menu-toggle .bars::before,.menu-toggle .bars::after,.menu-toggle .bars span{content:"";position:absolute;left:0;right:0;height:1.5px;background:var(--ink);}
+.menu-toggle .bars::before{top:0;}
+.menu-toggle .bars span{top:50%;transform:translateY(-50%);}
+.menu-toggle .bars::after{bottom:0;}
+.menu-toggle[aria-expanded="true"] .bars::before{top:50%;transform:translateY(-50%) rotate(45deg);}
+.menu-toggle[aria-expanded="true"] .bars::after{bottom:50%;transform:translateY(50%) rotate(-45deg);}
+.menu-toggle[aria-expanded="true"] .bars span{opacity:0;}
+@media (max-width:880px){.topbar nav{display:none;}.menu-toggle{display:inline-flex;}}
+@media (max-width:540px){.topbar-actions .login{display:none;}}
+@media (max-width:430px){.topbar-actions .gift-link{display:none;}}
+
+/* 드로우어 (모바일 메뉴) */
+.nav-drawer{position:fixed;inset:0;z-index:300;visibility:hidden;pointer-events:none;}
+.nav-drawer[aria-hidden="false"]{visibility:visible;pointer-events:auto;}
+.nav-drawer-scrim{position:absolute;inset:0;background:rgba(31,27,23,.42);opacity:0;transition:opacity .35s ease;}
+.nav-drawer[aria-hidden="false"] .nav-drawer-scrim{opacity:1;}
+.nav-drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(86vw,360px);background:var(--bg);border-left:1px solid rgba(28,26,23,.09);box-shadow:-20px 0 48px -28px rgba(31,27,23,.3);transform:translateX(100%);transition:transform .42s cubic-bezier(.2,.6,.2,1);display:flex;flex-direction:column;padding:22px 24px 28px;}
+.nav-drawer[aria-hidden="false"] .nav-drawer-panel{transform:translateX(0);}
+.nav-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid rgba(28,26,23,.09);}
+.nav-drawer-close{width:40px;height:40px;background:transparent;border:1px solid rgba(28,26,23,.16);cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;position:relative;}
+.nav-drawer-close::before,.nav-drawer-close::after{content:"";position:absolute;width:18px;height:1.5px;background:var(--ink);top:50%;left:50%;}
+.nav-drawer-close::before{transform:translate(-50%,-50%) rotate(45deg);}
+.nav-drawer-close::after{transform:translate(-50%,-50%) rotate(-45deg);}
+.nav-drawer-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;}
+.nav-drawer-list li + li{border-top:1px solid rgba(28,26,23,.09);}
+.nav-drawer-list a{display:flex;align-items:center;padding:18px 4px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:19px;color:var(--ink);text-decoration:none;cursor:pointer;}
+.nav-drawer-foot{margin-top:auto;padding-top:24px;border-top:1px solid rgba(28,26,23,.09);display:flex;flex-direction:column;gap:10px;}
+.nav-drawer-foot .login{font-size:16px;color:var(--i3);text-decoration:none;padding:8px 0;cursor:pointer;}
+.nav-drawer-foot .gift-link{display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#FBF8F3;background:var(--ac);padding:12px 16px;text-decoration:none;}
 
 /* ── 공통 버튼 ── */
 .btn-p{display:inline-flex;align-items:center;gap:8px;padding:15px 32px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s;min-height:52px;}
@@ -1602,442 +1647,54 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<!-- NAV -->
-<nav class="nav" id="globalNav">
-  <a href="#" onclick="showView('home')" class="nav-logo">
-    <div class="nav-logo-icon" style="background:transparent;padding:2px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg></div>AI<span class="g">동행</span>
+<!-- TOPBAR (홈페이지 통일 네비) -->
+<header class="topbar" id="globalNav">
+  <a href="/" class="brand" aria-label="AI동행">
+    <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
   </a>
-  <div class="nav-links" id="navLinksGuest">
-    <a class="nav-link" id="nav-dojo" href="#" onclick="showView('dojo')">🏆 AI 도장깨기</a>
-    <a class="nav-link" id="nav-builder" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" id="nav-community" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" id="nav-learn" href="#" onclick="showView('learn')">AI 알아보기</a>
-    <a class="nav-link" id="nav-faq" href="#" onclick="showView('faq')">고객센터</a>
-    <a class="nav-link" id="nav-pricing" href="#" onclick="showView('pricing')">구독</a>
+  <nav aria-label="주요 메뉴">
+    <a href="ai-donghang.html#builder">만들기</a>
+    <a href="ai-donghang.html#dojo">도장깨기</a>
+    <a href="ai-donghang.html#community">커뮤니티</a>
+    <a href="ai-donghang.html#portfolio">내 작품함</a>
+    <a href="ai-donghang.html#pricing">요금제</a>
+    <a href="ai-donghang.html#faq">고객센터</a>
+  </nav>
+  <div class="topbar-actions">
+    <a href="ai-donghang.html#auth" class="login">로그인</a>
+    <a href="gift.html" class="gift-link">부모님께 선물하기</a>
+    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
+      <span class="bars" aria-hidden="true"><span></span></span>
+    </button>
   </div>
-  <div class="nav-links" id="navLinksUser" style="display:none;">
-    <a class="nav-link" href="#" onclick="showView('dojo')">🏆 도장깨기</a>
-    <a class="nav-link" href="#" onclick="showView('builder')">만들기</a>
-    <a class="nav-link" href="#" onclick="showView('community')">커뮤니티</a>
-    <a class="nav-link" href="#" onclick="showView('portfolio')">내 작품함</a>
-    <a class="nav-link" href="#" onclick="showView('learn')">AI 알아보기</a>
-    <a class="nav-link" href="#" onclick="showView('faq')">고객센터</a>
-    <a class="nav-link" href="#" onclick="showView('pricing')">구독</a>
-  </div>
-  <div class="nav-row" id="navBtnsGuest">
-    <button class="btn-nav-login" onclick="showView('login')">로그인</button>
-    <button class="btn-nav-signup" onclick="showView('auth')">무료 가입 →</button>
-  </div>
-  <div class="nav-row" id="navBtnsUser" style="display:none;">
-    <button class="btn-nav-user" onclick="showView('mypage')">👤 <span id="navUserName">마이페이지</span></button>
-  </div>
-</nav>
+</header>
+
+<!-- 모바일 햄버거 드로우어 -->
+<div class="nav-drawer" id="site-nav-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="메뉴">
+  <div class="nav-drawer-scrim" data-nav-close=""></div>
+  <aside class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <a href="/" class="brand" aria-label="AI동행">
+        <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
+      </a>
+      <button type="button" class="nav-drawer-close" data-nav-close="" aria-label="메뉴 닫기"></button>
+    </div>
+    <ul class="nav-drawer-list">
+      <li><a href="ai-donghang.html#builder">만들기</a></li>
+      <li><a href="ai-donghang.html#dojo">도장깨기</a></li>
+      <li><a href="ai-donghang.html#community">커뮤니티</a></li>
+      <li><a href="ai-donghang.html#portfolio">내 작품함</a></li>
+      <li><a href="ai-donghang.html#pricing">요금제</a></li>
+      <li><a href="ai-donghang.html#faq">고객센터</a></li>
+    </ul>
+    <div class="nav-drawer-foot">
+      <a href="ai-donghang.html#auth" class="login">로그인</a>
+      <a href="gift.html" class="gift-link">부모님께 선물하기</a>
+    </div>
+  </aside>
+</div>
 <div class="nav-spacer"></div>
 
-<!-- ══ HOME ══ -->
-<div class="view active" id="homeView">
-<div style="background:var(--bg);position:relative;">
-
-  <!-- 히어로 슬라이더 wrapper - 고정 높이로 두 버전 높이 통일 -->
-  <div id="heroSliderWrap" style="position:relative;">
-
-    <!-- 히어로 페이지네이션 dots -->
-    <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;">
-      <button id="hero-dot-0" onclick="switchHero(0)" style="width:36px;height:10px;border-radius:100px;background:var(--ac);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-      <button id="hero-dot-1" onclick="switchHero(1)" style="width:10px;height:10px;border-radius:100px;background:var(--bd);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-      <button id="hero-dot-2" onclick="switchHero(2)" style="width:10px;height:10px;border-radius:100px;background:var(--bd);border:none;cursor:pointer;transition:all .3s;padding:0;min-height:44px;"></button>
-    </div>
-
-    <!-- ── 히어로 버전1: 텍스트 애니메이션 ── -->
-    <div id="heroV1" style="position:absolute;inset:0;opacity:1;pointer-events:auto;transition:opacity .5s;">
-    <div class="hero">
-      <div>
-        <div class="hero-pill"><span class="hero-dot"></span>AI로 만든 실제 작품들</div>
-        <h1 class="hero-title">내 손으로<br><em>직접 만든</em><br>작품이에요</h1>
-        <p class="hero-sub">어르신들이 AI 동행으로 만든<br>실제 작품들이에요. 나도 5분이면 만들 수 있어요.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="goToBuilder()">✨ 무료로 체험해보기 →</button>
-          
-        </div>
-        <div class="hero-reassure">✅ 모두 어르신이 직접 만든 작품 &nbsp;·&nbsp; ✅ AI 동행으로 5분 만에</div>
-      </div>
-      <div>
-        <!-- 이미지 슬라이드 카드 -->
-        <div style="position:relative;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(28,26,23,.12);background:#fff;height:420px;display:flex;flex-direction:column;">
-          <!-- 슬라이드 컨테이너 -->
-          <div style="position:relative;flex:1;overflow:hidden;background:var(--wm);" id="heroImgSlider">
-
-            <!-- 슬라이드 1: 고향 그림 -->
-            <div class="hero-img-slide active" id="hslide-0"
-              style="position:absolute;inset:0;transition:opacity .7s;">
-              <img src="images/andong_watercolor.png"
-                alt="고향 마을 가을 풍경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <!-- 따뜻한 세피아 오버레이 -->
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(120,70,20,.35) 0%,rgba(0,0,0,.0) 40%,rgba(0,0,0,.72) 100%);"></div>
-              <!-- AI 그림 느낌 수채화 테두리 효과 -->
-              <div style="position:absolute;inset:0;box-shadow:inset 0 0 60px rgba(160,100,40,.3);"></div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:24px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(255,220,150,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;">🎨 AI 이미지 생성 · 수채화</div>
-                <div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;text-shadow:0 2px 8px rgba(0,0,0,.4);">경북 안동 고향 마을</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.8);">박철수(68세)님 · 수채화 스타일 · 5분 소요</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 2: 트로트 -->
-            <div class="hero-img-slide" id="hslide-1"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 따뜻한 무대 조명 느낌 배경 -->
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=85"
-                alt="음악 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(20,50,40,.6) 0%,rgba(0,0,0,.75) 100%);"></div>
-              <!-- 중앙 콘텐츠 -->
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;">
-                <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(4px);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.3);">🎵</div>
-                <div style="font-family:var(--serif,serif);font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5);">어머니 생각</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:22px;text-align:center;">박철수 작사 · Suno AI 작곡 · 트로트</div>
-                <!-- 음악 진행바 -->
-                <div style="background:rgba(255,255,255,.15);border-radius:100px;height:5px;width:200px;overflow:hidden;margin-bottom:7px;backdrop-filter:blur(2px);">
-                  <div id="heroMusicBar" style="width:0%;height:100%;background:linear-gradient(90deg,#5ee7d0,#fff);border-radius:100px;transition:width .1s linear;"></div>
-                </div>
-                <div style="font-size:12px;color:rgba(255,255,255,.45);">▶ Suno AI가 실제 노래로 완성했어요</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(180,255,220,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">🎵 Suno AI · 음악 생성</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.4);">나만의 트로트 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">김순자(72세)님 · 가사 10분 + 노래 생성 1분</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 3: 자서전 -->
-            <div class="hero-img-slide" id="hslide-2"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 냇가·여름 느낌 자연 배경 -->
-              <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85"
-                alt="여름 자연 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <!-- 위쪽은 밝게, 아래로 짙게 -->
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,.82) 100%);"></div>
-              <!-- 자서전 텍스트 카드 (중앙 살짝 위) -->
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:calc(100% - 48px);background:rgba(255,252,245,.92);backdrop-filter:blur(6px);border-radius:12px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.25);">
-                <div style="font-size:10px;font-weight:700;color:var(--gd);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">📖 제 1장</div>
-                <div style="font-family:var(--serif,serif);font-size:19px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.3;">냇가의 여름</div>
-                <div style="font-family:var(--serif,serif);font-size:13px;color:var(--i2);line-height:1.95;">그 여름, 냇가는 우리들의 세상이었다. 발밑으로 차가운 물이 흘렀고, 돌 틈에서 피라미들이 반짝였다…</div>
-                <div style="margin-top:10px;font-size:11px;color:var(--ac);font-weight:700;">✓ ChatGPT가 완성했어요 · 1 / 12챕터</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(200,240,220,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">📖 ChatGPT · 자서전</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.5);">자서전 첫 챕터 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">이경숙(75세)님 · 기억 5줄 입력 → 완성</div>
-              </div>
-            </div>
-
-            <!-- 슬라이드 4: 편지 -->
-            <div class="hero-img-slide" id="hslide-3"
-              style="position:absolute;inset:0;opacity:0;transition:opacity .7s;">
-              <!-- 감성적인 창가·꽃 배경 -->
-              <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=85"
-                alt="편지 배경"
-                style="width:100%;height:100%;object-fit:cover;"
-                onerror="this.style.display='none'">
-              <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(80,30,10,.25) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.80) 100%);"></div>
-              <!-- 편지 카드 (중앙) -->
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:calc(100% - 48px);background:rgba(255,252,245,.9);backdrop-filter:blur(6px);border-radius:12px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.2);border-left:4px solid var(--gd);">
-                <div style="font-size:12px;color:var(--gd);font-weight:700;margin-bottom:10px;">💌 사랑하는 딸 지영에게</div>
-                <div style="font-family:var(--serif,serif);font-size:13px;color:var(--i2);line-height:2;">말은 잘 못했지만, 언제나 네 편이었단다.<br>이제라도 말할게.<br><b style="color:var(--ink);">고맙다, 지영아. 사랑한다.</b> — 엄마</div>
-                <div style="margin-top:10px;font-size:11px;color:var(--ac);font-weight:700;">✓ 뤼튼이 완성했어요 · 3분 소요</div>
-              </div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:22px;">
-                <div style="font-size:11px;font-weight:700;color:rgba(255,220,180,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">💌 뤼튼 · 편지</div>
-                <div style="font-family:var(--serif,serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.5);">딸에게 편지 완성</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.75);">최영희(81세)님 · 3분 만에 완성</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 슬라이드 하단 썸네일 -->
-          <div style="display:flex;gap:0;background:#fff;">
-            <button id="hthumb-0" onclick="goHeroSlide(0)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid var(--ac);background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">🎨</button>
-            <button id="hthumb-1" onclick="goHeroSlide(1)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">🎵</button>
-            <button id="hthumb-2" onclick="goHeroSlide(2)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">📖</button>
-            <button id="hthumb-3" onclick="goHeroSlide(3)"
-              style="flex:1;padding:12px 8px;border:none;border-top:3px solid transparent;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;">💌</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-    <div id="heroV3" style="position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;">
-    <div class="hero">
-      <div>
-        <div class="hero-pill"><span class="hero-dot"></span>어르신도 AI를 직접 써보는 날</div>
-        <h1 class="hero-title">뤼튼, ChatGPT…<br>나도 <em>직접</em><br>써볼 수 있어요</h1>
-        <p class="hero-sub">요즘 사람들이 쓰는 AI 툴을 하나씩 배워요.<br>도장 하나 깰 때마다 손자에게 자랑할 수 있어요.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="showView('builder')">✍️ 프롬프트 만들어보기 →</button>
-        </div>
-        <div class="hero-reassure">✅ 회원가입 없이 바로 체험 &nbsp;·&nbsp; ✅ 어렵지 않아요</div>
-      </div>
-      <div>
-        <div class="hero-card">
-          <div class="hero-card-hdr"><span class="hero-card-title">자서전 쓰기 · AI 동행</span><span class="hero-card-badge">프롬프트 완성</span></div>
-          <div class="hero-card-body">
-            <div class="anim-q" id="aq1">어떤 시절 이야기인가요?</div>
-            <div class="anim-chips" id="ac1">
-              <span class="anim-chip" id="chip-youth">유년 시절</span><span class="anim-chip" id="chip-school">학창 시절</span><span class="anim-chip" id="chip-work">청년·직장 시절</span><span class="anim-chip" id="chip-family">결혼 이야기</span>
-            </div>
-            <div class="anim-q" id="aq2" style="opacity:.35;">어떤 감정을 담고 싶으세요?</div>
-            <div class="anim-chips" id="ac2">
-              <span class="anim-chip" id="chip-longing" style="opacity:.35;">그리움과 추억</span><span class="anim-chip" id="chip-thanks" style="opacity:.35;">감사한 마음</span><span class="anim-chip" id="chip-love" style="opacity:.35;">가족에 대한 사랑</span>
-            </div>
-            <div class="anim-prompt-box" id="prompt-box" style="opacity:.25;">
-              <div class="anim-prompt-label">✨ 완성된 프롬프트 (AI에게 하는 부탁 문장)</div>
-              <div class="anim-prompt-text" id="prompt-text"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <!-- ── 히어로 버전2: 자서전 소구 ── -->
-    <div id="heroV2" style="position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;">
-    <div class="hero">
-      <div>
-        <div class="hero-pill"><span class="hero-dot"></span>내 삶을 책으로 남겨요</div>
-        <h1 class="hero-title">당신의 이야기를<br><em>자서전으로</em><br>남겨드릴게요</h1>
-        <p class="hero-sub" style="min-height:5em;">3챕터만 완성하면<br>실제 종이책으로 출판할 수 있어요.<br>가족에게 드리는 세상에 하나뿐인 선물.</p>
-        <div class="hero-cta">
-          <button class="btn-p" onclick="goToCourse('자서전 쓰기')">📖 자서전 쓰기 시작하기 →</button>
-        </div>
-        <div class="hero-reassure">✅ 3챕터 완성 시 종이책 출판 가능 &nbsp;·&nbsp; ✅ 동행+ 연 1권 무료</div>
-      </div>
-      <div>
-        <!-- 자서전 챕터 프리뷰 카드 -->
-        <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(28,26,23,.1);border:1.5px solid var(--bd);">
-          <div style="background:var(--ad);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:15px;font-weight:700;color:rgba(255,255,255,.85);">📖 내 자서전 · AI 동행</span>
-            <span style="font-size:13px;background:rgba(255,255,255,.2);color:#fff;border-radius:100px;padding:3px 10px;font-weight:600;">3챕터 완성 시 출판</span>
-          </div>
-          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
-            <div style="background:var(--al);border:1.5px solid var(--ac);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">✅</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--ac);">1챕터. 내가 자란 곳</div><div style="font-size:14px;color:var(--ac);margin-top:3px;">고향과 유년 시절 이야기</div></div>
-            </div>
-            <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">✏️</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--ink);">2챕터. 내 삶의 전환점</div><div style="font-size:14px;color:var(--i3);margin-top:3px;">결혼·직업·도전의 순간들</div></div>
-            </div>
-            <div style="background:var(--wm);border:1.5px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-              <div style="font-size:24px;">🔒</div>
-              <div><div style="font-size:17px;font-weight:700;color:var(--i3);">3챕터. 가족에게 전하는 말</div><div style="font-size:14px;color:var(--i3);margin-top:3px;">소중한 분들께 남기는 말</div></div>
-            </div>
-            <div style="background:linear-gradient(135deg,#7a5c1e,var(--gd));border-radius:12px;padding:14px 16px;text-align:center;">
-              <div style="font-size:15px;font-weight:700;color:#fff;">📚 3챕터 완성 → 종이책 출판!</div>
-              <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:4px;">동행+ 멤버 연 1권 무료</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-
-    <!-- ── 히어로 버전3: 프롬프트 애니메이션 ── -->
-
-    <div id="heroV3Placeholder" style="visibility:hidden;pointer-events:none;" aria-hidden="true">
-      <div class="hero">
-        <div>
-          <div class="hero-pill" style="opacity:0;">placeholder</div>
-          <h1 class="hero-title" style="opacity:0;">뤼튼, ChatGPT…<br>나도 직접<br>써볼 수 있어요</h1>
-          <p class="hero-sub" style="opacity:0;">placeholder placeholder placeholder</p>
-          <div class="hero-cta" style="opacity:0;"><button class="btn-p">placeholder</button></div>
-          <div class="hero-reassure" style="opacity:0;">placeholder</div>
-        </div>
-        <div id="heroImgPlaceholder" style="height:420px;border-radius:20px;background:transparent;"></div>
-      </div>
-    </div>
-
-  </div><!-- /슬라이더 wrapper -->
-
-<!-- 도장깨기 홈 미리보기 -->
-<div class="sec-w"><div class="sec-w-in">
-  <div class="eyebrow">새로 나왔어요</div>
-  <h2 class="sec-title">AI 툴 도장깨기 🏆</h2>
-  <p class="sec-sub" style="margin-bottom:28px;">뤼튼, ChatGPT, Suno AI... 하나씩 직접 써보고 도장을 받아요.<br>"나 ChatGPT 써봤어!" 손자한테 자랑하는 그 날을 위해.</p>
-  <div class="dojo-preview">
-    <div class="dojo-preview-title">나의 AI 도장 여권</div>
-    <div class="dojo-preview-sub">6개의 AI 툴을 하나씩 정복해보세요. 처음엔 어렵지 않아요!</div>
-    <div class="dojo-stamps-row">
-      <div class="dojo-stamp-mini done"><span class="si">🤖</span></div>
-      <div class="dojo-stamp-mini done"><span class="si">💬</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎨</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎵</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">📸</span></div>
-      <div class="dojo-stamp-mini locked"><span class="si">🎬</span></div>
-    </div>
-    <div class="dojo-preview-cta">
-      <div class="dojo-preview-stat"><b>2</b>/6 도장 완성 예시</div>
-      <button class="btn-dojo" onclick="goToDojo()">도장깨기 시작하기 →</button>
-    </div>
-  </div>
-</div></div>
-
-<!-- 예시 섹션 -->
-<div class="sec" id="examplesSection">
-  <div class="eyebrow">이런 작품이 나와요</div>
-  <h2 class="sec-title">직접 써보면<br>이런 결과가 나와요</h2>
-  <p class="sec-sub">어렵지 않아요. AI에게 부탁하면 이런 감동적인 결과물이 나와요.</p>
-  <div class="example-tabs">
-    <button class="example-tab active" onclick="switchExample(this,'ex-image')">🎨 고향 그림</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-trot')">🎵 트로트 노래</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-memoir')">📖 자서전</button>
-    <button class="example-tab" onclick="switchExample(this,'ex-letter')">💌 편지</button>
-  </div>
-  <div class="example-card active" id="ex-image">
-    <div class="example-badge">고향·마을 풍경 · Adobe Firefly로 생성</div>
-    <div class="example-card-header"><div class="example-card-emoji">🎨</div><div><div class="example-card-title">경북 안동 고향 마을, 가을 감나무</div><div class="example-card-sub">회원 박철수(68세)님이 AI로 만든 그림 · 5분 소요</div></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
-      <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:var(--wm);"><img src="images/andong_watercolor.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:10px 12px;"><div style="font-size:12px;color:#fff;font-weight:600;">수채화 스타일</div></div></div>
-      <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:var(--wm);"><img src="images/andong_ink.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:10px 12px;"><div style="font-size:12px;color:#fff;font-weight:600;">동양화 스타일</div></div></div>
-    </div>
-    <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:var(--i3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">입력한 이야기</div><div style="font-size:14px;color:var(--i2);line-height:1.75;font-style:italic;">경북 안동 시골. 가을에 감이 빨갛게 익어 있었어. 흙길에 닭이 돌아다니고. 수채화로 그려줘.</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 프롬프트를 만들고 Adobe Firefly에 붙여넣기 하면 이런 그림이 나와요</span><button class="btn-p" onclick="goToCourse('고향·마을 풍경')" style="padding:11px 24px;font-size:15px;">나도 만들기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-trot">
-    <div class="example-badge">트로트 만들기 · Suno AI로 실제 노래 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">🎵</div><div><div class="example-card-title">어머니 생각 — 박철수 작사, Suno AI 작곡</div><div class="example-card-sub">회원 박철수(68세)님 · 가사 작성 10분 + 노래 생성 1분</div></div></div>
-    <div style="background:linear-gradient(135deg,var(--ad),#2d7a68);border-radius:14px;padding:22px;margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;"><div style="width:58px;height:58px;border-radius:13px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;">🎤</div><div><div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">어머니 생각</div><div style="font-size:13px;color:rgba(255,255,255,.7);">박철수 작사 · 트로트 · 3분 24초</div></div></div>
-      <div style="background:rgba(255,255,255,.15);border-radius:100px;height:7px;margin-bottom:9px;"><div style="width:35%;height:100%;border-radius:100px;background:#fff;"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px;"><span>1:12</span><span>3:24</span></div>
-      <div style="font-size:12px;color:rgba(255,255,255,.65);text-align:center;">🎵 Suno AI가 실제 노래로 만들어줍니다</div>
-    </div>
-    <div style="background:var(--bg);border-radius:12px;padding:16px;font-size:14px;color:var(--i2);line-height:1.9;margin-bottom:16px;font-family:var(--serif,serif);">1절<br>새벽빛이 물드는 부엌에서 / 손이 거칠어도 따뜻했던 어머니<br>보리밥 한 공기에 담긴 사랑 / 지금도 그 냄새가 그리워요<br><br>후렴<br>어머니~ 어머니~ 보고 싶어요 / 하늘 어딘가에서 웃고 계시죠</div>
-    <div class="example-cta"><span class="example-cta-text">💡 가사 프롬프트 완성 → Suno AI 붙여넣기 → 진짜 노래 완성!</span><button class="btn-p" onclick="goToCourse('트로트 만들기')" style="padding:11px 24px;font-size:15px;">나도 만들기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-memoir">
-    <div class="example-badge">자서전 쓰기 · ChatGPT로 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">📖</div><div><div class="example-card-title">제 1장. 냇가의 여름</div><div class="example-card-sub">회원 김순자(72세)님 · 기억 조각 5줄 입력 → 완성</div></div></div>
-    <div style="background:linear-gradient(135deg,#f5f0e8,#ede5d5);border-radius:14px;padding:26px;margin-bottom:16px;border-left:5px solid var(--gd);position:relative;"><div style="font-family:var(--serif,serif);font-size:19px;font-weight:700;color:var(--ink);margin-bottom:14px;">제 1장. 냇가의 여름</div><div style="font-family:var(--serif,serif);font-size:15px;color:var(--i2);line-height:2;font-style:italic;">그 여름, 냇가는 우리들의 세상이었다.<br><br>발밑으로 차가운 물이 흘렀고, 돌 틈에서 피라미들이 반짝였다. 어머니가 싸주신 보리밥 도시락을 가운데 놓고 친구 셋이 둘러앉아 먹던 그 맛을, 나는 지금도 잊지 못한다.</div><div style="position:absolute;top:16px;right:18px;font-size:12px;color:var(--i3);">1 / 12쪽</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 기억 조각만 적으면 이런 자서전이 완성돼요</span><button class="btn-p" onclick="goToCourse('자서전 쓰기')" style="padding:11px 24px;font-size:15px;">나도 써보기 →</button></div>
-  </div>
-  <div class="example-card" id="ex-letter">
-    <div class="example-badge">편지 쓰기 · 뤼튼으로 완성</div>
-    <div class="example-card-header"><div class="example-card-emoji">💌</div><div><div class="example-card-title">사랑하는 딸 지영에게</div><div class="example-card-sub">회원 이경숙(75세)님 · 3분 만에 완성</div></div></div>
-    <div style="background:#fff9f0;border:1px solid #e8d5b0;border-radius:14px;padding:26px;margin-bottom:16px;position:relative;"><div style="position:absolute;top:18px;right:22px;font-size:24px;opacity:.12;">💌</div><div style="font-family:var(--serif,serif);font-size:15px;color:var(--i2);line-height:2;">사랑하는 딸 지영에게<br><br>말은 잘 못했지만, 언제나 네 편이었단다. 힘들다고 했던 날 밤에 전화 끊고 얼마나 울었는지 모른다.<br><br>이제라도 말할게. 고맙다, 지영아. 그 어떤 딸보다 자랑스럽다.<br>사랑한다. — 엄마</div></div>
-    <div class="example-cta"><span class="example-cta-text">💡 완성된 편지를 카카오톡으로 바로 전달할 수 있어요</span><button class="btn-p" onclick="goToCourse('편지 쓰기')" style="padding:11px 24px;font-size:15px;">편지 쓰기 →</button></div>
-  </div>
-</div>
-
-<!-- 카테고리 -->
-<div class="sec-c"><div class="sec-c-in">
-  <div class="eyebrow">무엇을 만들까요?</div>
-  <h2 class="sec-title">관심사를 고르면<br>바로 시작할 수 있어요</h2>
-  <p class="sec-sub">클릭하면 해당 과정으로 바로 이동해요.</p>
-  <div class="photo-grid">
-    <div class="photo-card" onclick="goToCategory('writing')"><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-badge gold">가장 인기</div><div class="photo-title">글쓰기</div><div class="photo-tags"><span class="photo-tag">블로그</span><span class="photo-tag">자서전</span><span class="photo-tag">편지</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('image')"><img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">이미지 만들기</div><div class="photo-tags"><span class="photo-tag">풍경</span><span class="photo-tag">꽃</span><span class="photo-tag">고향</span></div></div></div>
-    <div class="photo-card" onclick="goToCategory('music')"><img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80" alt="" loading="lazy" onerror="this.style.display='none'"><div class="photo-overlay"></div><div class="photo-content"><div class="photo-title">음악 만들기</div><div class="photo-tags"><span class="photo-tag">트로트</span><span class="photo-tag">발라드</span><span class="photo-tag">동요</span></div></div></div>
-  </div>
-</div></div>
-
-<!-- 3단계 -->
-<div class="sec">
-  <div class="eyebrow">이렇게 해요</div>
-  <h2 class="sec-title">3단계면 충분해요</h2>
-  <p class="sec-sub">어렵지 않아요. 처음에는 뤼튼 하나만 알면 돼요.</p>
-  <div class="steps">
-    <div class="step"><div class="step-icon">👆</div><div class="step-title">관심사 선택</div><div class="step-desc">만들고 싶은 것을 버튼으로 골라요. 타이핑 없어요.</div><div class="step-num">01</div></div>
-    <div class="step"><div class="step-icon">📋</div><div class="step-title">프롬프트 완성</div><div class="step-desc">분위기, 스타일을 고르면 AI에게 부탁하는 문장이 완성돼요.</div><div class="step-num">02</div></div>
-    <div class="step"><div class="step-icon">✨</div><div class="step-title">붙여넣기 하면 끝</div><div class="step-desc">뤼튼 입력창에 Ctrl+V 하면 결과물이 바로 나와요!</div><div class="step-num">03</div></div>
-  </div>
-</div>
-
-<!-- 프롬프트 설명 섹션 -->
-<div class="sec-w"><div class="sec-w-in">
-  <div class="eyebrow">꼭 알아두세요</div>
-  <h2 class="sec-title">프롬프트가 뭔가요?</h2>
-  <div style="display:flex;flex-direction:column;gap:16px;">
-    <div style="background:var(--al);border:1.5px solid var(--ab);border-radius:16px;padding:28px;">
-      <div style="font-size:16px;font-weight:700;color:var(--ac);margin-bottom:10px;">🗣️ 프롬프트 = AI에게 하는 부탁</div>
-      <div style="font-size:15px;color:var(--i2);line-height:1.85;">AI는 아주 똑똑한 심부름꾼이에요.<br>"이런 글 써줘"라고 부탁하는 문장을<br><b style="color:var(--ac);">프롬프트</b>라고 해요.<br><br>어떻게 부탁하느냐에 따라<br>결과가 완전히 달라져요!</div>
-    </div>
-    <div style="background:var(--gl);border:1.5px solid var(--gb);border-radius:16px;padding:24px;">
-      <div style="font-size:15px;font-weight:700;color:var(--gd);margin-bottom:10px;">💡 이렇게 쓰면 더 좋아요</div>
-      <div style="font-size:14px;color:var(--i2);line-height:1.85;"><div style="margin-bottom:8px;">❌ 나쁜 예: "자서전 써줘"</div><div>✅ 좋은 예: "경북 안동 시골에서 자란 유년 시절 이야기를, 그리움이 담긴 따뜻한 문체로 700자로 써줘"</div></div>
-    </div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:16px;padding:24px;">
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;">🤖 AI 동행이 하는 일</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">어떤 이야기를 할지 <b>버튼으로 선택</b>하게 도와드려요</div></div>
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">좋은 결과를 위한 <b>프롬프트를 자동으로 완성</b>해드려요</div></div>
-        <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div style="font-size:14px;color:var(--i2);line-height:1.7;">어떤 AI 툴에 붙여넣을지 <b>바로 안내</b>해드려요</div></div>
-      </div>
-    </div>
-  </div>
-</div></div>
-
-<!-- 동반자 -->
-<div class="sec-d"><div class="sec-d-in">
-  <div class="partner-grid">
-    <div>
-      <div class="eyebrow-d">왜 "동행"인가요?</div>
-      <h2 class="sec-title-d">AI 시대를<br>함께 걸어요</h2>
-      <p style="font-size:16px;color:rgba(255,255,255,.7);line-height:1.85;margin-bottom:34px;">단순한 앱이 아니에요. 변해가는 AI 세상을 어르신도 함께할 수 있도록 손잡아 드려요.</p>
-      <div class="ppoints">
-        <div class="pp"><div class="pp-icon">🏆</div><div><div class="pp-title">직접 써보는 경험</div><div class="pp-desc">"나 ChatGPT 써봤어!" 말할 수 있는 그 경험을 드려요</div></div></div>
-        <div class="pp"><div class="pp-icon">💌</div><div><div class="pp-title">가족에게 전달</div><div class="pp-desc">완성된 작품을 카카오톡으로 바로 가족에게 보낼 수 있어요</div></div></div>
-        <div class="pp"><div class="pp-icon">📖</div><div><div class="pp-title">나의 이야기가 역사가 돼요</div><div class="pp-desc">작품함에 모아두면 나만의 창작 아카이브가 완성돼요</div></div></div>
-      </div>
-    </div>
-    <div class="partner-preview">
-      <div class="pp-item" onclick="showView('dojo')"><span class="pp-item-icon">🏆</span><div style="flex:1;"><div class="pp-item-title">AI 도장깨기 시작</div><div class="pp-item-sub">관심 있는 미션 골라서 시작</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('자서전 쓰기')"><span class="pp-item-icon">✍️</span><div style="flex:1;"><div class="pp-item-title">자서전 첫 장 써보기</div><div class="pp-item-sub">유년 시절 · 그리움 담아</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('트로트 만들기')"><span class="pp-item-icon">🎵</span><div style="flex:1;"><div class="pp-item-title">트로트 가사 만들기</div><div class="pp-item-sub">Suno AI로 실제 노래 완성</div></div><span class="pp-item-arr">›</span></div>
-      <div class="pp-item" onclick="goToCourse('편지 쓰기')"><span class="pp-item-icon">💌</span><div style="flex:1;"><div class="pp-item-title">가족에게 편지 쓰기</div><div class="pp-item-sub">감사한 마음 · 따뜻하게</div></div><span class="pp-item-arr">›</span></div>
-    </div>
-  </div>
-</div></div>
-
-<!-- 후기 -->
-<div class="sec-w"><div class="sec-w-in">
-  <div class="eyebrow">함께한 분들</div>
-  <h2 class="sec-title">"나도 AI 써봤어!"</h2>
-  <div style="margin-bottom:36px;"></div>
-  <div class="review-grid">
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"딸이 AI로 쓴 편지라고 하니까 오히려 더 감동받았어요. 나도 이제 AI 쓸 줄 안다고 자랑했죠!"</div><div class="review-author"><div class="review-avatar">👩‍🦳</div><div><div class="review-name">김순자 님</div><div class="review-meta">72세 · 서울</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"아내 환갑에 트로트 만들어줬더니 펑펑 울었어요. Suno AI 첫 사용이었는데 손자한테 자랑했어요!"</div><div class="review-author"><div class="review-avatar">👴</div><div><div class="review-name">박철수 님</div><div class="review-meta">68세 · 부산</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"뤼튼이 뭔지도 몰랐는데 이제는 매일 써요. 복지관에서 제일 잘 쓰는 사람이 됐어요."</div><div class="review-author"><div class="review-avatar">👩</div><div><div class="review-name">이경숙 님</div><div class="review-meta">75세 · 대구</div></div></div></div>
-    <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><div class="review-text">"도장 6개 다 깼어요! ChatGPT, Firefly, Suno까지. 손녀가 할머니 대단하다고 했어요."</div><div class="review-author"><div class="review-avatar">👩‍🦳</div><div><div class="review-name">최영희 님</div><div class="review-meta">81세 · 인천</div></div></div></div>
-  </div>
-</div></div>
-
-<!-- CTA -->
-<div class="cta-sec">
-  <div><div class="cta-title">오늘 AI와<br>첫 만남을 시작해요</div><div class="cta-sub">회원가입 없이 바로 체험 · 어렵지 않아요</div></div>
-  <div class="cta-btns">
-    <button class="btn-cta-w" onclick="showView('dojo')">🏆 5분이면 첫 도장 완성 →</button>
-    <button class="btn-cta-o" onclick="showView('builder')">프롬프트 빌더 바로가기</button>
-    <button class="btn-cta-o" onclick="showView('b2g')">🏛️ 기관 도입 문의</button>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
-</div>
-</div><!-- /homeView -->
 
 <!-- ══ AI 도장깨기 ══ -->
 <div class="view" id="dojoView">
@@ -4537,6 +4194,8 @@ var COURSE_CAT = {
 
 // ── 뷰 전환 ──
 function showView(view, _skipHash){
+  // 홈뷰 제거됨 — home 호출은 자서전(memoir)으로 자동 우회
+  if(view === 'home') view = 'memoir';
   // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
   var skipSave = ['auth','admin','mypage','login'];
   if(skipSave.indexOf(view) === -1){
@@ -7708,29 +7367,38 @@ function confirmLogout(){
   modal.innerHTML='<div style="background:#fff;border-radius:22px;padding:34px;width:100%;max-width:360px;box-shadow:0 20px 64px rgba(0,0,0,.25);text-align:center;"><div style="font-size:52px;margin-bottom:16px;">👋</div><div style="font-family:\'Gowun Batang\',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:9px;">로그아웃 하시겠어요?</div><div style="font-size:15px;color:var(--i3);margin-bottom:26px;">작품함은 다음에 로그인해도 유지돼요</div><div style="display:flex;gap:10px;"><button onclick="document.getElementById(\'logoutConfirmModal\').remove()" style="flex:1;padding:14px;border:1.5px solid var(--bd);border-radius:100px;background:#fff;color:var(--i3);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;">취소</button><button onclick="doLogout()" style="flex:1;padding:14px;border:none;border-radius:100px;background:#e05555;color:#fff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;">로그아웃</button></div></div>';
   document.body.appendChild(modal);
 }
-function doLogout(){var m=g('logoutConfirmModal');if(m)m.remove();userProfile={};portfolio=[];dojoProgress={};['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});setNavLoggedOut();// ── 해시 라우터 ──
+function doLogout(){
+  var m=g('logoutConfirmModal');if(m)m.remove();
+  userProfile={};portfolio=[];dojoProgress={};
+  ['aiDonghang_profile','aiDonghang_portfolio','aiDonghang_dojo','aiDonghang_pendingPlan','aiDonghang_pendingWork','aiDonghang_pendingAction'].forEach(function(k){localStorage.removeItem(k);});
+  setNavLoggedOut();
+  showToast('또 올게요? 기다리고 있을게요 😊');
+}
+
+// ── 해시 라우터 ──
+// 해시 없으면 자서전(memoir)으로 기본 진입 (홈뷰 제거됨)
 function _hashToView(hash){
   var map = {
-    '':'home', '#':'home', '#home':'home',
+    '':'memoir', '#':'memoir', '#home':'memoir',
     '#dojo':'dojo', '#builder':'builder', '#portfolio':'portfolio',
     '#pricing':'pricing', '#auth':'auth', '#mypage':'mypage',
     '#faq':'faq', '#learn':'learn', '#community':'community',
     '#about':'about', '#b2g':'b2g', '#admin':'admin', '#memoir':'memoir'
   };
-  return map[hash] || 'home';
+  return map[hash] || 'memoir';
 }
 
 // 브라우저 뒤로/앞으로 버튼
 window.addEventListener('popstate', function(e){
   var view = (e.state && e.state.view) ? e.state.view : _hashToView(window.location.hash);
-  showView(view, true); // _skipHash=true (pushState 안 함)
+  showView(view, true);
 });
 
-// 최초 로드: 해시에 맞는 뷰로
-(function(){
-  var initView = _hashToView(window.location.hash);
-  showView(initView, true);
-})();showToast('또 올게요? 기다리고 있을게요 😊');}
+// 해시 변경 (페이지 내 anchor 클릭) — topbar nav가 hash 링크라서 필요
+window.addEventListener('hashchange', function(){
+  var view = _hashToView(window.location.hash);
+  showView(view, true);
+});
 
 // ── 기타 ──
 function toggleFaqById(id){var item=g(id);if(item)item.classList.toggle('open');}
@@ -8551,7 +8219,8 @@ filterCards('writing','');
   // 스트릭 초기화
   initStreak();
 })();
-showView('home');
+// 최초 진입 — URL 해시에 맞는 뷰로 (해시 없으면 자서전)
+showView(_hashToView(window.location.hash), true);
 
 // ══ 동동이 하단 팝업 ══
 
@@ -10264,5 +9933,31 @@ function loadFalApiKeyToInput(){
   <canvas id="chestCanvas" width="320" height="300" style="display:block;"></canvas>
   <div id="chestUnlockBadge" style="background:linear-gradient(135deg,#f5c842,#e8a020);color:#3a2800;font-size:17px;font-weight:800;padding:10px 26px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 20px rgba(245,200,66,0.6);transform:scale(0);opacity:0;transition:none;font-family:'Noto Sans KR',sans-serif;"></div>
 </div>
+
+<!-- topbar 모바일 햄버거 드로어 토글 -->
+<script>
+(function(){
+  var toggle = document.querySelector('.menu-toggle');
+  var drawer = document.getElementById('site-nav-drawer');
+  if(!toggle || !drawer) return;
+  var closeEls = drawer.querySelectorAll('[data-nav-close]');
+  var links = drawer.querySelectorAll('a');
+  function setOpen(open){
+    drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.classList.toggle('nav-open', open);
+    if(open){ setTimeout(function(){ if(links[0]) links[0].focus(); }, 50); }
+    else { toggle.focus(); }
+  }
+  toggle.addEventListener('click', function(){ setOpen(drawer.getAttribute('aria-hidden') === 'true'); });
+  closeEls.forEach(function(el){ el.addEventListener('click', function(){ setOpen(false); }); });
+  links.forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && drawer.getAttribute('aria-hidden') === 'false') setOpen(false);
+  });
+  var mq = window.matchMedia('(min-width: 881px)');
+  if(mq.addEventListener) mq.addEventListener('change', function(e){ if(e.matches) setOpen(false); });
+})();
+</script>
 </body>
 </html>

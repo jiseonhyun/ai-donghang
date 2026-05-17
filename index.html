@@ -61,14 +61,20 @@
      로고/내비 한 줄. 기존 사이트에 붙일 때는 이 부분만 제거하면 됨.
      ───────────────────────────────────────────────────────────── */
   .topbar{
-    position: relative;
-    z-index: 5;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+    background: rgba(251,248,243,.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     /* brand → nav 좌측 정렬, actions는 풌시로 우측 */
     display:flex; align-items:center;
     gap: clamp(24px, 4vw, 48px);
     padding: 14px clamp(20px, 5vw, 64px);
     border-bottom: 1px solid var(--hair);
   }
+  /* topbar는 fixed이므로 본문이 가려지지 않도록 동일 높이의 spacer */
+  .topbar-spacer{ height: 64px; }
   .brand{
     display:inline-flex; align-items:center; gap:10px;
     font-family: "Noto Serif KR", serif;
@@ -1365,6 +1371,9 @@
   </aside>
 </div>
 
+<!-- fixed topbar 만큼의 spacer -->
+<div class="topbar-spacer" aria-hidden="true"></div>
+
 <!-- HERO ROTATOR — Hero #1 ↔ Hero #2 7초 자동 전환 -->
 <div class="hero-rotator" id="heroRotator">
 
@@ -1389,7 +1398,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="ai-donghang.html#builder" class="btn btn-primary">
+        <a href="ai-donghang.html#memoir" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -1452,8 +1461,8 @@
       </p>
 
       <div class="cta-row">
-        <a href="ai-donghang.html#builder" class="btn btn-primary">
-          <span>샘플 책 보기</span>
+        <a href="ai-donghang.html#memoir" class="btn btn-primary">
+          <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
         <a href="#how" class="btn btn-ghost">어떻게 만들어지나요</a>

@@ -16,10 +16,48 @@
 body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--cr);line-height:1.75;}
 .wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
 
-/* ── 상단 ── */
-.topbar{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--bd);}
-.topbar a{color:var(--ac);text-decoration:none;font-size:14px;font-weight:600;}
-.topbar a:hover{text-decoration:underline;}
+/* ── TOPBAR (홈페이지 통일 네비, fixed) ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(250,248,244,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:clamp(24px,4vw,48px);padding:14px clamp(20px,5vw,64px);border-bottom:1px solid var(--bd);}
+.topbar .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:22px;color:var(--ink);text-decoration:none;}
+.topbar .brand-logo{display:block;height:28px;width:auto;}
+.topbar nav{display:flex;gap:28px;font-size:16px;color:var(--i2);}
+.topbar nav a{color:inherit;text-decoration:none;}
+.topbar nav a:hover{color:var(--ink);text-decoration:none;}
+.topbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.topbar-actions .login{font-size:14px;color:var(--i2);text-decoration:none;padding:6px 4px;}
+.topbar-actions .login:hover{color:var(--ink);}
+.topbar-actions .gift-link{display:inline-flex;align-items:center;font-size:14px;color:var(--cr);background:var(--ac);padding:8px 14px;border-radius:2px;text-decoration:none;transition:background-color .25s ease;}
+.topbar-actions .gift-link:hover{background:var(--ad);}
+.menu-toggle{display:none;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--bd);cursor:pointer;padding:0;margin-left:4px;}
+.menu-toggle .bars{display:inline-block;width:20px;height:12px;position:relative;}
+.menu-toggle .bars::before,.menu-toggle .bars::after,.menu-toggle .bars span{content:"";position:absolute;left:0;right:0;height:1.5px;background:var(--ink);}
+.menu-toggle .bars::before{top:0;}
+.menu-toggle .bars span{top:50%;transform:translateY(-50%);}
+.menu-toggle .bars::after{bottom:0;}
+.menu-toggle[aria-expanded="true"] .bars::before{top:50%;transform:translateY(-50%) rotate(45deg);}
+.menu-toggle[aria-expanded="true"] .bars::after{bottom:50%;transform:translateY(50%) rotate(-45deg);}
+.menu-toggle[aria-expanded="true"] .bars span{opacity:0;}
+@media (max-width:880px){.topbar nav{display:none;}.menu-toggle{display:inline-flex;}}
+@media (max-width:540px){.topbar-actions .login{display:none;}}
+@media (max-width:430px){.topbar-actions .gift-link{display:none;}}
+.topbar-spacer{height:64px;}
+.nav-drawer{position:fixed;inset:0;z-index:300;visibility:hidden;pointer-events:none;}
+.nav-drawer[aria-hidden="false"]{visibility:visible;pointer-events:auto;}
+.nav-drawer-scrim{position:absolute;inset:0;background:rgba(28,26,23,.42);opacity:0;transition:opacity .35s ease;}
+.nav-drawer[aria-hidden="false"] .nav-drawer-scrim{opacity:1;}
+.nav-drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(86vw,360px);background:var(--cr);border-left:1px solid var(--bd);box-shadow:-20px 0 48px -28px rgba(28,26,23,.3);transform:translateX(100%);transition:transform .42s cubic-bezier(.2,.6,.2,1);display:flex;flex-direction:column;padding:22px 24px 28px;}
+.nav-drawer[aria-hidden="false"] .nav-drawer-panel{transform:translateX(0);}
+.nav-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid var(--bd);}
+.nav-drawer-close{width:40px;height:40px;background:transparent;border:1px solid var(--bd);cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;position:relative;}
+.nav-drawer-close::before,.nav-drawer-close::after{content:"";position:absolute;width:18px;height:1.5px;background:var(--ink);top:50%;left:50%;}
+.nav-drawer-close::before{transform:translate(-50%,-50%) rotate(45deg);}
+.nav-drawer-close::after{transform:translate(-50%,-50%) rotate(-45deg);}
+.nav-drawer-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;}
+.nav-drawer-list li + li{border-top:1px solid var(--bd);}
+.nav-drawer-list a{display:flex;padding:18px 4px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:19px;color:var(--ink);text-decoration:none;}
+.nav-drawer-foot{margin-top:auto;padding-top:24px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:10px;}
+.nav-drawer-foot .login{font-size:16px;color:var(--i2);text-decoration:none;padding:8px 0;}
+.nav-drawer-foot .gift-link{display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:var(--cr);background:var(--ac);padding:12px 16px;text-decoration:none;}
 
 /* ── 타이틀 ── */
 .hero{text-align:center;margin-bottom:36px;}
@@ -91,11 +129,55 @@ tbody tr:last-child td{border-bottom:none;}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<div class="topbar">
-  <a href="https://aitogether.co.kr">← AI 동행으로 돌아가기</a>
+<!-- TOPBAR (홈페이지 통일 네비) -->
+<header class="topbar">
+  <a href="/" class="brand" aria-label="AI동행">
+    <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
+  </a>
+  <nav aria-label="주요 메뉴">
+    <a href="ai-donghang.html#builder">만들기</a>
+    <a href="ai-donghang.html#dojo">도장깨기</a>
+    <a href="ai-donghang.html#community">커뮤니티</a>
+    <a href="ai-donghang.html#portfolio">내 작품함</a>
+    <a href="ai-donghang.html#pricing">요금제</a>
+    <a href="ai-donghang.html#faq">고객센터</a>
+  </nav>
+  <div class="topbar-actions">
+    <a href="ai-donghang.html#auth" class="login">로그인</a>
+    <a href="gift.html" class="gift-link">부모님께 선물하기</a>
+    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
+      <span class="bars" aria-hidden="true"><span></span></span>
+    </button>
+  </div>
+</header>
+
+<div class="nav-drawer" id="site-nav-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="메뉴">
+  <div class="nav-drawer-scrim" data-nav-close=""></div>
+  <aside class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <a href="/" class="brand" aria-label="AI동행">
+        <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
+      </a>
+      <button type="button" class="nav-drawer-close" data-nav-close="" aria-label="메뉴 닫기"></button>
+    </div>
+    <ul class="nav-drawer-list">
+      <li><a href="ai-donghang.html#builder">만들기</a></li>
+      <li><a href="ai-donghang.html#dojo">도장깨기</a></li>
+      <li><a href="ai-donghang.html#community">커뮤니티</a></li>
+      <li><a href="ai-donghang.html#portfolio">내 작품함</a></li>
+      <li><a href="ai-donghang.html#pricing">요금제</a></li>
+      <li><a href="ai-donghang.html#faq">고객센터</a></li>
+    </ul>
+    <div class="nav-drawer-foot">
+      <a href="ai-donghang.html#auth" class="login">로그인</a>
+      <a href="gift.html" class="gift-link">부모님께 선물하기</a>
+    </div>
+  </aside>
 </div>
+<div class="topbar-spacer" aria-hidden="true"></div>
+
+<div class="wrap">
 
 <div class="hero">
   <h1>개인정보처리방침</h1>
@@ -411,5 +493,19 @@ tbody tr:last-child td{border-bottom:none;}
 </div>
 
 </div>
+<script>
+(function(){
+  var toggle=document.querySelector('.menu-toggle');
+  var drawer=document.getElementById('site-nav-drawer');
+  if(!toggle||!drawer) return;
+  var closeEls=drawer.querySelectorAll('[data-nav-close]');
+  var links=drawer.querySelectorAll('a');
+  function setOpen(open){drawer.setAttribute('aria-hidden',open?'false':'true');toggle.setAttribute('aria-expanded',open?'true':'false');if(open){setTimeout(function(){if(links[0])links[0].focus();},50);}}
+  toggle.addEventListener('click',function(){setOpen(drawer.getAttribute('aria-hidden')==='true');});
+  closeEls.forEach(function(el){el.addEventListener('click',function(){setOpen(false);});});
+  links.forEach(function(a){a.addEventListener('click',function(){setOpen(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&drawer.getAttribute('aria-hidden')==='false')setOpen(false);});
+})();
+</script>
 </body>
 </html>

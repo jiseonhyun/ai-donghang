@@ -1,0 +1,361 @@
+<!-- ══ BUILDER ══ -->
+
+
+<div class="view" id="builderView">
+<div class="pv" id="page2View">
+  <div class="page-hdr"><div class="page-hdr-logo">AI <span>동행</span></div><div class="page-hdr-badge">프롬프트 빌더</div></div>
+  <div class="cat-wrap">
+    <div class="cat-tabs">
+      <button class="cat-tab active" data-cat="writing" onclick="switchCat(this,'writing')">✍️ 글쓰기</button>
+      <button class="cat-tab" data-cat="image" onclick="switchCat(this,'image')">🎨 이미지</button>
+      <button class="cat-tab" data-cat="music" onclick="switchCat(this,'music')">🎵 음악</button>
+      <button class="cat-tab" data-cat="video" onclick="switchCat(this,'video')">🎬 영상</button>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-bar">
+      <span style="font-size:20px;color:var(--i3);flex-shrink:0;">🔍</span>
+      <input class="search-input" id="searchInput" type="search" name="course-search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="관심사를 검색해보세요 (예: 자서전, 편지, 트로트…)" oninput="handleSearch(this)">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">✕ 지우기</button>
+      <span class="search-count" id="searchCount"></span>
+    </div>
+  </div>
+  <div class="sec-label" id="sectionLabel">내 이야기를 글로 남겨요 · <b>6가지</b></div>
+  <div class="cards-wrap">
+    <div class="cards-grid" id="cardsGrid">
+      <div class="course-card" data-cat="writing" data-kw="블로그 글 일상 여행 기록" onclick="toggleCard(this)"><div class="card-emoji">📝</div><div class="card-body"><div class="card-title">블로그 글쓰기</div><div class="card-desc">일상과 여행 이야기를 글로 남겨요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="writing" data-kw="자서전 인생 회고 역사 기억" onclick="toggleCard(this)"><div class="card-emoji">📖</div><div class="card-body"><div class="card-title">자서전 쓰기</div><div class="card-desc">소중한 삶의 기억을 책으로 남겨요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="writing" data-kw="편지 자녀 손주 친구 마음" onclick="toggleCard(this)"><div class="card-emoji">💌</div><div class="card-body"><div class="card-title">편지 쓰기</div><div class="card-desc">자녀·손주·친구에게 마음을 전해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="writing" data-kw="일기 하루 기록 감정 정리" onclick="toggleCard(this)"><div class="card-emoji">🌿</div><div class="card-body"><div class="card-title">일기 쓰기</div><div class="card-desc">오늘 하루를 기록하고 마음을 정리해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="writing" data-kw="공문 안내문 공지 감사패 축사" onclick="toggleCard(this)"><div class="card-emoji">📋</div><div class="card-body"><div class="card-title">공문·안내문</div><div class="card-desc">모임 공지, 감사패, 축사 등을 써요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="writing" data-kw="시 수필 감정 생각 문학 창작" onclick="toggleCard(this)"><div class="card-emoji">✨</div><div class="card-body"><div class="card-title">시·수필 쓰기</div><div class="card-desc">감정과 생각을 시나 수필로 표현해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="풍경 자연 그림 수채화" onclick="toggleCard(this)"><div class="card-emoji">🏞️</div><div class="card-body"><div class="card-title">풍경·자연 그림</div><div class="card-desc">아름다운 자연 풍경을 그림으로 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="꽃 식물 수채화 일러스트" onclick="toggleCard(this)"><div class="card-emoji">🌸</div><div class="card-body"><div class="card-title">꽃·식물 일러스트</div><div class="card-desc">좋아하는 꽃과 식물을 예쁘게 그려요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="가족 인물 초상화 추억" onclick="toggleCard(this)"><div class="card-emoji">👨‍👩‍👧‍👦</div><div class="card-body"><div class="card-title">가족·인물 초상화</div><div class="card-desc">소중한 가족의 모습을 그림으로 남겨요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="고향 마을 추억 옛날" onclick="toggleCard(this)"><div class="card-emoji">🏡</div><div class="card-body"><div class="card-title">고향·마을 풍경</div><div class="card-desc">기억 속 고향 풍경을 그림으로 되살려요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="사진 보정 흑백 컬러 복원" onclick="toggleCard(this)"><div class="card-emoji">🖼️</div><div class="card-body"><div class="card-title">사진 보정·복원</div><div class="card-desc">오래된 사진을 선명하고 생생하게 복원해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="image" data-kw="카드 엽서 선물 기념일" onclick="toggleCard(this)"><div class="card-emoji">🎴</div><div class="card-body"><div class="card-title">카드·엽서 만들기</div><div class="card-desc">기념일에 보낼 특별한 카드를 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="트로트 노래 음악 신나는" onclick="toggleCard(this)"><div class="card-emoji">🎤</div><div class="card-body"><div class="card-title">트로트 만들기</div><div class="card-desc">신나는 나만의 트로트 노래를 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="발라드 감성 사랑 노래" onclick="toggleCard(this)"><div class="card-emoji">🎵</div><div class="card-body"><div class="card-title">발라드 만들기</div><div class="card-desc">감성적인 발라드로 마음을 표현해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="동요 어린이 손주 귀여운" onclick="toggleCard(this)"><div class="card-emoji">🎶</div><div class="card-body"><div class="card-title">동요 만들기</div><div class="card-desc">손주에게 들려줄 동요를 직접 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="기념일 축하 생일 결혼" onclick="toggleCard(this)"><div class="card-emoji">🎂</div><div class="card-body"><div class="card-title">기념일 축하 노래</div><div class="card-desc">생일·결혼기념일에 특별한 노래를 선물해요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="민요 고향 전통 옛날" onclick="toggleCard(this)"><div class="card-emoji">🪘</div><div class="card-body"><div class="card-title">민요풍 노래</div><div class="card-desc">고향의 정취가 담긴 민요풍 노래를 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="music" data-kw="찬송 종교 신앙 노래" onclick="toggleCard(this)"><div class="card-emoji">🕊️</div><div class="card-body"><div class="card-title">찬송·신앙 노래</div><div class="card-desc">신앙과 감사를 담은 노래를 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="video" data-kw="슬라이드쇼 사진 영상 추억" onclick="toggleCard(this)"><div class="card-emoji">📽️</div><div class="card-body"><div class="card-title">슬라이드쇼 영상</div><div class="card-desc">소중한 사진으로 추억 영상을 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="video" data-kw="자서전 영상 나레이션" onclick="toggleCard(this)"><div class="card-emoji">🎬</div><div class="card-body"><div class="card-title">자서전 영상</div><div class="card-desc">내 이야기를 나레이션 영상으로 만들어요</div></div><div class="card-check">✓</div></div>
+      <div class="course-card" data-cat="video" data-kw="가족 영상 편지 메시지" onclick="toggleCard(this)"><div class="card-emoji">💝</div><div class="card-body"><div class="card-title">가족 영상 편지</div><div class="card-desc">가족에게 영상으로 마음을 전해요</div></div><div class="card-check">✓</div></div>
+    </div>
+    <div id="emptyState" style="display:none;text-align:center;padding:60px 20px;color:var(--i3);"><div style="font-size:52px;margin-bottom:14px;">🔍</div><div style="font-size:16px;">검색 결과가 없어요. 다른 키워드로 찾아보세요.</div></div>
+  </div>
+  <div class="pb-fix"></div>
+  <div class="cta-bar">
+    <div class="cta-bar-left">관심사를 선택하면 <b>프롬프트 만들기</b>로 이동해요</div>
+    <button class="cta-bar-btn" id="ctaBtn" onclick="goNext()">과정을 선택하면 바로 이동해요</button>
+  </div>
+</div>
+
+<!-- 위저드 Page3 -->
+<div class="pv" id="page3View">
+<div class="wizard-wrap">
+
+  <!-- 진행 표시: 2단계 -->
+  <div class="wizard-prog-bar">
+    <div class="wizard-prog-steps">
+      <div class="wps current" id="wps0"><div class="wps-circle">1</div><div class="wps-label">작성하기</div></div>
+      <div class="wps" id="wps1"><div class="wps-circle">2</div><div class="wps-label">나의 프롬프트</div></div>
+    </div>
+  </div>
+
+  <!-- 화면 1: 스타일 + 이야기 (한 화면) -->
+  <div class="wizard-step active" id="wstep0">
+
+    <!-- 강의 주제 헤더 -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+      <div style="width:4px;height:44px;background:var(--ac);border-radius:2px;flex-shrink:0;"></div>
+      <div>
+        <div style="font-size:13px;color:var(--i3);font-weight:500;margin-bottom:3px;">지금 만들고 있어요</div>
+        <div style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);" id="courseHeaderTitle">블로그 글쓰기</div>
+      </div>
+    </div>
+
+    <!-- 스타일 선택 카드 -->
+    <div class="ws-card" style="margin-bottom:16px;">
+      <div class="ws-num">1</div>
+      <div class="ws-title">스타일을 골라주세요</div>
+      <div class="ws-desc">선택할수록 더 좋은 결과물이 나와요. 기본값이 이미 선택되어 있어요!</div>
+      <div class="ws-reassure">💡 선택하지 않아도 괜찮아요. 기본 설정으로 진행돼요!</div>
+      <div class="style-groups" id="styleGroups"></div>
+    </div>
+
+    <!-- 내 이야기 카드 -->
+    <div class="ws-card">
+      <div class="ws-num">2</div>
+      <div class="ws-title" id="ws1-title">내 이야기를 써주세요</div>
+      <div class="ws-desc" id="ws1-desc">투박하게 써도 괜찮아요. 단어 몇 개만 적어도 충분해요!</div>
+      <div class="ws-reassure">🙂 아무것도 안 적어도 괜찮아요. 그냥 버튼만 눌러도 AI가 알아서 써줘요!</div>
+      <div class="ws-example"><div class="ws-example-label">✏️ 이렇게 쓰시면 돼요</div><div class="ws-example-text" id="ws1-example">예시가 여기에 표시됩니다</div></div>
+      <!-- 사진 업로드 영역 (requiresUpload 강의에서만 표시) -->
+      <div id="photoUploadSection" style="display:none;margin-bottom:14px;">
+        <div style="border:2.5px dashed var(--ab);border-radius:14px;padding:20px;text-align:center;background:var(--al);cursor:pointer;transition:all .15s;" id="photoDropZone" onclick="document.getElementById('photoFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--ac)'" ondragleave="this.style.borderColor='var(--ab)'" ondrop="handlePhotoDrop(event)">
+          <div id="photoPreviewWrap" style="display:none;position:relative;">
+            <img id="photoPreview" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;" />
+            <button onclick="event.stopPropagation();removePhoto()" style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+          </div>
+          <div id="photoUploadPlaceholder">
+            <div style="font-size:36px;margin-bottom:8px;">📷</div>
+            <div style="font-size:15px;font-weight:700;color:var(--ac);margin-bottom:4px;">사진을 올려주세요</div>
+            <div style="font-size:13px;color:var(--i3);">클릭하거나 사진을 끌어다 놓으세요</div>
+            <div style="font-size:12px;color:var(--i3);margin-top:4px;">JPG, PNG 가능 · 최대 5MB</div>
+          </div>
+        </div>
+        <input type="file" id="photoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoSelect(event)" />
+      </div>
+
+      <textarea class="ws-textarea" id="storyInput" placeholder="" oninput="onStoryInput()"></textarea>
+      <div class="ws-footer">
+        <span class="ws-charcount" id="charCount">0자</span>
+      </div>
+    </div>
+
+    <div class="ws-nav-btns" style="margin-top:16px;">
+      <button class="ws-btn-prev" onclick="showPage2()">← 처음으로</button>
+      <button class="ws-btn-next" id="ws1-next" onclick="goToPromptScreen()">프롬프트 완성 →</button>
+    </div>
+  </div>
+
+  <!-- 화면 2: 나의 프롬프트 -->
+  <div class="wizard-step" id="wstep1">
+
+    <!-- 프롬프트 카드 -->
+    <div class="prompt-result-card" style="margin-bottom:16px;">
+      <div class="prc-hdr">
+        <div class="prc-title">나의 프롬프트</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button onclick="copyPrompt()" id="promptCopyBtn"
+            style="padding:6px 14px;background:var(--al);color:var(--ac);border:1.5px solid var(--ab);border-radius:100px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;">
+            📋 복사
+          </button>
+          <span id="promptBadge"
+            style="padding:6px 14px;background:var(--al);color:var(--ac);border:1.5px solid var(--ab);border-radius:100px;font-size:13px;font-weight:700;white-space:nowrap;">
+            완성 ✓
+          </span>
+        </div>
+      </div>
+      <div class="prc-text" id="promptText"><span class="prc-placeholder">스타일과 이야기를 선택하면 프롬프트가 완성됩니다</span></div>
+    </div>
+
+    <!-- 메인 CTA: AI로 바로 결과 받기 -->
+    <button id="aiGenerateBtn" onclick="generateWithAI()"
+      style="width:100%;padding:18px;background:var(--ad);color:#fff;border:none;border-radius:16px;font-size:20px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;min-height:62px;box-shadow:0 6px 0 #0f2e28;transition:transform .12s,box-shadow .12s;margin-bottom:24px;letter-spacing:-.01em;"
+      onmousedown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #0f2e28'"
+      onmouseup="this.style.transform='';this.style.boxShadow='0 6px 0 #0f2e28'"
+      ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #0f2e28'"
+      ontouchend="this.style.transform='';this.style.boxShadow='0 6px 0 #0f2e28'">
+      ✨ AI 동행으로 완성하기
+    </button>
+
+    <!-- 구분선 + 다른 AI -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;height:1px;background:var(--bd);"></div>
+      <div style="font-size:13px;color:var(--i3);white-space:nowrap;">다른 AI에서 해보고 싶다면</div>
+      <div style="flex:1;height:1px;background:var(--bd);"></div>
+    </div>
+    <div style="font-size:14px;color:var(--i3);text-align:center;line-height:1.7;margin-bottom:12px;">
+      위의 프롬프트를 복사해서 아래 AI 도구에서<br>직접 시도해보실 수 있어요 📋
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <a href="https://wrtn.ai" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">뤼튼</a>
+      <a href="https://chat.openai.com" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">ChatGPT</a>
+      <a href="https://gemini.google.com" target="_blank" style="flex:1;padding:12px 6px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;" onclick="copyPromptSilent()">Gemini</a>
+    </div>
+
+    <div class="ws-nav-btns">
+      <button class="ws-btn-prev" onclick="goWizardStep(0)">← 다시 작성하기</button>
+      <button class="ws-btn-next" onclick="showPage2()">다른 과정 만들기</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── AI 결과 화면 ── -->
+<div class="pv" id="aiResultView">
+<div class="wizard-wrap">
+
+  <!-- 로딩 화면 -->
+  <div id="aiLoadingScreen" style="display:none;text-align:center;padding:48px 24px;">
+    <!-- 동동이 -->
+    <div style="margin-bottom:20px;position:relative;display:inline-block;">
+      <svg width="100" height="125" viewBox="0 0 200 240" style="animation:dongBounce 1.2s ease-in-out infinite;filter:drop-shadow(0 10px 28px rgba(232,160,32,.35));">
+        <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+        <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+        <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+        <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+        <g style="transform-origin:136px 154px;animation:dongWave 1.5s ease-in-out infinite;">
+          <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+        </g>
+        <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+        <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+        <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+        <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+        <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+        <circle cx="100" cy="110" r="44" fill="#d08010"/>
+        <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+        <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+        <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+        <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+        <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+      </svg>
+    </div>
+    <div style="font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;" id="loadingTitle">열심히 쓰고 있어요...</div>
+    <div style="font-size:15px;color:var(--i3);margin-bottom:28px;" id="loadingSubtitle">동동이가 AI에게 부탁했어요. 잠깐만요! 🙂</div>
+    <!-- 점 로딩 애니메이션 -->
+    <div style="display:flex;justify-content:center;gap:8px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--ac);animation:dotPulse 1.4s ease-in-out infinite;"></div>
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--ac);animation:dotPulse 1.4s ease-in-out infinite .2s;"></div>
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--ac);animation:dotPulse 1.4s ease-in-out infinite .4s;"></div>
+    </div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div id="aiResultScreen" style="display:none;">
+
+    <!-- 완성 배너 -->
+    <div id="aiResultBadge" style="display:none;align-items:center;gap:8px;background:var(--al);border:1px solid var(--ab);border-radius:10px;padding:10px 14px;margin-bottom:14px;">
+      <span style="font-size:18px;">📁</span>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--ac);">작품함에 저장됐어요!</div>
+        <div style="font-size:12px;color:var(--i3);">언제든지 내 작품함에서 다시 볼 수 있어요</div>
+      </div>
+      <button onclick="showView('portfolio')" style="margin-left:auto;font-size:12px;color:var(--ac);background:none;border:none;cursor:pointer;font-weight:700;font-family:inherit;padding:0;white-space:nowrap;">보기 →</button>
+    </div>
+
+    <!-- 결과 카드 -->
+    <div style="background:#fff;border:1.5px solid var(--ac);border-radius:18px;overflow:hidden;margin-bottom:14px;">
+      <!-- 헤더 -->
+      <div style="background:var(--ac);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#fff;opacity:.8;margin-bottom:2px;" id="aiResultCourse">글쓰기 결과</div>
+          <div style="font-size:16px;font-weight:800;color:#fff;">✅ AI가 완성했어요!</div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.7);" id="aiResultCharCount"></div>
+      </div>
+      <!-- 본문 -->
+      <div id="aiResultText" style="padding:20px;font-size:16px;color:var(--i2);line-height:2;font-family:'Gowun Batang',serif;white-space:pre-wrap;max-height:360px;overflow-y:auto;background:#fff;"></div>
+    </div>
+
+    <!-- 버튼들 -->
+    <button class="btn-kakao" onclick="shareKakaoResult()" style="margin-bottom:10px;">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg>
+      카카오톡 전송
+    </button>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <button onclick="saveAIResult()" style="flex:1;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">📁 작품함 저장</button>
+      <button onclick="shareAIToCommunity()" style="flex:1;padding:13px;background:var(--gl);color:var(--gd);border:1.5px solid var(--gb);border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">🏆 커뮤니티 자랑</button>
+    </div>
+    <div id="bookPublishBtn" style="display:none;margin-bottom:10px;">
+      <button onclick="openBookPublish()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">📚 이 자서전 종이책으로 만들기 →</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <button onclick="regenerateAI()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">🔄 다시 생성</button>
+      <button onclick="copyAIResult()" style="flex:1;padding:12px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">📋 복사</button>
+    </div>
+    <button onclick="backToPromptStep();" style="width:100%;padding:12px;background:none;border:none;color:var(--i3);font-size:14px;cursor:pointer;font-family:inherit;">← 처음부터 다시 만들기</button>
+
+  </div>
+
+  <!-- 에러 화면 -->
+  <div id="aiErrorScreen" style="display:none;text-align:center;padding:40px 24px;">
+    <div style="font-size:48px;margin-bottom:16px;">😥</div>
+    <div style="font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:10px;">잠깐, 문제가 생겼어요</div>
+    <div style="font-size:15px;color:var(--i3);line-height:1.75;margin-bottom:28px;" id="aiErrorMsg">네트워크 연결을 확인하고 다시 시도해 주세요</div>
+    <button onclick="retryGeneration()" style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">다시 시도하기</button>
+    <button onclick="copyPromptSilent();window.open('https://wrtn.ai','_blank');" style="width:100%;padding:14px;background:var(--wm);color:var(--i2);border:1px solid var(--bd);border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">뤼튼에서 직접 해보기</button>
+  </div>
+
+</div>
+</div>
+
+<!-- Page4 결과 -->
+<div class="pv" id="page4View">
+<div class="dojo-mission-wrap">
+  <div style="background:var(--al);border:1.5px solid var(--ab);border-radius:16px;padding:28px;margin-bottom:22px;">
+    <div style="font-family:var(--serif,serif);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;">🎉 거의 다 왔어요!</div>
+    <div style="font-size:15px;color:var(--i2);margin-bottom:20px;line-height:1.75;">AI가 써준 결과물을 아래에 붙여넣어 주세요. 작품이 완성되면 가족에게 바로 보낼 수 있어요!</div>
+    <div style="display:flex;gap:11px;margin-bottom:22px;">
+      <a href="https://wrtn.ai" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--ac);color:#fff;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;min-height:52px;">🤖 뤼튼 열기 →</a>
+      <a href="https://chat.openai.com" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:#fff;color:var(--ink);border:1.5px solid var(--bd);border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;min-height:52px;">💬 ChatGPT 열기 →</a>
+    </div>
+    <div class="side-guide">
+      <div class="side-guide-title">📖 이렇게 하세요</div>
+      <div class="side-guide-step"><div class="sgs-num">1</div><div class="sgs-text">위 <b>뤼튼 열기</b> 버튼을 눌러요</div></div>
+      <div class="side-guide-step"><div class="sgs-num">2</div><div class="sgs-text">뤼튼 입력창에 <b>Ctrl+V</b> (프롬프트 붙여넣기)</div></div>
+      <div class="side-guide-step"><div class="sgs-num">3</div><div class="sgs-text">엔터 → AI가 글을 써줘요 (약 30초)</div></div>
+      <div class="side-guide-step"><div class="sgs-num">4</div><div class="sgs-text">AI 글 전체 선택 (<b>Ctrl+A</b>) → 복사 (<b>Ctrl+C</b>)</div></div>
+      <div class="side-guide-step"><div class="sgs-num">5</div><div class="sgs-text">아래 칸에 <b>Ctrl+V</b> 붙여넣기 → 완성!</div></div>
+    </div>
+  </div>
+  <div class="done-check-card">
+    <div class="dcc-title">📄 AI가 써준 결과물을 여기에 붙여넣으세요</div>
+    <div class="dcc-desc" style="font-size:15px;">뤼튼/ChatGPT에서 결과물을 복사한 뒤, 아래 칸을 클릭하고 <b>Ctrl+V</b> 를 누르세요.</div>
+
+    <!-- 붙여넣기 textarea -->
+    <textarea class="dcc-textarea" id="resultTextarea"
+      placeholder="여기를 클릭하고 Ctrl+V 하세요"
+      oninput="onResultInput()"></textarea>
+
+    <!-- 결과 미리보기 + 원클릭 복사 박스 (붙여넣기 후 나타남) -->
+    <div id="resultPreviewBox" style="display:none;margin-top:16px;">
+      <div style="background:var(--al);border:2px solid var(--ac);border-radius:14px;overflow:hidden;">
+        <!-- 헤더 -->
+        <div style="background:var(--ac);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">✅ 완성된 작품</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.75);" id="resultCharCount"></div>
+        </div>
+        <!-- 본문 -->
+        <div id="resultPreviewText"
+          style="padding:20px;font-size:16px;color:var(--i2);line-height:2;font-family:var(--serif,serif);white-space:pre-wrap;max-height:300px;overflow-y:auto;background:#fff;">
+        </div>
+        <!-- 원클릭 복사 버튼 -->
+        <div style="padding:14px 18px;background:var(--al);border-top:1px solid var(--ab);">
+          <button id="oneClickCopyBtn"
+            onclick="oneClickCopy()"
+            style="width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;transition:all .15s;">
+            📋 작품 전체 복사하기
+          </button>
+          <div style="font-size:13px;color:var(--i3);text-align:center;margin-top:8px;">
+            버튼 한 번으로 전체가 복사돼요 — 드래그 필요 없어요!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 저장 배지 (팝업 닫힌 후 표시) -->
+    <div id="savedBadge" style="display:none;align-items:center;gap:8px;background:var(--al);border:1px solid var(--ab);border-radius:10px;padding:10px 14px;margin-bottom:12px;">
+      <span style="font-size:18px;">📁</span>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--ac);">작품함에 저장됐어요!</div>
+        <div style="font-size:12px;color:var(--i3);">언제든지 내 작품함에서 다시 볼 수 있어요</div>
+      </div>
+      <button onclick="showView('portfolio')" style="margin-left:auto;font-size:12px;color:var(--ac);background:none;border:none;cursor:pointer;font-weight:700;font-family:inherit;padding:0;white-space:nowrap;">보기 →</button>
+    </div>
+
+    <div class="dcc-btns" style="margin-top:14px;">
+      <button class="dcc-btn-main" onclick="saveWorkFromResult()">🎉 완성하기!</button>
+      <button class="dcc-btn-skip" onclick="showPage3()">← 돌아가기</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
+  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
+  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
+</div>
+</div><!-- /builderView -->

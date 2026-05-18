@@ -1719,6 +1719,10 @@
   var spa = ['#builder','#dojo','#portfolio','#pricing','#auth','#mypage','#faq','#learn','#community','#about','#b2g','#admin','#memoir','#autobiography','#autobio','#login'];
   function maybeRedirect(){
     var h = location.hash;
+    if(h === '#builder'){
+      location.replace('/builder.html');
+      return;
+    }
     if(h && spa.indexOf(h) !== -1){
       location.replace('/ai-donghang.html' + h);
     }

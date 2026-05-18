@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI동행 — 프롬프트 빌더</title>
+<meta name="description" content="AI동행 프롬프트 빌더 — 글·그림·노래·영상을 한 편의 작품으로.">
+<meta property="og:title" content="AI동행 — 프롬프트 빌더">
+<meta property="og:description" content="고르시는 대로, 한 편의 작품이 됩니다.">
+<meta property="og:url" content="https://aitogether.co.kr/builder.html">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&display=swap">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     디자인 토큰 — 랜딩과 같은 에디토리얼 톤
+     ───────────────────────────────────────────────────────────── */
+  :root{
+    --paper:      #FBF8F3;
+    --paper-deep: #F2ECE0;
+    --ink:        #2C2A26;
+    --ink-soft:   #5C4A3E;
+    --ink-mute:   #8A7E70;
+    --apricot:    #E8D5C4;
+    --teal:       #2A5F52;
+    --teal-hover: #224E44;
+    --teal-soft:  #EAF0EC;
+    --gold:       #B8956A;
+    --hair:       #E3DCCC;
+  }
+  *,*::before,*::after{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ display:block; max-width:100%; }
+  button{ font: inherit; }
+
+  /* 상단바 — 간소화 */
+  .topbar{
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px clamp(20px, 5vw, 64px);
+    border-bottom: 1px solid var(--hair);
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .brand{
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Noto Serif KR", serif; font-weight: 500; font-size: 20px;
+    color: var(--ink); text-decoration: none;
+  }
+  .brand .mark{
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--teal);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .brand .mark::before{
+    content:""; width: 12px; height: 14px; background: #FBF8F3;
+    border-radius: 7px 7px 50% 50% / 8px 8px 50% 50%;
+  }
+  .topbar .back{
+    font-size: 14px; color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .topbar .back:hover{ color: var(--ink); }
+
+  /* 페이지 헤더 */
+  .page-head{
+    max-width: 1280px; margin: 0 auto;
+    padding: clamp(32px, 4vw, 56px) clamp(20px, 5vw, 64px) clamp(24px, 3vw, 32px);
+  }
+  .page-num{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 14px; color: var(--ink-soft);
+    margin-bottom: 8px; letter-spacing: .04em;
+  }
+  .page-lead{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    font-size: clamp(15px, 1.4vw, 18px);
+    color: var(--gold);
+    margin: 0 0 14px;
+    letter-spacing: .02em;
+  }
+  .page-title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.4;
+    color: var(--ink); margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  .page-sub{
+    font-size: clamp(15px, 1.3vw, 17px);
+    color: var(--ink-soft); margin: 0;
+    max-width: 38em; line-height: 1.7;
+  }
+
+  /* 카테고리 탭 */
+  .cat-tabs{
+    max-width: 1280px; margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 64px);
+    display: flex; flex-wrap: wrap; gap: 8px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .cat-tab{
+    background: transparent; border: 0; cursor: pointer;
+    padding: 14px 18px;
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: 17px;
+    color: var(--ink-soft);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .25s, border-color .25s;
+  }
+  .cat-tab .roman{
+    font-style: italic; font-size: 13px;
+    color: var(--ink-mute); margin-right: 6px;
+  }
+  .cat-tab:hover{ color: var(--ink); }
+  .cat-tab[aria-selected="true"]{
+    color: var(--ink);
+    border-bottom-color: var(--teal);
+  }
+  .cat-tab[aria-selected="true"] .roman{ color: var(--gold); }
+
+  /* 메인 — 2열 (왼쪽 빌더, 오른쪽 프롬프트 미리보기) */
+  .stage{
+    max-width: 1280px; margin: 0 auto;
+    padding: clamp(32px, 4vw, 48px) clamp(20px, 5vw, 64px) clamp(56px, 7vw, 96px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 4vw, 56px);
+  }
+  @media (min-width: 960px){
+    .stage{ grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  }
+
+  /* 빌더 단계 */
+  .step{
+    margin-bottom: clamp(40px, 4vw, 56px);
+  }
+  .step-label{
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .step-label .roman{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    color: var(--gold); font-size: 18px;
+    letter-spacing: .04em;
+  }
+  .step-label h2{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(20px, 2vw, 24px);
+    margin: 0; letter-spacing: -0.01em;
+  }
+  .step-hint{
+    font-size: 15px; color: var(--ink-soft);
+    margin: -8px 0 18px;
+  }
+
+  /* 서브카테고리 그리드 */
+  .sub-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .sub-card{
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    padding: 18px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .25s, transform .25s, background-color .25s;
+  }
+  .sub-card:hover{ border-color: var(--ink-soft); transform: translateY(-1px); }
+  .sub-card[aria-pressed="true"]{
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
+  .sub-card[aria-pressed="true"]::after{
+    content:""; position: absolute; top: 14px; right: 14px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--teal);
+  }
+  .sub-card .num{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px; color: var(--gold);
+    display: block; margin-bottom: 6px; letter-spacing: .02em;
+  }
+  .sub-card .title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: 18px; line-height: 1.4;
+    color: var(--ink); display: block; margin-bottom: 4px;
+  }
+  .sub-card .desc{
+    font-size: 14px; color: var(--ink-soft);
+    line-height: 1.55; display: block;
+  }
+  .sub-card .badge{
+    position: absolute; top: 14px; right: 14px;
+    background: var(--ink); color: var(--paper);
+    font-family: "Noto Serif KR", serif;
+    font-size: 11px; letter-spacing: .14em;
+    padding: 4px 8px;
+  }
+  .sub-card[aria-pressed="true"] .badge{ display: none; }
+
+  /* 스타일 칩 */
+  .chip-row{
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 22px;
+  }
+  .chip-group-label{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+    letter-spacing: .02em;
+  }
+  .chip{
+    background: #fff;
+    border: 1px solid var(--hair);
+    color: var(--ink);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color .2s, background-color .2s, color .2s;
+  }
+  .chip:hover{ border-color: var(--ink-soft); }
+  .chip[aria-pressed="true"]{
+    border-color: var(--teal);
+    background: var(--teal);
+    color: #F6F0E4;
+  }
+
+  /* 이야기 입력 */
+  .story{
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .story textarea{
+    width: 100%; min-height: 140px;
+    font: inherit; font-size: 16px; line-height: 1.7;
+    color: var(--ink);
+    background: transparent;
+    border: 0; outline: none; resize: vertical;
+    padding: 0;
+  }
+  .story textarea::placeholder{ color: var(--ink-mute); }
+  .story-meta{
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 1px solid var(--hair);
+    font-size: 13px;
+    color: var(--ink-mute);
+  }
+  .story-meta .roman{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+  }
+
+  /* 오른쪽 — 프롬프트 미리보기 */
+  .preview{
+    position: sticky; top: 84px;
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    padding: clamp(24px, 2.6vw, 32px);
+    align-self: start;
+  }
+  .preview-folio{
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--hair);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+    letter-spacing: .03em;
+  }
+  .preview-title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: 20px;
+    margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  .preview-body{
+    font-family: "Noto Serif KR", serif;
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink);
+    margin: 0;
+    text-indent: 1.2em;
+    min-height: 5em;
+  }
+  .preview-body em{
+    font-style: italic; color: var(--ink-soft);
+  }
+  .preview-body .ph{
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+  .preview-cta{
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hair);
+  }
+  .btn{
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 22px; min-height: 52px;
+    border-radius: 2px; border: 1px solid transparent;
+    font-size: 16px;
+    cursor: pointer; text-decoration: none;
+    transition: background-color .25s, color .25s, border-color .25s;
+  }
+  .btn[disabled]{ opacity: .5; cursor: not-allowed; }
+  .btn-primary{
+    background: var(--teal); color: #F6F0E4; border-color: var(--teal);
+  }
+  .btn-primary:hover:not([disabled]){ background: var(--teal-hover); border-color: var(--teal-hover); }
+  .btn-primary .arrow{
+    width: 14px; height: 1px; background: currentColor;
+    position: relative;
+  }
+  .btn-primary .arrow::after{
+    content:""; position: absolute; right: -1px; top: -4px;
+    width: 8px; height: 8px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .btn-secondary{
+    background: transparent; color: var(--ink-soft);
+    border-color: var(--hair);
+    font-size: 14px; min-height: 44px; padding: 12px 18px;
+  }
+  .btn-secondary:hover:not([disabled]){ color: var(--ink); border-color: var(--ink-soft); }
+
+  /* 모바일 조정 */
+  @media (max-width: 720px){
+    .preview{ position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="/" class="brand" aria-label="AI동행">
+    <span class="mark" aria-hidden="true"></span>
+    <span>AI동행</span>
+  </a>
+  <a href="/" class="back">← 홈으로</a>
+</header>
+
+<header class="page-head">
+  <div class="page-num">vi. 프롬프트 빌더</div>
+  <p class="page-lead">고르시는 대로, 한 편의 작품이 됩니다.</p>
+  <h1 class="page-title">오늘은 어떤 작품을<br>만들어 볼까요?</h1>
+  <p class="page-sub">
+    글·그림·노래·영상 — 어머니가 만드실 수 있는 작품은 스무 가지가 넘습니다.
+    천천히 둘러보시고, 마음에 드시는 한 가지를 고르세요.
+    한 줄도 직접 쓰시지 않아도 됩니다.
+  </p>
+</header>
+
+<nav class="cat-tabs" role="tablist" aria-label="작품 종류">
+  <button type="button" class="cat-tab" role="tab" aria-selected="true" data-cat="write">
+    <span class="roman">i.</span>글쓰기
+  </button>
+  <button type="button" class="cat-tab" role="tab" aria-selected="false" data-cat="image">
+    <span class="roman">ii.</span>이미지
+  </button>
+  <button type="button" class="cat-tab" role="tab" aria-selected="false" data-cat="music">
+    <span class="roman">iii.</span>음악
+  </button>
+  <button type="button" class="cat-tab" role="tab" aria-selected="false" data-cat="video">
+    <span class="roman">iv.</span>영상
+  </button>
+</nav>
+
+<main class="stage">
+
+  <section>
+    <div class="step">
+      <div class="step-label">
+        <span class="roman">step i.</span>
+        <h2 id="sub-h">어떤 글을 써볼까요?</h2>
+      </div>
+      <p class="step-hint" id="sub-hint">자서전이 가장 인기 있는 갈래입니다. 몇 분이면 첫 편이 완성됩니다.</p>
+      <div class="sub-grid" id="sub-grid" role="listbox" aria-labelledby="sub-h"></div>
+    </div>
+
+    <div class="step" id="style-step" hidden>
+      <div class="step-label">
+        <span class="roman">step ii.</span>
+        <h2>어떤 결로 담을까요?</h2>
+      </div>
+      <p class="step-hint" id="style-hint">아래에서 마음에 드시는 결을 골라 주세요.</p>
+      <div id="style-groups"></div>
+    </div>
+  </section>
+
+  <aside class="preview" aria-label="완성될 프롬프트">
+    <div class="preview-folio">
+      <span>나의 프롬프트</span>
+      <span class="roman">draft</span>
+    </div>
+    <h3 class="preview-title" id="preview-title">아직 시작 전입니다.</h3>
+    <p class="preview-body" id="preview-body"><span class="ph">위에서 작품 종류를 고르시면, 만드실 작품의 모습이 한 문장으로 정리되어 여기에 보입니다.</span></p>
+    <div class="preview-cta">
+      <button type="button" class="btn btn-primary" id="finish-btn" disabled>
+        <span>AI동행으로 완성하기</span>
+        <span class="arrow" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="btn btn-secondary" id="copy-btn" disabled>프롬프트 복사하기</button>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // 데이터 — 카테고리/서브카테고리/스타일 옵션
+  // ─────────────────────────────────────────────────────────────
+  const CATS = {
+    write: [
+      { id: 'memoir', title: '자서전 쓰기', desc: '내 삶의 장면들을 한 장씩. 모이면 한 권이 됩니다.', popular: true },
+      { id: 'blog',   title: '블로그 글쓰기', desc: '오늘 있었던 일, 텃밭·손주 이야기를 한 편의 글로.' },
+      { id: 'letter', title: '편지 쓰기', desc: '자녀·손주·옛 친구에게 마음을 한 통의 편지로.' },
+      { id: 'diary',  title: '일기 쓰기', desc: '오늘 하루를 정리하고, 마음을 가라앉히는 짧은 글.' },
+      { id: 'poem',   title: '시·수필', desc: '감정과 생각을 한 편의 시 또는 수필로 옮깁니다.' },
+      { id: 'notice', title: '공문·안내문', desc: '모임 공지, 감사패, 축사 — 정중한 글이 필요할 때.' },
+    ],
+    image: [
+      { id: 'landscape',  title: '풍경·자연 그림', desc: '아름다운 자연 풍경을 한 점의 그림으로.' },
+      { id: 'flower',     title: '꽃·식물 일러스트', desc: '좋아하시는 꽃과 식물을 그림으로 옮깁니다.' },
+      { id: 'portrait',   title: '가족·인물 초상화', desc: '기억하시는 가족·친구의 얼굴을 한 장으로.', popular: true },
+      { id: 'hometown',   title: '고향·마을 풍경', desc: '기억 속 고향을 한 폭의 그림으로 되살립니다.' },
+      { id: 'restore',    title: '사진 보정·복원', desc: '빛바랜 옛 사진을 선명하고 따뜻하게.' },
+      { id: 'card',       title: '카드·엽서', desc: '기념일에 보낼 특별한 카드를 만듭니다.' },
+    ],
+    music: [
+      { id: 'trot',     title: '트로트', desc: '가족만을 위한 한 곡의 트로트.', popular: true },
+      { id: 'ballad',   title: '발라드', desc: '감성을 담은 한 곡의 발라드.' },
+      { id: 'children', title: '동요', desc: '손주에게 들려줄 한 곡의 동요.' },
+      { id: 'anniv',    title: '기념일 축하 노래', desc: '생일·결혼기념일을 위한 한 곡.' },
+      { id: 'folk',     title: '민요풍 노래', desc: '고향의 정취가 담긴 민요풍 한 곡.' },
+      { id: 'hymn',     title: '찬송·신앙', desc: '신앙과 감사를 담은 한 곡.' },
+    ],
+    video: [
+      { id: 'memory',   title: '추억 영상', desc: '옛 사진들을 한 편의 영상으로 엮어 드립니다.' },
+      { id: 'greeting', title: '인사 영상', desc: '자녀·손주에게 보내는 짧은 영상 편지.' },
+      { id: 'family',   title: '가족 모임', desc: '결혼·생신 모임을 위한 짧은 축하 영상.' },
+    ],
+  };
+
+  const STYLE_GROUPS = {
+    memoir: [
+      { label: '시절', options: ['어린 시절', '청춘', '결혼하던 해', '첫 직장', '자식이 태어나던 날', '지금'] },
+      { label: '감정', options: ['따뜻한', '그리운', '벅찬', '담담한', '슬픈'] },
+      { label: '누구에게', options: ['손주에게', '자녀에게', '배우자에게', '나 자신에게'] },
+    ],
+    letter: [
+      { label: '받는 분', options: ['자녀', '손주', '배우자', '옛 친구', '먼저 가신 분'] },
+      { label: '감정', options: ['따뜻한', '미안한', '고마운', '그리운', '담담한'] },
+    ],
+    blog: [
+      { label: '오늘의 주제', options: ['텃밭·정원', '음식·반찬', '손주 이야기', '동네 산책', '옛 추억', '오늘의 일'] },
+      { label: '길이', options: ['짧게', '보통', '길게'] },
+    ],
+    diary: [
+      { label: '오늘 마음', options: ['평온한', '뿌듯한', '아쉬운', '바쁜', '쓸쓸한'] },
+    ],
+    poem: [
+      { label: '결', options: ['짧은 시', '수필', '편지글'] },
+      { label: '감정', options: ['따뜻한', '쓸쓸한', '벅찬', '담담한'] },
+    ],
+    notice: [
+      { label: '용도', options: ['모임 공지', '감사 인사', '축사', '추모'] },
+    ],
+    landscape:  [{ label: '풍경', options: ['바다', '산', '들판', '호수', '하늘'] }, { label: '계절', options: ['봄','여름','가을','겨울'] }],
+    flower:     [{ label: '꽃', options: ['동백','매화','벚꽃','국화','장미','수국'] }],
+    portrait:   [{ label: '누구', options: ['아버지','어머니','자녀','손주','형제'] }, { label: '결', options: ['수채화','유화','수묵','연필'] }],
+    hometown:   [{ label: '계절', options: ['봄','여름','가을','겨울'] }, { label: '결', options: ['수묵','수채','유화'] }],
+    restore:    [{ label: '결', options: ['흑백 → 컬러','선명도만','흠집 복원'] }],
+    card:       [{ label: '용도', options: ['생신','결혼기념일','어버이날','크리스마스','새해'] }],
+    trot:       [{ label: '결', options: ['옛 트로트','요즘 트로트','애절한','신나는'] }, { label: '주제', options: ['고향','어머니','첫사랑','인생'] }],
+    ballad:     [{ label: '결', options: ['잔잔한','애절한','희망적'] }],
+    children:   [{ label: '주제', options: ['손주','동물','자연','학교'] }],
+    anniv:      [{ label: '용도', options: ['생신','결혼기념일','어버이날','금혼식'] }],
+    folk:       [{ label: '지역', options: ['남도','경상','강원','제주'] }],
+    hymn:       [{ label: '결', options: ['찬송','감사','새 노래'] }],
+    memory:     [{ label: '결', options: ['따뜻한','잔잔한','벅찬'] }, { label: '길이', options: ['1분','3분','5분'] }],
+    greeting:   [{ label: '받는 분', options: ['자녀','손주','옛 친구'] }],
+    family:     [{ label: '모임', options: ['생신','결혼','명절','금혼식'] }],
+  };
+
+  const state = {
+    cat: 'write',
+    sub: null,
+    styles: {},
+  };
+
+  const subGrid = document.getElementById('sub-grid');
+  const subH = document.getElementById('sub-h');
+  const subHint = document.getElementById('sub-hint');
+  const styleStep = document.getElementById('style-step');
+  const styleGroups = document.getElementById('style-groups');
+  const previewTitle = document.getElementById('preview-title');
+  const previewBody = document.getElementById('preview-body');
+  const finishBtn = document.getElementById('finish-btn');
+  const copyBtn = document.getElementById('copy-btn');
+
+  const roman = ['i','ii','iii','iv','v','vi','vii','viii','ix','x'];
+
+  function renderSubGrid(){
+    const items = CATS[state.cat];
+    subGrid.innerHTML = items.map((it, idx) => `
+      <button type="button" class="sub-card" role="option"
+              data-sub="${it.id}"
+              aria-pressed="${state.sub === it.id}">
+        ${it.popular && state.sub !== it.id ? '<span class="badge">가장 인기</span>' : ''}
+        <span class="num">${roman[idx]}.</span>
+        <span class="title">${it.title}</span>
+        <span class="desc">${it.desc}</span>
+      </button>
+    `).join('');
+  }
+
+  function renderStyleGroups(){
+    if (!state.sub){ styleStep.hidden = true; return; }
+    const groups = STYLE_GROUPS[state.sub] || [];
+    styleStep.hidden = false;
+    styleGroups.innerHTML = groups.map(g => `
+      <p class="chip-group-label">${g.label}</p>
+      <div class="chip-row" data-group="${g.label}">
+        ${g.options.map(o => `
+          <button type="button" class="chip"
+                  data-opt="${o}"
+                  aria-pressed="${state.styles[g.label] === o}">${o}</button>
+        `).join('')}
+      </div>
+    `).join('');
+  }
+
+  const STEP1_HEAD = {
+    write: { h: '어떤 글을 써볼까요?',          hint: '자서전이 가장 인기 있는 갈래입니다. 몇 분이면 첫 편이 완성됩니다.' },
+    image: { h: '어떤 그림을 그려볼까요?',         hint: '수채화·수묵·유화 — 결은 다음 단계에서 고르실 수 있습니다.' },
+    music: { h: '어떤 노래를 만들어볼까요?',       hint: '트로트·발라드·동요 — 가족만을 위한 한 곡이 됩니다.' },
+    video: { h: '어떤 영상을 만들어볼까요?',       hint: '추억 사진들을 엮어 한 편의 영상으로 만들어 드립니다.' },
+  };
+
+  function renderStep1Head(){
+    const meta = STEP1_HEAD[state.cat] || STEP1_HEAD.write;
+    subH.textContent = meta.h;
+    subHint.textContent = meta.hint;
+  }
+
+  function findSub(){
+    return CATS[state.cat].find(s => s.id === state.sub);
+  }
+
+  function renderPreview(){
+    if (!state.sub){
+      previewTitle.textContent = '아직 시작 전입니다.';
+      previewBody.innerHTML = '<span class="ph">위에서 작품 종류를 고르시면, 만드실 작품의 모습이 한 문장으로 정리되어 여기에 보입니다.</span>';
+      finishBtn.disabled = true; copyBtn.disabled = true;
+      return;
+    }
+    const sub = findSub();
+    const styleParts = Object.values(state.styles).filter(Boolean);
+
+    let title = sub.title;
+    if (styleParts.length){
+      title = styleParts.join(' · ') + ' · ' + sub.title;
+    }
+    previewTitle.textContent = title;
+
+    let body = '';
+    body += `<em>${sub.title}.</em> `;
+    if (styleParts.length){
+      body += `${styleParts.join(', ')}로 결을 잡고, `;
+    }
+    body += `AI동행이 한 편의 작품으로 다듬어 드립니다.`;
+
+    previewBody.innerHTML = body;
+    finishBtn.disabled = false; copyBtn.disabled = false;
+  }
+
+  function syncAll(){
+    renderStep1Head();
+    renderSubGrid();
+    renderStyleGroups();
+    renderPreview();
+  }
+
+  document.querySelectorAll('.cat-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach(b => b.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+      state.cat = btn.dataset.cat;
+      state.sub = null;
+      state.styles = {};
+      syncAll();
+    });
+  });
+
+  subGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.sub-card');
+    if (!card) return;
+    state.sub = card.dataset.sub;
+    state.styles = {};
+    syncAll();
+  });
+
+  styleGroups.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const group = chip.closest('.chip-row').dataset.group;
+    const opt = chip.dataset.opt;
+    if (state.styles[group] === opt){
+      delete state.styles[group];
+    } else {
+      state.styles[group] = opt;
+    }
+    renderStyleGroups();
+    renderPreview();
+  });
+
+  copyBtn.addEventListener('click', () => {
+    const text = previewTitle.textContent + '\n\n' + previewBody.textContent;
+    navigator.clipboard?.writeText(text).then(() => {
+      const old = copyBtn.textContent;
+      copyBtn.textContent = '복사했습니다';
+      setTimeout(() => copyBtn.textContent = old, 1500);
+    });
+  });
+
+  finishBtn.addEventListener('click', () => {
+    const labelSpan = finishBtn.querySelector('span');
+    if (labelSpan) labelSpan.textContent = 'AI동행이 작품을 만드는 중입니다…';
+    finishBtn.disabled = true;
+  });
+
+  syncAll();
+</script>
+
+</body>
+</html>

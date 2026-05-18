@@ -4697,6 +4697,11 @@ var COURSE_CAT = {
 
 // ── 뷰 전환 ──
 function showView(view, _skipHash){
+  // builder는 별도 페이지 /builder.html 로 위임 (2026-05-18~)
+  if(view === 'builder'){
+    location.href = '/builder.html';
+    return;
+  }
   // 홈뷰 제거됨 — home/memoir 호출은 자서전 v3(autobiography)로 자동 우회
   if(view === 'home') view = 'autobiography';
   if(view === 'memoir') view = 'autobiography';

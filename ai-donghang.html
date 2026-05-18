@@ -16,6 +16,16 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.tosspayments.com/v2/standard"></script>
 <script>
+// ── URL 정리: 주소창에서 /ai-donghang.html 숨김 ──
+// 새로고침/북마크에도 호환되도록 index.html이 SPA 해시를 받으면 여기로 redirect 후 본 스크립트가 URL을 다시 / 로 재작성한다.
+(function(){
+  var p = location.pathname;
+  if(p.endsWith('/ai-donghang.html')){
+    var newPath = p.replace(/\/ai-donghang\.html$/, '/');
+    history.replaceState(null, '', newPath + location.search + location.hash);
+  }
+})();
+
 const SUPABASE_URL='https://gaibakqhdfdpnsdgpmya.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
 const TOSS_CLIENT_KEY='test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'; // Toss 공식 테스트 키 (운영 시 실 키로 교체)
@@ -1829,15 +1839,15 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
     <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
   </a>
   <nav aria-label="주요 메뉴">
-    <a href="ai-donghang.html#builder">만들기</a>
-    <a href="ai-donghang.html#dojo">도장깨기</a>
-    <a href="ai-donghang.html#community">커뮤니티</a>
-    <a href="ai-donghang.html#portfolio">내 작품함</a>
-    <a href="ai-donghang.html#pricing">요금제</a>
-    <a href="ai-donghang.html#faq">고객센터</a>
+    <a href="/#builder">만들기</a>
+    <a href="/#dojo">도장깨기</a>
+    <a href="/#community">커뮤니티</a>
+    <a href="/#portfolio">내 작품함</a>
+    <a href="/#pricing">요금제</a>
+    <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <a href="ai-donghang.html#auth" class="login">로그인</a>
+    <a href="/#auth" class="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
       <span class="bars" aria-hidden="true"><span></span></span>
@@ -1856,15 +1866,15 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
       <button type="button" class="nav-drawer-close" data-nav-close="" aria-label="메뉴 닫기"></button>
     </div>
     <ul class="nav-drawer-list">
-      <li><a href="ai-donghang.html#builder">만들기</a></li>
-      <li><a href="ai-donghang.html#dojo">도장깨기</a></li>
-      <li><a href="ai-donghang.html#community">커뮤니티</a></li>
-      <li><a href="ai-donghang.html#portfolio">내 작품함</a></li>
-      <li><a href="ai-donghang.html#pricing">요금제</a></li>
-      <li><a href="ai-donghang.html#faq">고객센터</a></li>
+      <li><a href="/#builder">만들기</a></li>
+      <li><a href="/#dojo">도장깨기</a></li>
+      <li><a href="/#community">커뮤니티</a></li>
+      <li><a href="/#portfolio">내 작품함</a></li>
+      <li><a href="/#pricing">요금제</a></li>
+      <li><a href="/#faq">고객센터</a></li>
     </ul>
     <div class="nav-drawer-foot">
-      <a href="ai-donghang.html#auth" class="login">로그인</a>
+      <a href="/#auth" class="login">로그인</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>
   </aside>

@@ -1711,6 +1711,22 @@
   }
 
 </style>
+<script>
+// ── SPA 해시 라우터 — 새로고침/북마크 + 같은 페이지 내 클릭 모두 대응 ──
+// /#builder 등 SPA 해시가 보이면 ai-donghang.html로 위임. ai-donghang.html은 로드 직후 URL을
+// 다시 / 로 재작성하므로, 사용자가 보는 주소창은 결국 깔끔하게 / + 해시만 남는다.
+(function(){
+  var spa = ['#builder','#dojo','#portfolio','#pricing','#auth','#mypage','#faq','#learn','#community','#about','#b2g','#admin','#memoir','#autobiography','#autobio','#login'];
+  function maybeRedirect(){
+    var h = location.hash;
+    if(h && spa.indexOf(h) !== -1){
+      location.replace('/ai-donghang.html' + h);
+    }
+  }
+  maybeRedirect();
+  window.addEventListener('hashchange', maybeRedirect);
+})();
+</script>
 </head>
 <body>
 
@@ -1722,15 +1738,15 @@
     <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
   </a>
   <nav aria-label="주요 메뉴">
-    <a href="ai-donghang.html#builder">만들기</a>
-    <a href="ai-donghang.html#dojo">도장깨기</a>
-    <a href="ai-donghang.html#community">커뮤니티</a>
-    <a href="ai-donghang.html#portfolio">내 작품함</a>
-    <a href="ai-donghang.html#pricing">요금제</a>
-    <a href="ai-donghang.html#faq">고객센터</a>
+    <a href="/#builder">만들기</a>
+    <a href="/#dojo">도장깨기</a>
+    <a href="/#community">커뮤니티</a>
+    <a href="/#portfolio">내 작품함</a>
+    <a href="/#pricing">요금제</a>
+    <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <a href="ai-donghang.html#auth" class="login">로그인</a>
+    <a href="/#auth" class="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
       <span class="bars" aria-hidden="true"><span></span></span>
@@ -1749,15 +1765,15 @@
       <button type="button" class="nav-drawer-close" data-nav-close="" aria-label="메뉴 닫기"></button>
     </div>
     <ul class="nav-drawer-list">
-      <li><a href="ai-donghang.html#builder">만들기</a></li>
-      <li><a href="ai-donghang.html#dojo">도장깨기</a></li>
-      <li><a href="ai-donghang.html#community">커뮤니티</a></li>
-      <li><a href="ai-donghang.html#portfolio">내 작품함</a></li>
-      <li><a href="ai-donghang.html#pricing">요금제</a></li>
-      <li><a href="ai-donghang.html#faq">고객센터</a></li>
+      <li><a href="/#builder">만들기</a></li>
+      <li><a href="/#dojo">도장깨기</a></li>
+      <li><a href="/#community">커뮤니티</a></li>
+      <li><a href="/#portfolio">내 작품함</a></li>
+      <li><a href="/#pricing">요금제</a></li>
+      <li><a href="/#faq">고객센터</a></li>
     </ul>
     <div class="nav-drawer-foot">
-      <a href="ai-donghang.html#auth" class="login">로그인</a>
+      <a href="/#auth" class="login">로그인</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>
   </aside>
@@ -1790,7 +1806,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="ai-donghang.html#memoir" class="btn btn-primary">
+        <a href="/#memoir" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -1853,7 +1869,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="ai-donghang.html#memoir" class="btn btn-primary">
+        <a href="/#memoir" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -1941,7 +1957,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="ai-donghang.html#memoir" class="btn btn-primary">
+        <a href="/#memoir" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -2471,7 +2487,7 @@
     가족이 두고두고 펼쳐 볼 한 권의 책이, 오늘 한 줄에서 시작됩니다.
   </p>
   <div class="cta-row">
-    <a href="ai-donghang.html#builder" class="btn btn-primary">
+    <a href="/#builder" class="btn btn-primary">
       <span>이야기 시작하기</span>
       <span class="arrow" aria-hidden="true"></span>
     </a>
@@ -2509,8 +2525,8 @@
       <h4>회사</h4>
       <ul>
         <li><a href="#how">만드는 과정</a></li>
-        <li><a href="ai-donghang.html#about">AI 동행 소개</a></li>
-        <li><a href="ai-donghang.html#b2g">기관 도입</a></li>
+        <li><a href="/#about">AI 동행 소개</a></li>
+        <li><a href="/#b2g">기관 도입</a></li>
         <li><a href="#gift">선물하기</a></li>
         <li><a href="#reviews">먼저 써보신 분들</a></li>
         <li><a href="terms.html">이용약관</a></li>

@@ -16,6 +16,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.tosspayments.com/v2/standard"></script>
 <script>
+// ── 자서전(동동이 인터뷰) → voice standalone 페이지로 위임 ──
+// 직접 방문/북마크/외부 링크로 들어와도 voice.html로 보낸다.
+(function(){
+  var h = location.hash;
+  if(h === '#autobiography' || h === '#autobio' || h === '#memoir'){
+    location.replace('/voice.html');
+  }
+})();
+
 // ── URL 정리: 주소창에서 /ai-donghang.html 숨김 ──
 // 새로고침/북마크에도 호환되도록 index.html이 SPA 해시를 받으면 여기로 redirect 후 본 스크립트가 URL을 다시 / 로 재작성한다.
 (function(){

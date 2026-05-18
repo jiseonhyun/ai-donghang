@@ -1717,10 +1717,16 @@
 // 다시 / 로 재작성하므로, 사용자가 보는 주소창은 결국 깔끔하게 / + 해시만 남는다.
 (function(){
   var spa = ['#builder','#dojo','#portfolio','#pricing','#auth','#mypage','#faq','#learn','#community','#about','#b2g','#admin','#memoir','#autobiography','#autobio','#login'];
+  // 자서전(동동이 인터뷰)은 별도 voice standalone 파일로 분리됨
+  var voiceHashes = ['#autobiography','#autobio','#memoir'];
   function maybeRedirect(){
     var h = location.hash;
     if(h === '#builder'){
       location.replace('/builder.html');
+      return;
+    }
+    if(h && voiceHashes.indexOf(h) !== -1){
+      location.replace('/voice.html');
       return;
     }
     if(h && spa.indexOf(h) !== -1){
@@ -1810,7 +1816,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="/#memoir" class="btn btn-primary">
+        <a href="/voice.html" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -1873,7 +1879,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="/#memoir" class="btn btn-primary">
+        <a href="/voice.html" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>
@@ -1961,7 +1967,7 @@
       </p>
 
       <div class="cta-row">
-        <a href="/#memoir" class="btn btn-primary">
+        <a href="/voice.html" class="btn btn-primary">
           <span>이야기 시작하기</span>
           <span class="arrow" aria-hidden="true"></span>
         </a>

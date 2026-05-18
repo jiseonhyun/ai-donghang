@@ -650,9 +650,27 @@
   });
 
   finishBtn.addEventListener('click', () => {
+    // 조립된 프롬프트 = preview title + body
+    const title = (previewTitle.textContent || '').trim();
+    const body  = (previewBody.textContent  || '').trim();
+    const fullPrompt = (title && body) ? (title + '\n\n' + body) : (title || body);
+
     const labelSpan = finishBtn.querySelector('span');
+    if (!fullPrompt){
+      if (labelSpan) labelSpan.textContent = '먼저 위에서 옵션을 골라주세요';
+      setTimeout(() => { syncAll(); }, 1500);
+      return;
+    }
+
     if (labelSpan) labelSpan.textContent = 'AI동행이 작품을 만드는 중입니다…';
     finishBtn.disabled = true;
+
+    const qs = new URLSearchParams({
+      cat:    state.cat || 'write',
+      sub:    state.sub || '',
+      prompt: fullPrompt,
+    });
+    location.href = 'result.html?' + qs.toString();
   });
 
   syncAll();

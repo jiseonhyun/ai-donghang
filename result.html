@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>AI동행 — 작품 완성</title>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     디자인 토큰 — builder.html과 동일
+     ───────────────────────────────────────────────────────────── */
+  :root{
+    --paper:      #FBF8F3;
+    --paper-deep: #F2ECE0;
+    --ink:        #2C2A26;
+    --ink-soft:   #5C4A3E;
+    --ink-mute:   #8A7E70;
+    --apricot:    #E8D5C4;
+    --teal:       #2A5F52;
+    --teal-hover: #224E44;
+    --teal-soft:  #EAF0EC;
+    --gold:       #B8956A;
+    --hair:       #E3DCCC;
+  }
+  *,*::before,*::after{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ display:block; max-width:100%; }
+  button{ font: inherit; }
+
+  /* 상단바 */
+  .topbar{
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px clamp(20px, 5vw, 64px);
+    border-bottom: 1px solid var(--hair);
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .brand{
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Noto Serif KR", serif; font-weight: 500; font-size: 20px;
+    color: var(--ink); text-decoration: none;
+  }
+  .brand .mark{
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--teal);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .brand .mark::before{
+    content:""; width: 12px; height: 14px; background: #FBF8F3;
+    border-radius: 7px 7px 50% 50% / 8px 8px 50% 50%;
+  }
+  .topbar .back{
+    font-size: 14px; color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .topbar .back:hover{ color: var(--ink); }
+
+  /* 페이지 헤더 */
+  .page-head{
+    max-width: 1100px; margin: 0 auto;
+    padding: clamp(40px, 5vw, 64px) clamp(20px, 5vw, 64px) clamp(24px, 3vw, 32px);
+  }
+  .page-num{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 14px; color: var(--ink-soft);
+    margin-bottom: 8px; letter-spacing: .04em;
+  }
+  .page-lead{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    font-size: clamp(15px, 1.4vw, 18px);
+    color: var(--gold);
+    margin: 0 0 14px;
+    letter-spacing: .02em;
+  }
+  .page-title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.4;
+    color: var(--ink); margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  .page-sub{
+    font-size: clamp(15px, 1.3vw, 17px);
+    color: var(--ink-soft); margin: 0;
+    max-width: 38em; line-height: 1.7;
+  }
+
+  /* 메인 스테이지 */
+  .stage{
+    max-width: 1100px; margin: 0 auto;
+    padding: clamp(24px, 3vw, 40px) clamp(20px, 5vw, 64px) clamp(56px, 7vw, 96px);
+  }
+
+  /* 공통 카드 */
+  .card{
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    padding: clamp(28px, 3.4vw, 48px);
+  }
+
+  /* 프롬프트 인용 카드 — 위에 표시되는 받은 프롬프트 */
+  .prompt-quote{
+    background: var(--paper-deep);
+    border-left: 2px solid var(--gold);
+    padding: 18px 22px;
+    margin-bottom: clamp(24px, 3vw, 32px);
+  }
+  .prompt-quote .label{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px; color: var(--ink-soft);
+    letter-spacing: .04em;
+    margin: 0 0 6px;
+  }
+  .prompt-quote .text{
+    font-family: "Noto Serif KR", serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ─── 상태 1: 로딩 ─── */
+  .loading-head{
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .loading-mark{
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 1px solid var(--hair);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .loading-mark::before{
+    content:""; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%, 100%{ opacity: .25; transform: scale(.85); }
+    50%     { opacity: 1;   transform: scale(1.15); }
+  }
+  .loading-title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(22px, 2.4vw, 28px);
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .loading-sub{
+    font-size: 16px; color: var(--ink-soft);
+    margin: 0;
+  }
+  .loading-stage{
+    display: flex; justify-content: center; gap: 6px;
+    margin-top: 28px;
+  }
+  .loading-stage .dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ink-mute);
+    opacity: .35;
+    animation: dotwalk 1.4s ease-in-out infinite;
+  }
+  .loading-stage .dot:nth-child(2){ animation-delay: .15s; }
+  .loading-stage .dot:nth-child(3){ animation-delay: .3s; }
+  @keyframes dotwalk{
+    0%, 100%{ opacity: .25; transform: translateY(0); }
+    50%     { opacity: 1;   transform: translateY(-3px); }
+  }
+
+  /* ─── 상태 2: 텍스트 결과 ─── */
+  .result-folio{
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--hair);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    letter-spacing: .03em;
+  }
+  .result-title{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.4;
+    margin: 0 0 24px;
+    letter-spacing: -0.01em;
+  }
+  .result-body{
+    font-family: "Noto Serif KR", serif;
+    font-size: 18px;
+    line-height: 1.95;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+  .result-body p{
+    margin: 0 0 1.1em;
+    text-indent: 1.2em;
+  }
+  .result-body p:first-child{ text-indent: 0; }
+
+  /* ─── 음악 플레이어 (text 상태 내, music 카테고리용) ─── */
+  .music-player{
+    margin: 18px 0 22px;
+    padding: 16px 18px;
+    background: var(--paper-deep);
+    border: 1px solid var(--hair);
+    border-radius: 2px;
+  }
+  .music-player-label{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-family: "Noto Serif KR", serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    letter-spacing: .02em;
+  }
+  .music-player-label .roman{
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+  .music-player audio{
+    width: 100%;
+    height: 40px;
+    display: block;
+  }
+
+  /* ─── 상태 3: 이미지 결과 ─── */
+  .image-frame{
+    background: var(--paper-deep);
+    border: 1px solid var(--hair);
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .image-frame img{
+    width: 100%; height: auto; display: block;
+  }
+  .image-caption{
+    font-family: "Noto Serif KR", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 0 0 8px;
+    letter-spacing: .02em;
+  }
+
+  /* ─── 상태 4: 에러 ─── */
+  .error-mark{
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 1px solid var(--hair);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-mute);
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 22px;
+  }
+  .error-title{
+    text-align: center;
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(22px, 2.4vw, 28px);
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .error-sub{
+    text-align: center;
+    font-size: 16px; color: var(--ink-soft);
+    margin: 0 auto 28px;
+    max-width: 34em;
+    line-height: 1.75;
+  }
+
+  /* ─── 상태 5: 자서전 분기 ─── */
+  .memoir-mark{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+    text-align: center;
+    letter-spacing: .06em;
+    margin: 0 0 12px;
+  }
+  .memoir-title{
+    text-align: center;
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: clamp(24px, 2.8vw, 34px);
+    line-height: 1.4;
+    margin: 0 0 18px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .memoir-sub{
+    text-align: center;
+    font-size: 16px; color: var(--ink-soft);
+    margin: 0 auto 32px;
+    max-width: 32em;
+    line-height: 1.8;
+  }
+  .memoir-weeks{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin: 0 0 36px;
+    padding: 24px 0;
+    border-top: 1px solid var(--hair);
+    border-bottom: 1px solid var(--hair);
+  }
+  .memoir-week{
+    text-align: center;
+    padding: 8px 4px;
+  }
+  .memoir-week .num{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px; color: var(--gold);
+    display: block; margin-bottom: 4px;
+  }
+  .memoir-week .label{
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+    font-size: 14px; color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* 액션 영역 */
+  .actions{
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: clamp(28px, 3vw, 36px);
+    padding-top: clamp(20px, 2vw, 24px);
+    border-top: 1px solid var(--hair);
+    justify-content: flex-end;
+  }
+  .actions.center{ justify-content: center; }
+
+  .btn{
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px 22px; min-height: 50px;
+    border-radius: 2px; border: 1px solid transparent;
+    font-size: 15px;
+    cursor: pointer; text-decoration: none;
+    transition: background-color .25s, color .25s, border-color .25s;
+    color: var(--ink);
+  }
+  .btn-primary{
+    background: var(--teal); color: #F6F0E4; border-color: var(--teal);
+  }
+  .btn-primary:hover{ background: var(--teal-hover); border-color: var(--teal-hover); }
+  .btn-primary .arrow{
+    width: 14px; height: 1px; background: currentColor;
+    position: relative;
+  }
+  .btn-primary .arrow::after{
+    content:""; position: absolute; right: -1px; top: -4px;
+    width: 8px; height: 8px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .btn-ghost{
+    background: transparent; color: var(--ink-soft);
+    border-color: var(--hair);
+  }
+  .btn-ghost:hover{ color: var(--ink); border-color: var(--ink-soft); }
+
+  /* 상태 토글 — 한 번에 하나만 */
+  [data-state]{ display: none; }
+  [data-state].is-active{ display: block; }
+
+  /* ─── 디버그 토글 (나중에 제거) ─── */
+  .debug-bar{
+    position: fixed; right: 14px; bottom: 14px;
+    z-index: 100;
+    background: rgba(44, 42, 38, .94);
+    color: #F6F0E4;
+    padding: 8px;
+    border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    display: flex; gap: 6px; align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  }
+  .debug-bar .label{
+    color: rgba(246, 240, 228, .6);
+    padding: 0 6px;
+    letter-spacing: .05em;
+  }
+  .debug-bar button{
+    background: rgba(246, 240, 228, .08);
+    color: #F6F0E4;
+    border: 1px solid rgba(246, 240, 228, .14);
+    padding: 5px 9px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color .15s;
+  }
+  .debug-bar button:hover{
+    background: rgba(246, 240, 228, .18);
+  }
+  .debug-bar button[aria-pressed="true"]{
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+  .debug-bar .close{
+    margin-left: 4px;
+    background: transparent;
+    border: 0;
+    color: rgba(246, 240, 228, .5);
+    padding: 4px 6px;
+  }
+  .debug-bar .close:hover{ color: #F6F0E4; background: transparent; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="/" class="brand" aria-label="AI동행">
+    <span class="mark" aria-hidden="true"></span>
+    <span>AI동행</span>
+  </a>
+  <a href="/builder.html" class="back">← 빌더로</a>
+</header>
+
+<header class="page-head">
+  <div class="page-num" id="page-num">vii. 작품 완성</div>
+  <p class="page-lead" id="page-lead">고르신 결로, 한 편이 되었습니다.</p>
+  <h1 class="page-title" id="page-title">AI동행이 만든 작품입니다.</h1>
+  <p class="page-sub" id="page-sub">아래에서 천천히 살펴보시고, 마음에 드시면 작품함에 담아 두세요. 다시 만들어 보고 싶으시면 한 번 더 부탁드려도 됩니다.</p>
+</header>
+
+<main class="stage">
+
+  <!-- ─── 상태 1: 로딩 ─── -->
+  <section data-state="loading" class="is-active" aria-live="polite">
+    <div class="card">
+      <div class="loading-head">
+        <div class="loading-mark" aria-hidden="true"></div>
+        <h2 class="loading-title" id="loading-title">AI동행이 작품을 만드는 중입니다</h2>
+        <p class="loading-sub" id="loading-sub">잠시만 기다려 주세요. 보통 30초 안에 완성됩니다.</p>
+        <div class="loading-stage" aria-hidden="true">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+      </div>
+
+      <div class="prompt-quote">
+        <p class="label">받은 프롬프트</p>
+        <p class="text" id="loading-prompt">—</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 상태 2: 텍스트 결과 (write / music / video) ─── -->
+  <section data-state="text">
+    <article class="card">
+      <div class="result-folio">
+        <span id="text-folio-cat">글</span>
+        <span class="roman">opus</span>
+      </div>
+      <h2 class="result-title" id="text-title">제목이 여기에 보입니다</h2>
+      <div class="result-body" id="text-body">
+        <p>본문이 여기에 보입니다.</p>
+      </div>
+
+      <!-- 음악 카테고리: Lyria 3가 만든 음원 -->
+      <div class="music-player" id="music-player" hidden>
+        <div class="music-player-label">
+          <span class="roman">audio i.</span>
+          <span>가사에 가락을 입혔습니다 — 한 곡(30초)을 들어보세요</span>
+        </div>
+        <audio id="music-audio" controls preload="metadata"></audio>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-action="copy">복사하기</button>
+        <button type="button" class="btn btn-ghost" data-action="regenerate">다시 만들기</button>
+        <a href="#" class="btn btn-ghost" id="suno-link" hidden="">Suno에서 열기 ↗</a>
+        <button type="button" class="btn btn-ghost" id="download-music" hidden data-action="download-music">음원 내려받기</button>
+        <button type="button" class="btn btn-primary" data-action="save-text">
+          <span>작품함에 저장</span>
+          <span class="arrow" aria-hidden="true"></span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <!-- ─── 상태 3: 이미지 결과 ─── -->
+  <section data-state="image">
+    <article class="card">
+      <div class="result-folio">
+        <span>그림</span>
+        <span class="roman">plate</span>
+      </div>
+      <h2 class="result-title" id="image-title">그림 제목이 여기에 보입니다</h2>
+
+      <div class="image-frame">
+        <img id="image-img" alt="">
+      </div>
+      <p class="image-caption" id="image-caption">—</p>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-action="download">다운로드</button>
+        <button type="button" class="btn btn-ghost" data-action="regenerate">다시 만들기</button>
+        <button type="button" class="btn btn-primary" data-action="save-image">
+          <span>작품함에 저장</span>
+          <span class="arrow" aria-hidden="true"></span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <!-- ─── 상태 4: 에러 ─── -->
+  <section data-state="error">
+    <article class="card">
+      <div class="error-mark" aria-hidden="true">—</div>
+      <h2 class="error-title">작품을 만들지 못했습니다</h2>
+      <p class="error-sub" id="error-sub">잠시 길이 막혔던 것 같습니다. 다시 한 번 부탁드려 보시거나, 빌더로 돌아가 결을 조금 바꿔 보셔도 좋습니다.</p>
+
+      <div class="actions center">
+        <a href="/builder.html" class="btn btn-ghost">빌더로 돌아가기</a>
+        <button type="button" class="btn btn-primary" data-action="retry">
+          <span>다시 시도</span>
+          <span class="arrow" aria-hidden="true"></span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <!-- ─── 상태 5: 자서전 분기 ─── -->
+  <section data-state="memoir">
+    <article class="card">
+      <p class="memoir-mark">vii. 자서전은 조금 다릅니다</p>
+      <h2 class="memoir-title">자서전은 8주 위저드로<br>한 권을 완성합니다.</h2>
+      <p class="memoir-sub">한 편의 글로 끝내기에는 아까운 이야기들이 있습니다. 자서전은 매주 한 장(章)씩, 여덟 주에 걸쳐 차분히 쌓아 올립니다. 중간에 멈추셨다가 이어 가셔도 괜찮습니다.</p>
+
+      <div class="memoir-weeks" aria-hidden="true">
+        <div class="memoir-week"><span class="num">week i.</span><span class="label">어린 시절</span></div>
+        <div class="memoir-week"><span class="num">week ii.</span><span class="label">청춘</span></div>
+        <div class="memoir-week"><span class="num">week iii.</span><span class="label">결혼</span></div>
+        <div class="memoir-week"><span class="num">week iv.</span><span class="label">자식</span></div>
+        <div class="memoir-week"><span class="num">week v.</span><span class="label">일과 보람</span></div>
+        <div class="memoir-week"><span class="num">week vi.</span><span class="label">고비</span></div>
+        <div class="memoir-week"><span class="num">week vii.</span><span class="label">지금</span></div>
+        <div class="memoir-week"><span class="num">week viii.</span><span class="label">남기는 말</span></div>
+      </div>
+
+      <div class="actions center">
+        <a href="/builder.html" class="btn btn-ghost">빌더로 돌아가기</a>
+        <a href="/ai-donghang.html#autobiography" class="btn btn-primary">
+          <span>자서전 시작</span>
+          <span class="arrow" aria-hidden="true"></span>
+        </a>
+      </div>
+    </article>
+  </section>
+
+</main>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // AI 동행 — 작품 결과 페이지 (result.html)
+  // builder.html이 ?cat=write&sub=...&prompt=... 형태로 진입
+  // ─────────────────────────────────────────────────────────────
+
+  // Supabase (기존 ai-donghang.html과 동일한 프로젝트)
+  const SUPABASE_URL = 'https://gaibakqhdfdpnsdgpmya.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
+
+  // ─── URL 파라미터 ───
+  const params = new URLSearchParams(location.search);
+  const cat    = (params.get('cat')    || 'write').toLowerCase();
+  const sub    = (params.get('sub')    || '').toLowerCase();
+  const prompt = params.get('prompt')   || '';
+
+  // memoir는 cat 또는 sub 어느 쪽으로 와도 자서전 위저드로 분기
+  const isMemoir = (cat === 'memoir' || sub === 'memoir');
+
+  // ─── 카테고리별 부제 — 로딩 화면용 ───
+  const LOADING_SUB = {
+    write: '한 줄, 한 줄 정리해 한 편의 글로 다듬는 중입니다.',
+    image: '결을 잡아 한 점의 그림으로 옮기는 중입니다.',
+    music: '가사를 짓고, 가락을 입히는 중입니다.',
+    video: '장면을 골라 한 편의 영상으로 엮는 중입니다.',
+  };
+
+  const CAT_LABEL = {
+    write: '글',
+    image: '그림',
+    music: '노래',
+    video: '영상',
+  };
+
+  // ─── 카테고리별 system prompt ───
+  const SYSTEM_PROMPTS = {
+    write:
+      '당신은 60-80대 한국 어르신을 위한 따뜻하고 친절한 글쓰기 도우미입니다. ' +
+      '어르신의 요청을 정성스럽게 한 편의 글로 다듬어주세요. ' +
+      '결과물만 바로 출력하세요. 설명이나 앞뒤 인사말, 마크다운 기호(#, *, -)는 절대 넣지 마세요. ' +
+      '응답 첫 줄은 짧은 제목(20자 이내), 빈 줄, 그 다음에 본문 순서로 작성해주세요.',
+    music:
+      '당신은 한국 어르신을 위한 따뜻한 작사가입니다. ' +
+      '어르신이 들려주신 마음을 노래 가사로 옮겨주세요. ' +
+      '결과물만 바로 출력하세요. 마크다운 기호 사용 금지. ' +
+      '응답 첫 줄은 노래 제목(20자 이내), 빈 줄, 그 다음에 가사(절 구분은 빈 줄). ' +
+      '각 절은 3-5줄, 전체 2-3절 분량으로 따뜻하게 써주세요.',
+    video:
+      '당신은 한국 어르신을 위한 짧은 영상 스크립트 작가입니다. ' +
+      '어르신이 들려주신 이야기를 1-2분짜리 영상 스크립트로 다듬어주세요. ' +
+      '결과물만 바로 출력. 마크다운 기호 금지. ' +
+      '응답 첫 줄은 영상 제목(20자 이내), 빈 줄, 그 다음에 [장면 1] 형식의 본문.',
+  };
+
+  // ─── 상태 토글 ───
+  function setState(name){
+    document.querySelectorAll('[data-state]').forEach(el => {
+      el.classList.toggle('is-active', el.dataset.state === name);
+    });
+  }
+
+  // ─── 화면 함수 ───
+  function showLoading(){
+    document.getElementById('loading-prompt').textContent = prompt || '—';
+    document.getElementById('loading-sub').textContent =
+      LOADING_SUB[cat] || LOADING_SUB.write;
+    setState('loading');
+  }
+
+  function showTextResult(title, body, audioUrl){
+    document.getElementById('text-folio-cat').textContent = CAT_LABEL[cat] || '글';
+    document.getElementById('text-title').textContent = title || '';
+
+    const bodyEl = document.getElementById('text-body');
+    bodyEl.innerHTML = '';
+    const paragraphs = String(body || '').split(/\n\s*\n/);
+    paragraphs.forEach(p => {
+      const node = document.createElement('p');
+      node.textContent = p.trim();
+      bodyEl.appendChild(node);
+    });
+
+    // 음악: Lyria가 만든 음원을 재생기에 싣고, 내려받기 버튼 노출
+    const player   = document.getElementById('music-player');
+    const audioEl  = document.getElementById('music-audio');
+    const dlBtn    = document.getElementById('download-music');
+    if (audioUrl){
+      audioEl.src   = audioUrl;
+      player.hidden = false;
+      if (dlBtn) dlBtn.hidden = false;
+    } else {
+      audioEl.removeAttribute('src');
+      audioEl.load && audioEl.load();
+      player.hidden = true;
+      if (dlBtn) dlBtn.hidden = true;
+    }
+
+    // 영상은 아직 출시 예정 — 안내 링크만 노출
+    const sunoLink = document.getElementById('suno-link');
+    if (sunoLink){
+      if (cat === 'video'){
+        sunoLink.hidden = false;
+        sunoLink.textContent = '🎬 영상 도구는 곧 출시됩니다';
+        sunoLink.href = '#';
+        sunoLink.style.pointerEvents = 'none';
+        sunoLink.style.opacity = '0.6';
+      } else {
+        sunoLink.hidden = true;
+      }
+    }
+
+    setState('text');
+  }
+
+  function showImageResult(title, url, promptText){
+    document.getElementById('image-title').textContent = title || '';
+    const img = document.getElementById('image-img');
+    img.src = url || '';
+    img.alt = title || '';
+    document.getElementById('image-caption').textContent = promptText || prompt || '';
+    setState('image');
+  }
+
+  function showError(type){
+    const sub = document.getElementById('error-sub');
+    if (type === 'network'){
+      sub.textContent = '지금 잠시 길이 막혀 있는 것 같습니다. 조금 뒤에 다시 부탁드려 주세요.';
+    } else if (type === 'quota'){
+      sub.textContent = '오늘의 사용량이 모두 차서, 잠시 쉬어 가야 합니다. 내일 다시 만나 뵙겠습니다.';
+    } else {
+      sub.textContent = '잠시 길이 막혔던 것 같습니다. 다시 한 번 부탁드려 보시거나, 빌더로 돌아가 결을 조금 바꿔 보셔도 좋습니다.';
+    }
+    setState('error');
+  }
+
+  function showMemoirRedirect(){
+    setState('memoir');
+  }
+
+  // ─── 작품함 저장 — localStorage ───
+  // 키: 'aiDonghang_portfolio' (ai-donghang.html과 공유)
+  // 항목은 양쪽 코드가 모두 읽을 수 있도록 두 스키마를 합쳐 둡니다:
+  //   디자인:  { id, createdAt, cat, sub, prompt, kind, title, body|url|audioUrl }
+  //   기존:    { id, course, emoji, prompt, result, date }
+  function saveToPortfolio(work){
+    const KEY = 'aiDonghang_portfolio';
+    const COURSE_LABEL = { write: '글쓰기', image: '이미지', music: '음악', video: '영상' };
+    const EMOJI        = { write: '✍️',    image: '🎨',     music: '🎵',  video: '🎬' };
+    const now = new Date();
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e){}
+
+    // ai-donghang.html 호환 필드
+    const compat = {
+      course: COURSE_LABEL[cat] || '작품',
+      emoji:  EMOJI[cat]        || '📝',
+      result: work.body || '',           // 텍스트 결과는 body가 곧 result
+      date:   now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }),
+    };
+
+    list.unshift({
+      id: Date.now().toString(36),
+      createdAt: now.toISOString(),
+      cat, sub, prompt,
+      ...compat,
+      ...work,
+    });
+    // 항목 개수 제한 — 기존 코드 패턴과 동일 (50개)
+    if (list.length > 50) list = list.slice(0, 50);
+    localStorage.setItem(KEY, JSON.stringify(list));
+  }
+
+  // ─── API 호출: 텍스트 (write/music/video) ───
+  async function generateText(p, c){
+    const systemPrompt = SYSTEM_PROMPTS[c] || SYSTEM_PROMPTS.write;
+    const res = await fetch(SUPABASE_URL + '/functions/v1/ai-chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+      },
+      body: JSON.stringify({ prompt: p, systemPrompt, maxTokens: 1500 }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error){
+      const errMsg = (data && data.error) || ('HTTP ' + res.status);
+      const err = new Error(errMsg);
+      err.status = res.status;
+      throw err;
+    }
+    const text = String(data.result || '').trim();
+    // 첫 줄을 제목, 나머지를 본문으로 분리
+    const lines = text.split(/\n/);
+    let title = '';
+    let body = text;
+    if (lines.length >= 2){
+      title = lines[0].trim();
+      body  = lines.slice(1).join('\n').replace(/^\s+/, '');
+    }
+    if (!title){
+      title = (prompt || '').slice(0, 18) || '오늘의 한 편';
+    }
+    return { title, body };
+  }
+
+  // ─── API 호출: 음악 (Lyria 3) ───
+  //   응답: { title, lyrics, audioUrl } — audioUrl은 data: URL (mp3 base64)
+  async function generateMusic(p){
+    const res = await fetch(SUPABASE_URL + '/functions/v1/ai-music', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+      },
+      body: JSON.stringify({ prompt: p }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error){
+      const errMsg = (data && data.error) || ('HTTP ' + res.status);
+      const err = new Error(errMsg);
+      err.status = res.status;
+      throw err;
+    }
+    if (!data.audioUrl) throw new Error('음원이 비어 있습니다');
+    return {
+      title:    data.title    || ((p || '').slice(0, 18) || '오늘의 한 곡'),
+      lyrics:   data.lyrics   || '',
+      audioUrl: data.audioUrl,
+    };
+  }
+
+  // ─── API 호출: 이미지 (fal.ai) ───
+  async function generateImage(p){
+    const res = await fetch(SUPABASE_URL + '/functions/v1/ai-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+      },
+      body: JSON.stringify({ prompt: p }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error){
+      const errMsg = (data && data.error) || ('HTTP ' + res.status);
+      const err = new Error(errMsg);
+      err.status = res.status;
+      throw err;
+    }
+    const url = data.url || (Array.isArray(data.images) && data.images[0] && data.images[0].url);
+    if (!url) throw new Error('이미지 URL이 비어 있습니다');
+    return {
+      title: (p || '').slice(0, 18) || '한 점의 그림',
+      url,
+      caption: p || '',
+    };
+  }
+
+  // ─── 진입 ───
+  async function init(){
+    if (isMemoir){
+      showMemoirRedirect();
+      return;
+    }
+    if (!prompt){
+      // prompt 없이 직접 들어온 경우 — error 화면
+      showError('default');
+      return;
+    }
+
+    showLoading();
+
+    try{
+      if (cat === 'image'){
+        const r = await generateImage(prompt);
+        showImageResult(r.title, r.url, r.caption);
+      } else if (cat === 'music'){
+        // Lyria가 가사+음원을 함께 만들어 줍니다
+        const r = await generateMusic(prompt);
+        showTextResult(r.title, r.lyrics, r.audioUrl);
+      } else if (cat === 'video' || cat === 'write'){
+        const r = await generateText(prompt, cat);
+        showTextResult(r.title, r.body);
+      } else {
+        // 알 수 없는 카테고리는 write로 처리
+        const r = await generateText(prompt, 'write');
+        showTextResult(r.title, r.body);
+      }
+    } catch (err){
+      console.error('[result.html] generate failed:', err);
+      if (err && (err.status === 429 || /quota|limit/i.test(err.message || ''))){
+        showError('quota');
+      } else if (err && (err.status === 0 || err.message === 'Failed to fetch')){
+        showError('network');
+      } else {
+        showError('default');
+      }
+    }
+  }
+
+  // ─── 액션 버튼 — 이벤트 위임 ───
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const action = btn.dataset.action;
+
+    if (action === 'copy'){
+      const title = document.getElementById('text-title').textContent;
+      const body  = document.getElementById('text-body').innerText;
+      navigator.clipboard?.writeText(title + '\n\n' + body).then(() => {
+        const old = btn.textContent;
+        btn.textContent = '복사했습니다';
+        setTimeout(() => btn.textContent = old, 1500);
+      });
+    }
+    else if (action === 'regenerate'){
+      init();
+    }
+    else if (action === 'download-music'){
+      const audioEl = document.getElementById('music-audio');
+      const url = audioEl && audioEl.src;
+      if (!url) return;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ai-donghang-' + Date.now() + '.mp3';
+      a.click();
+    }
+    else if (action === 'save-text'){
+      const audioEl = document.getElementById('music-audio');
+      const audioUrl = (cat === 'music' && audioEl && audioEl.src) ? audioEl.src : '';
+      saveToPortfolio({
+        kind: cat === 'music' ? 'music' : 'text',
+        title: document.getElementById('text-title').textContent,
+        body:  document.getElementById('text-body').innerText,
+        ...(audioUrl ? { audioUrl } : {}),
+      });
+      const labelEl = btn.querySelector('span:first-child') || btn;
+      const old = labelEl.textContent;
+      labelEl.textContent = '저장했습니다';
+      setTimeout(() => labelEl.textContent = old, 1500);
+    }
+    else if (action === 'save-image'){
+      saveToPortfolio({
+        kind: 'image',
+        title: document.getElementById('image-title').textContent,
+        url:   document.getElementById('image-img').src,
+      });
+      const labelEl = btn.querySelector('span:first-child') || btn;
+      const old = labelEl.textContent;
+      labelEl.textContent = '저장했습니다';
+      setTimeout(() => labelEl.textContent = old, 1500);
+    }
+    else if (action === 'download'){
+      const url = document.getElementById('image-img').src;
+      if (!url) return;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ai-donghang-' + Date.now() + '.png';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.click();
+    }
+    else if (action === 'retry'){
+      init();
+    }
+  });
+
+  // ─── 시작 ───
+  init();
+</script>
+
+
+</body></html>

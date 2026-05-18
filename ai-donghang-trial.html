@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="AI 동행 — 무료 AI 체험">
+<meta property="og:description" content="로그인 없이 바로! 글쓰기, 그림, 음악을 AI로 만들어보세요">
+<meta property="og:url" content="https://jiseonhyun.github.io/ai-donghang/ai-donghang-trial.html">
+<title>AI 동행 — 무료 AI 체험</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL='https://gaibakqhdfdpnsdgpmya.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
+var db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+</script>
+<style>
+:root{
+  --bg:#FAF8F4;--wm:#F4F0E8;--ink:#1C1A17;--i2:#3D3A33;--i3:#5C5A54;
+  --ac:#2A5F52;--al:#EBF5F2;--ab:#B8DDD6;--ad:#1E4840;
+  --gd:#A07C30;--gl:#FBF4E4;--gb:#DEC98A;
+  --bd:rgba(28,26,23,0.12);--r:14px;--shadow:0 2px 16px rgba(28,26,23,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.7;}
+
+/* ── Views ── */
+.view{display:none;}.view.active{display:block;}
+
+/* ── NAV ── */
+.nav{height:64px;background:rgba(250,248,244,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:200;}
+.nav-logo{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;cursor:pointer;}
+.nav-logo-icon{width:38px;height:38px;background:var(--ac);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo .g{color:var(--ac);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-link{font-size:15px;font-weight:600;color:var(--i3);cursor:pointer;border:none;background:none;font-family:inherit;padding:10px 14px;min-height:48px;text-decoration:none;transition:color .15s;}
+.nav-link:hover{color:var(--ac);}
+.btn-nav-login{font-size:15px;color:var(--i3);cursor:pointer;border:none;background:none;font-family:inherit;font-weight:600;padding:10px 14px;min-height:48px;}
+.btn-nav-login:hover{color:var(--ac);}
+.btn-nav-trial{padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;min-height:48px;transition:background .15s;}
+.btn-nav-trial:hover{background:var(--ad);}
+.nav-spacer{height:64px;}
+
+/* ── HERO ── */
+.hero-trial{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 80px;max-width:560px;margin:0 auto;min-height:calc(100vh - 64px);}
+.hero-dongdong{margin-bottom:20px;animation:dongBounce 2.5s ease-in-out infinite;}
+.hero-title{font-family:'Gowun Batang',serif;font-size:34px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:12px;word-break:keep-all;}
+.hero-title em{font-style:normal;color:var(--ac);}
+.hero-sub{font-size:18px;color:var(--i3);line-height:1.85;margin-bottom:32px;word-break:keep-all;}
+.hero-cta-btn{display:inline-flex;align-items:center;gap:10px;padding:20px 44px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:20px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s;min-height:64px;box-shadow:0 6px 0 var(--ad);}
+.hero-cta-btn:hover{background:var(--ad);transform:translateY(-2px);box-shadow:0 8px 0 #163830;}
+.hero-cta-btn:active{transform:translateY(3px);box-shadow:none;}
+.hero-reassure{font-size:15px;color:var(--i3);margin-top:16px;display:flex;align-items:center;gap:6px;justify-content:center;}
+
+/* ── HERO 자동 전환 ROTATOR ── */
+.hero-rotator{position:relative;}
+.hero-slide{display:none;}
+.hero-slide.active{display:block;animation:heroFade .7s cubic-bezier(.2,.6,.2,1);}
+@keyframes heroFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.hero-dots{position:absolute;bottom:24px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5;pointer-events:none;}
+.hero-dot-btn{width:32px;height:6px;border-radius:3px;border:none;background:rgba(28,26,23,.2);cursor:pointer;padding:0;transition:background .35s,width .35s;pointer-events:auto;}
+.hero-dot-btn:hover{background:rgba(28,26,23,.4);}
+.hero-dot-btn.active{background:var(--ac);width:44px;}
+.hero-dot-btn.active:hover{background:var(--ad);}
+.hero-rotator.on-dark .hero-dot-btn{background:rgba(245,240,232,.25);}
+.hero-rotator.on-dark .hero-dot-btn:hover{background:rgba(245,240,232,.45);}
+.hero-rotator.on-dark .hero-dot-btn.active{background:#B8956A;}
+
+/* ── HERO #2: 가족의 책 (출판사 다크 톤) ── */
+.hero-book{position:relative;overflow:hidden;background:#1F1B17;padding:clamp(72px,9vw,128px) clamp(20px,5vw,64px) clamp(96px,10vw,144px);min-height:calc(100vh - 64px);color:#F5F0E8;font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:18px;line-height:1.7;}
+.hero-book::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 70% at 75% 50%,rgba(184,149,106,.08),transparent 60%),radial-gradient(120% 80% at 50% 100%,#15120F,transparent 70%);}
+.hero-book::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.6'/></svg>");mix-blend-mode:overlay;}
+.hero-book-inner{position:relative;z-index:1;max-width:1440px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:clamp(48px,7vw,88px);align-items:center;}
+@media(min-width:960px){.hero-book-inner{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(64px,8vw,120px);}}
+
+.hero-book .copy{max-width:600px;}
+.hero-book .eyebrow{display:inline-flex;align-items:center;gap:14px;font-family:'Noto Serif KR',serif;font-size:17px;letter-spacing:.04em;color:#B8956A;margin:0 0 clamp(28px,3.6vw,40px);}
+.hero-book .eyebrow::before{content:"";width:32px;height:1px;background:#B8956A;display:inline-block;}
+.hero-book .headline-mark{font-family:'Noto Serif KR',serif;font-weight:400;color:#B8956A;font-size:clamp(56px,9vw,96px);line-height:.6;display:block;margin-bottom:12px;user-select:none;}
+.hero-book .headline{font-family:'Noto Serif KR',serif;font-weight:500;color:#F5F0E8;font-size:clamp(32px,4.8vw,56px);line-height:1.45;letter-spacing:-.015em;margin:0 0 clamp(22px,3vw,30px);}
+.hero-book .headline .accent{font-weight:600;color:#B8956A;text-shadow:0 1px 0 rgba(0,0,0,.4);}
+.hero-book .sub{font-size:clamp(17px,1.4vw,20px);line-height:1.75;color:rgba(245,240,232,.55);margin:0 0 clamp(36px,4.5vw,52px);max-width:30em;}
+.hero-book .cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;}
+.hero-book .btn-pub{display:inline-flex;align-items:center;justify-content:center;gap:12px;font:inherit;font-size:19px;letter-spacing:-.005em;padding:18px 30px;min-height:56px;border-radius:2px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background-color .35s,color .35s,border-color .35s;}
+.hero-book .btn-paper{background:#F5F0E8;color:#1F1B17;border-color:#F5F0E8;}
+.hero-book .btn-paper:hover{background:#FFFAF1;border-color:#FFFAF1;}
+.hero-book .btn-paper .arrow{display:inline-block;width:18px;height:1px;background:currentColor;position:relative;transition:width .35s;}
+.hero-book .btn-paper .arrow::after{content:"";position:absolute;right:-1px;top:-4px;width:9px;height:9px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg);}
+.hero-book .btn-paper:hover .arrow{width:26px;}
+.hero-book .btn-ghost-pub{background:transparent;color:#F5F0E8;border-color:transparent;padding:18px 4px;border-radius:0;position:relative;}
+.hero-book .btn-ghost-pub::after{content:"";position:absolute;left:4px;right:4px;bottom:14px;height:1px;background:#B8956A;transition:background-color .35s;}
+.hero-book .btn-ghost-pub:hover{color:#B8956A;}
+
+.hero-book .imprint{margin-top:clamp(40px,5vw,56px);padding-top:20px;border-top:1px solid rgba(245,240,232,.14);display:flex;flex-wrap:wrap;gap:6px 28px;font-size:14px;color:rgba(245,240,232,.55);letter-spacing:.02em;}
+.hero-book .imprint .roman{font-family:'Noto Serif KR',serif;font-style:italic;color:#8A6F4F;}
+
+.hero-book .stage{position:relative;padding:clamp(48px,6vw,80px) 0 clamp(64px,7vw,96px);display:flex;justify-content:center;perspective:1600px;}
+.hero-book .stage::after{content:"";position:absolute;left:50%;bottom:clamp(24px,4vw,56px);width:clamp(220px,26vw,380px);height:28px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.5),transparent 75%);filter:blur(8px);z-index:0;pointer-events:none;}
+.hero-book .book{--book-w:clamp(220px,28vw,320px);--book-h:calc(var(--book-w)*1.42);--book-d:28px;width:var(--book-w);height:var(--book-h);position:relative;transform-style:preserve-3d;transform:rotateX(6deg) rotateY(-26deg);transition:transform .8s cubic-bezier(.2,.6,.2,1);}
+.hero-book .stage:hover .book{transform:rotateX(4deg) rotateY(-22deg);}
+.hero-book .face{position:absolute;inset:0;background:#F5F0E8;}
+.hero-book .cover{background:#F5F0E8;border:1px solid #ECE5D6;box-shadow:inset 12px 0 16px -10px rgba(0,0,0,.18),inset 0 0 60px rgba(31,27,23,.06);padding:clamp(28px,3.2vw,42px) clamp(24px,2.8vw,36px);display:flex;flex-direction:column;justify-content:space-between;color:#1F1B17;}
+.hero-book .cover-frame{position:absolute;inset:clamp(14px,1.6vw,20px);border:1px solid #B8956A;pointer-events:none;}
+.hero-book .cover-frame::before{content:"";position:absolute;inset:4px;border:1px solid #8A6F4F;opacity:.55;}
+.hero-book .cover-meta{font-family:'Noto Serif KR',serif;font-style:italic;font-size:12.5px;letter-spacing:.06em;color:#8A6F4F;z-index:1;}
+.hero-book .cover-title{font-family:'Noto Serif KR',serif;font-weight:600;font-size:clamp(28px,3.4vw,42px);line-height:1.15;letter-spacing:-.01em;color:#1F1B17;margin:clamp(8px,1vw,14px) 0;z-index:1;position:relative;}
+.hero-book .cover-ornament{width:36px;height:1px;background:#B8956A;margin:clamp(10px,1.4vw,14px) 0 clamp(14px,1.6vw,18px);position:relative;z-index:1;}
+.hero-book .cover-ornament::before,.hero-book .cover-ornament::after{content:"";position:absolute;top:-2px;width:5px;height:5px;border-radius:50%;background:#B8956A;}
+.hero-book .cover-ornament::before{left:-10px;}
+.hero-book .cover-ornament::after{right:-10px;}
+.hero-book .cover-author{font-family:'Noto Serif KR',serif;font-weight:400;font-size:clamp(13px,1.1vw,15px);color:#2A2520;letter-spacing:.02em;line-height:1.5;z-index:1;position:relative;}
+.hero-book .cover-foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;z-index:1;}
+.hero-book .cover-mark{font-family:'Noto Serif KR',serif;font-weight:500;font-size:13px;letter-spacing:.14em;color:#1F1B17;}
+.hero-book .cover-edition{font-family:'Noto Serif KR',serif;font-style:italic;font-size:12px;color:#8A6F4F;}
+
+.hero-book .spine{position:absolute;top:0;left:0;height:100%;width:var(--book-d);transform-origin:left center;transform:translateX(0) rotateY(-90deg);background:linear-gradient(90deg,#ECE5D6 0%,#DDD3BD 40%,#C9BFA5 100%);box-shadow:inset 0 0 12px rgba(0,0,0,.15),inset 0 8px 16px -8px rgba(0,0,0,.25),inset 0 -8px 16px -8px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.hero-book .spine-title{writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-family:'Noto Serif KR',serif;font-weight:500;font-size:11px;letter-spacing:.14em;color:#1F1B17;white-space:nowrap;position:relative;}
+.hero-book .spine-band{position:absolute;left:50%;transform:translateX(-50%);width:60%;height:1px;background:#B8956A;opacity:.7;}
+.hero-book .spine-band.top{top:18%;}
+.hero-book .spine-band.bot{bottom:18%;}
+
+.hero-book .pages-right{position:absolute;top:0;right:0;height:100%;width:var(--book-d);transform-origin:right center;transform:rotateY(90deg);background:repeating-linear-gradient(180deg,#ECE5D6 0px,#ECE5D6 1px,#DDD3BD 1px,#DDD3BD 2px);box-shadow:inset 0 0 8px rgba(0,0,0,.15);}
+.hero-book .pages-top,.hero-book .pages-bottom{position:absolute;left:0;width:100%;height:var(--book-d);transform-style:preserve-3d;background:repeating-linear-gradient(90deg,#ECE5D6 0px,#ECE5D6 1px,#DDD3BD 1px,#DDD3BD 2px);}
+.hero-book .pages-top{top:0;transform-origin:top center;transform:rotateX(90deg);}
+.hero-book .pages-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg);}
+.hero-book .back{background:#ECE5D6;transform:translateZ(calc(-1 * var(--book-d)));}
+
+.hero-book .swap{display:inline-grid;grid-template-areas:"stack";}
+.hero-book .swap>.t-a,.hero-book .swap>.t-b{grid-area:stack;}
+.hero-book .swap>.t-b{opacity:0;}
+.hero-book .swap>.t-a{animation:bookSwapA 8s ease-in-out infinite;}
+.hero-book .swap>.t-b{animation:bookSwapB 8s ease-in-out infinite;}
+@keyframes bookSwapA{0%,42%{opacity:1;}50%,92%{opacity:0;}100%{opacity:1;}}
+@keyframes bookSwapB{0%,42%{opacity:0;}50%,92%{opacity:1;}100%{opacity:0;}}
+
+.hero-book .book-caption{position:relative;z-index:1;margin:clamp(20px,2.5vw,28px) auto 0;max-width:360px;text-align:center;font-size:14px;color:rgba(245,240,232,.55);line-height:1.6;letter-spacing:.02em;}
+.hero-book .book-caption .roman{font-family:'Noto Serif KR',serif;font-style:italic;color:#8A6F4F;}
+
+/* ── 동동이 모션 ── */
+@keyframes dongWink{0%,85%,100%{ry:6px;}90%{ry:1px;}}
+@keyframes dongWave{0%,100%{transform:rotate(0deg);}25%{transform:rotate(-15deg);}50%{transform:rotate(10deg);}75%{transform:rotate(-10deg);}}
+@keyframes dongBounce{0%,100%{transform:translateY(0) scale(1);}30%{transform:translateY(-14px) scale(1.03);}60%{transform:translateY(-5px) scale(1);}}
+@keyframes dongClap{0%,100%{transform:rotate(0deg);}12%{transform:rotate(-20deg);}24%{transform:rotate(20deg);}36%{transform:rotate(-20deg);}48%{transform:rotate(20deg);}60%{transform:rotate(0deg);}}
+@keyframes dongJump{0%,100%{transform:translateY(0) scale(1);}20%{transform:translateY(-24px) scale(1.06);}40%{transform:translateY(0) scale(.97);}55%{transform:translateY(-12px) scale(1.03);}75%{transform:translateY(0) scale(1);}}
+
+/* ── 팝업 공통 ── */
+.trial-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.trial-overlay.show{opacity:1;pointer-events:auto;}
+.trial-popup{background:#fff;border-radius:32px 32px 0 0;padding:36px 28px 44px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .4s ease-out;text-align:center;}
+.trial-overlay.show .trial-popup{transform:translateY(0);}
+.trial-popup-center{border-radius:28px;max-width:420px;margin:auto;align-self:center;}
+.trial-popup .dongdong-popup{margin:0 auto 16px;display:block;}
+
+/* ── 관심사 선택 ── */
+.trial-interest-btn{display:flex;align-items:center;gap:16px;width:100%;padding:18px 22px;background:var(--bg);border:2.5px solid var(--bd);border-radius:18px;cursor:pointer;font-family:inherit;font-size:18px;font-weight:700;color:var(--ink);transition:all .15s;min-height:64px;margin-bottom:10px;text-align:left;}
+.trial-interest-btn:hover{border-color:var(--ac);background:var(--al);}
+.trial-interest-btn:active{transform:scale(.97);}
+.trial-interest-btn .icon{font-size:32px;flex-shrink:0;}
+.trial-interest-sub{font-size:14px;font-weight:500;color:var(--i3);margin-top:2px;}
+
+/* ── 미션 화면 ── */
+.trial-mission{max-width:520px;margin:0 auto;padding:24px 24px 140px;}
+.trial-mission-step{font-size:15px;font-weight:700;color:var(--ac);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.trial-mission-step .badge{background:var(--al);border:1.5px solid var(--ab);border-radius:100px;padding:4px 14px;font-size:13px;}
+.trial-mission-icon{font-size:56px;width:90px;height:90px;background:var(--al);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.trial-mission-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;}
+.trial-mission-sub{font-size:16px;color:var(--i3);text-align:center;line-height:1.65;margin-bottom:24px;}
+
+/* 프롬프트 영역 */
+.trial-prompt-card{background:#fff;border:2px solid var(--ac);border-radius:18px;padding:24px;margin-bottom:16px;}
+.trial-prompt-label{font-size:14px;font-weight:700;color:var(--ac);letter-spacing:.04em;margin-bottom:10px;}
+.trial-prompt-desc{font-size:15px;color:var(--i3);margin-bottom:14px;padding:10px 14px;background:var(--al);border-radius:10px;line-height:1.7;}
+.trial-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.trial-chip{padding:10px 20px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;color:var(--i2);font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;min-height:44px;display:flex;align-items:center;}
+.trial-chip:hover{border-color:var(--ab);color:var(--ac);background:var(--al);}
+.trial-chip.selected{background:var(--ac);color:#fff;border-color:var(--ac);}
+.trial-textarea{width:100%;min-height:120px;border:1.5px solid var(--bd);border-radius:14px;padding:16px;font-size:17px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);resize:vertical;outline:none;line-height:1.8;background:#fff;transition:border-color .2s,box-shadow .2s;}
+.trial-textarea:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--al);}
+.trial-textarea::placeholder{color:var(--i3);font-size:16px;}
+
+/* AI 버튼 */
+.trial-ai-btn{width:100%;padding:20px;background:linear-gradient(135deg,#58cc02,var(--ac));color:#fff;border:none;border-radius:16px;font-size:19px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s;min-height:64px;box-shadow:0 5px 0 #2b7a00;margin-bottom:10px;}
+.trial-ai-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 #2b7a00;}
+.trial-ai-btn:active{transform:translateY(3px);box-shadow:none;}
+.trial-ai-btn:disabled{opacity:.7;cursor:default;transform:none;box-shadow:0 5px 0 #2b7a00;}
+.trial-divider{display:flex;align-items:center;gap:14px;margin:14px 0;color:var(--i3);font-size:14px;font-weight:600;}
+.trial-divider::before,.trial-divider::after{content:'';flex:1;height:1px;background:var(--bd);}
+.trial-copy-btn{width:100%;padding:16px;background:#fff;color:var(--i2);border:2px solid var(--bd);border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;min-height:56px;}
+.trial-copy-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--al);}
+
+/* 결과 영역 */
+.trial-result-area{display:none;margin-top:20px;}
+.trial-result-area.show{display:block;}
+.trial-result-box{background:#fff;border:2px solid var(--ac);border-radius:18px;padding:24px;margin-bottom:16px;}
+.trial-result-label{font-size:14px;font-weight:700;color:var(--ac);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.trial-result-text{width:100%;min-height:200px;border:1.5px solid var(--bd);border-radius:12px;padding:16px;font-size:17px;font-family:'Noto Sans KR',sans-serif;color:var(--i2);resize:none;outline:none;line-height:1.9;background:var(--bg);}
+.trial-edu-box{background:var(--gl);border:1.5px solid var(--gb);border-radius:14px;padding:16px 18px;margin-bottom:16px;}
+.trial-edu-title{font-size:15px;font-weight:700;color:var(--gd);margin-bottom:8px;}
+.trial-edu-desc{font-size:15px;color:var(--i2);line-height:1.7;margin-bottom:12px;}
+.trial-edu-links{display:flex;gap:8px;flex-wrap:wrap;}
+.trial-edu-link{padding:8px 16px;background:#fff;border:1.5px solid var(--bd);border-radius:100px;font-size:14px;font-weight:700;color:var(--i2);text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .15s;min-height:40px;}
+.trial-edu-link:hover{border-color:var(--ac);color:var(--ac);}
+
+/* 도장 받기 */
+.trial-stamp-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--gd),#c89a30);color:#fff;border:none;border-radius:16px;font-size:19px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s;min-height:64px;box-shadow:0 5px 0 #7a5c1e;margin-bottom:16px;}
+.trial-stamp-btn:hover{transform:translateY(-2px);}
+.trial-stamp-btn:active{transform:translateY(3px);box-shadow:none;}
+
+/* 도장 효과 */
+.trial-stamp-effect{display:none;text-align:center;padding:20px 0;}
+.trial-stamp-effect.show{display:block;animation:stampPop .5s ease-out;}
+@keyframes stampPop{0%{transform:scale(0) rotate(-30deg);opacity:0;}60%{transform:scale(1.2) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
+.trial-stamp-big{font-size:80px;margin-bottom:8px;}
+.trial-stamp-text{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--gd);}
+
+/* 동동이 말풍선 */
+.trial-dong-speech{display:none;margin:16px auto;max-width:320px;position:relative;}
+.trial-dong-speech.show{display:flex;align-items:flex-start;gap:12px;animation:fadeSlideUp .4s ease-out;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.trial-dong-speech .dong-mini{flex-shrink:0;}
+.trial-dong-bubble{background:#fff;border:2.5px solid var(--ac);border-radius:18px;padding:14px 18px;font-size:17px;font-weight:700;color:var(--ac);line-height:1.5;box-shadow:0 4px 16px rgba(42,95,82,.1);}
+
+/* 다음 미션 버튼 */
+.trial-next-btn{width:100%;padding:20px;background:var(--ac);color:#fff;border:none;border-radius:16px;font-size:19px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s;min-height:64px;box-shadow:0 5px 0 var(--ad);margin-top:16px;}
+.trial-next-btn:hover{transform:translateY(-2px);}
+
+/* ── 요금제 ── */
+.pricing-hero{padding:60px 24px 0;max-width:860px;margin:0 auto;text-align:center;}
+.pricing-title{font-family:'Gowun Batang',serif;font-size:34px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:12px;}
+.pricing-sub{font-size:16px;color:var(--i3);line-height:1.75;margin-bottom:40px;}
+.pricing-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;max-width:900px;margin:0 auto;padding:0 24px 64px;align-items:stretch;}
+.plan-card{border-radius:18px;padding:28px 24px;position:relative;}
+.plan-card.free{background:var(--wm);border:1.5px solid var(--bd);}
+.plan-card.paid{background:linear-gradient(135deg,var(--ad),var(--ac));color:#fff;}
+.plan-card.plus{background:linear-gradient(135deg,#7a5c1e,var(--gd));color:#fff;}
+.plan-badge{display:inline-block;font-size:12px;font-weight:700;padding:5px 14px;border-radius:100px;margin-bottom:14px;}
+.plan-card.free .plan-badge{background:var(--al);color:var(--ac);}
+.plan-card.paid .plan-badge{background:rgba(255,255,255,.2);color:#fff;}
+.plan-card.plus .plan-badge{background:rgba(255,255,255,.2);color:#fff;}
+.plan-name{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;margin-bottom:6px;}
+.plan-price{font-family:'Gowun Batang',serif;font-size:32px;font-weight:700;margin-bottom:4px;}
+.plan-price-sub{font-size:14px;opacity:.7;margin-bottom:18px;}
+.plan-features{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;}
+.plan-features li{font-size:15px;line-height:1.6;display:flex;align-items:flex-start;gap:8px;}
+.plan-btn{width:100%;padding:14px;border:none;border-radius:100px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;min-height:52px;transition:all .15s;}
+.plan-card.free .plan-btn{background:#fff;color:var(--ac);border:1.5px solid var(--bd);}
+.plan-card.paid .plan-btn{background:#fff;color:var(--ac);}
+.plan-card.plus .plan-btn{background:#fff;color:var(--gd);}
+.plan-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+
+/* ── 회원가입 ── */
+.auth-section{max-width:420px;margin:0 auto;padding:60px 24px 80px;text-align:center;}
+.auth-title{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.auth-sub{font-size:16px;color:var(--i3);margin-bottom:28px;line-height:1.7;}
+.auth-form{display:flex;flex-direction:column;gap:14px;text-align:left;}
+.auth-label{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.auth-input{width:100%;padding:16px 18px;border:1.5px solid var(--bd);border-radius:14px;font-size:17px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;min-height:56px;background:#fff;}
+.auth-input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--al);}
+.auth-input::placeholder{color:var(--i3);}
+.auth-submit{width:100%;padding:18px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;min-height:58px;margin-top:8px;transition:background .15s;}
+.auth-submit:hover{background:var(--ad);}
+.auth-divider{display:flex;align-items:center;gap:14px;margin:20px 0;color:var(--i3);font-size:14px;font-weight:600;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd);}
+.auth-kakao{width:100%;padding:16px;background:#FEE500;color:#3C1E1E;border:none;border-radius:100px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;transition:all .15s;}
+.auth-kakao:hover{background:#F5DC00;}
+.auth-back-link{display:inline-block;margin-top:18px;font-size:15px;color:var(--i3);cursor:pointer;background:none;border:none;font-family:inherit;text-decoration:underline;padding:8px;min-height:44px;}
+
+/* ── 컨페티 ── */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall linear forwards;}
+@keyframes confettiFall{
+  0%{transform:translateY(-10vh) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+
+/* ── 로딩 dots ── */
+@keyframes dot1{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* ── 반응형 ── */
+@media(max-width:768px){
+  .pricing-cards{grid-template-columns:1fr;max-width:400px;}
+}
+@media(max-width:480px){
+  .nav{padding:0 16px;}
+  .hero-title{font-size:28px;}
+  .hero-sub{font-size:16px;}
+  .hero-cta-btn{padding:18px 32px;font-size:18px;}
+  .trial-mission{padding:20px 16px 120px;}
+  .trial-mission-title{font-size:22px;}
+  .trial-popup{padding:28px 20px 36px;}
+  .pricing-title{font-size:28px;}
+  .auth-section{padding:40px 16px 60px;}
+}
+
+/* ── 접근성: 모션 감소 ── */
+@media(prefers-reduced-motion:reduce){
+  .hero-dongdong,.confetti-piece,
+  [style*="dongBounce"],[style*="dongWave"],[style*="dongWink"]{animation:none !important;}
+  .trial-overlay .trial-popup{transition:none;}
+  .hero-slide.active{animation:none;}
+  .hero-book .swap>.t-a,.hero-book .swap>.t-b{animation:none;}
+  .hero-book .swap>.t-a{opacity:1;}
+  .hero-book .swap>.t-b{opacity:0;}
+  .hero-book .book{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a class="nav-logo" onclick="showView('home')">
+    <span class="nav-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#fff"/><path d="M2 17l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    AI <span class="g">동행</span>
+  </a>
+  <div class="nav-right">
+    <button class="btn-nav-trial" onclick="startTrial()">무료 체험하기</button>
+    <a class="nav-link" href="#" onclick="showView('pricing')">요금제</a>
+    <button class="btn-nav-login" onclick="showView('auth')">로그인</button>
+  </div>
+</nav>
+<div class="nav-spacer"></div>
+
+<!-- ===== HOME VIEW ===== -->
+<div class="view active" id="homeView">
+  <div class="hero-rotator" id="heroRotator">
+
+    <!-- Slide 1: 동동이 트라이얼 히어로 -->
+    <div class="hero-slide active" id="heroSlide-0">
+      <div class="hero-trial">
+        <div class="hero-dongdong">
+          <svg class="dongdong-hero" width="150" height="188" viewBox="0 0 200 240">
+            <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+            <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+            <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+            <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+            <g style="transform-origin:149px 154px;animation:dongWave 2s ease-in-out infinite;">
+              <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+            </g>
+            <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+            <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+            <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+            <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+            <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+            <circle cx="100" cy="110" r="44" fill="#d08010"/>
+            <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+            <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+            <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+            <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+            <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+            <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
+            <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+            <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000" style="animation:dongWink 3s ease-in-out infinite;"/>
+            <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
+            <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+            <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+          </svg>
+        </div>
+        <h1 class="hero-title">어르신도 <em>AI</em>를<br>직접 써보는 날</h1>
+        <p class="hero-sub">뤼튼, ChatGPT 같은 AI로<br>글, 그림, 노래를 만들어봐요</p>
+        <button class="hero-cta-btn" onclick="startTrial()">무료로 AI 체험하기</button>
+        <p class="hero-reassure">로그인 없이 바로 체험!</p>
+      </div>
+    </div>
+
+    <!-- Slide 2: 가족의 책 히어로 -->
+    <div class="hero-slide" id="heroSlide-1">
+      <section class="hero-book" aria-label="AI동행 — 가족의 책 샘플">
+        <div class="hero-book-inner">
+
+          <!-- 좌측: 카피 -->
+          <div class="copy">
+            <span class="eyebrow">AI동행 · 가족의 책</span>
+            <span class="headline-mark" aria-hidden="true">"</span>
+            <h2 class="headline">
+              <span class="accent">80년</span>의 이야기가,<br>
+              한 권의 책이 됩니다.
+            </h2>
+            <p class="sub">
+              AI동행이 어머니와 대화하며,<br>
+              살아오신 이야기를 한 권의 책으로 엮어 드립니다.
+            </p>
+            <div class="cta-row">
+              <button type="button" class="btn-pub btn-paper" onclick="startTrial()">
+                <span>샘플 책 보기</span>
+                <span class="arrow" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="btn-pub btn-ghost-pub" onclick="showView('pricing')">어떻게 만들어지나요</button>
+            </div>
+            <div class="imprint">
+              <span><span class="roman">format</span> · 양장본 · 디지털</span>
+              <span><span class="roman">pages</span> · 약 220쪽</span>
+              <span><span class="roman">copies</span> · 가족 5권</span>
+            </div>
+          </div>
+
+          <!-- 우측: 책 목업 -->
+          <div class="hero-book-visual">
+            <div class="stage">
+              <div class="book" aria-label="자서전 샘플">
+                <!-- 앞표지 -->
+                <div class="face cover">
+                  <div class="cover-frame" aria-hidden="true"></div>
+                  <div class="cover-meta">i. 가족의 책</div>
+                  <div>
+                    <h3 class="cover-title swap">
+                      <span class="t-a">엄마의<br>이야기</span>
+                      <span class="t-b" aria-hidden="true">아버지의<br>이야기</span>
+                    </h3>
+                    <div class="cover-ornament" aria-hidden="true"></div>
+                    <p class="cover-author swap">
+                      <span class="t-a">박순자가 살아오신 80년<br>가족이 함께 엮음</span>
+                      <span class="t-b" aria-hidden="true">김진형이 살아오신 80년<br>가족이 함께 엮음</span>
+                    </p>
+                  </div>
+                  <div class="cover-foot">
+                    <span class="cover-mark">AI동행</span>
+                    <span class="cover-edition">first edition</span>
+                  </div>
+                </div>
+                <!-- 뒷표지 -->
+                <div class="face back" aria-hidden="true"></div>
+                <!-- 스파인 -->
+                <div class="face spine" aria-hidden="true">
+                  <span class="spine-band top"></span>
+                  <span class="spine-title swap">
+                    <span class="t-a">엄마의 이야기 · AI동행</span>
+                    <span class="t-b" aria-hidden="true">아버지의 이야기 · AI동행</span>
+                  </span>
+                  <span class="spine-band bot"></span>
+                </div>
+                <!-- 페이지 단면 -->
+                <div class="face pages-right" aria-hidden="true"></div>
+                <div class="face pages-top" aria-hidden="true"></div>
+                <div class="face pages-bottom" aria-hidden="true"></div>
+              </div>
+            </div>
+            <p class="book-caption">
+              <span class="roman">fig. i</span> — 어머니 한 분의 80년이 220쪽의 양장본 한 권으로 묶입니다.
+            </p>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- 페이지 인디케이터 -->
+    <div class="hero-dots" id="heroDots" role="tablist" aria-label="히어로 배너 전환">
+      <button class="hero-dot-btn active" type="button" onclick="goHero(0)" aria-label="히어로 1 — AI 체험"></button>
+      <button class="hero-dot-btn" type="button" onclick="goHero(1)" aria-label="히어로 2 — 가족의 책"></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MISSION VIEW ===== -->
+<div class="view" id="missionView">
+  <div class="trial-mission" id="trialMissionContent">
+    <!-- JS로 렌더링 -->
+  </div>
+</div>
+
+<!-- ===== PRICING VIEW ===== -->
+<div class="view" id="pricingView">
+  <div class="pricing-hero">
+    <h2 class="pricing-title">나에게 맞는 플랜 선택</h2>
+    <p class="pricing-sub">어떤 플랜이든 언제든 변경하거나 해지할 수 있어요</p>
+  </div>
+  <div class="pricing-cards">
+    <!-- 무료 -->
+    <div class="plan-card free">
+      <div class="plan-badge">무료</div>
+      <div class="plan-name">체험 플랜</div>
+      <div class="plan-price">0원</div>
+      <div class="plan-price-sub">기본 체험</div>
+      <ul class="plan-features">
+        <li>AI 체험 미션 2개</li>
+        <li>동동이 가이드</li>
+        <li>프롬프트 복사</li>
+      </ul>
+      <button class="plan-btn" onclick="startTrial()">무료 체험 시작</button>
+    </div>
+    <!-- 동행 -->
+    <div class="plan-card paid">
+      <div class="plan-badge">추천</div>
+      <div class="plan-name" style="color:#fff;">동행 플랜</div>
+      <div class="plan-price" style="color:#fff;">9,900원<span style="font-size:15px;font-weight:400;opacity:.7;"> / 월</span></div>
+      <div class="plan-price-sub">모든 미션 + AI 직접 연동</div>
+      <ul class="plan-features">
+        <li>AI 도장깨기 12개 전체</li>
+        <li>AI 직접 물어보기 무제한</li>
+        <li>작품함 무제한 저장</li>
+        <li>커뮤니티 참여</li>
+        <li>동동이 맞춤 격려</li>
+      </ul>
+      <button class="plan-btn" onclick="showView('auth')">가입하고 시작하기</button>
+    </div>
+    <!-- 플러스 -->
+    <div class="plan-card plus">
+      <div class="plan-badge">프리미엄</div>
+      <div class="plan-name" style="color:#fff;">동행 플러스</div>
+      <div class="plan-price" style="color:#fff;">19,900원<span style="font-size:15px;font-weight:400;opacity:.7;"> / 월</span></div>
+      <div class="plan-price-sub">1:1 코칭 포함</div>
+      <ul class="plan-features">
+        <li>동행 플랜 전체 포함</li>
+        <li>1:1 카카오톡 코칭</li>
+        <li>주 1회 화상 수업</li>
+        <li>가족 공유 (2인)</li>
+        <li>수료증 발급</li>
+      </ul>
+      <button class="plan-btn" onclick="showView('auth')">가입하고 시작하기</button>
+    </div>
+  </div>
+  <div style="text-align:center;padding:0 24px 60px;">
+    <button class="auth-back-link" onclick="showView('home')">홈으로 돌아가기</button>
+  </div>
+</div>
+
+<!-- ===== AUTH VIEW ===== -->
+<div class="view" id="authView">
+  <div class="auth-section">
+    <div style="margin-bottom:24px;">
+      <svg width="80" height="100" viewBox="0 0 200 240" style="animation:dongBounce 2.5s ease-in-out infinite;">
+        <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+        <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+        <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+        <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+        <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+        <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+        <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+        <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+        <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+        <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+        <circle cx="100" cy="110" r="44" fill="#d08010"/>
+        <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+        <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+        <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+        <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
+        <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+        <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/>
+        <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
+        <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+        <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+      </svg>
+    </div>
+    <h2 class="auth-title">회원가입</h2>
+    <p class="auth-sub">가입하면 체험 도장이 저장되고<br>12개 미션 전체를 도전할 수 있어요</p>
+    <div class="auth-form" id="signupForm">
+      <div>
+        <label class="auth-label" for="authName">이름</label>
+        <input class="auth-input" type="text" id="authName" placeholder="예: 홍길동">
+      </div>
+      <div>
+        <label class="auth-label" for="authPhone">전화번호</label>
+        <input class="auth-input" type="tel" id="authPhone" placeholder="예: 010-1234-5678">
+      </div>
+      <div>
+        <label class="auth-label" for="authEmail">이메일 (선택)</label>
+        <input class="auth-input" type="email" id="authEmail" placeholder="예: hong@email.com">
+      </div>
+      <button class="auth-submit" onclick="handleSignup()">무료 회원가입하기</button>
+      <div class="auth-divider">또는</div>
+      <button class="auth-kakao" onclick="handleKakaoSignup()">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.58 2 10.94c0 2.8 1.86 5.26 4.66 6.66-.15.56-.96 3.56-.99 3.78 0 0-.02.16.08.22.1.06.22.01.22.01.29-.04 3.38-2.22 3.92-2.6.67.1 1.38.15 2.11.15 5.52 0 10-3.58 10-7.98S17.52 3 12 3" fill="#3C1E1E"/></svg>
+        카카오로 3초 만에 가입
+      </button>
+    </div>
+    <button class="auth-back-link" onclick="showView('home')">나중에 할게요</button>
+  </div>
+</div>
+
+<!-- ===== 온보딩 팝업 ===== -->
+<div class="trial-overlay" id="onboardingOverlay">
+  <div class="trial-popup">
+    <svg class="dongdong-popup" width="150" height="188" viewBox="0 0 200 240" style="animation:dongBounce 2.5s ease-in-out infinite;">
+      <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+      <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+      <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+      <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+      <g style="transform-origin:149px 154px;animation:dongWave 2s ease-in-out infinite;">
+        <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+      </g>
+      <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+      <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+      <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+      <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+      <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+      <circle cx="100" cy="110" r="44" fill="#d08010"/>
+      <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+      <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+      <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+      <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+      <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+      <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
+      <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+      <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000" style="animation:dongWink 3s ease-in-out infinite;"/>
+      <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
+      <path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+      <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+    </svg>
+    <h2 style="font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;">반가워요!</h2>
+    <p style="font-size:18px;color:var(--i3);margin-bottom:6px;">저는 <b style="color:var(--gd);">동동이</b>에요</p>
+    <p style="font-size:17px;color:var(--i2);margin-bottom:24px;line-height:1.6;">어떤 것부터<br>해볼까요?</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="trial-interest-btn" onclick="selectTrialInterest('writing')">
+        <span class="icon">&#9997;&#65039;</span>
+        <div>
+          <div>글쓰기</div>
+          <div class="trial-interest-sub">편지, 일기, 시</div>
+        </div>
+      </button>
+      <button class="trial-interest-btn" onclick="selectTrialInterest('image')">
+        <span class="icon">&#127912;</span>
+        <div>
+          <div>이미지</div>
+          <div class="trial-interest-sub">그림, 사진 만들기</div>
+        </div>
+      </button>
+      <button class="trial-interest-btn" onclick="selectTrialInterest('music')">
+        <span class="icon">&#127925;</span>
+        <div>
+          <div>음악</div>
+          <div class="trial-interest-sub">노래 만들기</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 가입 유도 팝업 ===== -->
+<div class="trial-overlay" id="signupOverlay">
+  <div class="trial-popup trial-popup-center">
+    <svg class="dongdong-popup" width="150" height="188" viewBox="0 0 200 240" style="animation:dongJump 1.5s ease-in-out infinite;">
+      <rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/>
+      <rect x="79" y="161" width="42" height="26" rx="6" fill="rgba(255,255,255,.25)"/>
+      <text x="100" y="178" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#fff">AI</text>
+      <g style="transform-origin:51px 174px;animation:dongClap 1.5s ease-in-out infinite;">
+        <rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/>
+      </g>
+      <g style="transform-origin:149px 174px;animation:dongClap 1.5s .1s ease-in-out infinite;">
+        <rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/>
+      </g>
+      <rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+      <rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/>
+      <rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+      <rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/>
+      <rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/>
+      <circle cx="100" cy="110" r="44" fill="#d08010"/>
+      <circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/>
+      <circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/>
+      <line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/>
+      <rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/>
+      <ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/>
+      <circle cx="91" cy="101" r="2" fill="#fff" opacity=".8"/>
+      <rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/>
+      <ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/>
+      <circle cx="115" cy="101" r="2" fill="#fff" opacity=".8"/>
+      <path d="M85 120 Q100 136 115 120" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+      <circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/>
+    </svg>
+    <h2 style="font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:8px;">와! 2개나 완료하셨네요!</h2>
+    <p style="font-size:18px;color:var(--ac);font-weight:700;margin-bottom:16px;">정말 대단해요!</p>
+    <p style="font-size:16px;color:var(--i3);line-height:1.7;margin-bottom:24px;">회원가입하면<br>도장이 저장되고<br>12개 전부 도전할 수 있어요!</p>
+    <button style="width:100%;padding:18px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:18px;font-weight:700;font-family:inherit;cursor:pointer;min-height:58px;margin-bottom:10px;transition:background .15s;" onclick="hideOverlay('signupOverlay');showView('auth')">무료 회원가입하기</button>
+    <button style="width:100%;padding:14px;background:#fff;color:var(--i2);border:2px solid var(--bd);border-radius:100px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;min-height:52px;margin-bottom:10px;" onclick="hideOverlay('signupOverlay');showView('pricing')">구독 플랜 보기</button>
+    <button style="background:none;border:none;color:var(--i3);font-size:15px;cursor:pointer;font-family:inherit;padding:8px;min-height:44px;" onclick="hideOverlay('signupOverlay')">나중에 할게요</button>
+  </div>
+</div>
+
+<!-- 컨페티 -->
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+// ===== 유틸 =====
+function g(id){return document.getElementById(id);}
+
+function showToast(msg){
+  var t=g('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 24px;border-radius:100px;font-size:15px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 22px rgba(0,0,0,.22);transition:opacity .3s;opacity:0;pointer-events:none;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},3200);
+}
+
+function showOverlay(id){var el=g(id);if(el)el.classList.add('show');}
+function hideOverlay(id){var el=g(id);if(el)el.classList.remove('show');}
+
+function showView(name){
+  var views=['homeView','missionView','pricingView','authView'];
+  views.forEach(function(v){var el=g(v);if(el)el.classList.remove('active');});
+  if(name==='home') g('homeView').classList.add('active');
+  else if(name==='mission') g('missionView').classList.add('active');
+  else if(name==='pricing') g('pricingView').classList.add('active');
+  else if(name==='auth') g('authView').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function launchConfetti(){
+  var wrap=g('confettiWrap');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  var colors=['#58cc02','#E8A020','#2A5F52','#ff6b6b','#ffd93d','#6c5ce7','#fff'];
+  for(var i=0;i<60;i++){
+    var el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left=Math.random()*100+'%';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration=(2+Math.random()*2)+'s';
+    el.style.animationDelay=Math.random()*1.5+'s';
+    el.style.width=(6+Math.random()*8)+'px';
+    el.style.height=(6+Math.random()*8)+'px';
+    if(Math.random()>.5) el.style.borderRadius='50%';
+    wrap.appendChild(el);
+  }
+  setTimeout(function(){wrap.innerHTML='';},5000);
+}
+
+// ===== 미션 데이터 =====
+var TRIAL_MISSIONS={
+  writing:[
+    {id:0,icon:'\u270D\uFE0F',name:'\uC790\uC720 \uAE00\uC4F0\uAE30',sub:'\uB0B4\uAC00 \uC6D0\uD558\uB294 \uC5B4\uB5A4 \uC8FC\uC81C\uB4E0 \uC368\uC694',
+     promptDesc:'\uC6D0\uD558\uB294 \uB0B4\uC6A9\uC744 AI\uC5D0\uAC8C \uBD80\uD0C1\uD558\uC138\uC694',
+     promptEx:'\uC608: "\uC544\uB4E4\uC5D0\uAC8C \uD3B8\uC9C0 \uC368\uC918", "\uC624\uB298 \uC77C\uAE30 \uC368\uC918", "\uBD04\uC5D0 \uB300\uD55C \uC2DC \uC368\uC918"',
+     chips:['\uC624\uB298 \uC77C\uAE30','\uD3B8\uC9C0','\uB0B4 \uC774\uC57C\uAE30','\uC9E7\uC740 \uC2DC']},
+    {id:1,icon:'\uD83D\uDC8C',name:'\uD3B8\uC9C0 \uC4F0\uAE30',sub:'\uC18C\uC911\uD55C \uC0AC\uB78C\uC5D0\uAC8C \uB9C8\uC74C\uC744 \uC804\uD574\uC694',
+     promptDesc:'AI\uC5D0\uAC8C \uD3B8\uC9C0\uB97C \uBD80\uD0C1\uD558\uB294 \uD504\uB86C\uD504\uD2B8\uC608\uC694',
+     promptEx:'\uC18C\uC911\uD55C \uC0AC\uB78C\uC5D0\uAC8C \uB530\uB73B\uD55C \uB9C8\uC74C\uC744 \uC804\uD558\uB294 \uD3B8\uC9C0\uB97C \uC368\uC918. 200\uC790\uB85C.',
+     chips:[]}
+  ],
+  image:[
+    {id:0,icon:'\uD83C\uDFD4\uFE0F',name:'\uACE0\uD5A5 \uADF8\uB9BC',sub:'\uAE30\uC5B5 \uC18D \uACE0\uD5A5\uC744 \uADF8\uB9BC\uC73C\uB85C \uB418\uC0B4\uB824\uC694',
+     promptDesc:'Firefly\uC5D0\uAC8C \uADF8\uB9BC\uC744 \uBD80\uD0C1\uD558\uB294 \uD504\uB86C\uD504\uD2B8\uC608\uC694',
+     promptEx:'Beautiful Korean countryside village, traditional tile-roof houses, rice paddies, mountains in background, watercolor style',
+     chips:[]},
+    {id:1,icon:'\uD83D\uDCF8',name:'\uC0AC\uC9C4 \uBCF5\uC6D0',sub:'\uD751\uBC31 \uC0AC\uC9C4\uC744 \uC120\uBA85\uD558\uAC8C \uC0B4\uB824\uC694',
+     promptDesc:'Remini\uC5D0 \uC0AC\uC9C4\uC744 \uB123\uC73C\uBA74 \uC790\uB3D9\uC73C\uB85C \uBCF5\uC6D0\uB3FC\uC694',
+     promptEx:'\uC0AC\uC9C4 \uBCF5\uC6D0\uC740 Remini \uC571\uC744 \uC124\uCE58\uD55C \uB4A4 \uC0AC\uC9C4\uC744 \uC120\uD0DD\uD558\uBA74 \uC790\uB3D9\uC73C\uB85C \uB429\uB2C8\uB2E4.',
+     chips:[]}
+  ],
+  music:[
+    {id:0,icon:'\uD83C\uDFB5',name:'\uD2B8\uB85C\uD2B8 \uB9CC\uB4E4\uAE30',sub:'\uB098\uB9CC\uC758 \uD2B8\uB85C\uD2B8 \uB178\uB798\uB97C \uC644\uC131\uD574\uC694',
+     promptDesc:'Suno AI\uC5D0\uAC8C \uD2B8\uB85C\uD2B8\uB97C \uB9CC\uB4E4\uC5B4\uB2EC\uB77C\uB294 \uD504\uB86C\uD504\uD2B8\uC608\uC694',
+     promptEx:'Style: Korean trot, emotional, female vocalist\nLyrics:\n[Verse]\n\uC5B4\uBA38\uB2C8 \uC0DD\uAC01\uC774 \uB098\uB294 \uB0A0\uC5D0\n\uBCF4\uB9AC\uBC25 \uB0C4\uC0C8\uAC00 \uADF8\uB9AC\uC6CC\uC694\n\n[Chorus]\n\uC5B4\uBA38\uB2C8~ \uC5B4\uBA38\uB2C8~ \uBCF4\uACE0 \uC2F6\uC5B4\uC694',
+     chips:[]},
+    {id:1,icon:'\uD83C\uDFB6',name:'\uBC1C\uB77C\uB4DC \uB9CC\uB4E4\uAE30',sub:'\uAC10\uC131\uC801\uC778 \uBC1C\uB77C\uB4DC\uB97C \uB9CC\uB4E4\uC5B4\uC694',
+     promptDesc:'Suno AI\uC5D0\uAC8C \uBC1C\uB77C\uB4DC\uB97C \uB9CC\uB4E4\uC5B4\uB2EC\uB77C\uB294 \uD504\uB86C\uD504\uD2B8\uC608\uC694',
+     promptEx:'Style: Korean ballad, emotional, soft piano, female vocal\nLyrics:\n[Verse]\n\uBD04\uBE44\uAC00 \uB0B4\uB9AC\uB294 \uCC3D\uAC00\uC5D0\uC11C\n\uB2F9\uC2E0 \uC0DD\uAC01\uC774 \uB098\uC694\n\n[Chorus]\n\uBCF4\uACE0 \uC2F6\uC5B4\uC694~ \uADF8\uB9AC\uC6CC\uC694~',
+     chips:[]}
+  ]
+};
+
+// 데모 결과
+var DEMO_RESULTS={
+  writing:{
+    0:'\uC624\uB298\uC740 \uCC38 \uC88B\uC740 \uB0A0\uC774\uC5C8\uC2B5\uB2C8\uB2E4.\n\n\uC544\uCE68\uC5D0 \uC77C\uC5B4\uB098\uB2C8 \uCC3D\uBC16\uC73C\uB85C \uBD04\uBCBF\uC774 \uD658\uD558\uAC8C \uB4E4\uC5B4\uC654\uC5B4\uC694. \uCEE4\uD53C \uD55C \uC794\uC744 \uB0B4\uB9AC\uBA74\uC11C \uC61B\uB0A0 \uC0DD\uAC01\uC774 \uB0AC\uC2B5\uB2C8\uB2E4. \uC5B4\uB9B4 \uC801 \uC5B4\uBA38\uB2C8\uAC00 \uB9E4\uC77C \uC544\uCE68 \uB04C\uC5EC\uC8FC\uC2DC\uB358 \uBCF4\uB9AC\uCC28 \uD5A5\uAE30\uAC00 \uB5A0\uC62C\uB790\uAC70\uB4E0\uC694.\n\n\uC624\uD6C4\uC5D0\uB294 \uB3D9\uB124 \uACF5\uC6D0\uC744 \uC0B0\uCC45\uD588\uC5B4\uC694. \uBC9A\uAF43\uC774 \uD55C\uCC3D\uC774\uB77C \uAE38\uC774 \uC628\uD1B5 \uBD84\uD64D\uBE5B\uC774\uC5C8\uC2B5\uB2C8\uB2E4. \uBCA4\uCE58\uC5D0 \uC549\uC544 \uC9C0\uB098\uAC00\uB294 \uC0AC\uB78C\uB4E4\uC744 \uAD6C\uACBD\uD558\uB294\uB370, \uBB38\uB4DD \uC774\uB7F0 \uD3C9\uBC94\uD55C \uD558\uB8E8\uAC00 \uC5BC\uB9C8\uB098 \uC18C\uC911\uD55C\uC9C0 \uB290\uAF08\uC5B4\uC694.\n\n\uB0B4\uC77C\uB3C4 \uC774\uB807\uAC8C \uC88B\uC740 \uD558\uB8E8\uAC00 \uB418\uBA74 \uC88B\uACA0\uC2B5\uB2C8\uB2E4.',
+    1:'\uC0AC\uB791\uD558\uB294 \uC544\uB4E4\uC5D0\uAC8C\n\n\uC694\uC998 \uBC14\uC058\uAC8C \uC9C0\uB0B4\uB290\uB77C \uB9CE\uC774 \uD798\uB4E4\uC9C0? \uC5C4\uB9C8\uB294 \uB124\uAC00 \uAC74\uAC15\uD558\uAC8C \uC798 \uC9C0\uB0B4\uB294 \uAC83\uB9CC\uC73C\uB85C\uB3C4 \uCDA9\uBD84\uD788 \uD589\uBCF5\uD558\uB2E8\uB2E4.\n\n\uC5B4\uC82F\uBC24 \uB124 \uC5B4\uB9B4 \uC801 \uC0AC\uC9C4\uC744 \uBCF4\uB2E4\uAC00 \uD63C\uC790 \uC6C3\uC5C8\uC5B4. \uC720\uCE58\uC6D0 \uC878\uC5C5\uC2DD \uB54C \uB118\uC5B4\uC838\uC11C \uC6B8\uB358 \uBAA8\uC2B5\uC774 \uC544\uC9C1\uB3C4 \uB208\uC5D0 \uC120\uD558\uAD6C\uB098. \uADF8\uB54C\uB294 \uBB34\uB98E \uAE4C\uC9C4 \uAC83\uB3C4 \uC5C4\uB9C8\uAC00 \uD638~ \uBD88\uC5B4\uC8FC\uBA74 \uB0AB\uB294 \uC904 \uC54C\uC558\uC9C0.\n\n\uC774\uC81C\uB294 \uC5C4\uB9C8\uBCF4\uB2E4 \uD6E8\uC52C \uB4EC\uC9C1\uD574\uC9C4 \uB124\uAC00 \uCC38 \uC790\uB791\uC2A4\uB7EC\uC6CC. \uBC14\uC058\uB354\uB77C\uB3C4 \uBC25\uC740 \uAF2D \uCC59\uACA8 \uBA39\uACE0, \uAC00\uB054 \uC804\uD654\uD574\uC8FC\uBA74 \uC5C4\uB9C8\uAC00 \uC815\uB9D0 \uAE30\uC081 \uAC70\uC57C.\n\n\uD56D\uC0C1 \uC751\uC6D0\uD558\uB294 \uC5C4\uB9C8\uAC00'
+  },
+  image:{
+    0:'\uD55C\uAD6D\uC758 \uC2DC\uACE8 \uB9C8\uC744\uC774 \uC218\uCC44\uD654 \uC2A4\uD0C0\uC77C\uB85C \uC544\uB984\uB2F5\uAC8C \uADF8\uB824\uC84C\uC5B4\uC694!\n\n\uAE30\uC640\uC9C0\uBD95 \uB9C8\uC744, \uCD08\uB85D \uB17C, \uBA40\uB9AC \uC0B0\uC774 \uBCF4\uC774\uB294 \uD3C9\uD654\uB85C\uC6B4 \uD48D\uACBD\uC774\uC5D0\uC694.\n\n\uC774 \uD504\uB86C\uD504\uD2B8\uB97C Adobe Firefly\uB098 DALL-E\uC5D0 \uBD99\uC5EC\uB123\uC73C\uBA74 \uC9C4\uC9DC \uADF8\uB9BC\uC774 \uB9CC\uB4E4\uC5B4\uC838\uC694!',
+    1:'\uC0AC\uC9C4 \uBCF5\uC6D0\uC740 Remini \uC571\uC744 \uC0AC\uC6A9\uD574\uBCF4\uC138\uC694!\n\n1. \uD734\uB300\uD3F0\uC5D0\uC11C Remini \uC571 \uC124\uCE58\n2. \uBCF5\uC6D0\uD560 \uC0AC\uC9C4 \uC120\uD0DD\n3. "\uD5A5\uC0C1" \uBC84\uD2BC \uB204\uB974\uAE30\n4. \uC644\uC131!\n\n\uD751\uBC31 \uC0AC\uC9C4\uB3C4 \uCEEC\uB7EC\uB85C, \uD750\uB9BF\uD55C \uC0AC\uC9C4\uB3C4 \uC120\uBA85\uD558\uAC8C \uBC14\uAFD4\uC918\uC694.'
+  },
+  music:{
+    0:'Style: Korean trot, emotional, female vocalist\n\n[Verse]\n\uC5B4\uBA38\uB2C8 \uC0DD\uAC01\uC774 \uB098\uB294 \uB0A0\uC5D0\n\uBCF4\uB9AC\uBC25 \uB0C4\uC0C8\uAC00 \uADF8\uB9AC\uC6CC\uC694\n\uBD80\uC5CC \uC55E \uC6B0\uBB3C\uAC00 \uB9D1\uB358 \uB0A0\n\uC190\uC7A1\uACE0 \uAC77\uB358 \uB4F1\uAD34\uAE38\n\n[Chorus]\n\uC5B4\uBA38\uB2C8~ \uC5B4\uBA38\uB2C8~\n\uBCF4\uACE0 \uC2F6\uC5B4\uC694~\n\n\uC774 \uD504\uB86C\uD504\uD2B8\uB97C Suno AI(suno.com)\uC5D0 \uBD99\uC5EC\uB123\uC73C\uBA74 \uC9C4\uC9DC \uB178\uB798\uAC00 \uB9CC\uB4E4\uC5B4\uC838\uC694!',
+    1:'Style: Korean ballad, emotional, soft piano, female vocal\n\n[Verse]\n\uBD04\uBE44\uAC00 \uB0B4\uB9AC\uB294 \uCC3D\uAC00\uC5D0\uC11C\n\uB2F9\uC2E0 \uC0DD\uAC01\uC774 \uB098\uC694\n\uCC28 \uD55C\uC794\uC5D0 \uB9C8\uC74C\uC744 \uB2F4\uC544\n\uC870\uC6A9\uD788 \uB208\uBB3C \uD758\uB824\uC694\n\n[Chorus]\n\uBCF4\uACE0 \uC2F6\uC5B4\uC694~ \uADF8\uB9AC\uC6CC\uC694~\n\uB2F9\uC2E0\uC774 \uC788\uB358 \uADF8 \uC790\uB9AC\uAC00~\n\n\uC774 \uD504\uB86C\uD504\uD2B8\uB97C Suno AI\uC5D0 \uBD99\uC5EC\uB123\uC73C\uBA74 \uC9C4\uC9DC \uBC1C\uB77C\uB4DC\uAC00 \uB9CC\uB4E4\uC5B4\uC838\uC694!'
+  }
+};
+
+// ===== 상태 =====
+var trialInterest='';
+var trialDone=0;
+var trialCurrentMission=0;
+
+// ===== 체험 시작 =====
+function startTrial(){
+  showOverlay('onboardingOverlay');
+}
+
+function selectTrialInterest(cat){
+  trialInterest=cat;
+  trialDone=0;
+  trialCurrentMission=0;
+  localStorage.setItem('aiDonghang_trial_interest',cat);
+  hideOverlay('onboardingOverlay');
+  showView('mission');
+  renderTrialMission(0);
+}
+
+// ===== 미션 렌더링 =====
+function renderTrialMission(index){
+  var missions=TRIAL_MISSIONS[trialInterest];
+  if(!missions||!missions[index])return;
+  var m=missions[index];
+  trialCurrentMission=index;
+
+  var chipsHtml='';
+  if(m.chips&&m.chips.length){
+    chipsHtml='<div class="trial-chips" id="trialChips">';
+    m.chips.forEach(function(c){
+      chipsHtml+='<button class="trial-chip" onclick="selectTrialChip(this,\''+c+'\')">'+c+'</button>';
+    });
+    chipsHtml+='</div>';
+  }
+
+  var isWriting=(trialInterest==='writing'&&index===0);
+
+  var html='';
+  html+='<div class="trial-mission-step"><span class="badge">\uCCB4\uD5D8 \uBBF8\uC158 '+(index+1)+'/2</span></div>';
+  html+='<div class="trial-mission-icon">'+m.icon+'</div>';
+  html+='<h2 class="trial-mission-title">'+m.name+'</h2>';
+  html+='<p class="trial-mission-sub">'+m.sub+'</p>';
+
+  // 프롬프트 카드
+  html+='<div class="trial-prompt-card">';
+  html+='<div class="trial-prompt-label">'+m.promptDesc+'</div>';
+  if(isWriting){
+    html+=chipsHtml;
+    html+='<textarea class="trial-textarea" id="trialPromptInput" placeholder="'+m.promptEx+'" rows="4"></textarea>';
+  } else {
+    html+='<div class="trial-prompt-desc" id="trialPromptText">'+m.promptEx.replace(/\n/g,'<br>')+'</div>';
+  }
+  html+='</div>';
+
+  // AI 버튼
+  html+='<button class="trial-ai-btn" id="trialAiBtn" onclick="trialAskAI('+index+')">AI\uC5D0\uAC8C \uBC14\uB85C \uBB3C\uC5B4\uBCF4\uAE30</button>';
+
+  // 구분선
+  html+='<div class="trial-divider">\uB610\uB294</div>';
+
+  // 복사 버튼
+  html+='<button class="trial-copy-btn" onclick="trialCopyPrompt('+index+')"><span>\uD83D\uDCCB</span> \uBCF5\uC0AC\uD574\uC11C \uC9C1\uC811 \uD558\uAE30</button>';
+
+  // 결과 영역
+  html+='<div class="trial-result-area" id="trialResultArea">';
+  html+='<div class="trial-result-box">';
+  html+='<div class="trial-result-label">AI\uAC00 \uB9CC\uB4E0 \uACB0\uACFC</div>';
+  html+='<textarea class="trial-result-text" id="trialResultText" readonly></textarea>';
+  html+='</div>';
+
+  // 교육 박스
+  html+='<div class="trial-edu-box">';
+  html+='<div class="trial-edu-title">\uD83D\uDCA1 \uC774 \uACB0\uACFC\uB97C \uB9CC\uB4E0 AI\uB294?</div>';
+  html+='<div class="trial-edu-desc">\uBC29\uAE08 \uACB0\uACFC\uB294 <b>Claude</b>\uB77C\uB294 AI\uAC00 \uB9CC\uB4E4\uC5C8\uC5B4\uC694!<br>\uB2E4\uB978 AI\uC5D0\uC11C\uB3C4 \uC9C1\uC811 \uD574\uBCFC \uC218 \uC788\uC5B4\uC694!</div>';
+  html+='<div class="trial-edu-links">';
+  html+='<a class="trial-edu-link" href="https://wrtn.ai" target="_blank">\uD83E\uDD16 \uB4A4\uD2BC</a>';
+  html+='<a class="trial-edu-link" href="https://claude.ai" target="_blank">\u2726 Claude</a>';
+  html+='<a class="trial-edu-link" href="https://chat.openai.com" target="_blank">\uD83D\uDCAC ChatGPT</a>';
+  html+='</div>';
+  html+='</div>';
+
+  // 도장 받기 버튼
+  html+='<button class="trial-stamp-btn" id="trialStampBtn" onclick="trialGetStamp()">\uD83C\uDF89 \uB3C4\uC7A5 \uBC1B\uAE30!</button>';
+  html+='</div>';
+
+  // 도장 효과
+  html+='<div class="trial-stamp-effect" id="trialStampEffect">';
+  html+='<div class="trial-stamp-big">'+m.icon+'</div>';
+  html+='<div class="trial-stamp-text">\uCCAB \uBC88\uC9F8 \uB3C4\uC7A5!</div>';
+  html+='</div>';
+
+  // 동동이 말풍선
+  html+='<div class="trial-dong-speech" id="trialDongSpeech">';
+  html+='<div class="dong-mini">';
+  html+='<svg width="50" height="63" viewBox="0 0 200 240"><rect x="62" y="148" width="76" height="62" rx="18" fill="#E8A020"/><rect x="38" y="154" width="26" height="40" rx="12" fill="#E8A020"/><rect x="136" y="152" width="26" height="40" rx="12" fill="#E8A020"/><rect x="72" y="206" width="22" height="34" rx="10" fill="#c07010"/><rect x="106" y="206" width="22" height="34" rx="10" fill="#c07010"/><rect x="66" y="230" width="30" height="10" rx="5" fill="#2A5F52"/><rect x="104" y="230" width="30" height="10" rx="5" fill="#2A5F52"/><rect x="84" y="136" width="32" height="16" rx="8" fill="#d08010"/><circle cx="100" cy="110" r="44" fill="#d08010"/><circle cx="64" cy="110" r="12" fill="#d08010"/><circle cx="64" cy="110" r="7" fill="#c07010"/><circle cx="136" cy="110" r="12" fill="#d08010"/><circle cx="136" cy="110" r="7" fill="#c07010"/><line x1="100" y1="66" x2="100" y2="50" stroke="#2A5F52" stroke-width="3" stroke-linecap="round"/><circle cx="100" cy="45" r="7" fill="#2A5F52"/><circle cx="100" cy="45" r="3" fill="#fff" opacity=".9"/><rect x="81" y="98" width="14" height="14" rx="7" fill="#fff"/><ellipse cx="88" cy="106" rx="4" ry="6" fill="#7a4000"/><rect x="105" y="98" width="14" height="14" rx="7" fill="#fff"/><ellipse cx="112" cy="106" rx="4" ry="6" fill="#7a4000"/><path d="M88 122 Q100 132 112 122" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="75" cy="116" r="7" fill="#ffaa44" opacity=".45"/><circle cx="125" cy="116" r="7" fill="#ffaa44" opacity=".45"/></svg>';
+  html+='</div>';
+  html+='<div class="dong-bubble" id="trialDongBubbleText"></div>';
+  html+='</div>';
+
+  // 다음 미션 버튼
+  html+='<button class="trial-next-btn" id="trialNextBtn" style="display:none;" onclick="goNextTrialMission()">\uB2E4\uC74C \uBBF8\uC158 \uB3C4\uC804\uD558\uAE30 \u2192</button>';
+
+  g('trialMissionContent').innerHTML=html;
+  window.scrollTo(0,0);
+}
+
+// 칩 선택
+function selectTrialChip(el,text){
+  document.querySelectorAll('.trial-chip').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  var inp=g('trialPromptInput');
+  if(inp){
+    if(text==='\uC624\uB298 \uC77C\uAE30') inp.value='\uC624\uB298 \uC788\uC5C8\uB358 \uC77C\uC744 \uB530\uB73B\uD55C \uC77C\uAE30\uB85C \uC368\uC918';
+    else if(text==='\uD3B8\uC9C0') inp.value='\uC0AC\uB791\uD558\uB294 \uC544\uB4E4\uC5D0\uAC8C \uD3B8\uC9C0\uB97C \uC368\uC918. 200\uC790\uB85C.';
+    else if(text==='\uB0B4 \uC774\uC57C\uAE30') inp.value='\uB0B4\uAC00 \uC0B4\uC544\uC628 \uC774\uC57C\uAE30\uB97C \uC9E7\uAC8C \uC368\uC918';
+    else if(text==='\uC9E7\uC740 \uC2DC') inp.value='\uBD04\uC5D0 \uB300\uD55C \uC9E7\uC740 \uC2DC\uB97C \uC368\uC918';
+    else inp.value=text;
+    inp.focus();
+  }
+}
+
+// AI에게 바로 물어보기
+async function trialAskAI(index){
+  var missions=TRIAL_MISSIONS[trialInterest];
+  if(!missions||!missions[index])return;
+  var m=missions[index];
+
+  // 프롬프트 텍스트
+  var prompt='';
+  var inp=g('trialPromptInput');
+  if(inp){
+    prompt=inp.value.trim();
+    if(!prompt){showToast('\uC704\uC5D0 \uC6D0\uD558\uB294 \uB0B4\uC6A9\uC744 \uBA3C\uC800 \uC368\uC8FC\uC138\uC694!');return;}
+  } else {
+    prompt=m.promptEx;
+  }
+
+  // 로딩
+  var btn=g('trialAiBtn');
+  if(btn){
+    btn.disabled=true;
+    btn.innerHTML='<span style="display:inline-flex;gap:4px;align-items:center;">\uB3D9\uB3D9\uC774\uAC00 AI\uC5D0\uAC8C \uBB3C\uC5B4\uBCF4\uACE0 \uC788\uC5B4\uC694<span style="animation:dot1 1.4s infinite;display:inline-block;width:6px;height:6px;background:#fff;border-radius:50%;"></span><span style="animation:dot1 1.4s .2s infinite;display:inline-block;width:6px;height:6px;background:#fff;border-radius:50%;"></span><span style="animation:dot1 1.4s .4s infinite;display:inline-block;width:6px;height:6px;background:#fff;border-radius:50%;"></span></span>';
+  }
+
+  try{
+    var result='';
+    var isDemo=false;
+
+    try{
+      var response=await fetch(SUPABASE_URL+'/functions/v1/ai-chat',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+SUPABASE_KEY
+        },
+        body:JSON.stringify({prompt:prompt})
+      });
+      var data=await response.json();
+      if(!response.ok||data.error) throw new Error(data.error||'');
+      result=data.result||'';
+    }catch(apiErr){
+      isDemo=true;
+      var demoData=DEMO_RESULTS[trialInterest];
+      result=demoData?demoData[index]||demoData[0]:'AI\uAC00 \uB9CC\uB4E0 \uACB0\uACFC\uAC00 \uC5EC\uAE30\uC5D0 \uD45C\uC2DC\uB429\uB2C8\uB2E4.\n\n\uD604\uC7AC \uB370\uBAA8 \uBAA8\uB4DC\uB85C \uB3D9\uC791 \uC911\uC774\uC5D0\uC694.';
+      await new Promise(function(r){setTimeout(r,2000);});
+    }
+
+    // 결과 표시
+    var ra=g('trialResultArea');
+    if(ra)ra.classList.add('show');
+
+    var rt=g('trialResultText');
+    if(rt){
+      rt.value='';
+      var ri=0;
+      var typeInterval=setInterval(function(){
+        if(ri<result.length){
+          rt.value+=result[ri];
+          ri++;
+          rt.scrollTop=rt.scrollHeight;
+        }else{
+          clearInterval(typeInterval);
+        }
+      },20);
+    }
+
+    // 버튼 업데이트
+    if(btn){
+      btn.disabled=false;
+      btn.innerHTML='\uD83C\uDF89 \uC644\uC131! \uC544\uB798\uC5D0\uC11C \uB3C4\uC7A5 \uBC1B\uAE30';
+      btn.onclick=function(){
+        var sb=g('trialStampBtn');
+        if(sb)sb.scrollIntoView({behavior:'smooth',block:'center'});
+      };
+    }
+
+    // 결과로 스크롤
+    setTimeout(function(){
+      if(ra)ra.scrollIntoView({behavior:'smooth',block:'start'});
+    },300);
+
+    showToast(isDemo?'\uB370\uBAA8 \uACB0\uACFC\uC608\uC694! \uBC30\uD3EC \uD6C4 \uC9C4\uC9DC AI\uAC00 \uB2F5\uD574\uC918\uC694':'\u2728 AI\uAC00 \uC644\uC131\uD588\uC5B4\uC694!');
+
+  }catch(e){
+    console.error('trialAskAI error:',e);
+    if(btn){
+      btn.disabled=false;
+      btn.innerHTML='\u2728 AI\uC5D0\uAC8C \uBC14\uB85C \uBB3C\uC5B4\uBCF4\uAE30';
+    }
+    showToast('AI \uC5F0\uACB0\uC5D0 \uBB38\uC81C\uAC00 \uC788\uC5B4\uC694. "\uBCF5\uC0AC\uD558\uAE30"\uB85C \uD574\uBCF4\uC138\uC694!');
+  }
+}
+
+// 프롬프트 복사
+function trialCopyPrompt(index){
+  var missions=TRIAL_MISSIONS[trialInterest];
+  if(!missions||!missions[index])return;
+  var m=missions[index];
+
+  var text='';
+  var inp=g('trialPromptInput');
+  if(inp&&inp.value.trim()){
+    text=inp.value.trim();
+  }else{
+    text=m.promptEx;
+  }
+
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){
+      showToast('\uD504\uB86C\uD504\uD2B8 \uBCF5\uC0AC \uC644\uB8CC! AI\uC5D0 \uBD99\uC5EC\uB123\uC5B4\uBCF4\uC138\uC694');
+    });
+  }else{
+    var ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    showToast('\uD504\uB86C\uD504\uD2B8 \uBCF5\uC0AC \uC644\uB8CC! AI\uC5D0 \uBD99\uC5EC\uB123\uC5B4\uBCF4\uC138\uC694');
+  }
+
+  // 결과 영역 보여주기 (직접 했을 경우 도장 받을 수 있게)
+  var ra=g('trialResultArea');
+  if(ra)ra.classList.add('show');
+  var rt=g('trialResultText');
+  if(rt)rt.value='\uBCF5\uC0AC\uD55C \uD504\uB86C\uD504\uD2B8\uB97C AI\uC5D0 \uBD99\uC5EC\uB123\uACE0 \uACB0\uACFC\uB97C \uBC1B\uC544\uBCF4\uC138\uC694!\n\n\uACB0\uACFC\uB97C \uBC1B\uC73C\uC168\uC73C\uBA74 \uC544\uB798 "\uB3C4\uC7A5 \uBC1B\uAE30" \uBC84\uD2BC\uC744 \uB20C\uB7EC\uC8FC\uC138\uC694!';
+}
+
+// 도장 받기
+function trialGetStamp(){
+  trialDone++;
+  var missions=TRIAL_MISSIONS[trialInterest];
+  var m=missions[trialCurrentMission];
+
+  // 도장 효과
+  var se=g('trialStampEffect');
+  if(se){
+    se.querySelector('.trial-stamp-big').textContent=m.icon;
+    se.querySelector('.trial-stamp-text').textContent=(trialDone===1?'\uCCAB \uBC88\uC9F8 \uB3C4\uC7A5!':'\uB450 \uBC88\uC9F8 \uB3C4\uC7A5!');
+    se.classList.add('show');
+  }
+
+  // 도장 버튼 숨기기
+  var sb=g('trialStampBtn');
+  if(sb)sb.style.display='none';
+
+  // 동동이 말풍선
+  var ds=g('trialDongSpeech');
+  var bt=g('trialDongBubbleText');
+  if(ds&&bt){
+    if(trialDone<2){
+      bt.textContent='\uC798\uD588\uC5B4\uC694! \uB2E4\uC74C \uAC83\uB3C4 \uD574\uBCFC\uAE4C\uC694?';
+      ds.classList.add('show');
+      // 다음 미션 버튼
+      var nb=g('trialNextBtn');
+      if(nb)nb.style.display='flex';
+    }else{
+      bt.textContent='\uC640! \uC815\uB9D0 \uB300\uB2E8\uD574\uC694!';
+      ds.classList.add('show');
+      // 가입 유도 팝업
+      setTimeout(function(){
+        showOverlay('signupOverlay');
+        launchConfetti();
+      },1200);
+    }
+  }
+
+  // 스크롤
+  setTimeout(function(){
+    if(se)se.scrollIntoView({behavior:'smooth',block:'center'});
+  },200);
+}
+
+// 다음 미션
+function goNextTrialMission(){
+  showView('mission');
+  renderTrialMission(1);
+}
+
+// 회원가입
+function handleSignup(){
+  var name=(g('authName')||{}).value||'';
+  var phone=(g('authPhone')||{}).value||'';
+  var email=(g('authEmail')||{}).value||'';
+
+  if(!name.trim()){showToast('\uC774\uB984\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694');return;}
+  if(!phone.trim()){showToast('\uC804\uD654\uBC88\uD638\uB97C \uC785\uB825\uD574\uC8FC\uC138\uC694');return;}
+
+  // Supabase에 저장 시도
+  (async function(){
+    try{
+      var interest=localStorage.getItem('aiDonghang_trial_interest')||'';
+      var {data,error}=await db.from('trial_signups').insert([{
+        name:name.trim(),
+        phone:phone.trim(),
+        email:email.trim()||null,
+        interest:interest,
+        trial_done:trialDone
+      }]);
+      if(error) console.error('Supabase signup error:',error);
+    }catch(e){
+      console.error('Signup save error:',e);
+    }
+  })();
+
+  showToast('\uD68C\uC6D0\uAC00\uC785 \uC644\uB8CC! \uD658\uC601\uD569\uB2C8\uB2E4!');
+  launchConfetti();
+
+  setTimeout(function(){
+    window.location.href='ai-donghang-member.html';
+  },2000);
+}
+
+function handleKakaoSignup(){
+  showToast('\uCE74\uCE74\uC624 \uB85C\uADF8\uC778\uC740 \uC900\uBE44 \uC911\uC774\uC5D0\uC694! \uC804\uD654\uBC88\uD638\uB85C \uAC00\uC785\uD574\uC8FC\uC138\uC694.');
+}
+
+// ===== 히어로 자동 전환 (7초) =====
+var heroIdx=0;
+var heroTotal=2;
+var heroTimer=null;
+
+function goHero(idx){
+  heroIdx=idx;
+  var slides=document.querySelectorAll('#heroRotator .hero-slide');
+  slides.forEach(function(el,i){el.classList.toggle('active',i===idx);});
+  var dots=document.querySelectorAll('#heroDots .hero-dot-btn');
+  dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});
+  var rot=g('heroRotator');
+  if(rot)rot.classList.toggle('on-dark',idx===1);
+}
+
+function startHeroAuto(){
+  stopHeroAuto();
+  heroTimer=setInterval(function(){goHero((heroIdx+1)%heroTotal);},7000);
+}
+
+function stopHeroAuto(){
+  if(heroTimer){clearInterval(heroTimer);heroTimer=null;}
+}
+
+// ===== 초기화 =====
+(function(){
+  // 이전에 관심사 선택했으면 복원
+  var saved=localStorage.getItem('aiDonghang_trial_interest');
+  if(saved){
+    trialInterest=saved;
+  }
+  // 히어로 자동 전환 시작
+  startHeroAuto();
+  var rot=g('heroRotator');
+  if(rot){
+    rot.addEventListener('mouseenter',stopHeroAuto);
+    rot.addEventListener('mouseleave',startHeroAuto);
+  }
+})();
+</script>
+</body>
+</html>

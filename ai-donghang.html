@@ -2031,7 +2031,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   <div class="search-wrap">
     <div class="search-bar">
       <span style="font-size:20px;color:var(--i3);flex-shrink:0;">🔍</span>
-      <input class="search-input" id="searchInput" type="text" placeholder="관심사를 검색해보세요 (예: 자서전, 편지, 트로트…)" oninput="handleSearch(this)">
+      <input class="search-input" id="searchInput" type="search" name="course-search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="관심사를 검색해보세요 (예: 자서전, 편지, 트로트…)" oninput="handleSearch(this)">
       <button class="search-clear" id="searchClear" onclick="clearSearch()">✕ 지우기</button>
       <span class="search-count" id="searchCount"></span>
     </div>

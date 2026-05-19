@@ -40,6 +40,15 @@
 
 const SUPABASE_URL='https://gaibakqhdfdpnsdgpmya.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
+
+// ══ AUTH_MODE: 인증 백엔드 모드 플래그 ══
+//   'legacy'   = Users 테이블(bigint id) + 자체 phone/pw_hash + 직접 Kakao SDK. Phase B 마이그레이션 *전* 상태.
+//   'supabase' = profiles 테이블(uuid id) + Supabase Auth(Kakao OAuth) + RLS. Phase B SQL 적용 *후* 활성화.
+// ⚠️ 'supabase'로 변경 전 조건:
+//   1) supabase/scripts/option_c_full_migration.sql 적용 완료 (Users 드랍, profiles 생성)
+//   2) Supabase 대시보드 > Authentication > Providers > Kakao 활성화 + Redirect URL 등록
+// 전환 절차: 이 상수만 'supabase'로 변경 후 commit + push + 재배포.
+const AUTH_MODE = 'legacy';
 const TOSS_CLIENT_KEY='test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'; // Toss 공식 테스트 키 (운영 시 실 키로 교체)
 const TOSS_PLAN_PRICES={'동행':13900,'동행+':17900};
 const TOSS_PLAN_NAMES={'동행':'AI 동행 — 동행 플랜 (1개월)','동행+':'AI 동행 — 동행+ 플랜 (1개월)'};
@@ -60,6 +69,22 @@ if(!db) {
     upsert: function(){ return _p({data:null,error:null}); },
     update: function(){ return { eq:function(){ return _p({data:null,error:null}); } }; }
   }; } };
+}
+
+// ══ AUTH_MODE 헬퍼 ══
+// legacy: db.from('Users')  /  supabase: db.from('profiles')
+function _authTable(){
+  return AUTH_MODE === 'legacy' ? db.from('Users') : db.from('profiles');
+}
+// 페이지 로드 시 호출 — supabase 모드면 body 클래스 토글 → CSS로 전화 form 숨김
+function applyAuthMode(){
+  try{
+    if(AUTH_MODE === 'supabase'){
+      document.body.classList.add('auth-mode-supabase');
+    } else {
+      document.body.classList.remove('auth-mode-supabase');
+    }
+  }catch(e){}
 }
 </script>
 <style>
@@ -1662,6 +1687,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   box-shadow:0 2px 8px rgba(42,95,82,.25);
 }
 
+/* ══ AUTH_MODE='supabase' 일 때 전화 가입/로그인/비번찾기 영역 숨김 ══ */
+/* HTML/JS 코드는 보존, 향후 SMS OTP 도입 시 이 규칙만 해제하면 다시 노출됨 */
+body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !important;}
+
 /* ══ 동행 마당 (커뮤니티 v2) ══ */
 .madang-hero{background:linear-gradient(180deg,#fbf7ee 0%,var(--bg) 100%);padding:48px 40px 36px;border-bottom:1px solid var(--bd);}
 .madang-hero-inner{max-width:1180px;margin:0 auto;}
@@ -2637,35 +2666,41 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
         </div>
       </div>
       <button class="auth-kakao-btn" onclick="authKakao()"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg> 카카오톡으로 가입하기</button>
-      <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">또는 전화번호로 가입</div><div class="auth-divider-line"></div></div>
-      <div class="auth-label">성함</div><input class="auth-input" id="authName" type="text" placeholder="예) 김순자" autocomplete="name">
-      <div class="auth-label" style="margin-top:14px;">전화번호</div><div class="auth-hint">예) 010-1234-5678</div>
-      <input class="auth-input" id="authPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
-      <div class="auth-label" style="margin-top:14px;">비밀번호</div><div class="auth-hint">숫자+영문 조합 6자리 이상</div>
-      <input class="auth-input" id="authPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="new-password">
-      <div class="auth-label" style="margin-top:14px;">비밀번호 확인</div>
-      <input class="auth-input" id="authPwConfirm" type="password" placeholder="비밀번호를 한 번 더 입력해주세요" autocomplete="new-password" oninput="checkPwMatch()">
-      <div id="authPwMsg" style="font-size:13px;margin-top:6px;min-height:18px;"></div>
-      <button class="auth-submit-btn" onclick="authPhone()">가입하기 →</button>
+      <!-- 전화번호 가입 폼 (HTML/JS는 보존, supabase 모드에선 CSS로 숨김 — 향후 SMS OTP 도입 시 부활) -->
+      <div data-auth-mode-hide-on="supabase">
+        <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">또는 전화번호로 가입</div><div class="auth-divider-line"></div></div>
+        <div class="auth-label">성함</div><input class="auth-input" id="authName" type="text" placeholder="예) 김순자" autocomplete="name">
+        <div class="auth-label" style="margin-top:14px;">전화번호</div><div class="auth-hint">예) 010-1234-5678</div>
+        <input class="auth-input" id="authPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
+        <div class="auth-label" style="margin-top:14px;">비밀번호</div><div class="auth-hint">숫자+영문 조합 6자리 이상</div>
+        <input class="auth-input" id="authPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="new-password">
+        <div class="auth-label" style="margin-top:14px;">비밀번호 확인</div>
+        <input class="auth-input" id="authPwConfirm" type="password" placeholder="비밀번호를 한 번 더 입력해주세요" autocomplete="new-password" oninput="checkPwMatch()">
+        <div id="authPwMsg" style="font-size:13px;margin-top:6px;min-height:18px;"></div>
+        <button class="auth-submit-btn" onclick="authPhone()">가입하기 →</button>
+      </div>
       <div class="auth-terms">가입하면 <a href="https://aitogether.co.kr/terms.html" target="_blank">이용약관</a> 및 <a href="https://aitogether.co.kr/privacy.html" target="_blank">개인정보처리방침</a>에 동의한 것으로 간주됩니다</div>
     </div>
     <div id="authLogin" style="display:none;">
       <div class="auth-sub">가입하실 때 사용하신 방법으로 로그인해주세요</div>
       <button class="auth-kakao-btn" onclick="authKakao()"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.91 1.88 5.47 4.72 6.94L5.6 21.5l4.13-2.72c.74.1 1.5.15 2.27.15 5.52 0 10-3.69 10-8.25C22 6.69 17.52 3 12 3z" fill="#191919"/></svg> 카카오톡으로 로그인</button>
-      <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">또는 전화번호로 로그인</div><div class="auth-divider-line"></div></div>
-      <div class="auth-label">전화번호</div><div class="auth-hint">가입 시 입력하신 전화번호</div>
-      <input class="auth-input" id="loginPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
-      <div class="auth-label" style="margin-top:14px;">비밀번호</div>
-      <input class="auth-input" id="loginPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="current-password">
-      <button class="auth-submit-btn" onclick="authLoginPhone()">로그인 →</button>
-      <div style="text-align:center;margin-top:12px;">
-        <button onclick="showFindPw()" style="font-size:13px;color:var(--i3);background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;text-decoration:underline;">비밀번호를 잊으셨나요?</button>
+      <!-- 전화번호 로그인 폼 (보존, supabase 모드 숨김) -->
+      <div data-auth-mode-hide-on="supabase">
+        <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">또는 전화번호로 로그인</div><div class="auth-divider-line"></div></div>
+        <div class="auth-label">전화번호</div><div class="auth-hint">가입 시 입력하신 전화번호</div>
+        <input class="auth-input" id="loginPhone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13">
+        <div class="auth-label" style="margin-top:14px;">비밀번호</div>
+        <input class="auth-input" id="loginPw" type="password" placeholder="비밀번호를 입력해주세요" autocomplete="current-password">
+        <button class="auth-submit-btn" onclick="authLoginPhone()">로그인 →</button>
+        <div style="text-align:center;margin-top:12px;">
+          <button onclick="showFindPw()" style="font-size:13px;color:var(--i3);background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;text-decoration:underline;">비밀번호를 잊으셨나요?</button>
+        </div>
       </div>
       <div style="text-align:center;margin-top:4px;"><span style="font-size:14px;color:var(--i3);">아직 회원이 아니신가요? </span><button onclick="switchAuthTab('signup')" style="font-size:14px;color:var(--ac);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;min-height:44px;">회원가입하기</button></div>
     </div>
 
-    <!-- 비밀번호 찾기 섹션 -->
-    <div id="findPwSection" style="display:none;">
+    <!-- 비밀번호 찾기 섹션 (보존, supabase 모드 숨김) -->
+    <div id="findPwSection" data-auth-mode-hide-on="supabase" style="display:none;">
       <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px;">🔑 비밀번호 재설정</div>
       <div style="font-size:14px;color:var(--i3);margin-bottom:20px;">가입 시 입력하신 전화번호와 성함을 확인해요</div>
       <div class="auth-label">전화번호</div>
@@ -4402,7 +4437,72 @@ function initKakaoSdk(){
   return false;
 }
 // 페이지 로드 후 초기화 시도
-window.addEventListener('load', function(){ initKakaoSdk(); if(typeof handleKakaoCallback === 'function') handleKakaoCallback(); });
+window.addEventListener('load', function(){
+  // AUTH_MODE 에 따라 DOM 클래스 토글 (CSS로 전화 form 숨김 제어)
+  if(typeof applyAuthMode === 'function') applyAuthMode();
+  if(AUTH_MODE === 'supabase'){
+    // Supabase Auth: OAuth 콜백 처리 자동 + 세션 상태 리스너
+    if(typeof _initSupabaseAuthListener === 'function') _initSupabaseAuthListener();
+  } else {
+    // legacy: 카카오 SDK 직접 사용
+    initKakaoSdk();
+    if(typeof handleKakaoCallback === 'function') handleKakaoCallback();
+  }
+});
+
+// ── supabase 모드 전용: Supabase Auth 상태 변화 리스너 ──────────────────────
+function _initSupabaseAuthListener(){
+  if(AUTH_MODE !== 'supabase' || !db || !db.auth) return;
+  try{
+    db.auth.onAuthStateChange(function(event, session){
+      if(event === 'SIGNED_IN' && session && session.user){
+        _hydrateUserProfileFromSession(session, /*isNew=*/true);
+      } else if(event === 'SIGNED_OUT'){
+        userProfile = {};
+        try{ localStorage.removeItem('aiDonghang_profile'); }catch(e){}
+      }
+    });
+    // 이미 로그인 상태면 즉시 hydrate
+    db.auth.getSession().then(function(res){
+      if(res && res.data && res.data.session){
+        _hydrateUserProfileFromSession(res.data.session, /*isNew=*/false);
+      }
+    }).catch(function(e){ console.warn('getSession 실패:', e); });
+  }catch(e){ console.warn('supabase auth listener init 실패:', e); }
+}
+
+// 세션 → userProfile 채우기 + UI 갱신
+async function _hydrateUserProfileFromSession(session, isNewLogin){
+  try{
+    if(!session || !session.user) return;
+    var uid = session.user.id;
+    var meta = session.user.user_metadata || {};
+    // profiles에서 본인 row 조회 (RLS로 본인만 보임)
+    var pr = await db.from('profiles').select('*').eq('id', uid).maybeSingle();
+    var p = (pr && pr.data) ? pr.data : {};
+    userProfile = {
+      id: uid,
+      name: p.name || meta.name || meta.nickname || meta.full_name || '동행 사용자',
+      phone: p.phone || '',
+      plan: p.plan || 'free',
+      kakao_id: p.kakao_id || meta.provider_id || null,
+      loginType: 'kakao'
+    };
+    try{ localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile)); }catch(e){}
+    if(typeof setNavLoggedIn === 'function') setNavLoggedIn(userProfile.name);
+    // 신규 카카오 콜백 직후라면 환영 모달, 아니면 조용히 hydrate
+    if(isNewLogin && typeof showAuthSuccess === 'function'){
+      // SIGNED_IN 직후 — auth view에 있을 때만 환영 모달
+      var av = document.getElementById('authView');
+      if(av && av.classList.contains('active')){
+        showAuthSuccess(userProfile.name, !p.created_at ? true : false);
+      }
+    }
+    if(typeof loadUserDataFromSupabase === 'function' && userProfile.id){
+      loadUserDataFromSupabase(userProfile.id);
+    }
+  }catch(e){ console.warn('hydrate 오류:', e); }
+}
 // ── 상태 ──
 var userProfile = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
 var portfolio = JSON.parse(localStorage.getItem('aiDonghang_portfolio')||'[]');
@@ -7782,6 +7882,11 @@ async function initTossWidget(plan, amount){
 
 // ── 인증 ──
 async function authPhone(){
+  // supabase 모드 가드 — UI는 이미 숨겨져 호출 안 되지만 콘솔 직접 호출 등 안전망
+  if(AUTH_MODE === 'supabase'){
+    showToast('지금은 카카오톡으로 가입하실 수 있어요 🙂');
+    return;
+  }
   var rawName=(g('authName').value||'').trim();
   var phone=(g('authPhone').value||'').trim();
   var pw=(g('authPw')?g('authPw').value||'':'');
@@ -7807,6 +7912,10 @@ async function authPhone(){
   }
 }
 async function authLoginPhone(){
+  if(AUTH_MODE === 'supabase'){
+    showToast('지금은 카카오톡으로 로그인하실 수 있어요 🙂');
+    return;
+  }
   var phone=(g('loginPhone').value||'').trim();
   var pw=(g('loginPw')?g('loginPw').value||'':'');
   if(!phone||phone.length<12){showToast('전화번호를 올바르게 입력해주세요');return;}
@@ -7835,6 +7944,10 @@ function hideFindPw(){
   var msg = g('findPwMsg'); if(msg) msg.textContent='';
 }
 async function findPwSubmit(){
+  if(AUTH_MODE === 'supabase'){
+    showToast('지금은 카카오톡으로 로그인하실 수 있어요 🙂');
+    return;
+  }
   var phone=(g('findPwPhone')?g('findPwPhone').value||'':'').trim();
   var name=(g('findPwName')?g('findPwName').value||'':'').trim();
   var newPw=(g('findPwNew')?g('findPwNew').value||'':'');
@@ -7858,7 +7971,11 @@ async function findPwSubmit(){
   }
 }
 function authKakao(){
-  // SDK 없으면 로드 재시도
+  // supabase 모드: Supabase Auth OAuth 흐름
+  if(AUTH_MODE === 'supabase'){
+    return _authKakaoSupabase();
+  }
+  // === legacy: 직접 Kakao SDK 사용 (기존 코드 그대로) ===
   if(!initKakaoSdk()){
     showToast('카카오 연결 중이에요. 잠시 후 다시 눌러주세요 🙂'); return;
   }
@@ -7876,7 +7993,28 @@ function authKakao(){
     showToast('카카오 로그인에 실패했어요. 잠시 후 다시 시도해주세요.');
   }
 }
+// supabase 모드 카카오 OAuth — Supabase가 토큰 교환 + profiles 자동 생성 처리
+async function _authKakaoSupabase(){
+  try{
+    if(!db || !db.auth){
+      showToast('인증 모듈 로딩 중이에요. 잠시 후 다시 눌러주세요.'); return;
+    }
+    var res = await db.auth.signInWithOAuth({
+      provider: 'kakao',
+      options: { redirectTo: window.location.origin + '/' }
+    });
+    if(res && res.error) throw res.error;
+    // 성공 시 supabase가 카카오로 redirect — 이 이후 코드는 실행되지 않음
+  }catch(e){
+    console.error('Supabase OAuth 오류:', e);
+    showToast('카카오 로그인에 실패했어요. 잠시 후 다시 시도해주세요.');
+  }
+}
 async function handleKakaoCallback(){
+  // supabase 모드: 콜백 처리는 supabase-js + onAuthStateChange 가 자동 처리
+  // (window load 시 _initSupabaseAuthListener 에서 getSession 으로 hydrate)
+  if(AUTH_MODE === 'supabase') return;
+  // === legacy: 직접 토큰 교환 ===
   if(!initKakaoSdk()) return;
   var params = new URLSearchParams(window.location.search);
   var code = params.get('code');
@@ -8297,11 +8435,11 @@ async function loadAdminDashboard(){
     var todayStr = now.toISOString().slice(0,10);
 
     // 전체 회원
-    var totalR = await db.from('Users').select('*', {count:'exact', head:true});
+    var totalR = await _authTable().select('*', {count:'exact', head:true});
     var total = totalR.count || 0;
 
     // 플랜별 회원
-    var allUsersR = await db.from('Users').select('plan, created_at');
+    var allUsersR = await _authTable().select('plan, created_at');
     var allUsers = allUsersR.data || [];
     var paidCount = allUsers.filter(function(u){ return u.plan==='paid'||u.plan==='동행'; }).length;
     var plusCount = allUsers.filter(function(u){ return u.plan==='plus'||u.plan==='동행+'; }).length;
@@ -8316,16 +8454,21 @@ async function loadAdminDashboard(){
     }).length;
 
     // 도장 완주자
-    var dojoR = await db.from('Users').select('dojo_progress');
+    // legacy: Users.dojo_progress 컬럼 (JSON 문자열 또는 object)
+    // supabase: profiles에는 dojo_progress 컬럼 없음 → 0으로 표시 (TODO: user_progress 테이블로 옮기거나 profiles에 컬럼 추가)
     var dojoCount = 0;
-    if(dojoR.data){
-      dojoR.data.forEach(function(u){
-        try{
-          var p = typeof u.dojo_progress==='string' ? JSON.parse(u.dojo_progress) : (u.dojo_progress||{});
-          if(Object.values(p).filter(Boolean).length >= 12) dojoCount++;
-        }catch(e){}
-      });
+    if(AUTH_MODE === 'legacy'){
+      var dojoR = await db.from('Users').select('dojo_progress');
+      if(dojoR.data){
+        dojoR.data.forEach(function(u){
+          try{
+            var p = typeof u.dojo_progress==='string' ? JSON.parse(u.dojo_progress) : (u.dojo_progress||{});
+            if(Object.values(p).filter(Boolean).length >= 12) dojoCount++;
+          }catch(e){}
+        });
+      }
     }
+    // supabase 모드는 dojoCount = 0 (집계 임시 비활성)
 
     // 총 작품 수
     var worksR = await db.from('works').select('*', {count:'exact', head:true});
@@ -8346,7 +8489,7 @@ async function loadAdminDashboard(){
     }
 
     // 최근 가입자 10명
-    var recentR = await db.from('Users').select('name, plan, created_at').order('created_at', {ascending:false}).limit(10);
+    var recentR = await _authTable().select('name, plan, created_at').order('created_at', {ascending:false}).limit(10);
 
     // ── KPI 업데이트 ──
     var convRate = total > 0 ? Math.round(paid/total*100) : 0;

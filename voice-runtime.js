@@ -145,13 +145,32 @@
       catch(e){ console.warn('[voice-runtime] SR start', e); return null; }
     }
 
-    function startRecording(){
+    // opts.append === true 면 기존 baseFinal/audioChunks/timer 누적 (이어서 말하기)
+    function startRecording(opts){
+      var append = !!(opts && opts.append);
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
         toast('이 브라우저는 마이크 사용을 지원하지 않아요 🙏');
         return;
       }
       navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
-        audioChunks = [];
+        if (!append){
+          audioChunks = [];
+          baseFinal = '';
+          seconds = 0;
+          if (timerText) timerText.textContent = fmtTime(0);
+          if (transcriptBody){
+            var ph = transcriptBody.querySelector('.ph');
+            if (ph) ph.remove();
+            transcriptBody.textContent = '';
+          }
+        } else {
+          // 이어서 — 데모가 placeholder를 다시 깔았으면 제거, 기존 baseFinal 다시 그려줌
+          if (transcriptBody){
+            var ph2 = transcriptBody.querySelector('.ph');
+            if (ph2) ph2.remove();
+            if (baseFinal) transcriptBody.textContent = baseFinal;
+          }
+        }
         mimeType = pickMime();
         try {
           mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
@@ -163,24 +182,16 @@
         mediaRec.ondataavailable = function(e){
           if (e.data && e.data.size > 0) audioChunks.push(e.data);
         };
-        mediaRec.start(1000); // 1초마다 chunk
+        mediaRec.start(1000); // 1초마다 chunk — 이어말하기 시 새 stream의 chunk가 같은 array에 누적
 
-        // STT (선택적)
-        baseFinal = '';
-        lastFullFinal = '';
+        // STT — 새 인스턴스, baseFinal을 base로 넘김
+        lastFullFinal = ''; // 새 SR 세션 — Galaxy dedup state 초기화
         srRestarts = [];
         srIntent = true;
-        speechRec = buildAndStartSR('');
+        speechRec = buildAndStartSR(baseFinal);
 
         body.classList.remove('is-reviewing');
         body.classList.add('is-recording');
-        seconds = 0;
-        if (timerText) timerText.textContent = fmtTime(0);
-        if (transcriptBody){
-          var ph = transcriptBody.querySelector('.ph');
-          if (ph) ph.remove();
-          transcriptBody.textContent = '';
-        }
         clearInterval(secTimer);
         secTimer = setInterval(function(){
           seconds++;
@@ -244,11 +255,43 @@
       });
     }
 
-    // ── mic 버튼 토글
+    // ── mic 버튼 토글: 녹음 중이면 정지(검토 진입), 아니면 새로 시작
+    //    검토 상태에서 mic 다시 누르면 "이어서" 가 아니라 "새로 시작" — 사용자 의도가
+    //    명확한 mic 아이콘 클릭은 fresh start 로 처리. 이어서 말하려면 continueBtn 사용.
     micBtn.addEventListener('click', function(){
       if (body.classList.contains('is-recording')) stopRecording();
-      else startRecording();
+      else startRecording({ append: false });
     });
+
+    // ── 잠깐 멈추기 — 현재 녹음을 정지하지만 baseFinal/audioChunks 는 유지 (검토 상태)
+    if (pauseBtn){
+      pauseBtn.addEventListener('click', function(){
+        if (body.classList.contains('is-recording')) stopRecording();
+      }, true);
+    }
+
+    // ── 이어서 말씀하기 — 기존 baseFinal/audioChunks 누적한 채로 재개 (append)
+    if (continueBtn){
+      continueBtn.addEventListener('click', function(){
+        startRecording({ append: true });
+      }, true);
+    }
+
+    // ── 다시 답하기 — 전부 폐기하고 idle UI 로
+    if (redoBtn){
+      redoBtn.addEventListener('click', function(){
+        audioChunks = [];
+        baseFinal = '';
+        lastFullFinal = '';
+        lastUploadedUrl = null;
+        if (transcriptBody){
+          transcriptBody.textContent = '';
+        }
+        if (timerText) timerText.textContent = fmtTime(0);
+        seconds = 0;
+        // body 클래스 변경은 데모 redo 핸들러가 처리하도록 둠
+      }, true);
+    }
 
     // ── 확인(다음) 버튼 — 업로드 트리거 (capture phase로 데모 핸들러보다 먼저)
     if (confirmBtn){
@@ -256,24 +299,13 @@
         uploadAudio().then(function(url){
           if (url) console.log('[voice-runtime] saved audio:', url);
           // 다음 질문 진행은 voice.html 데모 로직이 그대로 처리
+          // 다음 질문을 위한 상태 초기화
+          audioChunks = [];
+          baseFinal = '';
+          lastFullFinal = '';
+          lastUploadedUrl = null;
+          seconds = 0;
         });
-      }, true);
-    }
-    // ── 다시 답하기 — chunks 초기화
-    if (redoBtn){
-      redoBtn.addEventListener('click', function(){
-        audioChunks = [];
-        baseFinal = '';
-        lastFullFinal = '';
-        lastUploadedUrl = null;
-      }, true);
-    }
-    if (continueBtn){
-      continueBtn.addEventListener('click', function(){
-        audioChunks = [];
-        baseFinal = '';
-        lastFullFinal = '';
-        lastUploadedUrl = null;
       }, true);
     }
 

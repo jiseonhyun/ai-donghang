@@ -1747,6 +1747,35 @@
   maybeRedirect();
   window.addEventListener('hashchange', maybeRedirect);
 })();
+
+// ── nav 로그인 상태 표시 — localStorage 'aiDonghang_profile'에 사용자 이름 있으면 "로그인" → "○○○님"으로 ──
+// 비로그인: "로그인 / 회원가입" 그대로
+// 로그인:   "○○○님" (→ 마이페이지) / 회원가입 숨김
+function updateNavAuthState(){
+  var profile = {};
+  try { profile = JSON.parse(localStorage.getItem('aiDonghang_profile') || '{}'); } catch(e){}
+  var loggedIn = !!(profile && profile.name);
+  document.querySelectorAll('[data-auth-cta]').forEach(function(el){
+    var role = el.getAttribute('data-auth-cta');
+    if(loggedIn){
+      if(role === 'login'){ el.textContent = profile.name + '님'; el.setAttribute('href','/#mypage'); }
+      if(role === 'signup'){ el.style.display = 'none'; }
+    } else {
+      if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/#auth'); }
+      if(role === 'signup'){ el.textContent = '회원가입'; el.setAttribute('href','/#auth'); el.style.display = ''; }
+    }
+  });
+}
+// DOM 준비되면 즉시 1회 실행
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', updateNavAuthState);
+} else {
+  updateNavAuthState();
+}
+// 다른 탭에서 로그인/로그아웃 시에도 자동 갱신
+window.addEventListener('storage', function(e){
+  if(e.key === 'aiDonghang_profile') updateNavAuthState();
+});
 </script>
 </head>
 <body>
@@ -1767,7 +1796,8 @@
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <a href="/#auth" class="login">로그인</a>
+    <a href="/#auth" class="login" data-auth-cta="login">로그인</a>
+    <a href="/#auth" class="login signup" data-auth-cta="signup">회원가입</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
       <span class="bars" aria-hidden="true"><span></span></span>
@@ -1794,7 +1824,8 @@
       <li><a href="/#faq">고객센터</a></li>
     </ul>
     <div class="nav-drawer-foot">
-      <a href="/#auth" class="login">로그인</a>
+      <a href="/#auth" class="login" data-auth-cta="login">로그인</a>
+      <a href="/#auth" class="login signup" data-auth-cta="signup">회원가입</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>
   </aside>

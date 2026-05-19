@@ -48,9 +48,11 @@
     var continueBtn = document.getElementById('continue-btn');
     var pauseBtn = document.getElementById('pause-btn');
 
-    // 데모의 setTimeout 기반 가짜 전사 체인(DEMO_WORDS — '어릴 적에는' 등)이
-    // pause/continue 버튼에서도 fire 되어 transcript-body에 깜빡임을 일으킴.
-    // mic-btn처럼 clone으로 데모 listener를 완전히 떼고 내 핸들러만 부착.
+    // 데모의 가짜 전사 체인(setRecording → tickHandle setInterval, DEMO_TRANSCRIPT)이
+    // mic/pause/continue/redo 어느 버튼에서든 fire 되면 closure 내부 tickHandle을
+    // 외부에서 멈출 수 없어 매 초 가짜 단어가 transcriptBody에 끼어 깜빡임을 만든다.
+    // 안전한 유일한 길은 setRecording을 호출할 수 있는 모든 버튼을 cloneNode 로
+    // 떼버려서 데모 listener를 완전히 제거하는 것.
     function takeOver(el){
       if (!el) return null;
       var fresh = el.cloneNode(true);
@@ -59,6 +61,7 @@
     }
     pauseBtn = takeOver(pauseBtn);
     continueBtn = takeOver(continueBtn);
+    redoBtn = takeOver(redoBtn);   // setRecording(false)로 typewriter 시작 → 제거
 
     var mediaRec = null, audioChunks = [], mimeType = '';
     var speechRec = null, baseFinal = '', lastFinalIdx = -1, lastFullFinal = '';
@@ -291,19 +294,28 @@
     }
 
     // ── 다시 답하기 — 전부 폐기하고 idle UI 로
+    //    데모 redo 핸들러를 clone으로 제거했으므로 body 클래스/placeholder 까지 직접 복구
     if (redoBtn){
       redoBtn.addEventListener('click', function(){
+        // 진행 중 녹음이 남아있으면 정지 + 자원 해제
+        srIntent = false;
+        clearInterval(secTimer);
+        try { if (speechRec) speechRec.stop(); } catch(e){}
+        try { if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop(); } catch(e){}
+        if (mediaRec && mediaRec.stream){
+          try { mediaRec.stream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
+        }
         audioChunks = [];
         baseFinal = '';
         lastFullFinal = '';
         lastUploadedUrl = null;
-        if (transcriptBody){
-          transcriptBody.textContent = '';
-        }
-        if (timerText) timerText.textContent = fmtTime(0);
         seconds = 0;
-        // body 클래스 변경은 데모 redo 핸들러가 처리하도록 둠
-      }, true);
+        if (timerText) timerText.textContent = fmtTime(0);
+        if (transcriptBody){
+          transcriptBody.innerHTML = '<span class="ph">말씀하시면 여기에 글자로 옮겨 드립니다.</span>';
+        }
+        body.classList.remove('is-recording', 'is-reviewing');
+      });
     }
 
     // ── 확인(다음) 버튼 — 업로드 트리거 (capture phase로 데모 핸들러보다 먼저)

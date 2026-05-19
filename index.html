@@ -1712,6 +1712,17 @@
 
 </style>
 <script>
+// ── 카카오 OAuth 콜백 도착 처리 — /?code=XXX 또는 /?error=XXX 가 보이면 ai-donghang.html로 위임 ──
+// 카카오 콘솔의 Redirect URI 가 https://aitogether.co.kr/ (= origin + '/') 로 등록되어 있어
+// 카카오는 항상 / 경로로 돌려보냄. 실제 처리(handleKakaoCallback)는 ai-donghang.html에 있으므로
+// 쿼리/해시를 그대로 보존하며 즉시 redirect.
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('code') || params.get('error')){
+    location.replace('/ai-donghang.html' + window.location.search + window.location.hash);
+  }
+})();
+
 // ── SPA 해시 라우터 — 새로고침/북마크 + 같은 페이지 내 클릭 모두 대응 ──
 // /#builder 등 SPA 해시가 보이면 ai-donghang.html로 위임. ai-donghang.html은 로드 직후 URL을
 // 다시 / 로 재작성하므로, 사용자가 보는 주소창은 결국 깔끔하게 / + 해시만 남는다.

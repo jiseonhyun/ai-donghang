@@ -7603,10 +7603,11 @@ function authKakao(){
   // Kakao SDK 2.x: Auth.login 제거됨 → Auth.authorize 사용 (redirect 흐름)
   // 카카오 인증 후 redirectUri로 ?code=XXX 가 붙어 돌아옴. handleKakaoCallback()이 처리.
   try{
-    // redirectUri는 카카오 Developers에 등록된 값과 정확히 일치해야 함.
-    // URL 정리 스크립트가 pathname을 '/'로 바꾸기 전에 직접 '/ai-donghang.html'로 명시.
+    // redirectUri는 카카오 Developers에 등록된 값과 정확히 일치해야 함 (= origin + '/').
+    // 3f58ad7 commit 기준 콘솔 등록값이 https://aitogether.co.kr/ 임.
+    // 카카오에서 /?code=XXX 로 돌아오면 index.html이 ai-donghang.html?code=XXX 로 redirect (index.html IIFE).
     Kakao.Auth.authorize({
-      redirectUri: window.location.origin + '/ai-donghang.html'
+      redirectUri: window.location.origin + '/'
     });
   }catch(e){
     console.error('Kakao authorize 오류:', e);
@@ -7626,8 +7627,8 @@ async function handleKakaoCallback(){
   if(!code) return;
   // 카카오 콜백 도착 — auth view를 띄워서 환영 모달이 보이게 함
   if(typeof showView === 'function') showView('auth');
-  // redirectUri는 authKakao()와 동일해야 함 (카카오가 검증)
-  var redirectUri = window.location.origin + '/ai-donghang.html';
+  // redirectUri는 authKakao()와 동일해야 함 (카카오가 토큰 교환 시 검증)
+  var redirectUri = window.location.origin + '/';
   // ?code 제거 (재로드 시 중복 처리 방지). pathname은 '/'로 정리.
   history.replaceState({}, '', '/' + window.location.hash);
   try{

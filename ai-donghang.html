@@ -27,9 +27,12 @@
 
 // ── URL 정리: 주소창에서 /ai-donghang.html 숨김 ──
 // 새로고침/북마크에도 호환되도록 index.html이 SPA 해시를 받으면 여기로 redirect 후 본 스크립트가 URL을 다시 / 로 재작성한다.
+// 단 카카오 OAuth 콜백 (?code= 또는 ?error=)이 있으면 SKIP — handleKakaoCallback이 ?code를 읽어야 하므로 URL 그대로 유지.
 (function(){
   var p = location.pathname;
   if(p.endsWith('/ai-donghang.html')){
+    var params = new URLSearchParams(location.search);
+    if(params.has('code') || params.has('error')) return;
     var newPath = p.replace(/\/ai-donghang\.html$/, '/');
     history.replaceState(null, '', newPath + location.search + location.hash);
   }
@@ -7600,8 +7603,10 @@ function authKakao(){
   // Kakao SDK 2.x: Auth.login 제거됨 → Auth.authorize 사용 (redirect 흐름)
   // 카카오 인증 후 redirectUri로 ?code=XXX 가 붙어 돌아옴. handleKakaoCallback()이 처리.
   try{
+    // redirectUri는 카카오 Developers에 등록된 값과 정확히 일치해야 함.
+    // URL 정리 스크립트가 pathname을 '/'로 바꾸기 전에 직접 '/ai-donghang.html'로 명시.
     Kakao.Auth.authorize({
-      redirectUri: window.location.origin + window.location.pathname,
+      redirectUri: window.location.origin + '/ai-donghang.html',
       scope: 'profile_nickname'
     });
   }catch(e){
@@ -7616,12 +7621,16 @@ async function handleKakaoCallback(){
   var oauthError = params.get('error');
   if(oauthError === 'access_denied'){
     showToast('카카오 로그인을 취소하셨어요.');
-    history.replaceState({}, '', window.location.pathname + window.location.hash);
+    history.replaceState({}, '', '/' + window.location.hash);
     return;
   }
   if(!code) return;
-  var redirectUri = window.location.origin + window.location.pathname;
-  history.replaceState({}, '', window.location.pathname + window.location.hash);
+  // 카카오 콜백 도착 — auth view를 띄워서 환영 모달이 보이게 함
+  if(typeof showView === 'function') showView('auth');
+  // redirectUri는 authKakao()와 동일해야 함 (카카오가 검증)
+  var redirectUri = window.location.origin + '/ai-donghang.html';
+  // ?code 제거 (재로드 시 중복 처리 방지). pathname은 '/'로 정리.
+  history.replaceState({}, '', '/' + window.location.hash);
   try{
     var tokenRes = await fetch('https://kauth.kakao.com/oauth/token', {
       method: 'POST',

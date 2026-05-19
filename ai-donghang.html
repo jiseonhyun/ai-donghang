@@ -7606,8 +7606,7 @@ function authKakao(){
     // redirectUri는 카카오 Developers에 등록된 값과 정확히 일치해야 함.
     // URL 정리 스크립트가 pathname을 '/'로 바꾸기 전에 직접 '/ai-donghang.html'로 명시.
     Kakao.Auth.authorize({
-      redirectUri: window.location.origin + '/ai-donghang.html',
-      scope: 'profile_nickname'
+      redirectUri: window.location.origin + '/ai-donghang.html'
     });
   }catch(e){
     console.error('Kakao authorize 오류:', e);

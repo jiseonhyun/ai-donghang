@@ -7653,49 +7653,46 @@ async function handleKakaoCallback(){
       return;
     }
     Kakao.Auth.setAccessToken(tokenData.access_token);
-    Kakao.API.request({
-      url: '/v2/user/me',
-      success: function(res){
-        var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
-          || (res.properties && res.properties.nickname)
-          || '카카오 사용자';
-        var isNew = !localStorage.getItem('aiDonghang_profile') ||
-                    !JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name;
-        userProfile = {
-          name: kakaoName,
-          phone: '',
-          plan: 'free',
-          kakaoId: res.id,
-          loginType: 'kakao'
-        };
-        localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-        if(db){
-          (async function(){
-            try{
-              var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
-              if(!exist.data){
-                var ki = await db.from('Users').insert([{
-                  name: kakaoName,
-                  kakao_id: String(res.id),
-                  plan: 'free',
-                  created_at: new Date().toISOString()
-                }]).select();
-                if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
-              } else {
-                userProfile.id = exist.data.id;
-              }
-              localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-            }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
-          })();
-        }
-        showAuthSuccess(kakaoName, isNew);
-      },
-      fail: function(err){
-        console.warn('카카오 user/me 호출 실패:', err);
-        userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
-        localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
-        showAuthSuccess('카카오 사용자', true);
+    // Kakao SDK 2.x: API.request는 Promise 방식 (옛 success/fail 콜백 지원 안 함)
+    Kakao.API.request({ url: '/v2/user/me' }).then(function(res){
+      var kakaoName = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
+        || (res.properties && res.properties.nickname)
+        || '카카오 사용자';
+      var isNew = !localStorage.getItem('aiDonghang_profile') ||
+                  !JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name;
+      userProfile = {
+        name: kakaoName,
+        phone: '',
+        plan: 'free',
+        kakaoId: res.id,
+        loginType: 'kakao'
+      };
+      localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+      if(db){
+        (async function(){
+          try{
+            var exist = await db.from('Users').select('id').eq('kakao_id', String(res.id)).maybeSingle();
+            if(!exist.data){
+              var ki = await db.from('Users').insert([{
+                name: kakaoName,
+                kakao_id: String(res.id),
+                plan: 'free',
+                created_at: new Date().toISOString()
+              }]).select();
+              if(ki.data && ki.data[0]) userProfile.id = ki.data[0].id;
+            } else {
+              userProfile.id = exist.data.id;
+            }
+            localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+          }catch(e){ console.warn('카카오 Supabase 저장 오류:', e); }
+        })();
       }
+      showAuthSuccess(kakaoName, isNew);
+    }).catch(function(err){
+      console.warn('카카오 user/me 호출 실패:', err);
+      userProfile = {name:'카카오 사용자', phone:'', plan:'free', loginType:'kakao'};
+      localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile));
+      showAuthSuccess('카카오 사용자', true);
     });
   }catch(e){
     console.error('카카오 OAuth 처리 오류:', e);

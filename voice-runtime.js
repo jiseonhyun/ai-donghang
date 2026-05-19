@@ -31,6 +31,121 @@
     setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 5000);
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // 동동이 페르소나 — ai-donghang.html _autobioBuildSystemPrompt 포팅.
+  // 6단계 점진 심화 + 5-7회 마무리 + [INTERVIEW_END] 토큰.
+  // ─────────────────────────────────────────────────────────────
+  function buildSystemPrompt(sessionNumber, chapterTitle){
+    var name = '';
+    try { name = (JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}').name) || ''; }
+    catch(e){}
+    if (!name) name = '어르신';
+    return [
+      '당신은 어르신 자서전 작가 동동이입니다.',
+      '지금 ' + name + '님과 ' + (sessionNumber || 1) + '회차 인터뷰를 진행하고 있습니다.',
+      '오늘의 주제: ' + (chapterTitle || '어린 시절의 풍경'),
+      '',
+      '【인터뷰 원칙】',
+      '1. 한 번에 한 가지 질문만 (절대 2개 이상 X)',
+      '2. ' + name + '님 답변에서 가장 인상적인 한 가지를 더 깊이 파고드세요',
+      '3. 6단계 점진 심화: 장면(어떤 모습) → 감각(소리·냄새) → 사람(누가 함께) → 사건(어떤 일) → 감정(어떤 마음) → 의미(지금 돌아보면)',
+      '4. 5-7번 질문 후 자연스럽게 "오늘은 여기까지 어떠세요?" 같이 마무리 제안',
+      '5. ' + name + '님이 마무리에 동의하면 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰을 출력하세요',
+      '',
+      '【어르신 친화 언어】',
+      '- 존댓말, ' + name + '님 호칭 사용',
+      '- 한 문장은 30자 이내, 짧고 명확하게',
+      '- 한자어보다 순우리말',
+      '- "혹시 기억나시는 게 있나요?" 같은 부드러운 표현',
+      '- 답변이 짧아도 강요하지 말고, 다른 각도로 다시 묻기',
+      '',
+      '【절대 하지 말 것】',
+      '- 복잡한 단어, 외래어',
+      '- 한 번에 2개 이상 질문',
+      '- 사실 확인 강요 ("정확히 몇 년도였나요?" X)',
+      '- 정치·종교 같은 민감 주제 (' + name + '님이 먼저 꺼내면 OK)',
+      '',
+      '【출력 형식】',
+      '- 인터뷰 중: 다음 질문 한 줄만 (앞말·인사 없이 바로 질문, 줄바꿈 1-2줄 OK)',
+      '- 마무리 시점: 부드러운 마무리 제안',
+      '- 종료 시: 따뜻한 마지막 말 후 마지막 줄에 [INTERVIEW_END] 토큰'
+    ].join('\n');
+  }
+
+  // Claude API 호출 — 우선 Supabase Edge Function (ai-chat) 사용,
+  // 실패 시 사용자가 설정한 직접 API 키(aiDonghang_claudeKey)로 fallback.
+  // ai-chat는 single-turn이라 대화 이력을 prompt에 직렬화해서 넘김.
+  function callClaudeAdaptive(messages, systemPrompt){
+    return new Promise(function(resolve){
+      var concatenated = messages.map(function(m){
+        var role = (m.role === 'user') ? '어르신' : '동동이';
+        return '[' + role + '] ' + m.content;
+      }).join('\n');
+      var prompt =
+        '【지금까지의 대화】\n' + concatenated +
+        '\n\n【지시】 위 마지막 어르신 답변을 잘 듣고, 시스템 프롬프트 규칙대로 다음 질문 한 줄(필요시 1-2줄)만 출력하세요. ' +
+        '5-7회차에 도달했거나 어르신이 지친 신호가 보이면 마무리 제안을 하고, 어르신이 동의하면 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰을 넣어주세요.';
+
+      // 1) Supabase Edge Function 우선
+      fetch(SUPABASE_URL + '/functions/v1/ai-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'apikey': SUPABASE_KEY
+        },
+        body: JSON.stringify({ prompt: prompt, systemPrompt: systemPrompt, maxTokens: 600 })
+      }).then(function(res){
+        if (res.ok) return res.json().then(function(d){ resolve((d && d.result) || ''); });
+        // 함수 미배포(404) 또는 오류 → fallback
+        tryDirectAnthropic();
+      }).catch(function(){
+        tryDirectAnthropic();
+      });
+
+      function tryDirectAnthropic(){
+        var apiKey = '';
+        try { apiKey = localStorage.getItem('aiDonghang_claudeKey') || ''; } catch(e){}
+        if (!apiKey){
+          console.warn('[voice-runtime] Claude 사용 불가: ai-chat 미배포 + aiDonghang_claudeKey 미설정');
+          resolve(null);
+          return;
+        }
+        fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 600,
+            system: systemPrompt,
+            messages: messages
+          })
+        }).then(function(res){
+          if (!res.ok) { resolve(null); return; }
+          return res.json().then(function(d){
+            var txt = (d && d.content || []).map(function(b){ return b.text || ''; }).join('').trim();
+            resolve(txt || null);
+          });
+        }).catch(function(){ resolve(null); });
+      }
+    });
+  }
+
+  // 대화 이력 localStorage — 페이지 리로드 시 복원
+  var MSG_KEY = 'aiDonghang_voiceMessages';
+  function loadMessages(){
+    try { return JSON.parse(localStorage.getItem(MSG_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveMessages(msgs){
+    try { localStorage.setItem(MSG_KEY, JSON.stringify(msgs)); } catch(e){}
+  }
+
   window.__voiceInit = function(){
     var micBtn = document.getElementById('mic-btn');
     if (!micBtn) { console.warn('[voice-runtime] mic-btn not found — bundle DOM may differ'); return; }
@@ -62,12 +177,52 @@
     pauseBtn = takeOver(pauseBtn);
     continueBtn = takeOver(continueBtn);
     redoBtn = takeOver(redoBtn);   // setRecording(false)로 typewriter 시작 → 제거
+    // confirmBtn 도 clone — 데모의 "다음 질문 시뮬레이션" 토스트와 내 진짜 진행 흐름이
+    // 경쟁하지 않도록 완전 인수. 진행 UI(processing 상태)는 내가 직접 처리.
+    confirmBtn = takeOver(confirmBtn);
 
     var mediaRec = null, audioChunks = [], mimeType = '';
     var speechRec = null, baseFinal = '', lastFinalIdx = -1, lastFullFinal = '';
     var srIntent = false, srRestarts = [];
     var secTimer = null, seconds = 0;
     var lastUploadedUrl = null;
+    var messages = loadMessages();       // 누적 대화 이력 (Claude messages 형식)
+    var interviewEnded = false;          // [INTERVIEW_END] 토큰 도달 후 잠금
+
+    // 질문 영역 DOM
+    var questionTextEl = document.querySelector('.question-text');
+    var questionEyebrowEl = document.querySelector('.question-eyebrow');
+    var progressTextEl = document.querySelector('.progress-text');
+
+    // 마지막 동동이 메시지(또는 voice.html 초기 질문)를 화면에 그림
+    function renderCurrentQuestion(){
+      var assistantTurns = messages.filter(function(m){ return m.role === 'assistant'; });
+      var current;
+      if (assistantTurns.length){
+        // [INTERVIEW_END] 토큰을 제거하고 표시
+        current = assistantTurns[assistantTurns.length-1].content.replace(/\[INTERVIEW_END\]\s*$/,'').trim();
+      } else if (questionTextEl){
+        // 첫 진입 — voice.html 데모의 초기 질문을 그대로 첫 질문으로 채택
+        // innerText는 <br>을 \n으로 보존; textContent는 붙여버려서 의미 깨짐
+        current = (questionTextEl.innerText || questionTextEl.textContent || '').trim();
+        // 첫 질문을 assistant 메시지로 저장 (이후 대화 컨텍스트에 포함)
+        if (current){
+          messages.push({ role: 'assistant', content: current, at: new Date().toISOString() });
+          saveMessages(messages);
+        }
+      }
+      if (questionTextEl && current){
+        // <br>로 줄바꿈 처리 (질문에 \n 있으면 시각적으로 두 줄)
+        questionTextEl.innerHTML = current.split('\n').map(function(s){
+          return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }).join('<br>');
+      }
+      // 진행 표시: 답변 횟수 기준 (사용자 메시지 + 1)
+      var userTurns = messages.filter(function(m){ return m.role === 'user'; }).length;
+      var qN = userTurns + 1;
+      if (progressTextEl) progressTextEl.textContent = '질문 ' + qN;
+    }
+    renderCurrentQuestion();
 
     function setTranscriptText(txt){
       if (!transcriptBody) return;
@@ -318,22 +473,112 @@
       });
     }
 
-    // ── 확인(다음) 버튼 — 업로드 트리거 (capture phase로 데모 핸들러보다 먼저)
+    // ── 확인(다음) 버튼 — 업로드 + Claude 적응형 다음 질문 생성 + UI 진행
+    function setProcessing(on){
+      if (!confirmBtn) return;
+      confirmBtn.disabled = !!on;
+      var label = confirmBtn.querySelector('span');
+      if (label) label.textContent = on ? '동동이가 듣고 있어요…' : '좋습니다, 다음으로';
+    }
+    function showInterviewEnd(closingWord){
+      interviewEnded = true;
+      var cleaned = (closingWord || '').replace(/\[INTERVIEW_END\]\s*$/,'').trim();
+      if (questionEyebrowEl) questionEyebrowEl.textContent = '오늘은 여기까지';
+      if (questionTextEl){
+        questionTextEl.innerHTML = (cleaned || '오늘 들려주신 이야기, 정성껏 잘 담아 두었어요.')
+          .split('\n').map(function(s){
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          }).join('<br>');
+      }
+      // 다음 단계 안내 — 작품함/홈으로 돌아가기
+      if (confirmBtn){
+        confirmBtn.disabled = false;
+        var span = confirmBtn.querySelector('span');
+        if (span) span.textContent = '홈으로 돌아가기';
+        confirmBtn.onclick = function(){ location.href = '/'; };
+      }
+      toast('오늘의 이야기 한 회차가 완성됐어요 🌿');
+    }
     if (confirmBtn){
       confirmBtn.addEventListener('click', function(){
-        uploadAudio().then(function(url){
-          if (url) console.log('[voice-runtime] saved audio:', url);
-          // 다음 질문 진행은 voice.html 데모 로직이 그대로 처리
-          // 다음 질문을 위한 상태 초기화
+        if (interviewEnded) return;
+        if (!baseFinal && !audioChunks.length){
+          toast('아직 답변이 비어 있어요. 마이크 버튼을 눌러 한 말씀 들려주세요 🙏');
+          return;
+        }
+        setProcessing(true);
+        // 1) 어르신 답변 메시지에 추가 (audio_url 은 업로드 후 채움)
+        var userMsg = {
+          role: 'user',
+          content: baseFinal || '(음성만 기록됨)',
+          at: new Date().toISOString()
+        };
+        messages.push(userMsg);
+        saveMessages(messages);
+
+        // 2) 오디오 업로드 (비동기 — Claude 호출과 병렬)
+        var uploadP = uploadAudio().then(function(url){
+          if (url){
+            userMsg.audio_url = url;
+            saveMessages(messages);
+          }
+          return url;
+        });
+
+        // 3) Claude 적응형 다음 질문 호출
+        var sessionN = 1;
+        var systemPrompt = buildSystemPrompt(sessionN, '어린 시절의 풍경');
+        var apiMessages = messages.map(function(m){ return { role: m.role, content: m.content }; });
+        var claudeP = callClaudeAdaptive(apiMessages, systemPrompt);
+
+        Promise.all([uploadP, claudeP]).then(function(arr){
+          var nextQ = arr[1];
+          if (!nextQ){
+            toast('동동이가 잠시 멍해졌어요. 잠깐 후 다시 눌러주세요 🙏');
+            setProcessing(false);
+            // 실패 시 마지막 user 메시지 롤백 (다시 보내기 위해)
+            messages.pop();
+            saveMessages(messages);
+            return;
+          }
+          // 4) 다음 질문 저장
+          messages.push({ role: 'assistant', content: nextQ, at: new Date().toISOString() });
+          saveMessages(messages);
+
+          // 5) [INTERVIEW_END] 토큰 감지
+          if (/\[INTERVIEW_END\]/.test(nextQ)){
+            showInterviewEnd(nextQ);
+            return;
+          }
+
+          // 6) UI 갱신 — 다음 질문 표시 + idle 상태로
+          renderCurrentQuestion();
           audioChunks = [];
           baseFinal = '';
           lastFullFinal = '';
           lastUploadedUrl = null;
           seconds = 0;
+          if (timerText) timerText.textContent = fmtTime(0);
+          if (transcriptBody){
+            transcriptBody.innerHTML = '<span class="ph">말씀하시면 여기에 글자로 옮겨 드립니다.</span>';
+          }
+          body.classList.remove('is-recording', 'is-reviewing');
+          setProcessing(false);
+        }).catch(function(e){
+          console.warn('[voice-runtime] confirm flow', e);
+          toast('잠시 연결이 불안정해요. 잠깐 후 다시 시도해 주세요 🙏');
+          setProcessing(false);
         });
-      }, true);
+      });
     }
 
-    console.log('[voice-runtime] wired — mic/STT/Supabase ready');
+    // 첫 진입 시점에 [INTERVIEW_END] 가 마지막 assistant 메시지에 이미 있다면
+    // 이어서 새 회차로 가야 함 — 일단 종료 화면을 보여주는 게 안전
+    var lastAssist = messages.filter(function(m){ return m.role === 'assistant'; }).pop();
+    if (lastAssist && /\[INTERVIEW_END\]/.test(lastAssist.content)){
+      showInterviewEnd(lastAssist.content);
+    }
+
+    console.log('[voice-runtime] wired — mic/STT/Supabase + adaptive Claude ready (messages:', messages.length, ')');
   };
 })();

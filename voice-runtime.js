@@ -72,67 +72,37 @@
     ].join('\n');
   }
 
-  // Claude API 호출 — 우선 Supabase Edge Function (ai-chat) 사용,
-  // 실패 시 사용자가 설정한 직접 API 키(aiDonghang_claudeKey)로 fallback.
-  // ai-chat는 single-turn이라 대화 이력을 prompt에 직렬화해서 넘김.
+  // Claude API 호출 — Supabase Edge Function claude-proxy 사용.
+  // ai-donghang.html의 자서전 흐름이 이미 쓰고 있는 그 endpoint. multi-turn messages
+  // 그대로 지원, API 키는 함수 환경변수에만 살아 브라우저 노출 없음.
   function callClaudeAdaptive(messages, systemPrompt){
     return new Promise(function(resolve){
-      var concatenated = messages.map(function(m){
-        var role = (m.role === 'user') ? '어르신' : '동동이';
-        return '[' + role + '] ' + m.content;
-      }).join('\n');
-      var prompt =
-        '【지금까지의 대화】\n' + concatenated +
-        '\n\n【지시】 위 마지막 어르신 답변을 잘 듣고, 시스템 프롬프트 규칙대로 다음 질문 한 줄(필요시 1-2줄)만 출력하세요. ' +
-        '5-7회차에 도달했거나 어르신이 지친 신호가 보이면 마무리 제안을 하고, 어르신이 동의하면 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰을 넣어주세요.';
-
-      // 1) Supabase Edge Function 우선
-      fetch(SUPABASE_URL + '/functions/v1/ai-chat', {
+      fetch(SUPABASE_URL + '/functions/v1/claude-proxy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + SUPABASE_KEY,
           'apikey': SUPABASE_KEY
         },
-        body: JSON.stringify({ prompt: prompt, systemPrompt: systemPrompt, maxTokens: 600 })
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 600,
+          system: systemPrompt,
+          messages: messages
+        })
       }).then(function(res){
-        if (res.ok) return res.json().then(function(d){ resolve((d && d.result) || ''); });
-        // 함수 미배포(404) 또는 오류 → fallback
-        tryDirectAnthropic();
-      }).catch(function(){
-        tryDirectAnthropic();
-      });
-
-      function tryDirectAnthropic(){
-        var apiKey = '';
-        try { apiKey = localStorage.getItem('aiDonghang_claudeKey') || ''; } catch(e){}
-        if (!apiKey){
-          console.warn('[voice-runtime] Claude 사용 불가: ai-chat 미배포 + aiDonghang_claudeKey 미설정');
-          resolve(null);
-          return;
+        if (!res.ok){
+          res.text().then(function(t){ console.warn('[voice-runtime] claude-proxy fail', res.status, t); });
+          resolve(null); return;
         }
-        fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 600,
-            system: systemPrompt,
-            messages: messages
-          })
-        }).then(function(res){
-          if (!res.ok) { resolve(null); return; }
-          return res.json().then(function(d){
-            var txt = (d && d.content || []).map(function(b){ return b.text || ''; }).join('').trim();
-            resolve(txt || null);
-          });
-        }).catch(function(){ resolve(null); });
-      }
+        return res.json().then(function(d){
+          var txt = ((d && d.content) || []).map(function(b){ return b.text || ''; }).join('').trim();
+          resolve(txt || null);
+        });
+      }).catch(function(e){
+        console.warn('[voice-runtime] claude-proxy err', e);
+        resolve(null);
+      });
     });
   }
 

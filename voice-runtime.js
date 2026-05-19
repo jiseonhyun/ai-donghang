@@ -46,6 +46,19 @@
     var confirmBtn = document.getElementById('confirm-btn');
     var redoBtn = document.getElementById('redo-btn');
     var continueBtn = document.getElementById('continue-btn');
+    var pauseBtn = document.getElementById('pause-btn');
+
+    // 데모의 setTimeout 기반 가짜 전사 체인(DEMO_WORDS — '어릴 적에는' 등)이
+    // pause/continue 버튼에서도 fire 되어 transcript-body에 깜빡임을 일으킴.
+    // mic-btn처럼 clone으로 데모 listener를 완전히 떼고 내 핸들러만 부착.
+    function takeOver(el){
+      if (!el) return null;
+      var fresh = el.cloneNode(true);
+      el.parentNode.replaceChild(fresh, el);
+      return fresh;
+    }
+    pauseBtn = takeOver(pauseBtn);
+    continueBtn = takeOver(continueBtn);
 
     var mediaRec = null, audioChunks = [], mimeType = '';
     var speechRec = null, baseFinal = '', lastFinalIdx = -1, lastFullFinal = '';
@@ -267,14 +280,14 @@
     if (pauseBtn){
       pauseBtn.addEventListener('click', function(){
         if (body.classList.contains('is-recording')) stopRecording();
-      }, true);
+      });
     }
 
     // ── 이어서 말씀하기 — 기존 baseFinal/audioChunks 누적한 채로 재개 (append)
     if (continueBtn){
       continueBtn.addEventListener('click', function(){
         startRecording({ append: true });
-      }, true);
+      });
     }
 
     // ── 다시 답하기 — 전부 폐기하고 idle UI 로

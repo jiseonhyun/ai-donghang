@@ -1661,6 +1661,118 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   border-color:var(--ac);
   box-shadow:0 2px 8px rgba(42,95,82,.25);
 }
+
+/* ══ 동행 마당 (커뮤니티 v2) ══ */
+.madang-hero{background:linear-gradient(180deg,#fbf7ee 0%,var(--bg) 100%);padding:48px 40px 36px;border-bottom:1px solid var(--bd);}
+.madang-hero-inner{max-width:1180px;margin:0 auto;}
+.madang-eyebrow{font-family:'Noto Serif KR',serif;font-style:italic;font-size:14px;color:var(--i3);letter-spacing:.02em;margin-bottom:14px;}
+.madang-title{font-family:'Gowun Batang',serif;font-size:38px;font-weight:700;color:var(--ink);line-height:1.35;margin:0 0 12px;letter-spacing:-.01em;}
+.madang-subtitle{font-size:15px;color:var(--i3);line-height:1.85;max-width:680px;margin:0 0 28px;word-break:keep-all;}
+
+.madang-cta-card{display:flex;align-items:center;gap:16px;width:100%;max-width:680px;padding:16px 22px;background:#fff;border:1.5px solid var(--bd);border-radius:18px;text-align:left;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(28,26,23,.04);min-height:56px;}
+.madang-cta-card:hover{border-color:var(--ab);box-shadow:0 6px 24px rgba(42,95,82,.12);transform:translateY(-1px);}
+.madang-cta-avatar{width:44px;height:44px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;flex-shrink:0;}
+.madang-cta-text{flex:1;font-size:15px;color:var(--i2);line-height:1.5;}
+.madang-cta-text strong{color:var(--ink);font-weight:700;}
+.madang-cta-icons{display:flex;gap:8px;font-size:18px;}
+.madang-cta-icons span{width:34px;height:34px;border-radius:50%;background:var(--wm);display:flex;align-items:center;justify-content:center;}
+
+.madang-tabs-wrap{background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:64px;z-index:40;}
+.madang-tabs{max-width:1180px;margin:0 auto;padding:10px 40px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.madang-tabs::-webkit-scrollbar{display:none;}
+.madang-tab{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:transparent;border:1.5px solid transparent;border-radius:100px;color:var(--i3);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all .15s;min-height:40px;}
+.madang-tab:hover{background:var(--wm);color:var(--ink);}
+.madang-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.madang-tab.active .cnt{color:rgba(255,255,255,.7);}
+.madang-tab .cnt{font-size:12px;color:var(--i3);font-weight:600;}
+
+.madang-body{background:var(--bg);padding:32px 40px 80px;}
+.madang-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;}
+.madang-feed{display:flex;flex-direction:column;gap:18px;min-width:0;}
+
+.madang-card{background:#fff;border:1.5px solid var(--bd);border-radius:18px;padding:22px 24px;}
+.madang-side{display:flex;flex-direction:column;gap:16px;position:sticky;top:130px;}
+.madang-side-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;}
+.madang-side-head h3{font-family:'Gowun Batang',serif;font-size:17px;font-weight:700;color:var(--ink);margin:0;}
+.madang-side-head .rn{font-family:'Noto Serif KR',serif;font-style:italic;color:var(--i3);font-weight:400;margin-right:6px;}
+.madang-side-desc{font-size:13px;color:var(--i3);line-height:1.7;margin:0 0 12px;}
+
+.madang-authors{display:flex;flex-direction:column;gap:12px;}
+.madang-author-row{display:flex;align-items:center;gap:10px;}
+.madang-author-row .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;font-family:'Gowun Batang',serif;}
+.madang-author-row .meta{flex:1;min-width:0;}
+.madang-author-row .meta .nm{font-size:14px;font-weight:700;color:var(--ink);margin:0;line-height:1.3;}
+.madang-author-row .meta .sub{font-size:11px;color:var(--i3);margin:2px 0 0;line-height:1.5;}
+
+.madang-prompts{display:flex;flex-direction:column;gap:10px;}
+.madang-prompt{display:block;padding:12px 14px;background:var(--bg);border-radius:12px;cursor:pointer;font-size:13px;color:var(--i2);line-height:1.65;transition:all .15s;text-decoration:none;border:1px solid transparent;}
+.madang-prompt:hover{background:var(--wm);color:var(--ink);border-color:var(--bd);}
+.madang-prompt .rn{font-family:'Noto Serif KR',serif;font-style:italic;color:var(--ac);margin-right:6px;font-weight:600;}
+
+/* ── 마당 작품 카드 ── */
+.madang-post{background:#fff;border:1.5px solid var(--bd);border-radius:20px;padding:24px 26px;transition:border-color .15s;}
+.madang-post:hover{border-color:rgba(42,95,82,.25);}
+.madang-post.featured{border-color:var(--gb);background:linear-gradient(180deg,#fbf7ee 0%,#fff 80%);}
+.madang-post-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--gd);background:var(--gl);border:1px solid var(--gb);border-radius:100px;padding:4px 10px;margin-bottom:10px;}
+.madang-post-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.madang-post-head .av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0;font-family:'Gowun Batang',serif;}
+.madang-post-head .meta{flex:1;min-width:0;}
+.madang-post-head .meta .nm{font-size:15px;font-weight:700;color:var(--ink);margin:0;line-height:1.3;}
+.madang-post-head .meta .sub{font-size:12px;color:var(--i3);margin:3px 0 0;line-height:1.4;}
+.madang-post-title{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.4;margin:0 0 12px;}
+.madang-post-body{font-size:15px;color:var(--i2);line-height:1.95;margin-bottom:14px;white-space:pre-wrap;word-break:keep-all;}
+.madang-post-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.madang-post-tags .tag{font-size:12px;color:var(--ac);background:var(--al);padding:4px 10px;border-radius:100px;font-weight:600;}
+.madang-post-react-summary{display:flex;align-items:center;justify-content:space-between;padding:10px 0 12px;border-bottom:1px solid var(--bd);font-size:12.5px;color:var(--i3);margin-bottom:6px;gap:10px;}
+.madang-post-react-summary .left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;}
+.madang-post-react-summary .emos{display:inline-flex;flex-shrink:0;}
+.madang-post-react-summary .emos span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--wm);border:1.5px solid #fff;margin-left:-4px;font-size:11px;}
+.madang-post-react-summary .emos span:first-child{margin-left:0;}
+.madang-post-react-summary .sumtxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.madang-post-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.madang-act{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;background:transparent;border:none;border-radius:100px;color:var(--i2);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;min-height:42px;}
+.madang-act:hover{background:var(--wm);color:var(--ink);}
+.madang-act.active{background:var(--al);color:var(--ac);}
+.madang-act .cnt{font-weight:700;}
+
+.madang-comments{margin-top:14px;padding-top:14px;border-top:1px dashed var(--bd);display:flex;flex-direction:column;gap:10px;}
+.madang-comment{display:flex;gap:10px;}
+.madang-comment .av{width:30px;height:30px;border-radius:50%;background:var(--wm);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--i2);flex-shrink:0;font-family:'Gowun Batang',serif;font-weight:600;}
+.madang-comment .bod{flex:1;min-width:0;}
+.madang-comment .bod .nm{font-size:13px;font-weight:700;color:var(--ink);margin:0;line-height:1.3;}
+.madang-comment .bod .txt{font-size:14px;color:var(--i2);margin:3px 0 0;line-height:1.7;word-break:keep-all;}
+.madang-comment-input{display:flex;gap:8px;align-items:center;padding-top:4px;}
+.madang-comment-input .av{width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;font-family:'Gowun Batang',serif;}
+.madang-comment-input input{flex:1;padding:10px 14px;background:var(--bg);border:1.5px solid transparent;border-radius:100px;font-size:14px;font-family:inherit;outline:none;color:var(--ink);min-height:42px;min-width:0;}
+.madang-comment-input input:focus{border-color:var(--ab);background:#fff;}
+.madang-comment-input button{padding:9px 16px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:42px;flex-shrink:0;}
+
+.madang-more-wrap{text-align:center;margin-top:26px;}
+.madang-more{padding:14px 32px;background:#fff;border:1.5px solid var(--bd);border-radius:100px;font-size:14px;font-weight:700;color:var(--i2);cursor:pointer;font-family:inherit;min-height:48px;}
+.madang-more:hover{border-color:var(--ab);color:var(--ac);}
+
+.madang-empty{text-align:center;padding:60px 20px;color:var(--i3);font-size:15px;line-height:1.8;background:#fff;border:1.5px dashed var(--bd);border-radius:18px;}
+
+@media(max-width:900px){
+  .madang-grid{grid-template-columns:1fr;}
+  .madang-side{position:static;}
+}
+@media(max-width:640px){
+  .madang-hero{padding:32px 20px 28px;}
+  .madang-title{font-size:26px;}
+  .madang-subtitle{font-size:14px;margin-bottom:22px;}
+  .madang-cta-card{padding:14px 16px;gap:12px;}
+  .madang-cta-icons{display:none;}
+  .madang-tabs{padding:8px 16px;}
+  .madang-body{padding:20px 16px 80px;}
+  .madang-post{padding:20px 18px;}
+  .madang-post-title{font-size:19px;}
+  .madang-post-body{font-size:14.5px;line-height:1.85;}
+  .madang-post-actions{gap:2px;}
+  .madang-act{padding:9px 11px;font-size:13px;}
+  .madang-side{gap:12px;}
+  .madang-card{padding:18px 20px;}
+}
 /* ── 자서전 v3 — 8주 인터뷰 시스템 (어르신 친화) ── */
 .autobio-wrap{max-width:520px;margin:0 auto;padding:18px 18px 60px;}
 .autobio-step{animation:autobioFadeIn .25s ease-out;}
@@ -2907,47 +3019,67 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 </div>
 </div>
 
-<!-- ══ 커뮤니티 ══ -->
+<!-- ══ 동행 마당 (커뮤니티) ══ -->
 <div class="view" id="communityView">
 
-<div style="background:linear-gradient(135deg,var(--ad),#1a5c48);padding:32px 40px 24px;">
-  <div style="max-width:860px;margin:0 auto;">
-    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">AI 동행 커뮤니티 💬</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;">우리들의 AI 작품 모음</div>
-    <div style="font-size:15px;color:rgba(255,255,255,.75);">어르신들이 AI로 직접 만든 작품이에요. 응원하고 이야기 나눠요 💕</div>
+<!-- 마당 헤더 -->
+<section class="madang-hero">
+  <div class="madang-hero-inner">
+    <div class="madang-eyebrow">vii. 동행 마당</div>
+    <h1 class="madang-title">오늘도, 함께 모인 작품들.</h1>
+    <p class="madang-subtitle">전국의 어머니·아버지들이 만드신 작품을 한자리에 모았습니다. 마음에 드시면 박수 보내 주시고, 짧은 한마디 남겨 주세요. 어머니 작품도 자랑해 보세요.</p>
+    <button class="madang-cta-card" onclick="openUploadWork()" type="button">
+      <div class="madang-cta-avatar" id="madangCtaAvatar">동</div>
+      <div class="madang-cta-text"><strong id="madangCtaName">손님,</strong> 오늘은 어떤 작품을 자랑해 볼까요?</div>
+      <div class="madang-cta-icons" aria-hidden="true">
+        <span title="글">✍️</span>
+        <span title="그림">🎨</span>
+        <span title="노래">🎵</span>
+        <span title="자서전">📖</span>
+      </div>
+    </button>
+  </div>
+</section>
+
+<!-- 마당 필터 탭 -->
+<div class="madang-tabs-wrap">
+  <div class="madang-tabs" role="tablist" aria-label="동행 마당 필터">
+    <button class="madang-tab active" type="button" onclick="filterComm('all',this)" data-cat="all">전체 <span class="cnt" id="cnt-all">0</span></button>
+    <button class="madang-tab" type="button" onclick="filterComm('today',this)" data-cat="today">오늘의 작품 <span class="cnt" id="cnt-today">0</span></button>
+    <button class="madang-tab" type="button" onclick="filterComm('writing',this)" data-cat="writing">글 <span class="cnt" id="cnt-writing">0</span></button>
+    <button class="madang-tab" type="button" onclick="filterComm('image',this)" data-cat="image">그림 <span class="cnt" id="cnt-image">0</span></button>
+    <button class="madang-tab" type="button" onclick="filterComm('music',this)" data-cat="music">노래 <span class="cnt" id="cnt-music">0</span></button>
+    <button class="madang-tab" type="button" onclick="filterComm('daily',this)" data-cat="daily">일상 <span class="cnt" id="cnt-daily">0</span></button>
   </div>
 </div>
 
-<!-- 오늘의 작품 -->
-<div style="background:#fff;border-bottom:1px solid var(--bd);padding:20px 40px;">
-  <div style="max-width:860px;margin:0 auto;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-      <span style="font-size:18px;">✨</span>
-      <span style="font-size:15px;font-weight:800;color:var(--ink);">오늘의 작품</span>
-      <span style="font-size:12px;color:var(--i3);" id="todayDate"></span>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" id="todayPickCards"></div>
-  </div>
-</div>
+<!-- 본문: 피드 + 사이드 -->
+<section class="madang-body">
+  <div class="madang-grid">
+    <main class="madang-feed">
+      <div id="commFeed" style="display:flex;flex-direction:column;gap:18px;"></div>
+      <div class="madang-more-wrap">
+        <button id="madangMoreBtn" class="madang-more" type="button" onclick="loadMoreCommunity()" style="display:none;">작품 더 보기</button>
+      </div>
+    </main>
 
-<!-- 필터 + 업로드 버튼 -->
-<div style="background:#fff;border-bottom:2px solid var(--bd);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:64px;z-index:50;">
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button class="comm-filter active" onclick="filterComm('all',this)">전체</button>
-    <button class="comm-filter" onclick="filterComm('writing',this)">✍️ 글쓰기</button>
-    <button class="comm-filter" onclick="filterComm('image',this)">🎨 이미지</button>
-    <button class="comm-filter" onclick="filterComm('music',this)">🎵 음악</button>
-    <button class="comm-filter" onclick="filterComm('daily',this)">📱 일상</button>
+    <aside class="madang-side" aria-label="사이드 정보">
+      <div class="madang-card">
+        <div class="madang-side-head"><h3><span class="rn">i.</span>이주의 작가</h3></div>
+        <div id="madangAuthors" class="madang-authors"></div>
+      </div>
+      <div class="madang-card">
+        <div class="madang-side-head"><h3><span class="rn">ii.</span>오늘의 글감</h3></div>
+        <p class="madang-side-desc">아래 질문 중 하나를 골라 글을 시작해 보세요.</p>
+        <div class="madang-prompts">
+          <a class="madang-prompt" onclick="startBuilderFromPrompt('올봄 가장 먼저 마음에 들어온 풍경은 무엇이었나요?')"><span class="rn">i.</span>올봄 가장 먼저 마음에 들어온 풍경은 무엇이었나요?</a>
+          <a class="madang-prompt" onclick="startBuilderFromPrompt('어머니께서 자주 하시던 한마디가 있으신가요?')"><span class="rn">ii.</span>어머니께서 자주 하시던 한마디가 있으신가요?</a>
+          <a class="madang-prompt" onclick="startBuilderFromPrompt('오늘 점심에 드신 반찬, 한 가지만 떠올려 보세요.')"><span class="rn">iii.</span>오늘 점심에 드신 반찬, 한 가지만 떠올려 보세요.</a>
+        </div>
+      </div>
+    </aside>
   </div>
-  <button onclick="openUploadWork()" style="display:flex;align-items:center;gap:7px;padding:10px 18px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;">📤 내 작품 올리기</button>
-</div>
-
-<!-- 피드 -->
-<div style="background:var(--bg);padding:20px 40px 100px;">
-  <div style="max-width:860px;margin:0 auto;">
-    <div id="commFeed" style="display:flex;flex-direction:column;gap:14px;"></div>
-  </div>
-</div>
+</section>
 
 <!-- 업로드 모달 -->
 <div class="modal-backdrop" id="uploadWorkModal" style="display:none;">
@@ -5285,67 +5417,197 @@ function skipToCurrent(catKey){
   if(first) openDojo(first.id);
 }
 
-// ══ 커뮤니티 ══
+// ══ 동행 마당 (커뮤니티) ══
 var communityWorks=[]; // Supabase에서 실시간 로딩
 var commFilter='all';
 var uploadAge='',uploadCat='';
+var commPageSize=6, commShown=6;
+
+var _madangAvatarColors=['#2A5F52','#B8956A','#5C4A3E','#1a7a5a','#6a30a0','#b03060','#A07C30','#1E4840'];
+function _madangColor(seed){
+  var s=String(seed||''); var n=0;
+  for(var i=0;i<s.length;i++) n+=s.charCodeAt(i);
+  return _madangAvatarColors[n % _madangAvatarColors.length];
+}
+function _madangCatLabel(cat){
+  return ({writing:'글 한 편', image:'그림 한 점', music:'노래 한 곡', daily:'일상 한 컷'})[cat]||'작품';
+}
+function _madangIsToday(w){
+  var t=w.time||'';
+  return t==='방금 전' || /^\d+분 전$/.test(t) || /^\d+시간 전$/.test(t) || t==='오늘';
+}
+function _madangTags(w){
+  var base={writing:['#글','#이야기'], image:['#그림','#일러스트'], music:['#노래','#음악'], daily:['#일상','#기록']}[w.cat]||['#작품'];
+  return base.slice(0,2).map(function(t){return '<span class="tag">'+t+'</span>';}).join('');
+}
+function _madangEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function renderCommunity(){
-  var today=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-  var td=g('todayDate');if(td)td.textContent=today;
-  var top3=communityWorks.slice().sort(function(a,b){return b.cheers-a.cheers;}).slice(0,3);
-  var tp=g('todayPickCards');
-  if(tp) tp.innerHTML=top3.map(function(w){
-    var col={writing:'var(--ac)',image:'#b03060',music:'#6a30a0',daily:'#1a7a5a'}[w.cat]||'var(--ac)';
-    return '<div class="today-pick-card" onclick="scrollToWork('+w.id+')" style="cursor:pointer;">'
-      +'<div style="font-size:11px;font-weight:700;color:'+col+';margin-bottom:5px;">'+w.nickname+'</div>'
-      +'<div style="font-size:13px;color:var(--i2);line-height:1.6;margin-bottom:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">'+w.content+'</div>'
-      +'<div style="font-size:12px;color:#ff6b9d;font-weight:700;">❤️ '+w.cheers+'</div>'
-      +'</div>';
+  // 탭 카운트
+  var counts={all:communityWorks.length, today:0, writing:0, image:0, music:0, daily:0};
+  communityWorks.forEach(function(w){
+    if(counts[w.cat]!==undefined) counts[w.cat]++;
+    if(_madangIsToday(w)) counts.today++;
+  });
+  Object.keys(counts).forEach(function(k){
+    var el=g('cnt-'+k); if(el) el.textContent=counts[k];
+  });
+
+  // CTA(자랑하기) 카드 사용자 정보
+  var nameEl=g('madangCtaName'), avEl=g('madangCtaAvatar');
+  if(userProfile && userProfile.name){
+    if(nameEl) nameEl.textContent = userProfile.name + ' 님,';
+    if(avEl){ avEl.textContent = userProfile.name.charAt(0); avEl.style.background = _madangColor(userProfile.name); }
+  } else {
+    if(nameEl) nameEl.textContent = '손님,';
+    if(avEl){ avEl.textContent = '동'; avEl.style.background = 'var(--ac)'; }
+  }
+
+  // 이주의 작가
+  var byAuthor={};
+  communityWorks.forEach(function(w){
+    var k=w.nickname||'익명';
+    if(!byAuthor[k]) byAuthor[k]={nm:k, age:w.age, cat:w.cat, works:0, cheers:0};
+    byAuthor[k].works++;
+    byAuthor[k].cheers += (w.cheers||0);
+  });
+  var topAuthors=Object.keys(byAuthor).map(function(k){return byAuthor[k];})
+    .sort(function(a,b){return (b.cheers-a.cheers) || (b.works-a.works);}).slice(0,4);
+  var au=g('madangAuthors');
+  if(au){
+    if(topAuthors.length===0){
+      au.innerHTML='<div style="font-size:13px;color:var(--i3);line-height:1.7;">아직 작품이 없어요.<br>첫 작가가 되어 보세요 ✨</div>';
+    } else {
+      au.innerHTML=topAuthors.map(function(a){
+        return '<div class="madang-author-row">'
+          +'<div class="av" style="background:'+_madangColor(a.nm)+'">'+_madangEsc(a.nm.charAt(0))+'</div>'
+          +'<div class="meta"><p class="nm">'+_madangEsc(a.nm)+'</p><p class="sub">'+_madangEsc(_madangCatLabel(a.cat))+' · 작품 '+a.works+'</p></div>'
+          +'</div>';
+      }).join('');
+    }
+  }
+
+  // 피드 필터링
+  var filtered;
+  if(commFilter==='all') filtered=communityWorks;
+  else if(commFilter==='today') filtered=communityWorks.filter(_madangIsToday);
+  else filtered=communityWorks.filter(function(w){return w.cat===commFilter;});
+
+  var feed=g('commFeed');
+  if(!feed) return;
+  if(filtered.length===0){
+    feed.innerHTML='<div class="madang-empty">아직 이 카테고리에 작품이 없어요.<br>첫 작품을 자랑해 보세요 ✨</div>';
+    var mb0=g('madangMoreBtn'); if(mb0) mb0.style.display='none';
+    return;
+  }
+
+  // featured: 전체에서 박수 최고
+  var featured=communityWorks.slice().sort(function(a,b){return (b.cheers||0)-(a.cheers||0);})[0];
+  var featuredId = featured ? featured.id : null;
+
+  var visible=filtered.slice(0, commShown);
+  feed.innerHTML=visible.map(function(w){
+    var isFeat = (commFilter==='all' && w.id===featuredId && (w.cheers||0)>0);
+    var displayName = _madangEsc(w.nickname||'익명');
+    var sub = [w.age, _madangCatLabel(w.cat), w.time].filter(function(x){return x;}).map(_madangEsc).join(' · ');
+    var cheers = w.cheers||0;
+    var comN = (w.comments||[]).length;
+    var content = _madangEsc(w.content||'');
+    var idArg = JSON.stringify(w.id); // 숫자/문자(UUID) 모두 안전하게
+    var idStr = _madangEsc(String(w.id));
+    return '<article class="madang-post'+(isFeat?' featured':'')+'" id="work-'+idStr+'">'
+      + (isFeat ? '<div class="madang-post-badge">★ 오늘의 작품</div>' : '')
+      + '<div class="madang-post-head">'
+      +   '<div class="av" style="background:'+_madangColor(w.nickname+'_'+w.id)+'">'+_madangEsc((w.nickname||'?').charAt(0))+'</div>'
+      +   '<div class="meta"><p class="nm">'+displayName+'</p><p class="sub">'+sub+'</p></div>'
+      + '</div>'
+      + '<div class="madang-post-body">'+content+'</div>'
+      + '<div class="madang-post-tags">'+_madangTags(w)+'</div>'
+      + '<div class="madang-post-react-summary">'
+      +   '<div class="left"><span class="emos"><span>♡</span><span>👏</span></span><span class="sumtxt">박수 '+cheers+' · 댓글 '+comN+'</span></div>'
+      +   '<span onclick="showToast(\'신고가 접수됐어요.\')" style="cursor:pointer;padding:4px 8px;font-size:12px;color:var(--i3);">신고</span>'
+      + '</div>'
+      + '<div class="madang-post-actions">'
+      +   '<button class="madang-act'+(w.cheered?' active':'')+'" type="button" onclick="toggleCheer('+idArg+',this)"><span>'+(w.cheered?'👏':'🤍')+'</span> 박수 <span class="cnt">'+cheers+'</span></button>'
+      +   '<button class="madang-act" type="button" onclick="toggleComments('+idArg+')"><span>💬</span> 댓글 <span class="cnt">'+comN+'</span></button>'
+      +   '<button class="madang-act" type="button" onclick="shareWorkLink('+idArg+')"><span>🔗</span> 공유</button>'
+      + '</div>'
+      + '<div id="comments-'+idStr+'" class="madang-comments" style="display:none;">'
+      +   (w.comments||[]).map(function(cm){
+            return '<div class="madang-comment"><div class="av">👤</div><div class="bod"><p class="nm">동행 친구</p><p class="txt">'+_madangEsc(cm)+'</p></div></div>';
+          }).join('')
+      +   '<div class="madang-comment-input">'
+      +     '<div class="av">'+_madangEsc((userProfile&&userProfile.name?userProfile.name:'나').charAt(0))+'</div>'
+      +     '<input type="text" id="ci-'+idStr+'" placeholder="따뜻한 한마디를 남겨 보세요…" onkeydown="if(event.key===\'Enter\'){submitComment('+idArg+');}">'
+      +     '<button type="button" onclick="submitComment('+idArg+')">등록</button>'
+      +   '</div>'
+      + '</div>'
+      + '</article>';
   }).join('');
-  var filtered=commFilter==='all'?communityWorks:communityWorks.filter(function(w){return w.cat===commFilter;});
-  var feed=g('commFeed');if(!feed)return;
-  feed.innerHTML=filtered.map(function(w){
-    var ci={writing:{color:'var(--ac)',bg:'var(--al)',label:'✍️ 글쓰기'},image:{color:'#b03060',bg:'#FBEAF0',label:'🎨 이미지'},music:{color:'#6a30a0',bg:'#EEEDFE',label:'🎵 음악'},daily:{color:'#1a7a5a',bg:'#E1F5EE',label:'📱 일상'}}[w.cat]||{color:'var(--ac)',bg:'var(--al)',label:'글쓰기'};
-    var abg=['#2A5F52','#b03060','#6a30a0','#E8A020','#1a7a5a'];
-    return '<div class="work-card" id="work-'+w.id+'">'
-      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">'
-      +'<div style="width:38px;height:38px;border-radius:50%;background:'+abg[w.id%abg.length]+';display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;">'+w.nickname.charAt(0)+'</div>'
-      +'<div><div style="font-size:15px;font-weight:700;color:var(--ink);">'+w.nickname+'</div><div style="font-size:12px;color:var(--i3);">'+w.age+' · '+w.time+'</div></div>'
-      +'<div style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:'+ci.bg+';color:'+ci.color+';">'+ci.label+'</div>'
-      +'</div>'
-      +'<div style="font-size:15px;color:var(--i2);line-height:1.85;margin-bottom:12px;font-family:var(--serif,serif);padding:14px;background:var(--bg);border-radius:10px;">'+w.content+'</div>'
-      +'<div style="font-size:12px;color:var(--i3);margin-bottom:12px;">🤖 '+w.tool+' 사용</div>'
-      +'<div style="display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--bd);">'
-      +'<button onclick="toggleCheer('+w.id+',this)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;font-size:14px;font-weight:700;color:var(--i2);font-family:inherit;">'+(w.cheered?'❤️':'🤍')+' 응원해요 <span>'+w.cheers+'</span></button>'
-      +'<button onclick="toggleComments('+w.id+')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:100px;border:1.5px solid var(--bd);background:#fff;cursor:pointer;font-size:14px;font-weight:700;color:var(--i2);font-family:inherit;">💬 댓글 '+w.comments.length+'</button>'
-      +'<span onclick="showToast(\'신고가 접수됐어요.\')" style="margin-left:auto;font-size:12px;color:var(--i3);cursor:pointer;padding:6px;">신고</span>'
-      +'</div>'
-      +'<div id="comments-'+w.id+'" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);">'
-      +w.comments.map(function(cm){return '<div style="display:flex;gap:8px;margin-bottom:7px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--wm);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">👤</div><div style="background:var(--bg);border-radius:10px;padding:7px 11px;font-size:14px;color:var(--i2);flex:1;">'+cm+'</div></div>';}).join('')
-      +'<div style="display:flex;gap:7px;margin-top:7px;"><input type="text" placeholder="응원 댓글을 남겨보세요 😊" style="flex:1;padding:8px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;" id="ci-'+w.id+'"><button onclick="submitComment('+w.id+')" style="padding:8px 14px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">등록</button></div>'
-      +'</div>'
-      +'</div>';
-  }).join('');
+
+  // 더보기 버튼
+  var mb=g('madangMoreBtn');
+  if(mb){
+    if(filtered.length > visible.length){
+      mb.style.display='inline-flex';
+      mb.textContent='작품 더 보기 ('+(filtered.length-visible.length)+'편 남음)';
+    } else {
+      mb.style.display='none';
+    }
+  }
+}
+
+function loadMoreCommunity(){
+  commShown += commPageSize;
+  renderCommunity();
 }
 
 function filterComm(cat,btn){
   commFilter=cat;
-  document.querySelectorAll('.comm-filter').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
+  commShown=commPageSize; // 새 카테고리는 처음부터
+  document.querySelectorAll('.comm-filter, .madang-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
   renderCommunity();
 }
 function toggleCheer(id,btn){
   var w=communityWorks.find(function(x){return x.id===id;});if(!w)return;
-  w.cheered=!w.cheered;w.cheers+=w.cheered?1:-1;
-  btn.innerHTML=(w.cheered?'❤️':'🤍')+' 응원해요 <span>'+w.cheers+'</span>';
-  if(w.cheered)showToast('응원을 보냈어요 ❤️');
+  w.cheered=!w.cheered;
+  w.cheers=(w.cheers||0)+(w.cheered?1:-1);
+  if(w.cheers<0) w.cheers=0;
+  if(btn){
+    btn.classList.toggle('active', !!w.cheered);
+    btn.innerHTML='<span>'+(w.cheered?'👏':'🤍')+'</span> 박수 <span class="cnt">'+w.cheers+'</span>';
+  }
+  var card=g('work-'+id);
+  if(card){
+    var sum=card.querySelector('.madang-post-react-summary .sumtxt');
+    if(sum) sum.textContent='박수 '+w.cheers+' · 댓글 '+((w.comments||[]).length);
+  }
+  if(w.cheered) showToast('박수를 보냈어요 👏');
 }
-function toggleComments(id){var el=g('comments-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
+function toggleComments(id){var el=g('comments-'+id);if(el)el.style.display=el.style.display==='none'?'flex':'none';}
 function submitComment(id){
   var inp=g('ci-'+id);if(!inp||!inp.value.trim()){showToast('댓글을 입력해주세요');return;}
   var w=communityWorks.find(function(x){return x.id===id;});if(w)w.comments.push(inp.value.trim());
-  showToast('댓글이 등록됐어요! 💕');filterComm(commFilter,null);
+  inp.value='';
+  renderCommunity();
+  var ce=g('comments-'+id); if(ce) ce.style.display='flex';
+  showToast('댓글이 등록됐어요! 💕');
+}
+function shareWorkLink(id){
+  try{
+    var url=location.origin+location.pathname+'#community-work-'+id;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url);
+      showToast('링크를 복사했어요 🔗');
+    } else { showToast('이 브라우저는 복사를 지원하지 않아요'); }
+  } catch(e){ showToast('복사에 실패했어요'); }
+}
+function startBuilderFromPrompt(txt){
+  try{
+    window._builderSeedPrompt = txt;
+    if(typeof showView==='function') showView('builder');
+  } catch(e){ console.warn(e); }
 }
 function scrollToWork(id){var el=g('work-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
 function openUploadWork(){

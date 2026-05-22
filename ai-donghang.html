@@ -38,6 +38,23 @@
   }
 })();
 
+// ── OAuth callback indicator capture (가장 먼저) ─────────────────────────────
+// supabase-js v2 의 createClient(detectSessionInUrl:true 기본) 가 URL fragment
+// 의 access_token 을 자동 처리하면서 hash 를 비운다. 그 후 hash router 가
+// 빈 hash 를 autobiography(기본) 로 라우팅하면서 #autobiography 로 바뀐다.
+// 우리가 OAuth callback 인지 판단하려면 그 모든 일이 일어나기 전 — 페이지
+// 최초 로드 직후 — 의 hash 와 localStorage 상태를 capture 해야 한다.
+window._initialHashOnLoad = (typeof window !== 'undefined' && window.location.hash) || '';
+window._hadProfileOnLoad = false;
+try {
+  var _rawOnLoadEarly = localStorage.getItem('aiDonghang_profile');
+  if(_rawOnLoadEarly){
+    var _pOnLoadEarly = JSON.parse(_rawOnLoadEarly);
+    // id 가 string(uuid) 이고 name 있으면 진짜 supabase 로그인 흔적
+    window._hadProfileOnLoad = !!(_pOnLoadEarly && _pOnLoadEarly.name && typeof _pOnLoadEarly.id === 'string');
+  }
+} catch(e){}
+
 const SUPABASE_URL='https://gaibakqhdfdpnsdgpmya.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
 
@@ -4467,21 +4484,8 @@ window.addEventListener('load', function(){
   }
 });
 
-// 페이지 로드 시점의 hash / localStorage profile 여부를 미리 capture.
-// supabase-js 가 OAuth fragment 처리하면서 hash 비움 + hash router 가
-// 빈 hash 를 autobiography 로 자동 라우팅하면서 URL 이 #autobiography 로
-// 바뀌어 OAuth callback 판단 실패하던 문제 회피. _hydrateUserProfileFromSession
-// 에서 사용.
-var _initialHashOnLoad = (typeof window !== 'undefined' && window.location.hash) || '';
-var _hadProfileOnLoad = false;
-try {
-  var _rawOnLoad = localStorage.getItem('aiDonghang_profile');
-  if(_rawOnLoad){
-    var _pOnLoad = JSON.parse(_rawOnLoad);
-    _hadProfileOnLoad = !!(_pOnLoad && _pOnLoad.name && typeof _pOnLoad.id === 'string');
-    // id 가 number 면 legacy 잔재 → 없는 것과 동일 취급 (잔재 정리 로직이 곧 처리)
-  }
-} catch(e){}
+// (페이지 로드 직후 capture 된 hash / 프로필 흔적은 window._initialHashOnLoad /
+//  window._hadProfileOnLoad 에 보관 — 파일 최상단 IIFE 직후 inline 스크립트 참고)
 
 // ── supabase 모드 전용: Supabase Auth 상태 변화 리스너 ──────────────────────
 function _initSupabaseAuthListener(){
@@ -4500,7 +4504,7 @@ function _initSupabaseAuthListener(){
     // 판단해 isNew=true → 환영 모달.
     db.auth.getSession().then(function(res){
       if(res && res.data && res.data.session){
-        _hydrateUserProfileFromSession(res.data.session, /*isNew=*/!_hadProfileOnLoad);
+        _hydrateUserProfileFromSession(res.data.session, /*isNew=*/!window._hadProfileOnLoad);
       }
     }).catch(function(e){ console.warn('getSession 실패:', e); });
   }catch(e){ console.warn('supabase auth listener init 실패:', e); }
@@ -4526,11 +4530,10 @@ async function _hydrateUserProfileFromSession(session, isNewLogin){
     try{ localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile)); }catch(e){}
     if(typeof setNavLoggedIn === 'function') setNavLoggedIn(userProfile.name);
     // 신규 카카오 콜백 직후라면 환영 모달.
-    // hash 검사는 _initialHashOnLoad (페이지 로드 시점 캡처) 사용 — supabase-js 가
-    // fragment 처리하고 hash router 가 빈 hash 를 autobiography 로 라우팅하면서
-    // 현재 hash 가 #autobiography 로 바뀌어도 정확히 판단 가능.
+    // hash 검사는 window._initialHashOnLoad (파일 최상단 inline script 에서 capture)
+    // 사용 — supabase-js 가 fragment 처리하기 *전* 시점 값이라 정확.
     if(isNewLogin && typeof showAuthSuccess === 'function'){
-      var h = _initialHashOnLoad || '';
+      var h = window._initialHashOnLoad || '';
       var isOAuthReturn = h.indexOf('access_token') >= 0 || h === '#auth' || h === '';
       if(isOAuthReturn){
         if(typeof showView === 'function') showView('auth');

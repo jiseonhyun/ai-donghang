@@ -43,8 +43,17 @@
 // 의 access_token 을 자동 처리하면서 hash 를 비운다. 그 후 hash router 가
 // 빈 hash 를 autobiography(기본) 로 라우팅하면서 #autobiography 로 바뀐다.
 // 우리가 OAuth callback 인지 판단하려면 그 모든 일이 일어나기 전 — 페이지
-// 최초 로드 직후 — 의 hash 와 localStorage 상태를 capture 해야 한다.
-window._initialHashOnLoad = (typeof window !== 'undefined' && window.location.hash) || '';
+// 최초 로드 직후 — 의 hash / query / localStorage 상태를 capture 해야 한다.
+window._initialHashOnLoad   = (typeof window !== 'undefined' && window.location.hash)   || '';
+window._initialSearchOnLoad = (typeof window !== 'undefined' && window.location.search) || '';
+// 통합 OAuth callback indicator — hash 또는 query 어느 한쪽에 흔적이 있으면 true.
+// (redirectTo=...?oauth=signup 로 query string indicator 사용 + supabase 가
+//  fragment 에 access_token 추가하는 두 경로 모두 잡음)
+window._wasOAuthReturnOnLoad = (
+  window._initialHashOnLoad.indexOf('access_token') >= 0 ||
+  window._initialHashOnLoad === '#auth' ||
+  window._initialSearchOnLoad.indexOf('oauth=') >= 0
+);
 window._hadProfileOnLoad = false;
 try {
   var _rawOnLoadEarly = localStorage.getItem('aiDonghang_profile');
@@ -4530,23 +4539,20 @@ async function _hydrateUserProfileFromSession(session, isNewLogin){
     try{ localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile)); }catch(e){}
     if(typeof setNavLoggedIn === 'function') setNavLoggedIn(userProfile.name);
     // 신규 카카오 콜백 직후라면 환영 모달.
-    // hash 검사는 window._initialHashOnLoad (파일 최상단 inline script 에서 capture)
-    // 사용 — supabase-js 가 fragment 처리하기 *전* 시점 값이라 정확.
-    if(isNewLogin && typeof showAuthSuccess === 'function'){
-      var h = window._initialHashOnLoad || '';
-      var isOAuthReturn = h.indexOf('access_token') >= 0 || h === '#auth' || h === '';
-      if(isOAuthReturn){
-        if(typeof showView === 'function') showView('auth');
-        // 신규 회원 판단 — profiles.created_at 이 1분 이내면 방금 가입.
-        var isFreshSignup = true;
-        try {
-          if(p.created_at){
-            var diffSec = (Date.now() - new Date(p.created_at).getTime()) / 1000;
-            isFreshSignup = diffSec < 60;
-          }
-        } catch(e){}
-        showAuthSuccess(userProfile.name, isFreshSignup);
-      }
+    // hash/query 검사는 window._wasOAuthReturnOnLoad (파일 최상단 inline script
+    // 에서 capture) — supabase-js 가 fragment 처리하기 *전* 시점 값이라 정확.
+    console.log('[auth] hydrate', { isNewLogin: isNewLogin, wasOAuthReturn: window._wasOAuthReturnOnLoad, hash: window._initialHashOnLoad, search: window._initialSearchOnLoad, name: userProfile.name });
+    if(isNewLogin && window._wasOAuthReturnOnLoad && typeof showAuthSuccess === 'function'){
+      if(typeof showView === 'function') showView('auth');
+      // 신규 회원 판단 — profiles.created_at 이 1분 이내면 방금 가입.
+      var isFreshSignup = true;
+      try {
+        if(p.created_at){
+          var diffSec = (Date.now() - new Date(p.created_at).getTime()) / 1000;
+          isFreshSignup = diffSec < 60;
+        }
+      } catch(e){}
+      showAuthSuccess(userProfile.name, isFreshSignup);
     }
     if(typeof loadUserDataFromSupabase === 'function' && userProfile.id){
       loadUserDataFromSupabase(userProfile.id);
@@ -8063,13 +8069,14 @@ async function _authKakaoSupabase(){
     if(!db || !db.auth){
       showToast('인증 모듈 로딩 중이에요. 잠시 후 다시 눌러주세요.'); return;
     }
-    // redirectTo 는 ai-donghang.html#auth 로 — 그래야 auth view 가 활성 상태로
-    // 돌아오고 _initSupabaseAuthListener 의 SIGNED_IN 핸들러가 환영 모달을 띄움.
-    // 단순히 origin/' 으로 보내면 index.html(랜딩)으로 돌아와서 supabase 세션
-    // 처리 코드 없음 → 사용자는 그냥 "홈에 떨어졌다"고 인식.
+    // redirectTo 에 #auth 같은 hash 를 넣으면 supabase 가 access_token 을
+    // 추가하면서 #auth#access_token=... 형태의 비표준 hash 가 만들어져
+    // detectSessionInUrl 가 fragment 파싱에 실패할 수 있다. hash 는 빼고
+    // query string ?oauth=signup 으로 callback 표식만 남김. ai-donghang.html
+    // 의 capture 코드가 이 querystring 도 같이 검사해 isOAuthReturn 판단.
     var res = await db.auth.signInWithOAuth({
       provider: 'kakao',
-      options: { redirectTo: window.location.origin + '/ai-donghang.html#auth' }
+      options: { redirectTo: window.location.origin + '/ai-donghang.html?oauth=signup' }
     });
     if(res && res.error) throw res.error;
     // 성공 시 supabase가 카카오로 redirect — 이 이후 코드는 실행되지 않음

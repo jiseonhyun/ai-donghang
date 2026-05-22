@@ -4502,7 +4502,10 @@ async function _initSupabaseAuthListener(){
   try{
     db.auth.onAuthStateChange(function(event, session){
       if(event === 'SIGNED_IN' && session && session.user){
-        _hydrateUserProfileFromSession(session, /*isNew=*/true);
+        // isNew = 페이지 로드 시 localStorage 에 profile 없었을 때만 (OAuth callback/신규).
+        // 매번 true 로 보내면 재로그인할 때마다 환영 모달 + 자동 dojo + 온보딩 퀴즈
+        // 까지 떠서 시니어가 헷갈림.
+        _hydrateUserProfileFromSession(session, /*isNew=*/!window._hadProfileOnLoad);
       } else if(event === 'SIGNED_OUT'){
         userProfile = {};
         try{ localStorage.removeItem('aiDonghang_profile'); }catch(e){}
@@ -4569,10 +4572,13 @@ async function _hydrateUserProfileFromSession(session, isNewLogin){
     console.log('[auth] hydrate', { isNewLogin: isNewLogin, wasOAuthReturn: window._wasOAuthReturnOnLoad, hash: window._initialHashOnLoad, search: window._initialSearchOnLoad, name: userProfile.name });
     if(isNewLogin && window._wasOAuthReturnOnLoad && typeof showAuthSuccess === 'function'){
       if(typeof showView === 'function') showView('auth');
-      // 신규 회원 판단 — profiles.created_at 이 1분 이내면 방금 가입.
-      var isFreshSignup = true;
+      // 신규 회원 판단 — surveyDone/onboarded 흔적이 있거나 created_at 이 60초
+      // 넘으면 재로그인. 기본값 false (조심스러운 쪽) — profile 조회 실패 시에도
+      // 자동 dojo 이동 + 온보딩 퀴즈가 잘못 트리거되지 않도록.
+      var isFreshSignup = false;
       try {
-        if(p.created_at){
+        var alreadyOnboarded = !!(localStorage.getItem('aiDonghang_surveyDone') || localStorage.getItem('aiDonghang_onboarded'));
+        if(!alreadyOnboarded && p.created_at){
           var diffSec = (Date.now() - new Date(p.created_at).getTime()) / 1000;
           isFreshSignup = diffSec < 60;
         }

@@ -14,6 +14,25 @@ _test_screenshots/
 .playwright-mcp/
 *-preview.png
 *_test_*.png
+# 루트의 디자인 참고 스크린샷 (커밋 대상 아님)
+/0[0-9]_*.png
+/로고_*.png
+
+# ── 데이터 export (Airtable/Prompts/Curriculum) ────────────────────────────
+# 외부 CSV/Excel 데이터는 별도 보관. 코드 저장소에 포함하지 않음.
+AI동행_Airtable_*.csv
+AI동행_Airtable_*.xlsx
+AI동행_Prompts_*.xlsx
+AI동행_Prompts_*.csv
+AI동행_Curriculum_*.csv
+AI동행_Curriculum_*.xlsx
+AI동행_SubscriptionLesson_*.xlsx
+AI동행_레슨FullList*.xlsx
+
+# ── 디자인 시안 변형 (메인 ai-donghang.html 외 변형) ───────────────────────
+# 작업 중 만든 변형/대안 HTML — 메인에 통합 완료 시 삭제 검토
+aidonghang-hero*.html
+works.standalone.html
 
 # ── 환경/비밀 ───────────────────────────────────────────────────────────────
 .env

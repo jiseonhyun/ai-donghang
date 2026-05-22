@@ -4497,7 +4497,7 @@ window.addEventListener('load', function(){
 //  window._hadProfileOnLoad 에 보관 — 파일 최상단 IIFE 직후 inline 스크립트 참고)
 
 // ── supabase 모드 전용: Supabase Auth 상태 변화 리스너 ──────────────────────
-function _initSupabaseAuthListener(){
+async function _initSupabaseAuthListener(){
   if(AUTH_MODE !== 'supabase' || !db || !db.auth) return;
   try{
     db.auth.onAuthStateChange(function(event, session){
@@ -4508,11 +4508,36 @@ function _initSupabaseAuthListener(){
         try{ localStorage.removeItem('aiDonghang_profile'); }catch(e){}
       }
     });
-    // 이미 로그인 상태면 즉시 hydrate.
-    // 페이지 로드 직후 localStorage profile 이 없었으면 OAuth 콜백/신규 로그인으로
-    // 판단해 isNew=true → 환영 모달.
+
+    // ── Manual OAuth session 복구 ────────────────────────────────────────────
+    // supabase-js v2 의 detectSessionInUrl 자동 처리가 일관되게 동작 안 함
+    // (Chrome MCP 검증: callback 직후 getSession() 이 null 반환. setSession
+    // 을 명시 호출하면 즉시 정상 동작 확인). 페이지 로드 직후 capture 된
+    // hash 에 access_token 이 있으면 우리가 직접 setSession 호출해 복구.
+    // setSession 성공 시 onAuthStateChange 의 SIGNED_IN 이벤트가 발동되어
+    // _hydrateUserProfileFromSession → 환영 모달까지 자동 흐름.
+    var initHash = window._initialHashOnLoad || '';
+    if(initHash.indexOf('access_token') >= 0){
+      try {
+        var hashStr = initHash.replace(/^#/, '');
+        var p = new URLSearchParams(hashStr);
+        var at = p.get('access_token');
+        var rt = p.get('refresh_token') || '';
+        if(at){
+          console.log('[auth] manual setSession 시도 — access_token in hash 감지');
+          var sr = await db.auth.setSession({ access_token: at, refresh_token: rt });
+          if(sr && sr.error){
+            console.warn('[auth] manual setSession error:', sr.error);
+          } else {
+            console.log('[auth] manual setSession 성공 — SIGNED_IN 이벤트 대기');
+          }
+        }
+      } catch(e){ console.warn('[auth] manual setSession 예외:', e); }
+    }
+
+    // 그 외 케이스(기존 로그인 유지) — getSession 으로 hydrate.
     db.auth.getSession().then(function(res){
-      if(res && res.data && res.data.session){
+      if(res && res.data && res.data.session && (!userProfile || !userProfile.id)){
         _hydrateUserProfileFromSession(res.data.session, /*isNew=*/!window._hadProfileOnLoad);
       }
     }).catch(function(e){ console.warn('getSession 실패:', e); });

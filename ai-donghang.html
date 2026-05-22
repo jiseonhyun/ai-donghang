@@ -4442,7 +4442,22 @@ function initKakaoSdk(){
 window.addEventListener('load', function(){
   // AUTH_MODE 에 따라 DOM 클래스 토글 (CSS로 전화 form 숨김 제어)
   if(typeof applyAuthMode === 'function') applyAuthMode();
+  // legacy → supabase 전환 후 localStorage 에 남은 옛 프로필(bigint id) 정리.
+  // 그대로 두면 비로그인 상태에서도 옛 이름이 nav 에 박혀 보임 + 자식 테이블
+  // INSERT 시 user_id 가 숫자라 RLS 가 차단.
   if(AUTH_MODE === 'supabase'){
+    try {
+      var raw = localStorage.getItem('aiDonghang_profile');
+      if(raw){
+        var p = JSON.parse(raw);
+        if(p && p.id != null && typeof p.id === 'number'){
+          console.log('[auth] legacy 프로필 잔재 감지 (id=' + p.id + ') — localStorage 정리');
+          localStorage.removeItem('aiDonghang_profile');
+          if(typeof userProfile !== 'undefined') userProfile = {};
+          if(typeof setNavLoggedOut === 'function') setNavLoggedOut();
+        }
+      }
+    } catch(e){ console.warn('[auth] legacy 잔재 정리 실패:', e); }
     // Supabase Auth: OAuth 콜백 처리 자동 + 세션 상태 리스너
     if(typeof _initSupabaseAuthListener === 'function') _initSupabaseAuthListener();
   } else {
@@ -5035,18 +5050,32 @@ function showView(view, _skipHash){
   else if(view==='b2g'){_activate('b2gView');}
   else if(view==='admin'){_activate('adminView');setTimeout(loadApiKeyToAdmin,100);setTimeout(loadReplicateKeyToAdmin,100);setTimeout(loadAdminDashboard,300);}
 }
+// 현재 nav 구조엔 navBtnsGuest/navBtnsUser 같은 ID 없음 → 클래스 기반으로 토글.
+// 1) topbar-actions / nav-drawer-foot 안의 회원가입·로그인 링크를 숨김
+// 2) 이름 클릭 시 마이페이지로 가는 사용자 링크를 동적으로 삽입
 function setNavLoggedIn(name){
-  if(g('navLinksGuest'))g('navLinksGuest').style.display='none';
-  if(g('navLinksUser'))g('navLinksUser').style.display='flex';
-  if(g('navBtnsGuest'))g('navBtnsGuest').style.display='none';
-  if(g('navBtnsUser'))g('navBtnsUser').style.display='flex';
-  if(g('navUserName'))g('navUserName').textContent=name||'마이페이지';
+  var display = name || '마이페이지';
+  ['.topbar-actions', '.nav-drawer-foot'].forEach(function(sel){
+    var parent = document.querySelector(sel);
+    if(!parent) return;
+    parent.querySelectorAll('a.login:not(.nav-user-link)').forEach(function(el){ el.style.display='none'; });
+    var userLink = parent.querySelector('.nav-user-link');
+    if(userLink){ userLink.textContent = display; return; }
+    userLink = document.createElement('a');
+    userLink.href = '#';
+    userLink.className = 'login nav-user-link';
+    userLink.textContent = display;
+    userLink.onclick = function(e){ e.preventDefault(); if(typeof showView==='function') showView('mypage'); };
+    parent.insertBefore(userLink, parent.firstChild);
+  });
 }
 function setNavLoggedOut(){
-  if(g('navLinksGuest'))g('navLinksGuest').style.display='flex';
-  if(g('navLinksUser'))g('navLinksUser').style.display='none';
-  if(g('navBtnsGuest'))g('navBtnsGuest').style.display='flex';
-  if(g('navBtnsUser'))g('navBtnsUser').style.display='none';
+  ['.topbar-actions', '.nav-drawer-foot'].forEach(function(sel){
+    var parent = document.querySelector(sel);
+    if(!parent) return;
+    parent.querySelectorAll('a.login:not(.nav-user-link)').forEach(function(el){ el.style.display=''; });
+    parent.querySelectorAll('.nav-user-link').forEach(function(el){ el.remove(); });
+  });
 }
 
 // ── 현재 챕터 ──

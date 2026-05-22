@@ -4467,6 +4467,22 @@ window.addEventListener('load', function(){
   }
 });
 
+// 페이지 로드 시점의 hash / localStorage profile 여부를 미리 capture.
+// supabase-js 가 OAuth fragment 처리하면서 hash 비움 + hash router 가
+// 빈 hash 를 autobiography 로 자동 라우팅하면서 URL 이 #autobiography 로
+// 바뀌어 OAuth callback 판단 실패하던 문제 회피. _hydrateUserProfileFromSession
+// 에서 사용.
+var _initialHashOnLoad = (typeof window !== 'undefined' && window.location.hash) || '';
+var _hadProfileOnLoad = false;
+try {
+  var _rawOnLoad = localStorage.getItem('aiDonghang_profile');
+  if(_rawOnLoad){
+    var _pOnLoad = JSON.parse(_rawOnLoad);
+    _hadProfileOnLoad = !!(_pOnLoad && _pOnLoad.name && typeof _pOnLoad.id === 'string');
+    // id 가 number 면 legacy 잔재 → 없는 것과 동일 취급 (잔재 정리 로직이 곧 처리)
+  }
+} catch(e){}
+
 // ── supabase 모드 전용: Supabase Auth 상태 변화 리스너 ──────────────────────
 function _initSupabaseAuthListener(){
   if(AUTH_MODE !== 'supabase' || !db || !db.auth) return;
@@ -4479,10 +4495,12 @@ function _initSupabaseAuthListener(){
         try{ localStorage.removeItem('aiDonghang_profile'); }catch(e){}
       }
     });
-    // 이미 로그인 상태면 즉시 hydrate
+    // 이미 로그인 상태면 즉시 hydrate.
+    // 페이지 로드 직후 localStorage profile 이 없었으면 OAuth 콜백/신규 로그인으로
+    // 판단해 isNew=true → 환영 모달.
     db.auth.getSession().then(function(res){
       if(res && res.data && res.data.session){
-        _hydrateUserProfileFromSession(res.data.session, /*isNew=*/false);
+        _hydrateUserProfileFromSession(res.data.session, /*isNew=*/!_hadProfileOnLoad);
       }
     }).catch(function(e){ console.warn('getSession 실패:', e); });
   }catch(e){ console.warn('supabase auth listener init 실패:', e); }
@@ -4507,17 +4525,24 @@ async function _hydrateUserProfileFromSession(session, isNewLogin){
     };
     try{ localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile)); }catch(e){}
     if(typeof setNavLoggedIn === 'function') setNavLoggedIn(userProfile.name);
-    // 신규 카카오 콜백 직후라면 환영 모달
-    // OAuth 후 redirectTo=/ai-donghang.html#auth 로 돌아오므로 auth view 활성 상태가
-    // 기본. 추가로 URL 해시가 #auth 거나 fragment 에 access_token 이 있으면 신규
-    // 콜백으로 판단해 강제로 auth view 활성 + 환영 모달.
+    // 신규 카카오 콜백 직후라면 환영 모달.
+    // hash 검사는 _initialHashOnLoad (페이지 로드 시점 캡처) 사용 — supabase-js 가
+    // fragment 처리하고 hash router 가 빈 hash 를 autobiography 로 라우팅하면서
+    // 현재 hash 가 #autobiography 로 바뀌어도 정확히 판단 가능.
     if(isNewLogin && typeof showAuthSuccess === 'function'){
-      var hash = window.location.hash || '';
-      var isOAuthReturn = hash.indexOf('access_token') >= 0 || hash === '#auth' || hash === '';
-      var av = document.getElementById('authView');
-      if(isOAuthReturn || (av && av.classList.contains('active'))){
+      var h = _initialHashOnLoad || '';
+      var isOAuthReturn = h.indexOf('access_token') >= 0 || h === '#auth' || h === '';
+      if(isOAuthReturn){
         if(typeof showView === 'function') showView('auth');
-        showAuthSuccess(userProfile.name, !p.created_at ? true : false);
+        // 신규 회원 판단 — profiles.created_at 이 1분 이내면 방금 가입.
+        var isFreshSignup = true;
+        try {
+          if(p.created_at){
+            var diffSec = (Date.now() - new Date(p.created_at).getTime()) / 1000;
+            isFreshSignup = diffSec < 60;
+          }
+        } catch(e){}
+        showAuthSuccess(userProfile.name, isFreshSignup);
       }
     }
     if(typeof loadUserDataFromSupabase === 'function' && userProfile.id){

@@ -75,15 +75,17 @@
   // Claude API 호출 — Supabase Edge Function claude-proxy 사용.
   // ai-donghang.html의 자서전 흐름이 이미 쓰고 있는 그 endpoint. multi-turn messages
   // 그대로 지원, API 키는 함수 환경변수에만 살아 브라우저 노출 없음.
+  //
+  // ⚠️ 헤더는 Content-Type 만. claude-proxy 의 CORS allow-headers 는
+  // "Content-Type, anthropic-version" 뿐이라 Authorization/apikey 를 넣으면
+  // 브라우저 preflight 가 차단해서 fetch 가 catch 발동 → "동동이가 멍해졌어요"
+  // (ai-donghang.html L11878, L12050 도 동일하게 Content-Type 만 보냄.)
+  // Promise 는 {ok, text, status} 로 resolve — 호출부에서 status 별 메시지 표시.
   function callClaudeAdaptive(messages, systemPrompt){
     return new Promise(function(resolve){
       fetch(SUPABASE_URL + '/functions/v1/claude-proxy', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'apikey': SUPABASE_KEY
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
           max_tokens: 600,
@@ -92,16 +94,18 @@
         })
       }).then(function(res){
         if (!res.ok){
-          res.text().then(function(t){ console.warn('[voice-runtime] claude-proxy fail', res.status, t); });
-          resolve(null); return;
+          res.text().then(function(t){
+            console.warn('[voice-runtime] claude-proxy fail', res.status, t);
+          });
+          resolve({ ok:false, text:null, status:res.status }); return;
         }
         return res.json().then(function(d){
           var txt = ((d && d.content) || []).map(function(b){ return b.text || ''; }).join('').trim();
-          resolve(txt || null);
+          resolve({ ok:!!txt, text:txt || null, status:200 });
         });
       }).catch(function(e){
         console.warn('[voice-runtime] claude-proxy err', e);
-        resolve(null);
+        resolve({ ok:false, text:null, status:0, err:String(e && e.message || e) });
       });
     });
   }
@@ -114,6 +118,15 @@
   }
   function saveMessages(msgs){
     try { localStorage.setItem(MSG_KEY, JSON.stringify(msgs)); } catch(e){}
+  }
+
+  // iOS Safari 감지 — webkitSpeechRecognition 이 침묵에 매우 민감해 짧은 끊김이 잦음.
+  // 시니어가 한 문장씩 천천히 말하도록 안내 한 줄을 mic 아래 표시.
+  function _isIOSSafari(){
+    var ua = navigator.userAgent || '';
+    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    return isIOS && isSafari;
   }
 
   window.__voiceInit = function(){
@@ -267,10 +280,14 @@
         if (!srIntent) return;
         if (speechRec !== rec) return;
         var now = Date.now();
-        srRestarts = srRestarts.filter(function(t){ return now - t < 10000; });
-        if (srRestarts.length >= 6){
-          console.warn('[voice-runtime] SR too many restarts — give up STT but keep MediaRecorder running');
+        // 20초 윈도우, 10회까지 재시작 허용. iOS Safari가 침묵에 매우 민감해서
+        // 짧은 간격으로 onend 가 자주 발생 — 기존 6회/10초는 너무 빡빡해 시니어가
+        // 잠깐 숨 고르는 사이에 STT가 통째로 죽어버림.
+        srRestarts = srRestarts.filter(function(t){ return now - t < 20000; });
+        if (srRestarts.length >= 10){
+          console.warn('[voice-runtime] SR too many restarts (' + srRestarts.length + ' in 20s) — give up STT but keep MediaRecorder running. baseFinal so far:', baseFinal);
           speechRec = null;
+          toast('말씀이 잘 안 들렸어요. 마이크 다시 눌러주세요 🙏');
           return;
         }
         srRestarts.push(now);
@@ -435,6 +452,7 @@
         lastFullFinal = '';
         lastUploadedUrl = null;
         seconds = 0;
+        _shortConfirmShown = false;
         if (timerText) timerText.textContent = fmtTime(0);
         if (transcriptBody){
           transcriptBody.innerHTML = '<span class="ph">말씀하시면 여기에 글자로 옮겨 드립니다.</span>';
@@ -469,6 +487,8 @@
       }
       toast('오늘의 이야기 한 회차가 완성됐어요 🌿');
     }
+    // 짧은 STT 결과 한 번 더 확인 — "다음" 두 번 누르면 통과
+    var _shortConfirmShown = false;
     if (confirmBtn){
       confirmBtn.addEventListener('click', function(){
         if (interviewEnded) return;
@@ -476,6 +496,15 @@
           toast('아직 답변이 비어 있어요. 마이크 버튼을 눌러 한 말씀 들려주세요 🙏');
           return;
         }
+        // STT 결과가 너무 짧으면 (5자 미만, 공백 제외) → 잘못 들었을 가능성 큼.
+        // 음성은 녹음됐어도 텍스트가 비어/짧으면 동동이 답변이 엉뚱해질 수 있어 한 번 더 묻기.
+        var stripped = (baseFinal || '').replace(/\s+/g, '');
+        if (stripped.length > 0 && stripped.length < 5 && !_shortConfirmShown){
+          _shortConfirmShown = true;
+          toast('음성이 짧게 들렸어요. 다시 말씀하시려면 "다시 답하기", 그대로 보내시려면 "다음으로"를 한 번 더 눌러주세요 🙏');
+          return;
+        }
+        _shortConfirmShown = false;
         setProcessing(true);
         // 1) 어르신 답변 메시지에 추가 (audio_url 은 업로드 후 채움)
         var userMsg = {
@@ -502,9 +531,16 @@
         var claudeP = callClaudeAdaptive(apiMessages, systemPrompt);
 
         Promise.all([uploadP, claudeP]).then(function(arr){
-          var nextQ = arr[1];
+          var claudeRes = arr[1] || {};
+          var nextQ = claudeRes.text;
           if (!nextQ){
-            toast('동동이가 잠시 멍해졌어요. 잠깐 후 다시 눌러주세요 🙏');
+            // status 코드 별 안내 — 시니어는 의미 모르지만, 개발자 콘솔 + CS 통해 진단 가능
+            var hint = '';
+            if (claudeRes.status === 0) hint = ' (인터넷 연결 확인)';
+            else if (claudeRes.status === 401 || claudeRes.status === 403) hint = ' (코드:' + claudeRes.status + ' 인증)';
+            else if (claudeRes.status >= 500) hint = ' (코드:' + claudeRes.status + ' 서버)';
+            else if (claudeRes.status) hint = ' (코드:' + claudeRes.status + ')';
+            toast('동동이가 잠시 멍해졌어요. 잠깐 후 다시 눌러주세요 🙏' + hint);
             setProcessing(false);
             // 실패 시 마지막 user 메시지 롤백 (다시 보내기 위해)
             messages.pop();
@@ -542,6 +578,21 @@
       });
     }
 
+    // iOS Safari 감지 → mic 버튼 아래에 한 줄 안내 (한 번만)
+    if (_isIOSSafari() && !document.getElementById('voice-ios-hint')){
+      var hint = document.createElement('div');
+      hint.id = 'voice-ios-hint';
+      hint.textContent = '한 번에 한 문장씩, 천천히 말씀해주세요 🙂';
+      hint.style.cssText = 'text-align:center;font-size:13px;color:#5C5A54;margin-top:10px;padding:0 16px;line-height:1.6;';
+      // mic 버튼 직후 위치에 삽입 — DOM 구조가 번들마다 다를 수 있어 가까운 부모에 부착
+      var anchor = micBtn.parentElement;
+      if (anchor && anchor.parentElement){
+        anchor.parentElement.insertBefore(hint, anchor.nextSibling);
+      } else if (anchor){
+        anchor.appendChild(hint);
+      }
+    }
+
     // 첫 진입 시점에 [INTERVIEW_END] 가 마지막 assistant 메시지에 이미 있다면
     // 이어서 새 회차로 가야 함 — 일단 종료 화면을 보여주는 게 안전
     var lastAssist = messages.filter(function(m){ return m.role === 'assistant'; }).pop();
@@ -549,6 +600,6 @@
       showInterviewEnd(lastAssist.content);
     }
 
-    console.log('[voice-runtime] wired — mic/STT/Supabase + adaptive Claude ready (messages:', messages.length, ')');
+    console.log('[voice-runtime] wired — mic/STT/Supabase + adaptive Claude ready (messages:', messages.length, ', iOSSafari:', _isIOSSafari(), ')');
   };
 })();

@@ -48,7 +48,7 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 //   1) supabase/scripts/option_c_full_migration.sql 적용 완료 (Users 드랍, profiles 생성)
 //   2) Supabase 대시보드 > Authentication > Providers > Kakao 활성화 + Redirect URL 등록
 // 전환 절차: 이 상수만 'supabase'로 변경 후 commit + push + 재배포.
-const AUTH_MODE = 'legacy';
+const AUTH_MODE = 'supabase';
 const TOSS_CLIENT_KEY='test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'; // Toss 공식 테스트 키 (운영 시 실 키로 교체)
 const TOSS_PLAN_PRICES={'동행':13900,'동행+':17900};
 const TOSS_PLAN_NAMES={'동행':'AI 동행 — 동행 플랜 (1개월)','동행+':'AI 동행 — 동행+ 플랜 (1개월)'};

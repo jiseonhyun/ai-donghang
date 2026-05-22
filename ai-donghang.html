@@ -2000,6 +2000,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
+    <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>
     <a href="/#auth" class="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
@@ -2027,6 +2028,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
       <li><a href="/#faq">고객센터</a></li>
     </ul>
     <div class="nav-drawer-foot">
+      <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>
       <a href="/#auth" class="login">로그인</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>

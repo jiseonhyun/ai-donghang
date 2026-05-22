@@ -1710,6 +1710,117 @@
     .mock-opt{ transition: none; }
   }
 
+  /* ═════════════════════════════════════════════════════════════
+     모바일(≤768px) 정밀 조정
+     ─ 한국어 헤드라인의 '니다.' 같은 단어 중간 줄바꿈을 방지하기 위해
+       word-break: keep-all 을 적용. 어절 단위로 끊어 가독성 확보.
+     ─ 좁은 폭에서 헤드라인이 폭을 넘기지 않도록 폰트 사이즈 상한 조정.
+     ─ 섹션 상/하 패딩을 약간 줄여 페이지 호흡을 조금 더 타이트하게.
+     ───────────────────────────────────────────────────────────── */
+  @media (max-width: 768px){
+    /* 한국어 어절 단위 줄바꿈 — 헤드라인/타이틀 전반 */
+    .headline,
+    .sec-headline,
+    .step-title,
+    .sample-title,
+    .sample-body,
+    .course-title,
+    .course-desc,
+    .gift-card-title,
+    .gift-copy .pull,
+    .quote-body,
+    .final h2,
+    .final p,
+    .sec-sub,
+    .sub,
+    .step-body{
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    /* 섹션 — 위·아래 호흡 살짝 조이기. 좌우는 18px로 살짝 더 타이트. */
+    .sec{
+      padding: 56px 18px;
+    }
+    .sec-head{
+      margin-bottom: 32px;
+    }
+    .sec-headline{
+      font-size: 24px;
+      line-height: 1.45;
+    }
+    .sec-num{ font-size: 15px; margin-bottom: 12px; }
+    .sec-sub{ font-size: 15.5px; line-height: 1.7; }
+
+    /* 사용법 3 단계 — 큰 카운터(60px)가 너무 무거워 보임. */
+    .steps{ gap: 36px; }
+    .step::before{ font-size: 48px; margin-bottom: 12px; }
+    .step-title{ font-size: 19px; }
+    .step-body{ font-size: 15.5px; line-height: 1.7; }
+    .step-caption{ font-size: 13px; margin-top: 14px; }
+
+    /* 결과물 샘플 — 책 페이지 카드 */
+    .samples{ gap: 18px; }
+    .sample{
+      padding: 22px 20px 20px;
+      gap: 12px;
+    }
+    .sample-folio{ font-size: 13px; }
+    .sample-title{ font-size: 19px; }
+    .sample-body{
+      font-size: 15.5px;
+      line-height: 1.8;
+      text-indent: 1em;
+    }
+    .sample-caption{ font-size: 13px; padding-top: 12px; }
+    .sample-art{ aspect-ratio: 4/3; }
+
+    /* 코스 카드 — 7가지 이야기 */
+    .course-body{ padding: 20px 20px 22px; }
+    .course-title{ font-size: 20px; }
+    .course-desc{ font-size: 15px; line-height: 1.65; }
+    .course-meta{ font-size: 13px; }
+
+    /* 선물 카드 */
+    .gift-copy .pull{ font-size: 20px; line-height: 1.5; }
+    .gift-copy p{ font-size: 15px; line-height: 1.7; }
+    .gift-card{ padding: 22px; }
+    .gift-card-title{ font-size: 20px; }
+    .gift-card-meta{ gap: 18px; font-size: 13px; }
+
+    /* 후기 인용 */
+    .quote{ padding: 26px 22px; }
+    .quote-mark{ font-size: 44px; }
+    .quote-body{ font-size: 17px; line-height: 1.65; margin-bottom: 18px; }
+
+    /* 마지막 CTA */
+    .final{ padding: 72px 18px; }
+    .final-mark{ font-size: 52px; margin-bottom: 14px; }
+    .final h2{ font-size: 24px; line-height: 1.45; }
+    .final p{ font-size: 15.5px; line-height: 1.7; }
+
+    /* 푸터 */
+    .foot{ padding: 40px 18px 44px; }
+    .foot-bottom{ font-size: 12.5px; gap: 6px 18px; }
+
+    /* Hero — 너무 큰 폰트 사이즈가 좁은 폭에서 넘치지 않도록. */
+    .hero{ padding: 24px 18px 64px; }
+    .headline{ font-size: 28px; line-height: 1.4; }
+    .headline-mark{ font-size: 48px; margin-bottom: 8px; }
+    .eyebrow{ font-size: 15px; margin-bottom: 22px; }
+    .sub{ font-size: 16px; line-height: 1.7; }
+  }
+
+  /* ─ 더 좁은 화면(≤380px, 구형 안드로이드/아이폰 SE)에서 추가 조정 ─ */
+  @media (max-width: 380px){
+    .sec{ padding: 48px 16px; }
+    .sec-headline{ font-size: 22px; }
+    .step::before{ font-size: 42px; }
+    .sample{ padding: 20px 16px 18px; }
+    .headline{ font-size: 26px; }
+    .final h2{ font-size: 22px; }
+  }
+
 </style>
 <script>
 // ── 카카오 OAuth 콜백 도착 처리 — /?code=XXX 또는 /?error=XXX 가 보이면 ai-donghang.html로 위임 ──

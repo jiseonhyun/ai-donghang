@@ -451,6 +451,31 @@
     padding: 4px 6px;
   }
   .debug-bar .close:hover{ color: #F6F0E4; background: transparent; }
+
+  /* ═════════════════════════════════════════════════════════════
+     모바일(≤768px) — 한국어 어절 단위 줄바꿈으로 '니다.' 단독 줄바꿈 방지.
+     ───────────────────────────────────────────────────────────── */
+  @media (max-width: 768px){
+    .page-title,
+    .page-sub,
+    .card h2,
+    .card h3,
+    .stage,
+    .work-title,
+    .work-body,
+    .work-caption,
+    .stage-caption,
+    p{
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .page-title{ font-size: 24px; line-height: 1.4; }
+    .page-sub{ font-size: 15px; }
+    .stage{ padding: 20px 18px 56px; }
+  }
+  @media (max-width: 380px){
+    .page-title{ font-size: 22px; }
+  }
 </style>
 </head>
 <body>

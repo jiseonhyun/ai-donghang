@@ -125,23 +125,14 @@ CREATE TABLE public.profiles (
 CREATE INDEX idx_profiles_phone    ON public.profiles (phone);
 CREATE INDEX idx_profiles_kakao_id ON public.profiles (kakao_id);
 
--- ── STEP 2: 기존 Users → profiles 복사 (0행 → 노옵) ─────────────────────────
-INSERT INTO public.profiles (
-  id, name, phone, kakao_id, plan,
-  last_question_shown_at, last_question_id,
-  agreed_age_14, agreed_terms_at, agreed_privacy_at,
-  agreed_marketing, agreed_marketing_at, terms_version, created_at
-)
-SELECT
-  m.new_uuid,
-  u.name, u.phone, u.kakao_id, COALESCE(u.plan,'free'),
-  u.last_question_shown_at, u.last_question_id,
-  COALESCE(u.agreed_age_14,false), u.agreed_terms_at, u.agreed_privacy_at,
-  COALESCE(u.agreed_marketing,false), u.agreed_marketing_at,
-  COALESCE(u.terms_version,'1.0'), COALESCE(u.created_at, now())
-FROM public."Users" u
-JOIN public._migration_user_id_map m ON m.old_id = u.id
-ON CONFLICT (id) DO NOTHING;
+-- ── STEP 2: 기존 Users → profiles 복사 ──────────────────────────────────────
+-- 옵션 C에서는 Users 테이블이 비어 있으므로 INSERT 자체 불필요.
+-- 일반화된 phase_b SQL 원본의 INSERT … SELECT 절은 일부 컬럼(예: created_at)이
+-- 실제 DB에서 text 로 저장돼 있어 COALESCE 타입 매칭(text vs timestamptz) 컴파일
+-- 단계에서 실패. Users 가 비어 있어 어차피 0행 처리될 거라 통째로 생략하는 게
+-- 안전. 향후 데이터 인계가 필요한 마이그에서는 phase_b_pre_migrate.mjs 흐름을
+-- 거치며 각 컬럼을 명시 CAST 한 별도 SQL 을 작성할 것.
+-- (옛 코드: INSERT INTO public.profiles ... SELECT ... FROM public."Users")
 
 -- ── STEP 3: 자식 테이블 user_id 컬럼 bigint → uuid ──────────────────────────
 -- 자식 테이블이 비어 있으므로 UPDATE 대상 0행, DROP/RENAME만 작용

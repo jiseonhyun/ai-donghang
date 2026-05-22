@@ -4507,11 +4507,16 @@ async function _hydrateUserProfileFromSession(session, isNewLogin){
     };
     try{ localStorage.setItem('aiDonghang_profile', JSON.stringify(userProfile)); }catch(e){}
     if(typeof setNavLoggedIn === 'function') setNavLoggedIn(userProfile.name);
-    // 신규 카카오 콜백 직후라면 환영 모달, 아니면 조용히 hydrate
+    // 신규 카카오 콜백 직후라면 환영 모달
+    // OAuth 후 redirectTo=/ai-donghang.html#auth 로 돌아오므로 auth view 활성 상태가
+    // 기본. 추가로 URL 해시가 #auth 거나 fragment 에 access_token 이 있으면 신규
+    // 콜백으로 판단해 강제로 auth view 활성 + 환영 모달.
     if(isNewLogin && typeof showAuthSuccess === 'function'){
-      // SIGNED_IN 직후 — auth view에 있을 때만 환영 모달
+      var hash = window.location.hash || '';
+      var isOAuthReturn = hash.indexOf('access_token') >= 0 || hash === '#auth' || hash === '';
       var av = document.getElementById('authView');
-      if(av && av.classList.contains('active')){
+      if(isOAuthReturn || (av && av.classList.contains('active'))){
+        if(typeof showView === 'function') showView('auth');
         showAuthSuccess(userProfile.name, !p.created_at ? true : false);
       }
     }
@@ -8030,9 +8035,13 @@ async function _authKakaoSupabase(){
     if(!db || !db.auth){
       showToast('인증 모듈 로딩 중이에요. 잠시 후 다시 눌러주세요.'); return;
     }
+    // redirectTo 는 ai-donghang.html#auth 로 — 그래야 auth view 가 활성 상태로
+    // 돌아오고 _initSupabaseAuthListener 의 SIGNED_IN 핸들러가 환영 모달을 띄움.
+    // 단순히 origin/' 으로 보내면 index.html(랜딩)으로 돌아와서 supabase 세션
+    // 처리 코드 없음 → 사용자는 그냥 "홈에 떨어졌다"고 인식.
     var res = await db.auth.signInWithOAuth({
       provider: 'kakao',
-      options: { redirectTo: window.location.origin + '/' }
+      options: { redirectTo: window.location.origin + '/ai-donghang.html#auth' }
     });
     if(res && res.error) throw res.error;
     // 성공 시 supabase가 카카오로 redirect — 이 이후 코드는 실행되지 않음

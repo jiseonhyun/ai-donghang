@@ -667,8 +667,17 @@
           mediaRec.start(1000);
           console.log('[VDBG] Android MR.start() OK');
 
-          // 2) Vosk Recognizer — 같은 stream 으로 STT
-          var recognizer = new model.KaldiRecognizer(16000);
+          // 3) AudioContext + ScriptProcessor 로 stream → AudioBuffer → recognizer
+          // ★ AudioContext sampleRate 를 명시적으로 audioCtx.sampleRate 로 잡아
+          //   KaldiRecognizer 에 같은 값 전달. 안 그러면 디바이스 default(48000Hz)
+          //   audio 가 16000Hz 로 trained 된 모델에 들어가서 인식이 거의 안 됨
+          //   (사용자 보고: small 모델 95% 부정확). vosk-browser worker 가 내부에서
+          //   16000Hz 로 리샘플링 처리.
+          voskAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          console.log('[VDBG] AudioContext sampleRate=' + voskAudioCtx.sampleRate);
+
+          // 2) Vosk Recognizer — 실제 audio sample rate 로 생성
+          var recognizer = new model.KaldiRecognizer(voskAudioCtx.sampleRate);
           recognizer.setWords(false);
 
           recognizer.on('partialresult', function(msg){
@@ -695,9 +704,8 @@
 
           voskRecognizer = recognizer;
 
-          // 3) AudioContext + ScriptProcessor 로 stream → AudioBuffer → recognizer
+          // 4) ScriptProcessor 로 stream → AudioBuffer → recognizer
           // (AudioWorklet 가 더 신식이지만 vosk-browser 공식 패턴이 ScriptProcessor.)
-          voskAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
           voskSource = voskAudioCtx.createMediaStreamSource(stream);
           voskProcessor = voskAudioCtx.createScriptProcessor(4096, 1, 1);
           voskProcessor.onaudioprocess = function(ev){

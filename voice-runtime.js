@@ -405,6 +405,56 @@
     function startRecording(opts){
       var append = !!(opts && opts.append);
       console.log('[VDBG] startRecording append=' + append + ' hasMD=' + !!navigator.mediaDevices);
+
+      // ── 안드로이드 Chrome 우회: getUserMedia(MediaRecorder) ↔ webkitSpeechRecognition
+      //    이 동일 마이크 디바이스를 동시 점유 못 함. getUserMedia 가 먼저 audio 를
+      //    잡으면 SR 이 audio 를 한 글자도 못 받아 onresult 미발화 → 텍스트 안 나옴.
+      //    사용자 진단(2026-05-23 f10a8be 미니콘솔 [VDBG] 스크린샷)으로 확정.
+      //
+      //    해결: 안드로이드에서는 MediaRecorder 를 안 띄우고 SR 만 단독 시작.
+      //    SR.start() 자체가 audio access 를 잡고 onresult 정상 발화. 음성 파일은
+      //    안드로이드에 한해 스킵 (uploadAudio 는 chunks 비면 null resolve, Claude
+      //    호출은 텍스트만으로 OK — confirm 핸들러도 baseFinal 만으로 통과).
+      if (_isAndroid()){
+        console.log('[VDBG] Android — SR-only mode (skip MediaRecorder)');
+        if (speechRec){
+          try { speechRec.stop(); } catch(e){}
+          speechRec = null;
+        }
+        if (!append){
+          audioChunks = [];
+          baseFinal = '';
+          seconds = 0;
+          if (timerText) timerText.textContent = fmtTime(0);
+          if (transcriptBody){
+            var phA = transcriptBody.querySelector('.ph');
+            if (phA) phA.remove();
+            transcriptBody.textContent = '';
+          }
+        } else {
+          if (transcriptBody){
+            var phA2 = transcriptBody.querySelector('.ph');
+            if (phA2) phA2.remove();
+            if (baseFinal) transcriptBody.textContent = baseFinal;
+          }
+        }
+        lastFullFinal = '';
+        srRestarts = [];
+        srIntent = true;
+        console.log('[VDBG] _startSRWithBackoff(0) call (Android SR-only)');
+        _startSRWithBackoff(0, baseFinal);
+
+        body.classList.remove('is-reviewing');
+        body.classList.add('is-recording');
+        clearInterval(secTimer);
+        secTimer = setInterval(function(){
+          seconds++;
+          if (timerText) timerText.textContent = fmtTime(seconds);
+        }, 1000);
+        return;
+      }
+
+      // ── 비안드로이드 (iOS / 데스크탑): 기존 흐름 — getUserMedia + MediaRecorder + SR
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
         console.log('[VDBG] no mediaDevices');
         toast('이 브라우저는 마이크 사용을 지원하지 않아요 🙏');

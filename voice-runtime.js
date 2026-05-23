@@ -4,6 +4,18 @@
 // window는 살아남으므로 여기서 정의한 __voiceInit는 swap 후에도 호출 가능.
 // ─────────────────────────────────────────────────────────────────────────
 (function(){
+  // ── 디버그 모드 — ?debug=1 시 eruda 모바일 콘솔 자동 로드 ──────────────────
+  // 안드로이드 Chrome 등 모바일 브라우저는 콘솔 UI 가 없어 진단 어려움.
+  // URL 끝에 ?debug=1 만 붙이면 우측 하단에 floating 콘솔 버튼이 떠 콘솔 / 네트워크 /
+  // DOM 등을 화면에서 직접 볼 수 있음. production 영향 0 (debug=1 없으면 미로드).
+  if (location.search.indexOf('debug=1') >= 0 && !window._erudaLoaded){
+    window._erudaLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    s.onload = function(){ if (window.eruda) window.eruda.init(); };
+    document.head.appendChild(s);
+  }
+
   var SUPABASE_URL = 'https://gaibakqhdfdpnsdgpmya.supabase.co';
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
   var BUCKET = 'voice-recordings';

@@ -38,6 +38,20 @@
   }
 })();
 
+// ── 디버그 모드 — ?debug=1 시 eruda 모바일 콘솔 자동 로드 ──────────────────────
+// 안드로이드 Chrome 등 모바일 브라우저는 콘솔 UI 가 없어 진단 어려움.
+// 사이트 URL 끝에 ?debug=1 만 붙이면 우측 하단에 floating 콘솔 버튼이 떠
+// 콘솔/네트워크/DOM 등을 화면에서 직접 볼 수 있음. production 영향 0.
+(function(){
+  if (location.search.indexOf('debug=1') >= 0 && !window._erudaLoaded){
+    window._erudaLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    s.onload = function(){ if (window.eruda) window.eruda.init(); };
+    document.head.appendChild(s);
+  }
+})();
+
 // ── OAuth callback indicator capture (가장 먼저) ─────────────────────────────
 // supabase-js v2 의 createClient(detectSessionInUrl:true 기본) 가 URL fragment
 // 의 access_token 을 자동 처리하면서 hash 를 비운다. 그 후 hash router 가

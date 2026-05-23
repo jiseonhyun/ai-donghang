@@ -239,6 +239,21 @@
     var messages = loadMessages();       // 누적 대화 이력 (Claude messages 형식)
     var interviewEnded = false;          // [INTERVIEW_END] 토큰 도달 후 잠금
 
+    // ── Vosk (안드로이드 Chrome 마이크 lock 우회용 클라이언트 STT) ────────────
+    // 안드로이드 Chrome 은 webkitSR + MediaRecorder 동시 마이크 점유 불가
+    // (사용자 진단 2026-05-23). 해결: getUserMedia 1회로 stream 받아 MediaRecorder
+    // 와 Vosk(WebAssembly) 둘 다 같은 stream 으로 처리. Vosk 는 마이크 access 안 잡고
+    // 우리가 추출한 AudioBuffer 만 받음 → 충돌 없음.
+    var voskModel = null;       // 모듈 캐싱 (한 페이지 세션 동안 모델 유지)
+    var voskRecognizer = null;
+    var voskAudioCtx = null;
+    var voskSource = null;
+    var voskProcessor = null;
+    var voskStream = null;
+    var voskLoadInFlight = null;
+    var VOSK_LIB_URL = 'https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js';
+    var VOSK_MODEL_URL = '/vosk-models/ko-small.tar.gz';
+
     // 질문 영역 DOM
     var questionTextEl = document.querySelector('.question-text');
     var questionEyebrowEl = document.querySelector('.question-eyebrow');
@@ -406,53 +421,22 @@
       var append = !!(opts && opts.append);
       console.log('[VDBG] startRecording append=' + append + ' hasMD=' + !!navigator.mediaDevices);
 
-      // ── 안드로이드 Chrome 우회: getUserMedia(MediaRecorder) ↔ webkitSpeechRecognition
-      //    이 동일 마이크 디바이스를 동시 점유 못 함. 사용자 진단으로 두 시나리오
-      //    모두 확인:
-      //      (a) getUserMedia 먼저 (f2525f9): SR 이 audio 못 받음 → onresult 0회.
-      //      (b) SR 먼저 + getUserMedia 공유 시도 (3dad051): getUserMedia 가 SR
-      //          마이크를 뺏어감 → share-attempt SUCCESS 로 보이지만 SR 죽음 →
-      //          텍스트도 녹음도 둘 다 망가짐 (가장 나쁜 결과).
+      // ── 안드로이드 Chrome 우회: Vosk(WebAssembly 클라이언트 STT) + MediaRecorder
+      //    문제: webkitSR + MediaRecorder 동시 마이크 점유 불가 (사용자 진단 확인).
+      //    해결: getUserMedia 1회로 stream 받아 MediaRecorder 와 Vosk 둘 다 같은
+      //    stream 으로 처리. Vosk 는 마이크 access 안 잡고 우리가 AudioContext +
+      //    ScriptProcessor 로 추출한 AudioBuffer 만 받음 → 충돌 자체 없음.
       //
-      //    따라서 안드로이드는 SR-only 로 다시 복귀 — 적어도 텍스트는 보장. 녹음
-      //    파일도 살리려면 Vosk(클라이언트 WebAssembly STT) 같은 마이크 access 1회
-      //    + audio stream 공유 가능한 방식이 필요. 별도 작업으로 진행.
+      //    첫 진입: vosk-browser CDN(~MB) + 한국어 모델(82MB) 다운로드. IndexedDB
+      //    캐싱(라이브러리 자체)으로 두 번째부터 즉시 시작. 로드 실패 시 SR-only
+      //    fallback 으로 그래도 텍스트는 보장.
       if (_isAndroid()){
-        console.log('[VDBG] Android — SR-only mode (share-attempt revert; Vosk pending)');
-        if (speechRec){
-          try { speechRec.stop(); } catch(e){}
-          speechRec = null;
-        }
-        if (!append){
-          audioChunks = [];
-          baseFinal = '';
-          seconds = 0;
-          if (timerText) timerText.textContent = fmtTime(0);
-          if (transcriptBody){
-            var phA = transcriptBody.querySelector('.ph');
-            if (phA) phA.remove();
-            transcriptBody.textContent = '';
-          }
-        } else {
-          if (transcriptBody){
-            var phA2 = transcriptBody.querySelector('.ph');
-            if (phA2) phA2.remove();
-            if (baseFinal) transcriptBody.textContent = baseFinal;
-          }
-        }
-        lastFullFinal = '';
-        srRestarts = [];
-        srIntent = true;
-        console.log('[VDBG] _startSRWithBackoff(0) call (Android SR-only)');
-        _startSRWithBackoff(0, baseFinal);
-
-        body.classList.remove('is-reviewing');
-        body.classList.add('is-recording');
-        clearInterval(secTimer);
-        secTimer = setInterval(function(){
-          seconds++;
-          if (timerText) timerText.textContent = fmtTime(seconds);
-        }, 1000);
+        console.log('[VDBG] Android — Vosk + MediaRecorder mode start');
+        if (speechRec){ try { speechRec.stop(); } catch(e){} speechRec = null; }
+        _startAndroidVosk(append).catch(function(err){
+          console.log('[VDBG] Android Vosk start FAIL ' + (err && err.message || err) + ' — SR-only fallback');
+          _startAndroidSROnlyFallback(append);
+        });
         return;
       }
 
@@ -540,6 +524,8 @@
       // _startSRWithBackoff 안의 `if(speechRec) return` 가드에 걸려 새 SR 안
       // 시작됨 (iPhone 보고된 증상). startRecording 도 진입 시 또 정리.
       speechRec = null;
+      // Vosk 파이프라인 정리 (안드로이드 Vosk 경로). recognizer/processor 가 없으면 no-op.
+      _teardownAndroidVosk();
       try { if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop(); } catch(e){}
       if (mediaRec && mediaRec.stream){
         try { mediaRec.stream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
@@ -580,6 +566,188 @@
           resolve(null);
         });
       });
+    }
+
+    // ── Vosk 로드 헬퍼 ─────────────────────────────────────────────────────
+    // CDN 스크립트 동적 로드 → window.Vosk 노출. 한 번만 수행, in-flight 캐싱.
+    function _loadVoskScript(){
+      if (window.Vosk) return Promise.resolve();
+      if (voskLoadInFlight) return voskLoadInFlight;
+      voskLoadInFlight = new Promise(function(resolve, reject){
+        var s = document.createElement('script');
+        s.src = VOSK_LIB_URL;
+        s.async = true;
+        s.onload = function(){ console.log('[VDBG] Vosk lib loaded'); resolve(); };
+        s.onerror = function(){ voskLoadInFlight = null; reject(new Error('vosk-browser CDN load failed')); };
+        document.head.appendChild(s);
+      });
+      return voskLoadInFlight;
+    }
+
+    // 모델 로드 — 한 페이지 세션 동안 voskModel 캐싱. vosk-browser 가 IndexedDB
+    // 내부 캐싱도 함께 수행해 두 번째 페이지 진입에서도 모델 다운로드 안 함.
+    function _ensureVoskModel(onProgress){
+      if (voskModel) return Promise.resolve(voskModel);
+      return _loadVoskScript().then(function(){
+        console.log('[VDBG] Vosk createModel start url=' + VOSK_MODEL_URL);
+        if (onProgress) onProgress();
+        return window.Vosk.createModel(VOSK_MODEL_URL).then(function(m){
+          voskModel = m;
+          console.log('[VDBG] Vosk model ready');
+          return m;
+        });
+      });
+    }
+
+    // 안드로이드 Vosk 시작 흐름. async-await 안 쓰고 Promise 체인 (ES5 친화).
+    function _startAndroidVosk(append){
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        return Promise.reject(new Error('no mediaDevices'));
+      }
+      if (!append){
+        audioChunks = [];
+        baseFinal = '';
+        seconds = 0;
+        if (timerText) timerText.textContent = fmtTime(0);
+        if (transcriptBody){
+          var phA = transcriptBody.querySelector('.ph');
+          if (phA) phA.remove();
+          transcriptBody.textContent = '';
+        }
+      } else {
+        if (transcriptBody){
+          var phA2 = transcriptBody.querySelector('.ph');
+          if (phA2) phA2.remove();
+          if (baseFinal) transcriptBody.textContent = baseFinal;
+        }
+      }
+
+      // 첫 진입(또는 모델 미로딩)이면 안내 토스트 + 타임라인 시작 보류
+      var modelAlreadyReady = !!voskModel;
+      if (!modelAlreadyReady){
+        toast('음성 인식 준비 중이에요… 처음 한 번만 약 1분 걸려요 🙏');
+      }
+
+      return _ensureVoskModel().then(function(model){
+        console.log('[VDBG] Android getUserMedia (Vosk path)');
+        return navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 }
+        }).then(function(stream){
+          voskStream = stream;
+          console.log('[VDBG] Android stream OK tracks=' + stream.getAudioTracks().length);
+
+          // 1) MediaRecorder — 녹음 파일 생성 (Supabase 업로드)
+          mimeType = pickMime();
+          try {
+            mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
+                                : new MediaRecorder(stream);
+          } catch(e){
+            console.log('[VDBG] MR ctor FAIL ' + e + ' — fallback no-mime');
+            mediaRec = new MediaRecorder(stream);
+          }
+          mediaRec.ondataavailable = function(e){
+            if (e.data && e.data.size > 0) audioChunks.push(e.data);
+          };
+          mediaRec.start(1000);
+          console.log('[VDBG] Android MR.start() OK');
+
+          // 2) Vosk Recognizer — 같은 stream 으로 STT
+          var recognizer = new model.KaldiRecognizer(16000);
+          recognizer.setWords(false);
+
+          recognizer.on('partialresult', function(msg){
+            var partial = (msg && msg.result && msg.result.partial) || '';
+            // partial 은 매번 누적 전체 partial — 우리 baseFinal 뒤에 붙여 표시만, 누적은 안 함.
+            if (transcriptBody){
+              var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
+              if (ph) ph.remove();
+              transcriptBody.textContent = (baseFinal + (baseFinal && partial ? ' ' : '') + partial).trim();
+            }
+          });
+
+          recognizer.on('result', function(msg){
+            var text = (msg && msg.result && msg.result.text) || '';
+            if (!text) return;
+            console.log('[VDBG] Vosk result: ' + text.slice(0, 40));
+            baseFinal = (baseFinal + (baseFinal ? ' ' : '') + text).trim();
+            if (transcriptBody){
+              var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
+              if (ph) ph.remove();
+              transcriptBody.textContent = baseFinal;
+            }
+          });
+
+          voskRecognizer = recognizer;
+
+          // 3) AudioContext + ScriptProcessor 로 stream → AudioBuffer → recognizer
+          // (AudioWorklet 가 더 신식이지만 vosk-browser 공식 패턴이 ScriptProcessor.)
+          voskAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          voskSource = voskAudioCtx.createMediaStreamSource(stream);
+          voskProcessor = voskAudioCtx.createScriptProcessor(4096, 1, 1);
+          voskProcessor.onaudioprocess = function(ev){
+            try { voskRecognizer && voskRecognizer.acceptWaveform(ev.inputBuffer); }
+            catch(e){ /* recognizer 가 cleanup 직후 호출되는 race — 무시 */ }
+          };
+          voskSource.connect(voskProcessor);
+          voskProcessor.connect(voskAudioCtx.destination);
+          console.log('[VDBG] Android Vosk pipeline wired');
+
+          // 4) UI 상태 전환 + 초 타이머
+          body.classList.remove('is-reviewing');
+          body.classList.add('is-recording');
+          clearInterval(secTimer);
+          secTimer = setInterval(function(){
+            seconds++;
+            if (timerText) timerText.textContent = fmtTime(seconds);
+          }, 1000);
+
+          if (!modelAlreadyReady){
+            toast('이제 말씀하셔도 됩니다 🎙');
+          }
+        });
+      });
+    }
+
+    // Vosk 로드/모델 실패 시 fallback — 기존 SR-only 흐름 (텍스트만 보장, 녹음 없음)
+    function _startAndroidSROnlyFallback(append){
+      console.log('[VDBG] Android SR-only fallback engage');
+      toast('음성 인식 모델을 불러오지 못해 텍스트만 변환합니다 🙏');
+      if (!append){
+        audioChunks = [];
+        baseFinal = '';
+        seconds = 0;
+        if (timerText) timerText.textContent = fmtTime(0);
+        if (transcriptBody){
+          var phF = transcriptBody.querySelector('.ph');
+          if (phF) phF.remove();
+          transcriptBody.textContent = '';
+        }
+      }
+      lastFullFinal = '';
+      srRestarts = [];
+      srIntent = true;
+      _startSRWithBackoff(0, baseFinal);
+      body.classList.remove('is-reviewing');
+      body.classList.add('is-recording');
+      clearInterval(secTimer);
+      secTimer = setInterval(function(){
+        seconds++;
+        if (timerText) timerText.textContent = fmtTime(seconds);
+      }, 1000);
+    }
+
+    // Vosk 파이프라인 정리 — stopRecording 에서 호출.
+    function _teardownAndroidVosk(){
+      try { if (voskProcessor) voskProcessor.disconnect(); } catch(e){}
+      try { if (voskSource) voskSource.disconnect(); } catch(e){}
+      try { if (voskAudioCtx && voskAudioCtx.state !== 'closed') voskAudioCtx.close(); } catch(e){}
+      try { if (voskRecognizer && voskRecognizer.remove) voskRecognizer.remove(); } catch(e){}
+      voskProcessor = null;
+      voskSource = null;
+      voskAudioCtx = null;
+      voskRecognizer = null;
+      // voskStream tracks 는 stopRecording 의 mediaRec.stream.getTracks().stop() 에서 해제.
+      voskStream = null;
     }
 
     // ── mic 버튼 토글: 녹음 중이면 정지(검토 진입), 아니면 새로 시작

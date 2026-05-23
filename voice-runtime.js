@@ -292,15 +292,39 @@
         }
         srRestarts.push(now);
         speechRec = null;
-        setTimeout(function(){
-          if (!srIntent) return;
-          var fresh = buildAndStartSR(baseFinal);
-          if (fresh) speechRec = fresh;
-        }, 500);
+        // backoff 헬퍼로 재시작 — 한 번 실패해도 500/1000/2000ms 단계로 재시도.
+        // Galaxy 오디오 세션 release 가 350ms 로 부족한 케이스 대응.
+        _startSRWithBackoff(0, baseFinal);
       };
 
       try { rec.start(); return rec; }
       catch(e){ console.warn('[voice-runtime] SR start', e); return null; }
+    }
+
+    // SR 시작 backoff 체인 — Galaxy/안드로이드 첫 시도 InvalidStateError 대비.
+    // [0, 500, 1000, 2000]ms 순으로 buildAndStartSR 재시도. 성공하면 speechRec
+    // 셋. 모든 시도 실패하면 STT 포기하고 사용자에게 안내(MediaRecorder 는
+    // 계속 돌아 음성 파일은 저장됨).
+    function _startSRWithBackoff(attempt, base){
+      attempt = attempt || 0;
+      var delays = [0, 500, 1000, 2000];
+      if (attempt >= delays.length){
+        console.warn('[voice-runtime] SR backoff 모두 실패 — MediaRecorder 만 진행');
+        speechRec = null;
+        toast('음성 인식이 시작되지 않았어요. 마이크 권한을 확인해 주세요 🙏');
+        return;
+      }
+      setTimeout(function(){
+        if (!srIntent) return;
+        if (speechRec) return; // 이미 누가 셋팅했으면 패스
+        var fresh = buildAndStartSR(base != null ? base : baseFinal);
+        if (fresh){
+          speechRec = fresh;
+          if (attempt > 0) console.log('[voice-runtime] SR start 재시도 #' + attempt + ' 성공');
+        } else {
+          _startSRWithBackoff(attempt + 1, base);
+        }
+      }, delays[attempt]);
     }
 
     // opts.append === true 면 기존 baseFinal/audioChunks/timer 누적 (이어서 말하기)
@@ -343,10 +367,14 @@
         mediaRec.start(1000); // 1초마다 chunk — 이어말하기 시 새 stream의 chunk가 같은 array에 누적
 
         // STT — 새 인스턴스, baseFinal을 base로 넘김
+        // Galaxy/안드로이드 Chrome: 첫 SR.start() 가 InvalidStateError 빈번 —
+        // 오디오 세션 release 미완료 또는 마이크 권한 dialog 와 충돌. backoff
+        // 체인으로 [0, 500, 1000, 2000]ms 재시도. (ai-donghang.html L91e41f4
+        // 의 _autobioScheduleRestart 패턴을 voice-runtime 에도 포팅)
         lastFullFinal = ''; // 새 SR 세션 — Galaxy dedup state 초기화
         srRestarts = [];
         srIntent = true;
-        speechRec = buildAndStartSR(baseFinal);
+        _startSRWithBackoff(0, baseFinal);
 
         body.classList.remove('is-reviewing');
         body.classList.add('is-recording');

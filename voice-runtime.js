@@ -411,12 +411,14 @@
       //    잡으면 SR 이 audio 를 한 글자도 못 받아 onresult 미발화 → 텍스트 안 나옴.
       //    사용자 진단(2026-05-23 f10a8be 미니콘솔 [VDBG] 스크린샷)으로 확정.
       //
-      //    해결: 안드로이드에서는 MediaRecorder 를 안 띄우고 SR 만 단독 시작.
-      //    SR.start() 자체가 audio access 를 잡고 onresult 정상 발화. 음성 파일은
-      //    안드로이드에 한해 스킵 (uploadAudio 는 chunks 비면 null resolve, Claude
-      //    호출은 텍스트만으로 OK — confirm 핸들러도 baseFinal 만으로 통과).
+      //    전략 (2026-05-23 사용자 요구 — 녹음파일도 필수): SR 을 먼저 시작해 audio
+      //    access 를 SR 이 잡게 한 뒤, 짧은 대기 후 getUserMedia 를 시도. 일부 안드
+      //    로이드 디바이스는 두 번째 access 시 같은 default 마이크 stream 을 공유함.
+      //    공유되면 MediaRecorder 로 녹음파일 생성 ← 실시간 미리보기 + 녹음 둘 다.
+      //    공유 실패하면 (NotReadableError / 같은 audio 가 0 sample 등) MediaRecorder
+      //    스킵하고 SR-only fallback. 어차피 텍스트는 보장.
       if (_isAndroid()){
-        console.log('[VDBG] Android — SR-only mode (skip MediaRecorder)');
+        console.log('[VDBG] Android — SR-first + getUserMedia share attempt');
         if (speechRec){
           try { speechRec.stop(); } catch(e){}
           speechRec = null;
@@ -441,7 +443,7 @@
         lastFullFinal = '';
         srRestarts = [];
         srIntent = true;
-        console.log('[VDBG] _startSRWithBackoff(0) call (Android SR-only)');
+        console.log('[VDBG] _startSRWithBackoff(0) call (Android SR-first)');
         _startSRWithBackoff(0, baseFinal);
 
         body.classList.remove('is-reviewing');
@@ -451,6 +453,45 @@
           seconds++;
           if (timerText) timerText.textContent = fmtTime(seconds);
         }, 1000);
+
+        // SR 이 audio 잡을 시간 확보 후 getUserMedia 공유 시도 (600ms 후).
+        // 너무 빠르면 SR 이 마이크 access 채 잡기 전이라 두 access 모두 race.
+        // 600ms 면 안드로이드에서 SR.start() 후 첫 audio frame 처리에 충분.
+        setTimeout(function(){
+          if (!srIntent) { console.log('[VDBG] Android share-attempt skip (srIntent=false)'); return; }
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+            console.log('[VDBG] Android share-attempt skip (no mediaDevices)');
+            return;
+          }
+          console.log('[VDBG] Android share-attempt getUserMedia call');
+          navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+            // 디바이스가 share 를 허용했음. MediaRecorder 시작.
+            if (!srIntent){
+              console.log('[VDBG] Android share-attempt got stream but srIntent=false — release');
+              try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
+              return;
+            }
+            console.log('[VDBG] Android share-attempt SUCCESS, tracks=' + stream.getAudioTracks().length);
+            mimeType = pickMime();
+            try {
+              mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
+                                  : new MediaRecorder(stream);
+            } catch(e){
+              console.log('[VDBG] Android MR ctor FAIL ' + e);
+              try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){}
+              return;
+            }
+            mediaRec.ondataavailable = function(e){
+              if (e.data && e.data.size > 0) audioChunks.push(e.data);
+            };
+            mediaRec.start(1000);
+            console.log('[VDBG] Android MR.start() OK — 녹음 + STT 동시');
+          }).catch(function(err){
+            // share 실패 — 흔한 케이스. SR-only 로 진행. 텍스트는 정상.
+            console.log('[VDBG] Android share-attempt FAIL name=' + (err && err.name) + ' — SR-only fallback');
+          });
+        }, 600);
+
         return;
       }
 

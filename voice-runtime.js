@@ -128,6 +128,12 @@
     var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
     return isIOS && isSafari;
   }
+  // 안드로이드 감지 — Chrome 의 webkitSpeechRecognition 이 continuous=true 를
+  // 사실상 무시. 짧게 한 발화만 듣고 끊겨 텍스트가 한 번도 안 나오는 케이스 빈번.
+  // continuous=false + onend 재시작 패턴으로 우회.
+  function _isAndroid(){
+    return /Android/i.test(navigator.userAgent || '');
+  }
 
   window.__voiceInit = function(){
     var micBtn = document.getElementById('mic-btn');
@@ -225,7 +231,10 @@
       var rec;
       try { rec = new SR(); } catch(e){ console.warn('[voice-runtime] SR ctor', e); return null; }
       rec.lang = 'ko-KR';
-      rec.continuous = true;
+      // Android Chrome 은 continuous=true 무시 + 짧은 첫 발화만 듣고 종료해
+      // onresult 자체가 안 와서 텍스트 변환이 한 번도 안 되는 사용자 보고.
+      // false 로 시작하고 onend 에서 재시작하는 패턴으로 강제 chunked 처리.
+      rec.continuous = !_isAndroid();
       rec.interimResults = true;
 
       var instanceBase = (initialBase != null) ? initialBase : baseFinal;
@@ -334,6 +343,11 @@
         toast('이 브라우저는 마이크 사용을 지원하지 않아요 🙏');
         return;
       }
+      // 이전 SR 잔재 정리 — stopRecording 누락/race 대비 이중 안전.
+      if (speechRec){
+        try { speechRec.stop(); } catch(e){}
+        speechRec = null;
+      }
       navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
         if (!append){
           audioChunks = [];
@@ -399,6 +413,10 @@
       srIntent = false;
       clearInterval(secTimer);
       try { if (speechRec) speechRec.stop(); } catch(e){}
+      // ★ null 처리 필수 — 안 하면 "잠시 멈추기" 후 "이어서 말씀하기" 클릭 시
+      // _startSRWithBackoff 안의 `if(speechRec) return` 가드에 걸려 새 SR 안
+      // 시작됨 (iPhone 보고된 증상). startRecording 도 진입 시 또 정리.
+      speechRec = null;
       try { if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop(); } catch(e){}
       if (mediaRec && mediaRec.stream){
         try { mediaRec.stream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}

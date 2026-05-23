@@ -578,6 +578,33 @@
       });
     }
 
+    // ── "이 질문은 건너뛰기" 버튼 ──────────────────────────────────────────────
+    // voice.html demo 템플릿에 "이 질문은 건너뛰기" 버튼이 있는데 id 가 없고
+    // demo 핸들러도 없어 클릭해도 아무 일 안 일어남. 텍스트로 버튼 찾아서
+    // confirm 흐름 재사용 — baseFinal 을 메타 메시지로 채우고 confirmBtn.click()
+    // 호출하면 기존 핸들러가 다음 질문을 받아옴.
+    var skipBtn = null;
+    var _allBtns = document.querySelectorAll('button');
+    for (var _i = 0; _i < _allBtns.length; _i++){
+      var _txt = (_allBtns[_i].textContent || '').trim();
+      if (_txt.indexOf('건너뛰기') >= 0 && _txt.indexOf('질문') >= 0){
+        skipBtn = _allBtns[_i]; break;
+      }
+    }
+    if (skipBtn){
+      skipBtn = takeOver(skipBtn);
+      skipBtn.addEventListener('click', function(){
+        if (interviewEnded) return;
+        // 녹음 중이면 정지
+        if (body.classList.contains('is-recording')) stopRecording();
+        // 메타 메시지로 답변 채워서 Claude 가 다른 각도로 질문하도록 유도
+        baseFinal = '(이 질문은 건너뛰고 싶어요. 다른 질문 부탁드립니다.)';
+        audioChunks = [];
+        _shortConfirmShown = true; // 짧은 답변 경고 우회
+        if (confirmBtn) confirmBtn.click();
+      });
+    }
+
     // iOS Safari 감지 → mic 버튼 아래에 한 줄 안내 (한 번만)
     if (_isIOSSafari() && !document.getElementById('voice-ios-hint')){
       var hint = document.createElement('div');

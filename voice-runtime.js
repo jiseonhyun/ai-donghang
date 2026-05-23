@@ -245,12 +245,14 @@
     // 와 Vosk(WebAssembly) 둘 다 같은 stream 으로 처리. Vosk 는 마이크 access 안 잡고
     // 우리가 추출한 AudioBuffer 만 받음 → 충돌 없음.
     var voskModel = null;       // 모듈 캐싱 (한 페이지 세션 동안 모델 유지)
+    var voskModelInFlight = null;  // createModel Promise — 사용자가 빠르게 두 번 누를 때 중복 호출 차단
     var voskRecognizer = null;
     var voskAudioCtx = null;
     var voskSource = null;
     var voskProcessor = null;
     var voskStream = null;
     var voskLoadInFlight = null;
+    var androidStartInFlight = false;  // _startAndroidVosk 진행 중 잠금 (mic 다중 클릭 차단)
     var VOSK_LIB_URL = 'https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js';
     var VOSK_MODEL_URL = '/vosk-models/ko-small.tar.gz';
 
@@ -433,7 +435,11 @@
       if (_isAndroid()){
         console.log('[VDBG] Android — Vosk + MediaRecorder mode start');
         if (speechRec){ try { speechRec.stop(); } catch(e){} speechRec = null; }
-        _startAndroidVosk(append).catch(function(err){
+        androidStartInFlight = true;
+        _startAndroidVosk(append).then(function(){
+          androidStartInFlight = false;
+        }).catch(function(err){
+          androidStartInFlight = false;
           console.log('[VDBG] Android Vosk start FAIL ' + (err && err.message || err) + ' — SR-only fallback');
           _startAndroidSROnlyFallback(append);
         });
@@ -586,17 +592,23 @@
 
     // 모델 로드 — 한 페이지 세션 동안 voskModel 캐싱. vosk-browser 가 IndexedDB
     // 내부 캐싱도 함께 수행해 두 번째 페이지 진입에서도 모델 다운로드 안 함.
-    function _ensureVoskModel(onProgress){
+    // ★ 사용자가 로딩 중 다시 누르면 같은 in-flight Promise 재사용 (중복 createModel 차단).
+    function _ensureVoskModel(){
       if (voskModel) return Promise.resolve(voskModel);
-      return _loadVoskScript().then(function(){
+      if (voskModelInFlight) return voskModelInFlight;
+      voskModelInFlight = _loadVoskScript().then(function(){
         console.log('[VDBG] Vosk createModel start url=' + VOSK_MODEL_URL);
-        if (onProgress) onProgress();
         return window.Vosk.createModel(VOSK_MODEL_URL).then(function(m){
           voskModel = m;
+          voskModelInFlight = null;
           console.log('[VDBG] Vosk model ready');
           return m;
+        }).catch(function(err){
+          voskModelInFlight = null;
+          throw err;
         });
       });
+      return voskModelInFlight;
     }
 
     // 안드로이드 Vosk 시작 흐름. async-await 안 쓰고 Promise 체인 (ES5 친화).
@@ -622,13 +634,17 @@
         }
       }
 
-      // 첫 진입(또는 모델 미로딩)이면 안내 토스트 + 타임라인 시작 보류
+      // 첫 진입(또는 모델 미로딩)이면 안내 토스트 + UI 잠금. 다중 클릭은
+      // androidStartInFlight 가드로 micBtn 핸들러에서 차단되지만, 시각적
+      // 피드백도 함께 — 마이크 버튼에 .is-loading 표시 + 라벨 변경.
       var modelAlreadyReady = !!voskModel;
       if (!modelAlreadyReady){
-        toast('음성 인식 준비 중이에요… 처음 한 번만 약 1분 걸려요 🙏');
+        toast('음성 인식 준비 중이에요… 처음 한 번만 약 1분 걸려요. 잠시만 기다려 주세요 🙏');
+        try { micBtn.classList.add('is-loading'); } catch(_){}
       }
 
       return _ensureVoskModel().then(function(model){
+        try { micBtn.classList.remove('is-loading'); } catch(_){}
         console.log('[VDBG] Android getUserMedia (Vosk path)');
         return navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 }
@@ -711,6 +727,7 @@
     // Vosk 로드/모델 실패 시 fallback — 기존 SR-only 흐름 (텍스트만 보장, 녹음 없음)
     function _startAndroidSROnlyFallback(append){
       console.log('[VDBG] Android SR-only fallback engage');
+      try { micBtn.classList.remove('is-loading'); } catch(_){}
       toast('음성 인식 모델을 불러오지 못해 텍스트만 변환합니다 🙏');
       if (!append){
         audioChunks = [];
@@ -754,7 +771,12 @@
     //    검토 상태에서 mic 다시 누르면 "이어서" 가 아니라 "새로 시작" — 사용자 의도가
     //    명확한 mic 아이콘 클릭은 fresh start 로 처리. 이어서 말하려면 continueBtn 사용.
     micBtn.addEventListener('click', function(){
-      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid());
+      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid() + ' androidStartInFlight=' + androidStartInFlight);
+      // 안드로이드 Vosk 로딩 중 다중 클릭 차단 — createModel race 방지
+      if (androidStartInFlight){
+        toast('음성 인식 준비 중이에요… 잠시만 기다려 주세요 🙏');
+        return;
+      }
       if (body.classList.contains('is-recording')) stopRecording();
       else startRecording({ append: false });
     });

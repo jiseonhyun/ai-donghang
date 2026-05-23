@@ -270,20 +270,22 @@
 
     function buildAndStartSR(initialBase){
       var SR = getRecognitionCtor();
-      if (!SR) return null;
+      if (!SR) { console.log('[VDBG] buildAndStartSR: NO SR ctor'); return null; }
       var rec;
-      try { rec = new SR(); } catch(e){ console.warn('[voice-runtime] SR ctor', e); return null; }
+      try { rec = new SR(); } catch(e){ console.log('[VDBG] SR ctor FAIL ' + e); console.warn('[voice-runtime] SR ctor', e); return null; }
       rec.lang = 'ko-KR';
       // Android Chrome 은 continuous=true 무시 + 짧은 첫 발화만 듣고 종료해
       // onresult 자체가 안 와서 텍스트 변환이 한 번도 안 되는 사용자 보고.
       // false 로 시작하고 onend 에서 재시작하는 패턴으로 강제 chunked 처리.
       rec.continuous = !_isAndroid();
       rec.interimResults = true;
+      console.log('[VDBG] buildAndStartSR continuous=' + rec.continuous + ' interim=' + rec.interimResults);
 
       var instanceBase = (initialBase != null) ? initialBase : baseFinal;
       var localLastFinalIdx = -1;
 
       rec.onresult = function(ev){
+        console.log('[VDBG] onresult len=' + (ev.results ? ev.results.length : 0) + ' idx=' + ev.resultIndex);
         var interim = '', addedFinal = '';
         for (var i = ev.resultIndex; i < ev.results.length; i++){
           var t = (ev.results[i][0] && ev.results[i][0].transcript) || '';
@@ -320,6 +322,7 @@
 
       rec.onerror = function(e){
         var err = e && e.error;
+        console.log('[VDBG] onerror=' + err);
         console.warn('[voice-runtime] SR err', err);
         if (err === 'not-allowed' || err === 'service-not-allowed'){
           toast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
@@ -329,6 +332,7 @@
       };
 
       rec.onend = function(){
+        console.log('[VDBG] onend intent=' + srIntent + ' sameRec=' + (speechRec===rec) + ' restarts=' + srRestarts.length);
         if (!srIntent) return;
         if (speechRec !== rec) return;
         var now = Date.now();
@@ -349,8 +353,8 @@
         _startSRWithBackoff(0, baseFinal);
       };
 
-      try { rec.start(); return rec; }
-      catch(e){ console.warn('[voice-runtime] SR start', e); return null; }
+      try { rec.start(); console.log('[VDBG] rec.start() OK'); return rec; }
+      catch(e){ console.log('[VDBG] rec.start() FAIL ' + (e && e.message || e)); console.warn('[voice-runtime] SR start', e); return null; }
     }
 
     // SR 시작 backoff 체인 — Galaxy/안드로이드 첫 시도 InvalidStateError 대비.
@@ -382,7 +386,9 @@
     // opts.append === true 면 기존 baseFinal/audioChunks/timer 누적 (이어서 말하기)
     function startRecording(opts){
       var append = !!(opts && opts.append);
+      console.log('[VDBG] startRecording append=' + append + ' hasMD=' + !!navigator.mediaDevices);
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        console.log('[VDBG] no mediaDevices');
         toast('이 브라우저는 마이크 사용을 지원하지 않아요 🙏');
         return;
       }
@@ -391,7 +397,9 @@
         try { speechRec.stop(); } catch(e){}
         speechRec = null;
       }
+      console.log('[VDBG] getUserMedia call');
       navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+        console.log('[VDBG] getUserMedia OK, stream tracks=' + stream.getAudioTracks().length);
         if (!append){
           audioChunks = [];
           baseFinal = '';
@@ -431,6 +439,7 @@
         lastFullFinal = ''; // 새 SR 세션 — Galaxy dedup state 초기화
         srRestarts = [];
         srIntent = true;
+        console.log('[VDBG] _startSRWithBackoff(0) call');
         _startSRWithBackoff(0, baseFinal);
 
         body.classList.remove('is-reviewing');
@@ -441,6 +450,7 @@
           if (timerText) timerText.textContent = fmtTime(seconds);
         }, 1000);
       }).catch(function(err){
+        console.log('[VDBG] getUserMedia FAIL name=' + (err && err.name) + ' msg=' + (err && err.message));
         console.warn('[voice-runtime] getUserMedia', err);
         if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')){
           toast('마이크 권한이 거부됐어요. 주소창 자물쇠 → 마이크 허용으로 바꿔주세요 🙏');
@@ -506,6 +516,7 @@
     //    검토 상태에서 mic 다시 누르면 "이어서" 가 아니라 "새로 시작" — 사용자 의도가
     //    명확한 mic 아이콘 클릭은 fresh start 로 처리. 이어서 말하려면 continueBtn 사용.
     micBtn.addEventListener('click', function(){
+      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid());
       if (body.classList.contains('is-recording')) stopRecording();
       else startRecording({ append: false });
     });

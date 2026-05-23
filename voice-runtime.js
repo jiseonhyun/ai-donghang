@@ -8,43 +8,56 @@
   // 안드로이드 Chrome 등 모바일에서 콘솔 UI 가 없어 진단이 어려움.
   // 외부 CDN(eruda 등) 의존 없이 자체 구현 — 차단/네트워크 이슈에도 무조건 동작.
   // production 영향 0 (debug=1 없으면 활성화 안 됨).
-  if (location.search.indexOf('debug=1') >= 0 && !window._miniConsoleInit){
-    window._miniConsoleInit = true;
-    var ready = function(){
-      var box = document.createElement('div');
-      box.id = '__mini_console';
-      box.style.cssText = 'position:fixed;bottom:0;left:0;right:0;max-height:45vh;background:rgba(0,0,0,.92);color:#9f9;font:11px ui-monospace,Menlo,monospace;overflow:auto;padding:6px 8px 30px;z-index:2147483647;border-top:2px solid #4f4;white-space:pre-wrap;word-break:break-all;';
-      var close = document.createElement('button');
-      close.textContent = '✕ 닫기';
-      close.style.cssText = 'position:fixed;bottom:4px;right:8px;z-index:2147483647;background:#f44;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;';
-      close.onclick = function(){ box.style.display='none'; close.style.display='none'; };
-      var clear = document.createElement('button');
-      clear.textContent = '🗑 지우기';
-      clear.style.cssText = 'position:fixed;bottom:4px;right:70px;z-index:2147483647;background:#444;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;';
-      clear.onclick = function(){ box.innerHTML = ''; };
-      (document.body || document.documentElement).appendChild(box);
-      (document.body || document.documentElement).appendChild(close);
-      (document.body || document.documentElement).appendChild(clear);
-      function fmt(a){ if(typeof a==='string')return a; try{return JSON.stringify(a);}catch(e){return String(a);} }
-      function add(level, args){
-        var ts = new Date().toISOString().slice(11,19);
-        var line = document.createElement('div');
-        line.style.cssText = 'color:'+(level==='error'?'#f88':level==='warn'?'#fc6':level==='info'?'#9cf':'#9f9')+';padding:2px 0;border-bottom:1px solid #222;';
-        try { line.textContent = ts+' ['+level+'] '+Array.prototype.slice.call(args).map(fmt).join(' '); }
-        catch(e){ line.textContent = ts+' ['+level+'] (fmt err)'; }
-        box.appendChild(line);
-        box.scrollTop = box.scrollHeight;
-      }
-      ['log','warn','error','info'].forEach(function(lvl){
-        var orig = console[lvl];
-        console[lvl] = function(){ try{add(lvl,arguments);}catch(e){} if(orig) orig.apply(console, arguments); };
-      });
-      window.addEventListener('error', function(e){ add('error',[e.message, (e.filename||'')+':'+e.lineno]); });
-      window.addEventListener('unhandledrejection', function(e){ add('error',['unhandledrejection', e.reason && (e.reason.message||String(e.reason))]); });
-      add('info', ['[mini-console] ready — debug=1 활성. UA: '+(navigator.userAgent||'').slice(0,80)]);
-    };
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
-    else ready();
+  //
+  // ⚠️ voice.html 은 bundler 가 document.documentElement.replaceWith(...) 로 DOM
+  // 을 통째 교체. head 시점에 box 를 body 에 붙여도 swap 으로 날아감.
+  // 이를 위해 ensureMiniConsole() 헬퍼를 노출하고 __voiceInit 진입 시점에도
+  // 다시 호출 — box 가 없거나 분리된 상태면 재생성.
+  window._ensureMiniConsole = function(){
+    if (location.search.indexOf('debug=1') < 0) return;
+    if (document.getElementById('__mini_console') && document.body && document.body.contains(document.getElementById('__mini_console'))) return;
+    var box = document.createElement('div');
+    box.id = '__mini_console';
+    box.style.cssText = 'position:fixed;bottom:0;left:0;right:0;max-height:45vh;background:rgba(0,0,0,.92);color:#9f9;font:11px ui-monospace,Menlo,monospace;overflow:auto;padding:6px 8px 30px;z-index:2147483647;border-top:2px solid #4f4;white-space:pre-wrap;word-break:break-all;';
+    var close = document.createElement('button');
+    close.textContent = '✕ 닫기';
+    close.style.cssText = 'position:fixed;bottom:4px;right:8px;z-index:2147483647;background:#f44;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;';
+    close.onclick = function(){ box.style.display='none'; close.style.display='none'; };
+    var clear = document.createElement('button');
+    clear.textContent = '🗑 지우기';
+    clear.style.cssText = 'position:fixed;bottom:4px;right:70px;z-index:2147483647;background:#444;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;';
+    clear.onclick = function(){ box.innerHTML = ''; };
+    var parent = document.body || document.documentElement;
+    parent.appendChild(box);
+    parent.appendChild(close);
+    parent.appendChild(clear);
+    function fmt(a){ if(typeof a==='string')return a; try{return JSON.stringify(a);}catch(e){return String(a);} }
+    function add(level, args){
+      var ts = new Date().toISOString().slice(11,19);
+      var line = document.createElement('div');
+      line.style.cssText = 'color:'+(level==='error'?'#f88':level==='warn'?'#fc6':level==='info'?'#9cf':'#9f9')+';padding:2px 0;border-bottom:1px solid #222;';
+      try { line.textContent = ts+' ['+level+'] '+Array.prototype.slice.call(args).map(fmt).join(' '); }
+      catch(e){ line.textContent = ts+' ['+level+'] (fmt err)'; }
+      box.appendChild(line);
+      box.scrollTop = box.scrollHeight;
+    }
+    // console hijack — 한 번만 (이미 hijack 됐으면 skip, box 는 새로 만들었지만 add 는 closure 안에 새로 정의되므로 hijack 도 다시 걸어야 새 box 에 그림)
+    ['log','warn','error','info'].forEach(function(lvl){
+      var orig = window._origConsole && window._origConsole[lvl] ? window._origConsole[lvl] : console[lvl];
+      window._origConsole = window._origConsole || {};
+      if (!window._origConsole[lvl]) window._origConsole[lvl] = orig;
+      console[lvl] = function(){ try{add(lvl,arguments);}catch(e){} if(window._origConsole[lvl]) window._origConsole[lvl].apply(console, arguments); };
+    });
+    if (!window._miniConsoleErrorHooked){
+      window._miniConsoleErrorHooked = true;
+      window.addEventListener('error', function(e){ try{add('error',[e.message, (e.filename||'')+':'+e.lineno]);}catch(_){} });
+      window.addEventListener('unhandledrejection', function(e){ try{add('error',['unhandledrejection', e.reason && (e.reason.message||String(e.reason))]);}catch(_){} });
+    }
+    add('info', ['[mini-console] ready — debug=1 활성 (re-init OK). UA: '+(navigator.userAgent||'').slice(0,80)]);
+  };
+  if (location.search.indexOf('debug=1') >= 0){
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window._ensureMiniConsole);
+    else window._ensureMiniConsole();
   }
 
   var SUPABASE_URL = 'https://gaibakqhdfdpnsdgpmya.supabase.co';
@@ -179,8 +192,13 @@
   }
 
   window.__voiceInit = function(){
+    // bundler 가 documentElement 를 swap 한 뒤이므로 미니 콘솔 박스가 사라졌을 수 있음.
+    // ?debug=1 켜진 채로 진단하려면 swap 후 시점에 다시 보장.
+    try { if (window._ensureMiniConsole) window._ensureMiniConsole(); } catch(e){}
+    console.log('[VDBG] __voiceInit start');
     var micBtn = document.getElementById('mic-btn');
-    if (!micBtn) { console.warn('[voice-runtime] mic-btn not found — bundle DOM may differ'); return; }
+    if (!micBtn) { console.warn('[voice-runtime] mic-btn not found — bundle DOM may differ'); console.log('[VDBG] mic-btn NOT FOUND'); return; }
+    console.log('[VDBG] mic-btn found');
 
     // 데모 핸들러 제거 — clone으로 listener 분리
     var fresh = micBtn.cloneNode(true);

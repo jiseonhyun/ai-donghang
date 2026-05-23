@@ -634,7 +634,7 @@
       if (!confirmBtn) return;
       confirmBtn.disabled = !!on;
       var label = confirmBtn.querySelector('span');
-      if (label) label.textContent = on ? '동동이가 듣고 있어요…' : '좋습니다, 다음으로';
+      if (label) label.textContent = on ? '다음 질문을 만들고 있어요…' : '좋습니다, 다음으로';
     }
     function showInterviewEnd(closingWord){
       interviewEnded = true;

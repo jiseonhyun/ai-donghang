@@ -166,7 +166,17 @@
     .menu-toggle{ display: inline-flex; }
   }
   @media (max-width: 540px){
-    .topbar-actions .login{ display:none; }
+    /* 로그인된 사용자 이름(.is-logged-in)은 모바일에서도 계속 노출 — 로그인 상태 가시화 */
+    .topbar-actions .login:not(.is-logged-in){ display:none; }
+  }
+  /* 로그인된 사용자 이름 — 회색 "로그인" 링크보다 또렷하게 */
+  .topbar-actions .login.is-logged-in{
+    color: var(--ink);
+    font-weight: 700;
+    max-width: 9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   @media (max-width: 430px){
     .topbar-actions .gift-link{ display:none; }
@@ -1887,10 +1897,10 @@ function updateNavAuthState(){
   document.querySelectorAll('[data-auth-cta]').forEach(function(el){
     var role = el.getAttribute('data-auth-cta');
     if(loggedIn){
-      if(role === 'login'){ el.textContent = profile.name + '님'; el.setAttribute('href','/ai-donghang.html#mypage'); }
+      if(role === 'login'){ el.textContent = profile.name + '님'; el.setAttribute('href','/ai-donghang.html#mypage'); el.classList.add('is-logged-in'); }
       if(role === 'signup'){ el.style.display = 'none'; }
     } else {
-      if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#auth'); }
+      if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#auth'); el.classList.remove('is-logged-in'); }
       if(role === 'signup'){ el.textContent = '회원가입'; el.setAttribute('href','/ai-donghang.html#auth'); el.style.display = ''; }
     }
   });

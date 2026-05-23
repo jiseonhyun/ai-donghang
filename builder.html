@@ -294,6 +294,68 @@
   .story-meta .roman{
     font-family: "Noto Serif KR", serif; font-style: italic;
   }
+  .example-toggle{
+    background: transparent; border: 0;
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 13px; color: var(--gold);
+    cursor: pointer; padding: 0;
+    letter-spacing: .02em;
+  }
+  .example-toggle:hover{ text-decoration: underline; }
+  .example-box{
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--paper-deep);
+    border-radius: 4px;
+  }
+  .example-label{
+    font-family: "Noto Serif KR", serif; font-style: italic;
+    font-size: 12px; color: var(--gold);
+    margin: 0 0 4px; letter-spacing: .03em;
+  }
+  .example-text{
+    font-size: 14px; color: var(--ink-soft);
+    line-height: 1.7; margin: 0;
+  }
+  .step-hint-mute{
+    font-size: 13px; color: var(--ink-mute);
+    margin: 10px 0 0; line-height: 1.6;
+  }
+
+  /* 사진 업로드 (restore, watercolor_anime) */
+  .photo-upload{
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px dashed var(--hair);
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 18px;
+    transition: border-color .25s, background-color .25s;
+  }
+  .photo-upload:hover{
+    border-color: var(--ink-soft);
+    background: rgba(0,0,0,.015);
+  }
+  .photo-upload input[type="file"]{ display: none; }
+  .photo-upload-icon{
+    font-size: 22px; line-height: 1;
+  }
+  .photo-upload-text{
+    font-size: 16px; color: var(--ink);
+    font-family: "Noto Serif KR", serif; font-weight: 500;
+  }
+  .photo-upload-name{
+    font-size: 13px; color: var(--ink-soft);
+    margin-left: auto;
+    max-width: 50%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .photo-upload[data-has-file="true"]{
+    border-style: solid;
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
 
   /* 오른쪽 — 프롬프트 미리보기 */
   .preview{
@@ -474,6 +536,35 @@
       <p class="step-hint" id="style-hint">아래에서 마음에 드시는 결을 골라 주세요.</p>
       <div id="style-groups"></div>
     </div>
+
+    <div class="step" id="story-step" hidden>
+      <div class="step-label">
+        <span class="roman">step iii.</span>
+        <h2 id="story-h">이야기를 적어주세요</h2>
+      </div>
+      <p class="step-hint">투박하게 써도 괜찮아요. 단어 몇 개만 적어도 충분합니다.</p>
+
+      <label class="photo-upload" id="photo-upload" hidden>
+        <input type="file" id="photo-input" accept="image/*">
+        <span class="photo-upload-icon" aria-hidden="true">📷</span>
+        <span class="photo-upload-text" id="photo-text">사진 고르기</span>
+        <span class="photo-upload-name" id="photo-name"></span>
+      </label>
+
+      <div class="story">
+        <textarea id="story-input" placeholder=""></textarea>
+        <div class="story-meta">
+          <button type="button" class="example-toggle" id="example-toggle">예시 보기</button>
+          <span id="char-count">0자</span>
+        </div>
+        <div class="example-box" id="example-box" hidden>
+          <p class="example-label">이렇게 적으셔도 좋아요</p>
+          <p class="example-text" id="example-text"></p>
+        </div>
+      </div>
+
+      <p class="step-hint-mute">비워두셔도 괜찮아요. 그냥 다음으로 가시면 AI가 알아서 써드립니다.</p>
+    </div>
   </section>
 
   <aside class="preview" aria-label="완성될 프롬프트">
@@ -498,6 +589,8 @@
   // ─────────────────────────────────────────────────────────────
   // 데이터 — 카테고리/서브카테고리/스타일 옵션
   // ─────────────────────────────────────────────────────────────
+  const PROMPT_SUFFIX = '';
+
   const CATS = {
     write: [
       { id: 'memoir', title: '자서전 쓰기', desc: '내 삶의 장면들을 한 장씩. 모이면 한 권이 됩니다.', popular: true },
@@ -508,73 +601,268 @@
       { id: 'notice', title: '공문·안내문', desc: '모임 공지, 감사패, 축사 — 정중한 글이 필요할 때.' },
     ],
     image: [
-      { id: 'landscape',  title: '풍경·자연 그림', desc: '아름다운 자연 풍경을 한 점의 그림으로.' },
-      { id: 'flower',     title: '꽃·식물 일러스트', desc: '좋아하시는 꽃과 식물을 그림으로 옮깁니다.' },
-      { id: 'portrait',   title: '가족·인물 초상화', desc: '기억하시는 가족·친구의 얼굴을 한 장으로.', popular: true },
-      { id: 'hometown',   title: '고향·마을 풍경', desc: '기억 속 고향을 한 폭의 그림으로 되살립니다.' },
-      { id: 'restore',    title: '사진 보정·복원', desc: '빛바랜 옛 사진을 선명하고 따뜻하게.' },
-      { id: 'card',       title: '카드·엽서', desc: '기념일에 보낼 특별한 카드를 만듭니다.' },
+      { id: 'landscape',        title: '풍경·자연 그림',   desc: '아름다운 자연 풍경을 한 점의 그림으로.' },
+      { id: 'flower',           title: '꽃·식물 일러스트', desc: '좋아하시는 꽃과 식물을 그림으로 옮깁니다.' },
+      { id: 'portrait',         title: '가족·인물 초상화', desc: '기억하시는 가족·친구의 얼굴을 한 장으로.' },
+      { id: 'hometown',         title: '고향·마을 풍경',   desc: '기억 속 고향을 한 폭의 그림으로 되살립니다.' },
+      { id: 'restore',          title: '사진 보정·복원',   desc: '빛바랜 사진을 그날의 색으로 되살려 드립니다.' },
+      { id: 'watercolor_anime', title: '수채 동화 일러스트', desc: '내 사진을 따뜻한 수채 동화 그림으로 옮겨 드립니다.' },
+      { id: 'card',             title: '카드·엽서',         desc: '기념일에 보낼 특별한 카드를 만듭니다.' },
     ],
     music: [
-      { id: 'trot',     title: '트로트', desc: '가족만을 위한 한 곡의 트로트.', popular: true },
-      { id: 'ballad',   title: '발라드', desc: '감성을 담은 한 곡의 발라드.' },
-      { id: 'children', title: '동요', desc: '손주에게 들려줄 한 곡의 동요.' },
-      { id: 'anniv',    title: '기념일 축하 노래', desc: '생일·결혼기념일을 위한 한 곡.' },
-      { id: 'folk',     title: '민요풍 노래', desc: '고향의 정취가 담긴 민요풍 한 곡.' },
-      { id: 'hymn',     title: '찬송·신앙', desc: '신앙과 감사를 담은 한 곡.' },
+      { id: 'trot',     title: '트로트',            desc: '가족만을 위한 한 곡의 트로트.' },
+      { id: 'ballad',   title: '발라드',            desc: '마음 깊은 곳의 감정을 한 곡의 발라드로 담아 드립니다.' },
+      { id: 'children', title: '동요',              desc: '손주에게 들려주실 따뜻한 동요 한 곡을 만들어 드립니다.' },
+      { id: 'anniv',    title: '기념일 축하 노래', desc: '소중한 기념일을 위한 한 곡을 가족만을 위해 만들어 드립니다.' },
+      { id: 'folk',     title: '민요풍 노래',       desc: '고향의 정취가 담긴 민요풍 한 곡.' },
+      { id: 'hymn',     title: '찬송·신앙',         desc: '신앙과 감사의 마음을 한 곡의 찬송으로 담아 드립니다.' },
     ],
     video: [
       { id: 'memory',   title: '추억 영상', desc: '옛 사진들을 한 편의 영상으로 엮어 드립니다.' },
-      { id: 'greeting', title: '인사 영상', desc: '자녀·손주에게 보내는 짧은 영상 편지.' },
+      { id: 'greeting', title: '인사 영상', desc: '자녀·손주에게 짧은 영상 편지를 보내실 수 있어요.' },
       { id: 'family',   title: '가족 모임', desc: '결혼·생신 모임을 위한 짧은 축하 영상.' },
     ],
   };
 
+  // 자서전(memoir) 전용 — 칩만, textarea/fn 없음 (v3.1 동작 그대로 유지)
   const STYLE_GROUPS = {
     memoir: [
       { label: '시절', options: ['어린 시절', '청춘', '결혼하던 해', '첫 직장', '자식이 태어나던 날', '지금'] },
       { label: '감정', options: ['따뜻한', '그리운', '벅찬', '담담한', '슬픈'] },
       { label: '누구에게', options: ['손주에게', '자녀에게', '배우자에게', '나 자신에게'] },
     ],
-    letter: [
-      { label: '받는 분', options: ['자녀', '손주', '배우자', '옛 친구', '먼저 가신 분'] },
-      { label: '감정', options: ['따뜻한', '미안한', '고마운', '그리운', '담담한'] },
-    ],
-    blog: [
-      { label: '오늘의 주제', options: ['텃밭·정원', '음식·반찬', '손주 이야기', '동네 산책', '옛 추억', '오늘의 일'] },
-      { label: '길이', options: ['짧게', '보통', '길게'] },
-    ],
-    diary: [
-      { label: '오늘 마음', options: ['평온한', '뿌듯한', '아쉬운', '바쁜', '쓸쓸한'] },
-    ],
-    poem: [
-      { label: '결', options: ['짧은 시', '수필', '편지글'] },
-      { label: '감정', options: ['따뜻한', '쓸쓸한', '벅찬', '담담한'] },
-    ],
-    notice: [
-      { label: '용도', options: ['모임 공지', '감사 인사', '축사', '추모'] },
-    ],
-    landscape:  [{ label: '풍경', options: ['바다', '산', '들판', '호수', '하늘'] }, { label: '계절', options: ['봄','여름','가을','겨울'] }],
-    flower:     [{ label: '꽃', options: ['동백','매화','벚꽃','국화','장미','수국'] }],
-    portrait:   [{ label: '누구', options: ['아버지','어머니','자녀','손주','형제'] }, { label: '결', options: ['수채화','유화','수묵','연필'] }],
-    hometown:   [{ label: '계절', options: ['봄','여름','가을','겨울'] }, { label: '결', options: ['수묵','수채','유화'] }],
-    restore:    [{ label: '결', options: ['흑백 → 컬러','선명도만','흠집 복원'] }],
-    card:       [{ label: '용도', options: ['생신','결혼기념일','어버이날','크리스마스','새해'] }],
-    trot:       [{ label: '결', options: ['옛 트로트','요즘 트로트','애절한','신나는'] }, { label: '주제', options: ['고향','어머니','첫사랑','인생'] }],
-    ballad:     [{ label: '결', options: ['잔잔한','애절한','희망적'] }],
-    children:   [{ label: '주제', options: ['손주','동물','자연','학교'] }],
-    anniv:      [{ label: '용도', options: ['생신','결혼기념일','어버이날','금혼식'] }],
-    folk:       [{ label: '지역', options: ['남도','경상','강원','제주'] }],
-    hymn:       [{ label: '결', options: ['찬송','감사','새 노래'] }],
-    memory:     [{ label: '결', options: ['따뜻한','잔잔한','벅찬'] }, { label: '길이', options: ['1분','3분','5분'] }],
-    greeting:   [{ label: '받는 분', options: ['자녀','손주','옛 친구'] }],
-    family:     [{ label: '모임', options: ['생신','결혼','명절','금혼식'] }],
+  };
+
+  // 자서전 제외 21개 코스 풀 데이터 (ai-donghang.html:5005-5055 COURSE_CONFIG 복원)
+  // placeholder, exText, requiresUpload, groups(id/label/chips/def), fn(story, styles)
+  const COURSE_DATA = {
+    // ── 글쓰기 5 ──
+    blog: {
+      placeholder: '어디서, 누구랑, 무슨 일이 있었는지... 생각나는 대로 써보세요',
+      exText: '설악산 단풍 여행. 아들이 운전해줬어. 입구에서 옥수수 사먹었고, 오는 길에 비가 왔는데 그게 또 좋았어.',
+      groups: [
+        { id: 'topic',  label: '어떤 주제인가요?',     chips: ['여행 이야기','가족 이야기','음식·맛집','취미·일상','계절·자연','추억 회상'], def: 0 },
+        { id: 'tone',   label: '어떤 느낌으로 쓸까요?', chips: ['따뜻하고 감성적으로','재미있고 유머있게','차분하고 진솔하게','정보를 담아 유익하게'], def: 0 },
+        { id: 'length', label: '글 분량은?',          chips: ['짧게 (300자)','보통 (600자)','길게 (1000자 이상)'], def: 1 },
+      ],
+      fn: (s, a) => `아래 이야기를 바탕으로 블로그 글을 완성해주세요.\n\n[내가 쓴 이야기]\n${s}\n\n주제: ${a.topic||'여행 이야기'}\n글의 느낌: ${a.tone||'따뜻하고 감성적으로'}\n분량: ${a.length||'보통 (600자)'} 내외\n\n제목도 붙여주세요. 내 실제 경험을 살려서 완성해주세요.${PROMPT_SUFFIX}`,
+    },
+    letter: {
+      placeholder: '누구에게, 어떤 마음을 전하고 싶은지 편하게 적어보세요',
+      exText: '아들한테. 취직 힘들어할 때 내가 더 챙겨줬어야 했는데. 바빠서 못 봤던 게 마음에 걸려.',
+      groups: [
+        { id: 'receiver', label: '누구에게 보내나요?', chips: ['자녀에게','손자·손녀에게','배우자에게','오랜 친구에게','부모님께'], def: 0 },
+        { id: 'tone',     label: '편지 느낌은?',       chips: ['따뜻하고 진심 담아','짧고 담백하게','감동적으로','유머있고 밝게'], def: 0 },
+        { id: 'length',   label: '편지 길이는?',       chips: ['짧은 메시지 (200자)','보통 편지 (500자)','긴 편지 (800자)'], def: 1 },
+      ],
+      fn: (s, a) => `아래 마음을 바탕으로 편지를 써주세요.\n\n[전하고 싶은 말]\n${s}\n\n받는 분: ${a.receiver||'__'}\n느낌: ${a.tone||'따뜻하고 진심 담아'}\n길이: ${a.length||'보통 편지 (500자)'}\n\n진심이 느껴지도록 완성해주세요. 편지 끝에 마무리 문구도 넣어주세요.${PROMPT_SUFFIX}`,
+    },
+    diary: {
+      placeholder: '오늘 만난 사람, 먹은 것, 본 것, 느낀 것... 메모처럼 적어보세요',
+      exText: '오전에 공원 산책. 오리 가족 봤어. 점심은 된장찌개. 딸한테 전화 왔고.',
+      groups: [
+        { id: 'style',  label: '일기 스타일은?', chips: ['감성적이고 솔직하게','간결하고 담백하게','감사 일기처럼','시적으로 아름답게'], def: 0 },
+        { id: 'length', label: '분량은?',         chips: ['짧게 (200자)','보통 (500자)','길게 (800자)'], def: 1 },
+      ],
+      fn: (s, a) => `아래 내용을 바탕으로 오늘 하루 일기를 써주세요.\n\n[오늘 있었던 일]\n${s}\n\n스타일: ${a.style||'감성적이고 솔직하게'}\n분량: ${a.length||'보통 (500자)'}\n\n날씨와 계절감도 자연스럽게 넣어주세요.${PROMPT_SUFFIX}`,
+    },
+    poem: {
+      placeholder: '떠오르는 장면, 냄새, 감정의 조각... 툭툭 적어도 돼요',
+      exText: '가을 아침 안개 낀 뒷산. 혼자 앉아서 커피. 나이 들었다는 게 이제는 나쁘지 않아.',
+      groups: [
+        { id: 'genre', label: '장르는?',   chips: ['짧은 시 (2~4연)','긴 시 (5연 이상)','짧은 수필 (300자)','감성 수필 (600자)'], def: 0 },
+        { id: 'mood',  label: '분위기는?', chips: ['따뜻하고 서정적으로','쓸쓸하지만 아름답게','밝고 희망차게','철학적이고 깊게'], def: 0 },
+      ],
+      fn: (s, a) => `아래 이미지와 감정을 바탕으로 ${a.genre||'시'}를 써주세요.\n\n[담고 싶은 장면과 감정]\n${s}\n\n분위기: ${a.mood||'따뜻하고 서정적으로'}\n\n한국 전통 서정시의 감성을 살려주세요.${PROMPT_SUFFIX}`,
+    },
+    notice: {
+      placeholder: '언제, 어디서, 무슨 내용인지 편하게 적어보세요',
+      exText: '경로당 12월 모임. 장소가 2층으로 바뀌었어. 점심 제공하고 회비 1만원.',
+      groups: [
+        { id: 'doctype', label: '어떤 종류인가요?', chips: ['모임·행사 공지문','감사패·표창 문구','축사·기념사','초대장'], def: 0 },
+        { id: 'tone',    label: '문체는?',          chips: ['공식적으로 격식있게','친근하고 따뜻하게','간결하고 명확하게'], def: 1 },
+      ],
+      fn: (s, a) => `아래 내용을 바탕으로 ${a.doctype||'안내문'}을 써주세요.\n\n[꼭 들어가야 할 내용]\n${s}\n\n문체: ${a.tone||'친근하고 따뜻하게'}\n\n읽는 사람이 한 번에 이해할 수 있도록 명확하게 써주세요.${PROMPT_SUFFIX}`,
+    },
+
+    // ── 이미지 7 ──
+    landscape: {
+      placeholder: '어떤 장소, 계절, 날씨, 분위기인지 떠오르는 대로 적어보세요',
+      exText: '경상도 시골 마을. 가을 단풍. 초가집 옆에 감나무. 아침 안개.',
+      groups: [
+        { id: 'artStyle', label: '그림 스타일은?', chips: ['수채화','유화','동양화 (수묵화)','따뜻한 일러스트','인상파 스타일'], def: 0 },
+        { id: 'season',   label: '계절은?',         chips: ['봄 (벚꽃·진달래)','여름 (푸른 녹음)','가을 (단풍·황금들판)','겨울 (눈·서리)'], def: 2 },
+        { id: 'mood',     label: '분위기는?',       chips: ['따뜻하고 포근하게','쓸쓸하고 서정적으로','밝고 생동감 있게','평화롭고 조용하게'], def: 0 },
+      ],
+      fn: (s, a) => `아래 묘사를 바탕으로 이미지 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 풍경]\n${s}\n\n그림 스타일: ${a.artStyle||'수채화'}\n계절: ${a.season||'가을'}\n분위기: ${a.mood||'따뜻하고 포근하게'}\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "가을 시골 마을을 수채화로 그려줘. 감나무와 초가집이 있고 따뜻한 느낌으로."${PROMPT_SUFFIX}`,
+    },
+    flower: {
+      placeholder: '어떤 꽃, 색깔, 분위기인지 적어보세요',
+      exText: '진달래. 봄 산기슭. 연분홍색. 조금 쓸쓸하지만 아름다운 느낌.',
+      groups: [
+        { id: 'flower',   label: '어떤 꽃인가요?',   chips: ['진달래·철쭉','벚꽃','국화','장미','무궁화','연꽃'], def: 0 },
+        { id: 'artStyle', label: '그림 스타일은?', chips: ['수채화','펜화·세밀화','보태니컬 아트','귀여운 일러스트'], def: 0 },
+      ],
+      fn: (s, a) => `아래 묘사를 바탕으로 꽃 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 꽃과 분위기]\n${s}\n\n꽃 종류: ${a.flower||'진달래'}\n스타일: ${a.artStyle||'수채화'}\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "봄날 진달래꽃을 수채화로 그려줘. 연분홍빛 꽃잎이 바람에 흩날리는 모습으로."${PROMPT_SUFFIX}`,
+    },
+    portrait: {
+      placeholder: '누구를 그릴지, 어떤 상황, 어떤 분위기인지 적어보세요',
+      exText: '온 가족이 다 같이 있는 그림. 명절에 모인 모습.',
+      groups: [
+        { id: 'artStyle', label: '그림 스타일은?', chips: ['따뜻한 일러스트','유화 초상화','수채화','동화 그림 스타일'], def: 0 },
+        { id: 'mood',     label: '분위기는?',       chips: ['환하게 웃는 모습','따뜻하고 평화로운','자연스럽고 편안하게'], def: 0 },
+      ],
+      fn: (s, a) => `아래 묘사를 바탕으로 인물 그림 요청 문장을 한국어로 만들어주세요.\n\n[원하는 그림]\n${s}\n\n스타일: ${a.artStyle||'따뜻한 일러스트'}\n분위기: ${a.mood||'따뜻하고 평화로운'}\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "명절에 온 가족이 둘러앉아 웃는 모습을 따뜻한 일러스트로 그려줘."${PROMPT_SUFFIX}`,
+    },
+    hometown: {
+      placeholder: '고향의 어떤 장면, 어떤 느낌인지 기억나는 대로 적어보세요',
+      exText: '경북 안동 시골. 초가집 담벼락. 가을에 감이 빨갛게 익어 있었어.',
+      groups: [
+        { id: 'artStyle', label: '그림 스타일은?', chips: ['수채화','동양화 (수묵화)','따뜻한 일러스트','빛바랜 사진 느낌'], def: 0 },
+        { id: 'season',   label: '계절은?',         chips: ['봄','여름','가을','겨울'], def: 2 },
+      ],
+      fn: (s, a) => `아래 기억을 바탕으로 고향 마을 그림 요청 문장을 한국어로 만들어주세요.\n\n[기억 속 고향 풍경]\n${s}\n\n스타일: ${a.artStyle||'수채화'}\n계절: ${a.season||'가을'}\n\n뤼튼 이미지에 바로 붙여넣을 수 있는 한국어 그림 요청 문장으로 작성해주세요. 예시: "경상도 가을 시골 마을을 수채화로 그려줘. 빨간 감나무, 흙길, 아침 안개가 있는 정겨운 풍경으로."${PROMPT_SUFFIX}`,
+    },
+    restore: {
+      requiresUpload: true,
+      placeholder: '사진에 대해 간단히 설명해주세요 (예: 흑백 가족사진, 오래된 풍경 사진)',
+      exText: '흑백 가족사진을 컬러로 바꾸고 싶어요.',
+      groups: [
+        { id: 'task', label: '어떻게 바꾸고 싶으세요?', chips: ['흑백→컬러 변환','흐린 사진 선명하게','손상·훼손 복원','밝기·색감 보정'], def: 0 },
+        { id: 'era',  label: '언제 찍은 사진인가요?',   chips: ['1950~70년대','1980~90년대','2000년대 이후','연대 모름'], def: 3 },
+      ],
+      fn: (s, a) => {
+        const task = a.task || '흑백→컬러 변환';
+        const taskMap = {
+          '흑백→컬러 변환':   'colorize this black and white photo, natural realistic colors',
+          '흐린 사진 선명하게': 'sharpen and enhance this blurry photo, restore fine details',
+          '손상·훼손 복원':    'restore damaged and scratched photo, repair tears and stains',
+          '밝기·색감 보정':    'enhance brightness and color balance, make it vivid and clear',
+        };
+        return (taskMap[task] || 'enhance and restore photo') + ', high quality, photorealistic, ' + (s || '').slice(0, 80);
+      },
+    },
+    watercolor_anime: {
+      requiresUpload: true,
+      placeholder: '어떤 사진인지 간단히 알려주세요 (예: 가족사진, 풍경사진, 혼자 찍은 사진)',
+      exText: '가족과 함께 찍은 사진',
+      groups: [
+        { id: 'scene', label: '어떤 분위기로 바꿀까요?', chips: ['모험·환상풍','자연·전원풍','신비·환상풍','따뜻한 모험풍'], def: 0 },
+        { id: 'mood',  label: '분위기는요?',           chips: ['따뜻하고 포근하게','신비롭고 환상적으로','밝고 생동감 있게','서정적이고 감성적으로'], def: 0 },
+      ],
+      fn: (s, a) => {
+        const scene = a.scene || '모험·환상풍';
+        const mood = a.mood || '따뜻하고 포근하게';
+        const sceneMap = {
+          '모험·환상풍':   'adventurous fantasy mood',
+          '자연·전원풍':   'natural pastoral mood',
+          '신비·환상풍':   'mystical fantasy mood',
+          '따뜻한 모험풍': 'warm adventure mood',
+        };
+        const moodMap = {
+          '따뜻하고 포근하게':   'warm cozy atmosphere',
+          '신비롭고 환상적으로': 'mysterious magical atmosphere',
+          '밝고 생동감 있게':    'bright vibrant joyful',
+          '서정적이고 감성적으로': 'lyrical emotional nostalgic',
+        };
+        return `soft watercolor animation style, hand-drawn illustration, painterly, ${sceneMap[scene]||scene}, ${moodMap[mood]||mood}, watercolor background, soft colors, ${(s||'').slice(0, 80)}, high quality illustration`;
+      },
+    },
+    card: {
+      placeholder: '받는 사람, 어떤 날, 전하고 싶은 마음을 편하게 적어보세요',
+      exText: '손녀 생일. 대학에 들어갔어. 항상 건강하고 하고 싶은 거 다 이루었으면.',
+      groups: [
+        { id: 'occasion', label: '어떤 날인가요?',  chips: ['생일','결혼기념일','입학·졸업','명절','어버이날'], def: 0 },
+        { id: 'design',   label: '카드 느낌은?',    chips: ['따뜻하고 감성적으로','화사하고 밝게','심플하고 세련되게','귀엽고 사랑스럽게'], def: 0 },
+      ],
+      fn: (s, a) => `아래 마음을 담은 카드 메시지를 만들어주세요.\n\n[전하고 싶은 마음]\n${s}\n\n날: ${a.occasion||'생일'}\n느낌: ${a.design||'따뜻하고 감성적으로'}\n\n진심이 전해지는 따뜻한 메시지로 완성해주세요.${PROMPT_SUFFIX}`,
+    },
+
+    // ── 음악 6 ──
+    trot: {
+      placeholder: '노래에 담고 싶은 사람, 장소, 기억, 감정을 적어보세요',
+      exText: '어머니 생각. 새벽에 일어나서 밥 지으시던 모습. 부엌 불빛. 그 냄새가 그리워.',
+      groups: [
+        { id: 'feel',      label: '노래 느낌은?', chips: ['신나고 흥겨운','구성지고 애잔한','웅장하고 감동적인','밝고 경쾌한'], def: 1 },
+        { id: 'structure', label: '가사 구성은?', chips: ['1절만 (짧게)','1절+후렴','1절+후렴+2절'], def: 1 },
+      ],
+      fn: (s, a) => `아래 이야기를 담아 트로트 가사를 써주세요.\n\n[담고 싶은 이야기]\n${s}\n\n노래 느낌: ${a.feel||'구성지고 애잔한'}\n구성: ${a.structure||'1절+후렴'}\n\n가사를 다 쓴 뒤, Suno AI에서 사용할 수 있는 음악 스타일 태그도 영어로 알려주세요.${PROMPT_SUFFIX}`,
+    },
+    ballad: {
+      placeholder: '노래에 담고 싶은 사람, 마음, 기억을 편하게 적어보세요',
+      exText: '30년 함께 산 남편. 말은 잘 못해도 항상 곁에 있어줬어.',
+      groups: [
+        { id: 'feel',      label: '노래 분위기는?', chips: ['잔잔하고 서정적인','감동적이고 울컥하는','따뜻하고 희망차게'], def: 0 },
+        { id: 'structure', label: '가사 구성은?',   chips: ['1절만','1절+후렴','1절+후렴+2절'], def: 1 },
+      ],
+      fn: (s, a) => `아래 마음을 담아 발라드 가사를 써주세요.\n\n[담고 싶은 이야기]\n${s}\n\n분위기: ${a.feel||'잔잔하고 서정적인'}\n구성: ${a.structure||'1절+후렴'}\n\n가사 완성 후 Suno AI 스타일 태그도 영어로 알려주세요.${PROMPT_SUFFIX}`,
+    },
+    children: {
+      placeholder: '아이 이름, 좋아하는 것, 담고 싶은 내용을 적어보세요',
+      exText: '손녀 이름이 지은이야. 7살. 강아지 좋아하고 그림 그리는 걸 좋아해.',
+      groups: [
+        { id: 'feel', label: '노래 느낌은?', chips: ['밝고 경쾌하게','귀엽고 사랑스럽게','잔잔하고 포근하게'], def: 0 },
+      ],
+      fn: (s, a) => `아래 내용을 담아 동요 가사를 써주세요.\n\n[담고 싶은 이야기]\n${s}\n\n노래 느낌: ${a.feel||'밝고 경쾌하게'}\n\n따라 부르기 쉽게 반복구와 리듬감을 살려주세요.${PROMPT_SUFFIX}`,
+    },
+    anniv: {
+      placeholder: '누구의 어떤 기념일인지, 전하고 싶은 마음을 적어보세요',
+      exText: '배우자 환갑. 30년 동안 잘 버텨줘서 고마워.',
+      groups: [
+        { id: 'style', label: '노래 스타일은?', chips: ['트로트 스타일','발라드 스타일','경쾌한 팝 스타일'], def: 0 },
+      ],
+      fn: (s, a) => `아래 마음을 담아 기념일 축하 노래 가사를 써주세요.\n\n[축하하고 싶은 마음]\n${s}\n\n스타일: ${a.style||'트로트 스타일'}\n\n받는 분의 이름을 가사에 자연스럽게 넣어주세요.${PROMPT_SUFFIX}`,
+    },
+    folk: {
+      placeholder: '고향, 그리운 사람, 삶의 이야기를 편하게 적어보세요',
+      exText: '전라도 고향. 봄에 논에서 일하시던 어머니.',
+      groups: [
+        { id: 'feel', label: '노래 느낌은?', chips: ['구성지고 애잔한','신명나고 흥겨운','잔잔하고 그리운'], def: 0 },
+      ],
+      fn: (s, a) => `아래 이야기를 담아 민요풍 노래 가사를 써주세요.\n\n[담고 싶은 이야기]\n${s}\n\n노래 느낌: ${a.feel||'구성지고 애잔한'}\n\n지역 사투리나 특색을 살려주고, 후렴구도 넣어주세요.${PROMPT_SUFFIX}`,
+    },
+    hymn: {
+      placeholder: '감사한 일, 기도의 응답, 신앙의 고백을 편하게 적어보세요',
+      exText: '오랜 병고 끝에 나았어. 기도밖에 할 게 없었는데.',
+      groups: [
+        { id: 'feel', label: '노래 분위기는?', chips: ['경건하고 엄숙하게','따뜻하고 감사하게','기쁘고 활기차게'], def: 1 },
+      ],
+      fn: (s, a) => `아래 신앙 고백을 담아 노래 가사를 써주세요.\n\n[담고 싶은 이야기]\n${s}\n\n분위기: ${a.feel||'따뜻하고 감사하게'}\n\n경건하고 진심이 담긴 가사로 완성해주세요.${PROMPT_SUFFIX}`,
+    },
+
+    // ── 영상 3 ──
+    memory: {
+      placeholder: '어떤 사진들인지, 어떤 분위기로 만들고 싶은지 적어보세요',
+      exText: '가족 여행 사진들. 지난 10년 추억.',
+      groups: [
+        { id: 'mood', label: '영상 분위기는?', chips: ['따뜻하고 감동적으로','밝고 즐겁게','잔잔하고 서정적으로'], def: 0 },
+      ],
+      fn: (s, a) => `아래 내용을 바탕으로 CapCut 슬라이드쇼 영상 기획안을 만들어주세요.\n\n[원하는 영상]\n${s}\n\n분위기: ${a.mood||'따뜻하고 감동적으로'}\n\nCapCut에서 어떤 템플릿을 사용하면 좋을지도 함께 알려주세요.${PROMPT_SUFFIX}`,
+    },
+    greeting: {
+      placeholder: '누구에게, 어떤 말을 전하고 싶은지 편하게 적어보세요',
+      exText: '아들한테. 결혼하고 바빠서 자주 못 봤는데.',
+      groups: [
+        { id: 'tone', label: '말하는 느낌은?', chips: ['따뜻하고 진심 담아','담백하고 솔직하게','감동적으로'], def: 0 },
+      ],
+      fn: (s, a) => `아래 말을 바탕으로 가족 영상 편지 나레이션 대본을 써주세요.\n\n[전하고 싶은 말]\n${s}\n\n말하는 느낌: ${a.tone||'따뜻하고 진심 담아'}\n\n카메라를 보고 말하듯 자연스럽게 써주시고, [사진 보여주기: 설명] 형태로 영상 연출도 넣어주세요.${PROMPT_SUFFIX}`,
+    },
+    family: {
+      placeholder: '어떤 시절, 어떤 이야기를 담고 싶은지 편하게 적어보세요',
+      exText: '직장 생활 30년. 처음 입사했을 때 기억.',
+      groups: [
+        { id: 'tone', label: '나레이션 말투는?', chips: ['차분하고 진솔하게','따뜻하고 감성적으로','손자에게 들려주듯'], def: 1 },
+      ],
+      fn: (s, a) => `아래 이야기를 바탕으로 가족 모임 영상 나레이션 대본을 써주세요.\n\n[담을 이야기]\n${s}\n\n나레이션 말투: ${a.tone||'따뜻하고 감성적으로'}\n\n[사진 삽입: 설명] 형태로 영상 연출도 넣어주세요.${PROMPT_SUFFIX}`,
+    },
   };
 
   const state = {
     cat: 'write',
     sub: null,
-    styles: {},
+    styles: {},   // memoir는 label 키, 그 외 21개는 group.id 키
+    story: '',
+    photoName: '',
   };
 
   const subGrid = document.getElementById('sub-grid');
@@ -582,6 +870,15 @@
   const subHint = document.getElementById('sub-hint');
   const styleStep = document.getElementById('style-step');
   const styleGroups = document.getElementById('style-groups');
+  const storyStep = document.getElementById('story-step');
+  const storyInput = document.getElementById('story-input');
+  const charCount = document.getElementById('char-count');
+  const exampleToggle = document.getElementById('example-toggle');
+  const exampleBox = document.getElementById('example-box');
+  const exampleText = document.getElementById('example-text');
+  const photoUpload = document.getElementById('photo-upload');
+  const photoInput = document.getElementById('photo-input');
+  const photoName = document.getElementById('photo-name');
   const previewTitle = document.getElementById('preview-title');
   const previewBody = document.getElementById('preview-body');
   const finishBtn = document.getElementById('finish-btn');
@@ -605,18 +902,62 @@
 
   function renderStyleGroups(){
     if (!state.sub){ styleStep.hidden = true; return; }
-    const groups = STYLE_GROUPS[state.sub] || [];
     styleStep.hidden = false;
-    styleGroups.innerHTML = groups.map(g => `
+
+    // 자서전: 옛 동작 그대로 (label 키, def 없음, textarea 없음)
+    if (state.sub === 'memoir'){
+      const groups = STYLE_GROUPS.memoir || [];
+      styleGroups.innerHTML = groups.map(g => `
+        <p class="chip-group-label">${g.label}</p>
+        <div class="chip-row" data-group="${g.label}">
+          ${g.options.map(o => `
+            <button type="button" class="chip"
+                    data-opt="${o}"
+                    aria-pressed="${state.styles[g.label] === o}">${o}</button>
+          `).join('')}
+        </div>
+      `).join('');
+      return;
+    }
+
+    // 그 외 21개: COURSE_DATA 기반 (id 키, def 자동 선택)
+    const data = COURSE_DATA[state.sub];
+    if (!data){ styleStep.hidden = true; return; }
+    styleGroups.innerHTML = data.groups.map(g => `
       <p class="chip-group-label">${g.label}</p>
-      <div class="chip-row" data-group="${g.label}">
-        ${g.options.map(o => `
+      <div class="chip-row" data-gid="${g.id}">
+        ${g.chips.map(c => `
           <button type="button" class="chip"
-                  data-opt="${o}"
-                  aria-pressed="${state.styles[g.label] === o}">${o}</button>
+                  data-opt="${c}"
+                  aria-pressed="${state.styles[g.id] === c}">${c}</button>
         `).join('')}
       </div>
     `).join('');
+  }
+
+  function renderStoryStep(){
+    // memoir은 textarea 없음
+    if (!state.sub || state.sub === 'memoir' || !COURSE_DATA[state.sub]){
+      storyStep.hidden = true;
+      return;
+    }
+    const data = COURSE_DATA[state.sub];
+    storyStep.hidden = false;
+    storyInput.placeholder = data.placeholder || '';
+    storyInput.value = state.story || '';
+    charCount.textContent = (state.story || '').length + '자';
+    exampleText.textContent = data.exText || '';
+    exampleBox.hidden = true;
+    exampleToggle.textContent = '예시 보기';
+
+    // 사진 업로드 (restore, watercolor_anime)
+    if (data.requiresUpload){
+      photoUpload.hidden = false;
+      photoUpload.dataset.hasFile = state.photoName ? 'true' : 'false';
+      photoName.textContent = state.photoName || '';
+    } else {
+      photoUpload.hidden = true;
+    }
   }
 
   const STEP1_HEAD = {
@@ -636,6 +977,15 @@
     return CATS[state.cat].find(s => s.id === state.sub);
   }
 
+  function getStyleParts(){
+    if (state.sub === 'memoir'){
+      return Object.values(state.styles).filter(Boolean);
+    }
+    const data = COURSE_DATA[state.sub];
+    if (!data) return [];
+    return data.groups.map(g => state.styles[g.id]).filter(Boolean);
+  }
+
   function renderPreview(){
     if (!state.sub){
       previewTitle.textContent = '아직 시작 전입니다.';
@@ -644,7 +994,7 @@
       return;
     }
     const sub = findSub();
-    const styleParts = Object.values(state.styles).filter(Boolean);
+    const styleParts = getStyleParts();
 
     let title = sub.title;
     if (styleParts.length){
@@ -652,21 +1002,51 @@
     }
     previewTitle.textContent = title;
 
-    let body = '';
-    body += `<em>${sub.title}.</em> `;
-    if (styleParts.length){
+    let body = `<em>${sub.title}.</em> `;
+    const story = (state.story || '').trim();
+    if (state.sub !== 'memoir' && story){
+      const snippet = story.slice(0, 50) + (story.length > 50 ? '…' : '');
+      body += `"${snippet}" 이야기를 담아, `;
+    } else if (styleParts.length){
       body += `${styleParts.join(', ')}로 결을 잡고, `;
     }
     body += `AI동행이 한 편의 작품으로 다듬어 드립니다.`;
-
     previewBody.innerHTML = body;
+
     finishBtn.disabled = false; copyBtn.disabled = false;
+  }
+
+  function buildFullPrompt(){
+    if (!state.sub) return '';
+    // 자서전: 기존 미리보기 그대로 송출
+    if (state.sub === 'memoir' || !COURSE_DATA[state.sub]){
+      const t = (previewTitle.textContent || '').trim();
+      const b = (previewBody.textContent  || '').trim();
+      return (t && b) ? (t + '\n\n' + b) : (t || b);
+    }
+    // 그 외 21개: 코스별 fn 으로 풍부 프롬프트 조립
+    const data = COURSE_DATA[state.sub];
+    const story = (state.story || '').trim() || '(이야기 미입력 — 일반적인 내용으로 써주세요)';
+    return data.fn(story, state.styles);
+  }
+
+  function applyDefaults(){
+    state.styles = {};
+    if (state.sub === 'memoir') return;  // 자서전은 def 없음
+    const data = COURSE_DATA[state.sub];
+    if (!data) return;
+    data.groups.forEach(g => {
+      if (g.def != null && g.chips[g.def] != null){
+        state.styles[g.id] = g.chips[g.def];
+      }
+    });
   }
 
   function syncAll(){
     renderStep1Head();
     renderSubGrid();
     renderStyleGroups();
+    renderStoryStep();
     renderPreview();
   }
 
@@ -677,6 +1057,8 @@
       state.cat = btn.dataset.cat;
       state.sub = null;
       state.styles = {};
+      state.story = '';
+      state.photoName = '';
       syncAll();
     });
   });
@@ -685,26 +1067,49 @@
     const card = e.target.closest('.sub-card');
     if (!card) return;
     state.sub = card.dataset.sub;
-    state.styles = {};
+    state.story = '';
+    state.photoName = '';
+    applyDefaults();
     syncAll();
   });
 
   styleGroups.addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (!chip) return;
-    const group = chip.closest('.chip-row').dataset.group;
+    const row = chip.closest('.chip-row');
+    const key = row.dataset.gid || row.dataset.group;  // memoir: label, 그 외: gid
     const opt = chip.dataset.opt;
-    if (state.styles[group] === opt){
-      delete state.styles[group];
+    if (state.styles[key] === opt){
+      delete state.styles[key];
     } else {
-      state.styles[group] = opt;
+      state.styles[key] = opt;
     }
     renderStyleGroups();
     renderPreview();
   });
 
+  storyInput.addEventListener('input', () => {
+    state.story = storyInput.value;
+    charCount.textContent = state.story.length + '자';
+    renderPreview();
+  });
+
+  exampleToggle.addEventListener('click', () => {
+    const isHidden = exampleBox.hidden;
+    exampleBox.hidden = !isHidden;
+    exampleToggle.textContent = isHidden ? '예시 닫기' : '예시 보기';
+  });
+
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files && photoInput.files[0];
+    state.photoName = file ? file.name : '';
+    photoUpload.dataset.hasFile = state.photoName ? 'true' : 'false';
+    photoName.textContent = state.photoName;
+  });
+
   copyBtn.addEventListener('click', () => {
-    const text = previewTitle.textContent + '\n\n' + previewBody.textContent;
+    const text = buildFullPrompt();
+    if (!text) return;
     navigator.clipboard?.writeText(text).then(() => {
       const old = copyBtn.textContent;
       copyBtn.textContent = '복사했습니다';
@@ -713,18 +1118,13 @@
   });
 
   finishBtn.addEventListener('click', () => {
-    // 조립된 프롬프트 = preview title + body
-    const title = (previewTitle.textContent || '').trim();
-    const body  = (previewBody.textContent  || '').trim();
-    const fullPrompt = (title && body) ? (title + '\n\n' + body) : (title || body);
-
+    const fullPrompt = buildFullPrompt();
     const labelSpan = finishBtn.querySelector('span');
     if (!fullPrompt){
       if (labelSpan) labelSpan.textContent = '먼저 위에서 옵션을 골라주세요';
       setTimeout(() => { syncAll(); }, 1500);
       return;
     }
-
     if (labelSpan) labelSpan.textContent = 'AI동행이 작품을 만드는 중입니다…';
     finishBtn.disabled = true;
 

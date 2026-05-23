@@ -8218,8 +8218,9 @@ function switchAuthTab(tab){var s=(tab==='signup');g('tabSignup').className='aut
 function showAuthSuccess(name,isNew){
   if(g('authSignup'))g('authSignup').style.display='none';if(g('authLogin'))g('authLogin').style.display='none';
   if(g('authSuccess'))g('authSuccess').style.display='block';if(g('authBackBtn'))g('authBackBtn').style.display='none';
-  var lastView = localStorage.getItem('aiDonghang_lastView') || 'dojo';
-  var lastViewLabel = {home:'홈',dojo:'도장깨기',builder:'만들기',portfolio:'내 작품함',learn:'AI 알아보기',community:'커뮤니티',faq:'고객센터',pricing:'구독'}[lastView] || '도장깨기';
+  // 기본 진입점은 만들기 — 시니어가 가입 직후 바로 글/그림 만들기 시작하게.
+  var lastView = localStorage.getItem('aiDonghang_lastView') || 'builder';
+  var lastViewLabel = {home:'홈',dojo:'도장깨기',builder:'만들기',portfolio:'내 작품함',learn:'AI 알아보기',community:'커뮤니티',faq:'고객센터',pricing:'구독'}[lastView] || '만들기';
   if(g('authSuccessTitle'))g('authSuccessTitle').textContent=isNew?'어서 오세요! 기다리고 있었어요 😊':'또 오셨군요! 보고 싶었어요 🥹';
   if(g('authSuccessMsg'))g('authSuccessMsg').innerHTML=isNew
     ? name+'님, 반가워요!<br>동동이가 함께할게요 🤖'
@@ -8243,10 +8244,10 @@ function showAuthSuccess(name,isNew){
   if(userProfile && userProfile.id){
     loadUserDataFromSupabase(userProfile.id);
   }
-  // 신규 회원가입 → 도장깨기로 이동 후 설문 (1회만)
+  // 신규 회원가입 → 만들기 페이지로 이동 + 환영 팝업 + 온보딩 설문 (1회만)
   if(isNew){
     setTimeout(function(){
-      showView('dojo');
+      showView('builder');
       // 동동이 환영 팝업
       setTimeout(function(){
         showDongPopup('welcome');
@@ -8257,11 +8258,11 @@ function showAuthSuccess(name,isNew){
       }, 600);
     }, 400);
   } else {
-    // 재방문 → 마지막 페이지로 이동
-    var lastView = localStorage.getItem('aiDonghang_lastView') || 'dojo';
+    // 재방문 → 마지막 페이지(없으면 만들기)로 이동
+    var lastView = localStorage.getItem('aiDonghang_lastView') || 'builder';
     // 유효한 페이지만 허용
     var validViews = ['home','dojo','builder','portfolio','learn','community','faq','pricing'];
-    if(validViews.indexOf(lastView) === -1) lastView = 'dojo';
+    if(validViews.indexOf(lastView) === -1) lastView = 'builder';
     setTimeout(function(){
       showView(lastView);
       // 동동이 재방문 팝업

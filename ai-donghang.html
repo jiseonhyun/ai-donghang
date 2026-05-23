@@ -12564,10 +12564,20 @@ function _autobioVoiceToggle(){
   _autobioStartVoice();
 }
 
+// 안드로이드 감지 — Chrome 의 webkitSpeechRecognition 이 continuous=true 를
+// 사실상 무시하고 첫 발화 전에 onend 가 와서 텍스트가 한 번도 안 나오는 케이스.
+// continuous=false + onend 재시작 패턴(아래 _autobioScheduleRestart)으로 우회.
+// (voice-runtime.js b1496c5 (2026-05-23) 의 동일 fix 를 자서전 v3 경로에도 포팅)
+function _autobioIsAndroid(){
+  return /Android/i.test(navigator.userAgent || '');
+}
+
 // 안드로이드 Chrome (특히 갤럭시)의 Web Speech API 자동 종료 대응:
 // _autobioVoiceIntent = 사용자가 켠 상태인가 (버튼 한 번 더 누르기 전엔 true)
-// onend 시 의도 true면 → 기존 rec 폐기, 새 SR 인스턴스로 350ms 후 재시작
-// 안전 가드: 10초 내 6회 이상 재시작 시 영구 에러로 추정하고 중단
+// onend 시 의도 true면 → 기존 rec 폐기, 새 SR 인스턴스로 즉시 재시작 (backoff 체인)
+// 안전 가드: 20초 내 10회 이상 재시작 시 영구 에러로 추정하고 중단
+// (continuous=false 안드로이드는 발화마다 onend 가 나서 5/11 의 10s/6회 한도는
+//  너무 빡빡 — 한 회차 답변 도중 STT 가 통째로 죽음. 20s/10회 로 완화.)
 var _autobioVoiceIntent = false;
 var _autobioVoiceRestartTimes = [];
 var _autobioVoiceLastFinalText = '';   // cross-instance dedup (normalized)
@@ -12580,7 +12590,9 @@ function _autobioBuildAndStartRec(initialBaseText){
   var rec;
   try { rec = new SR(); } catch(e){ console.warn('[voice new SR]', e); return null; }
   rec.lang = 'ko-KR';
-  rec.continuous = true;
+  // 안드로이드만 continuous=false — 발화별 chunk 처리(onend 재시작) 로 강제.
+  // iOS / 데스크탑 / 비안드로이드는 기존 continuous=true 유지.
+  rec.continuous = !_autobioIsAndroid();
   rec.interimResults = true;
 
   var inp = g('autobioIvInput');
@@ -12650,11 +12662,14 @@ function _autobioBuildAndStartRec(initialBaseText){
     // 2) 이 rec이 이미 폐기되고 새 rec이 active 상태 → 무시 (race condition)
     if(_autobioVoiceRec !== rec){ return; }
 
-    // 3) 안전 가드: 최근 10초 내 6회 이상 재시작 → 영구 에러 추정
+    // 3) 안전 가드: 최근 20초 내 10회 이상 재시작 → 영구 에러 추정
+    //    안드로이드 continuous=false 는 발화마다 onend → 재시작이 발생하므로
+    //    한 회차 답변 도중에도 6~8회 재시작이 정상. 한도를 완화해야 STT 가
+    //    중간에 통째로 죽지 않음. (5/11: 10s/6회 → 5/23: 20s/10회)
     var now = Date.now();
-    _autobioVoiceRestartTimes = _autobioVoiceRestartTimes.filter(function(t){ return now - t < 10000; });
-    if(_autobioVoiceRestartTimes.length >= 6){
-      console.warn('[voice] too many restarts in 10s — giving up');
+    _autobioVoiceRestartTimes = _autobioVoiceRestartTimes.filter(function(t){ return now - t < 20000; });
+    if(_autobioVoiceRestartTimes.length >= 10){
+      console.warn('[voice] too many restarts in 20s — giving up');
       if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');
       _autobioStopVoice();
       return;
@@ -12677,11 +12692,13 @@ function _autobioBuildAndStartRec(initialBaseText){
   }
 }
 
-// 재시작 시도 체인 — 500ms → 1000ms → 2000ms로 backoff
+// 재시작 시도 체인 — 0ms → 500ms → 1000ms → 2000ms로 backoff
+// 안드로이드 continuous=false 는 자연 종료(발화 끝) 가 빈번해 첫 시도를 0ms 로
+// 깔아야 끊김 없이 다음 발화가 이어짐. (5/11: [500,1000,2000] → 5/23: [0,500,1000,2000])
 // 시도 동안 .recording 클래스 유지(🔴 시각 유지). 모두 실패 시에만 _autobioStopVoice
 function _autobioScheduleRestart(attempt){
   if(!_autobioVoiceIntent) return;
-  var delays = [500, 1000, 2000];
+  var delays = [0, 500, 1000, 2000];
   if(attempt >= delays.length){
     console.warn('[voice] restart retries exhausted at attempt', attempt);
     if(typeof showToast==='function') showToast('마이크가 자꾸 끊겨요. 텍스트로 적어주세요 🙏');

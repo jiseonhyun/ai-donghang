@@ -12572,6 +12572,23 @@ function _autobioIsAndroid(){
   return /Android/i.test(navigator.userAgent || '');
 }
 
+// ── 디버그 토스트 (?vdebug=1 또는 ?debug=1 일 때만 ON) ──
+// 안드로이드 자서전 STT 가 어디서 막히는지 폰에서 바로 보려고 단계별 토스트.
+// 일반 사용자에겐 방해 안 되게 URL 쿼리로 켜야 동작. 사용 후 다음 fix 와 함께 제거.
+function _autobioVoiceDebugOn(){
+  try {
+    var q = (location.search || '');
+    if (/[?&]vdebug=1/.test(q) || /[?&]debug=1/.test(q)) return true;
+    if (localStorage.getItem('AUTOBIO_VOICE_DEBUG') === '1') return true;
+  } catch(e){}
+  return false;
+}
+function _autobioVoiceDebugToast(msg){
+  if (!_autobioVoiceDebugOn()) return;
+  try { if (typeof showToast === 'function') showToast('[VDBG] ' + msg); } catch(e){}
+  try { console.log('[VDBG]', msg); } catch(e){}
+}
+
 // 안드로이드 Chrome (특히 갤럭시)의 Web Speech API 자동 종료 대응:
 // _autobioVoiceIntent = 사용자가 켠 상태인가 (버튼 한 번 더 누르기 전엔 true)
 // onend 시 의도 true면 → 기존 rec 폐기, 새 SR 인스턴스로 즉시 재시작 (backoff 체인)
@@ -12601,6 +12618,7 @@ function _autobioBuildAndStartRec(initialBaseText){
   var lastFinalIndex = -1;   // 인스턴스 내 dedup — 같은 result index 재처리 차단
 
   rec.onresult = function(ev){
+    _autobioVoiceDebugToast('4 onresult len=' + (ev.results ? ev.results.length : 0));
     if(typeof _voiceDebugLog === 'function') _voiceDebugLog('autobio', ev);
     var interim = '', final = '';
     for(var i=ev.resultIndex; i<ev.results.length; i++){
@@ -12644,8 +12662,9 @@ function _autobioBuildAndStartRec(initialBaseText){
   };
 
   rec.onerror = function(e){
-    console.warn('[voice]', e && e.error);
     var errType = e && e.error;
+    _autobioVoiceDebugToast('5 onerror=' + errType);
+    console.warn('[voice]', errType);
     // 영구 에러 — 사용자에게 알리고 종료
     if(errType === 'not-allowed' || errType === 'service-not-allowed'){
       if(typeof showToast==='function') showToast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
@@ -12657,6 +12676,7 @@ function _autobioBuildAndStartRec(initialBaseText){
   };
 
   rec.onend = function(){
+    _autobioVoiceDebugToast('6 onend intent=' + _autobioVoiceIntent + ' restarts=' + _autobioVoiceRestartTimes.length);
     // 1) 사용자가 명시적으로 종료(_autobioStopVoice 호출) → 그대로 종료
     if(!_autobioVoiceIntent){ return; }
     // 2) 이 rec이 이미 폐기되고 새 rec이 active 상태 → 무시 (race condition)
@@ -12685,8 +12705,10 @@ function _autobioBuildAndStartRec(initialBaseText){
 
   try {
     rec.start();
+    _autobioVoiceDebugToast('S rec.start OK');
     return rec;
   } catch(e){
+    _autobioVoiceDebugToast('S rec.start FAIL ' + (e && e.message || e));
     console.warn('[voice rec.start]', e);
     return null;
   }
@@ -12726,18 +12748,26 @@ function _autobioScheduleRestart(attempt){
 }
 
 function _autobioStartVoice(){
+  _autobioVoiceDebugToast('1 start UA=' + (navigator.userAgent||'').slice(0,40) + ' isAnd=' + _autobioIsAndroid());
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏'); return; }
+  if(!SR){
+    _autobioVoiceDebugToast('1.5 NO SR');
+    if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 적어주세요 🙏');
+    return;
+  }
+  _autobioVoiceDebugToast('2 SR found');
   _autobioVoiceIntent = true;
   _autobioVoiceRestartTimes = [];
   _autobioVoiceLastFinalText = '';   // 사용자가 새로 시작 → cross-instance dedup 초기화
   _autobioVoiceLastFullFinal = '';    // Galaxy 누적 dedup 상태도 초기화
   var rec = _autobioBuildAndStartRec();
   if(!rec){
+    _autobioVoiceDebugToast('3 buildAndStart FAIL');
     _autobioVoiceIntent = false;
     if(typeof showToast==='function') showToast('음성 입력을 시작할 수 없어요');
     return;
   }
+  _autobioVoiceDebugToast('3 buildAndStart OK continuous=' + rec.continuous);
   _autobioVoiceRec = rec;
   _autobioVoiceActive = true;
   var btn = g('autobioIvVoiceBtn');

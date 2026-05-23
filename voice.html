@@ -18,7 +18,11 @@
     </div>
   </noscript>
   <!-- 실제 마이크/녹음/STT/Supabase 업로드 wiring — window.__voiceInit 정의 -->
-  <script src="/voice-runtime.js"></script>
+  <!-- voice-runtime.js 는 자주 수정되는 핵심 STT 코드. GitHub Pages 의 10분
+       max-age 캐시 + 모바일 브라우저 강한 캐시로 인해 push 후에도 사용자가
+       옛 버전을 보는 사례 빈발. 매 페이지 로드마다 timestamp 쿼리 부여해
+       무조건 새 다운로드 (capacity 부담은 미미한 단일 JS 파일). -->
+  <script>document.write('<scr' + 'ipt src="/voice-runtime.js?_=' + Date.now() + '"><\/scr' + 'ipt>');</script>
 </head>
 <body>
   <div id="__bundler_thumbnail">

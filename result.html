@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>AI동행 — 작품 완성</title>
+<!-- 카카오 SDK — '카카오톡 전달하기' 액션용 -->
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -620,6 +622,7 @@
       <div class="actions">
         <button type="button" class="btn btn-ghost" data-action="copy">복사하기</button>
         <button type="button" class="btn btn-ghost" data-action="regenerate">다시 만들기</button>
+        <button type="button" class="btn btn-ghost" data-action="share-kakao">카카오톡 전달하기</button>
         <a href="#" class="btn btn-ghost" id="suno-link" hidden="">Suno에서 열기 ↗</a>
         <button type="button" class="btn btn-ghost" id="download-music" hidden data-action="download-music">음원 내려받기</button>
         <button type="button" class="btn btn-primary" data-action="save-text">
@@ -1066,7 +1069,42 @@
     else if (action === 'retry'){
       init();
     }
+    else if (action === 'share-kakao'){
+      shareKakao(btn);
+    }
   });
+
+  // ─── 카카오톡 전달하기 ───
+  const KAKAO_KEY = '5c95d732ad7d1f1905583749ef4788ef';
+  function initKakaoSdk(){
+    if (typeof Kakao === 'undefined') return false;
+    if (!Kakao.isInitialized()) Kakao.init(KAKAO_KEY);
+    return true;
+  }
+  function shareKakao(btn){
+    const title = document.getElementById('text-title').textContent.trim();
+    const body  = document.getElementById('text-body').innerText.trim();
+    const text  = (title ? title + '\n\n' : '') + body + '\n\n— AI 동행으로 만든 작품';
+    if (initKakaoSdk()){
+      Kakao.Share.sendDefault({
+        objectType: 'text',
+        text: text.slice(0, 200),
+        link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' },
+        buttons: [{ title: 'AI 동행에서 만들기', link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' } }],
+      });
+      return;
+    }
+    // SDK 로드 실패 폴백: 모바일 카카오 앱 링크 시도 + 클립보드 복사
+    navigator.clipboard?.writeText(text).catch(() => {});
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile){
+      window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(text.slice(0, 1000));
+    } else if (btn) {
+      const old = btn.textContent;
+      btn.textContent = '복사했어요 (카톡에 붙여넣기)';
+      setTimeout(() => btn.textContent = old, 2000);
+    }
+  }
 
   // ─── 시작 ───
   init();

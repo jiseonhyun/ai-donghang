@@ -628,31 +628,33 @@
           var sampleRate = dgAudioCtx.sampleRate;
           console.log('[VDBG] AudioContext sampleRate=' + sampleRate);
 
-          // 4) WebSocket 연결 — encoding=linear16 + 실제 sample_rate 전달
-          //    Sec-WebSocket-Protocol 로 인증 (브라우저는 custom header 못 보냄)
+          // 4) WebSocket 연결
+          //    Sec-WebSocket-Protocol: ['token', jwt] — 두 element. RFC 6455
+          //    token 문법(공백 금지) 만족. 브라우저는 두 protocol 후보로 보내고
+          //    Deepgram 이 첫 번째('token')를 protocol 로 응답하고 두 번째 element
+          //    (JWT)를 인증 token 으로 처리. 'Bearer <jwt>' 단일 element 는 공백
+          //    때문에 브라우저가 invalid subprotocol 거부.
+          //    Query 는 최소만 — 부가 옵션은 추후 1006 원인 좁혀 추가. model=
+          //    nova-2 (nova-3 가능성 회피).
           var wsUrl = 'wss://api.deepgram.com/v1/listen' +
-            '?model=nova-3' +
+            '?model=nova-2' +
             '&language=ko' +
             '&interim_results=true' +
-            '&smart_format=true' +
             '&encoding=linear16' +
             '&sample_rate=' + sampleRate +
-            '&channels=1' +
-            '&endpointing=300';
-          // Sec-WebSocket-Protocol 인증 — Deepgram 패턴은 단일 element 안에
-          // 'Token <key>' 또는 'Bearer <jwt>' 로 prefix + 값.
-          // access_token 은 JWT 라 Bearer scheme. 안 되면 Token 로 fallback.
-          dgWs = new WebSocket(wsUrl, ['Bearer ' + tokenData.access_token, 'Token ' + tokenData.access_token]);
+            '&channels=1';
+          console.log('[VDBG] Deepgram WS connecting url=' + wsUrl);
+          dgWs = new WebSocket(wsUrl, ['token', tokenData.access_token]);
           dgWs.binaryType = 'arraybuffer';
 
           dgWs.onopen = function(){
-            console.log('[VDBG] Deepgram WS open');
+            console.log('[VDBG] Deepgram WS open proto=' + dgWs.protocol);
           };
           dgWs.onerror = function(e){
             console.warn('[voice-runtime] Deepgram WS error', e);
           };
           dgWs.onclose = function(e){
-            console.log('[VDBG] Deepgram WS close code=' + e.code);
+            console.log('[VDBG] Deepgram WS close code=' + e.code + ' reason=' + (e.reason || '') + ' wasClean=' + e.wasClean);
           };
 
           dgWs.onmessage = function(ev){

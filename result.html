@@ -2,6 +2,9 @@
 <html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon_32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -475,6 +478,42 @@
   }
   @media (max-width: 380px){
     .page-title{ font-size: 22px; }
+  }
+
+  /* ── 모바일 하단 탭바 (시니어 가독성) ── */
+  .bottom-nav{
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 199;
+    background: rgba(251,248,243,.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--hair);
+    display: none;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  }
+  .bottom-nav a{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 8px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color .2s;
+  }
+  .bottom-nav a:hover{ color: var(--ink); }
+  .bottom-nav a[aria-current="page"]{
+    color: var(--teal);
+    font-weight: 600;
+  }
+  @media (max-width: 768px){
+    .bottom-nav{ display: grid; }
+    body{ padding-bottom: 64px; }
   }
 </style>
 </head>
@@ -1048,5 +1087,14 @@
   mq.addEventListener('change',function(e){if(e.matches)setOpen(false);});
 })();
 </script>
+
+<!-- 모바일 하단 탭바 (768px 이하에서만 노출) -->
+<nav class="bottom-nav" aria-label="모바일 하단 메뉴">
+  <a href="/builder.html" aria-current="page">만들기</a>
+  <a href="/#dojo">도장깨기</a>
+  <a href="/#community">커뮤니티</a>
+  <a href="/#portfolio">내작품함</a>
+  <a href="/#faq">고객센터</a>
+</nav>
 
 </body></html>

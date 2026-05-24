@@ -375,6 +375,8 @@
   }
   .actions.center{ justify-content: center; }
 
+  /* display:inline-flex 등이 hidden 속성을 덮지 않도록 전역 보강 */
+  [hidden]{ display: none !important; }
   .btn{
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     padding: 14px 22px; min-height: 50px;

@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>AI동행 — 말씀해 주세요</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon_32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="images/favicon.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #faf9f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -18,11 +21,29 @@
     </div>
   </noscript>
   <!-- 실제 마이크/녹음/STT/Supabase 업로드 wiring — window.__voiceInit 정의 -->
-  <!-- voice-runtime.js 는 자주 수정되는 핵심 STT 코드. GitHub Pages 의 10분
-       max-age 캐시 + 모바일 브라우저 강한 캐시로 인해 push 후에도 사용자가
-       옛 버전을 보는 사례 빈발. 매 페이지 로드마다 timestamp 쿼리 부여해
-       무조건 새 다운로드 (capacity 부담은 미미한 단일 JS 파일). -->
-  <script>document.write('<scr' + 'ipt src="/voice-runtime.js?_=' + Date.now() + '"><\/scr' + 'ipt>');</script>
+  <!-- voice-runtime.js 는 자주 수정되는 핵심 STT 코드. GitHub Pages + Fastly
+       CDN 의 캐시 정책으로 query timestamp 만으로는 캐시 우회 불가 (Fastly
+       가 query 무시하고 동일 ETag 응답 → 브라우저 max-age=600 캐시 hit).
+       해결: fetch 에 cache:'no-cache' 옵션으로 매번 conditional GET (ETag
+       check). 서버가 새 ETag 면 새 코드, 동일하면 304. 새 commit 즉시 반영. -->
+  <script>
+  (function(){
+    fetch('/voice-runtime.js?_=' + Date.now(), { cache: 'no-cache' })
+      .then(function(r){ return r.text(); })
+      .then(function(code){
+        var s = document.createElement('script');
+        s.textContent = code;
+        document.head.appendChild(s);
+      })
+      .catch(function(err){
+        // fetch 실패 시 fallback — 일반 script tag 로 로드
+        console.warn('[voice-runtime] fetch fail, falling back to script tag', err);
+        var s = document.createElement('script');
+        s.src = '/voice-runtime.js?_=' + Date.now();
+        document.head.appendChild(s);
+      });
+  })();
+  </script>
 </head>
 <body>
   <div id="__bundler_thumbnail">

@@ -239,22 +239,18 @@
     var messages = loadMessages();       // 누적 대화 이력 (Claude messages 형식)
     var interviewEnded = false;          // [INTERVIEW_END] 토큰 도달 후 잠금
 
-    // ── Vosk (안드로이드 Chrome 마이크 lock 우회용 클라이언트 STT) ────────────
-    // 안드로이드 Chrome 은 webkitSR + MediaRecorder 동시 마이크 점유 불가
-    // (사용자 진단 2026-05-23). 해결: getUserMedia 1회로 stream 받아 MediaRecorder
-    // 와 Vosk(WebAssembly) 둘 다 같은 stream 으로 처리. Vosk 는 마이크 access 안 잡고
-    // 우리가 추출한 AudioBuffer 만 받음 → 충돌 없음.
-    var voskModel = null;       // 모듈 캐싱 (한 페이지 세션 동안 모델 유지)
-    var voskModelInFlight = null;  // createModel Promise — 사용자가 빠르게 두 번 누를 때 중복 호출 차단
-    var voskRecognizer = null;
-    var voskAudioCtx = null;
-    var voskSource = null;
-    var voskProcessor = null;
-    var voskStream = null;
-    var voskLoadInFlight = null;
-    var androidStartInFlight = false;  // _startAndroidVosk 진행 중 잠금 (mic 다중 클릭 차단)
-    var VOSK_LIB_URL = 'https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js';
-    var VOSK_MODEL_URL = '/vosk-models/ko-small.tar.gz';
+    // ── 안드로이드 STT 전략 (2026-05-24 Naver CLOVA 전환) ─────────────────
+    // 배경: 안드로이드 Chrome 은 webkitSR + MediaRecorder 동시 마이크 점유 불가.
+    // Vosk(클라이언트 WebAssembly) 시도했으나 small 모델 정확도 ~90% 부정확
+    // (사용자 보고). 한국어 시니어 발음에 안정적인 인식 필요.
+    //
+    // 신 전략: 안드로이드는 MediaRecorder 로 녹음만 → 사용자가 마이크 종료
+    // 누르면 audioChunks 를 clova-proxy(Supabase Edge Function)로 보내 Naver
+    // CLOVA Speech long-form 결과 텍스트를 받음. 한국어 특화 학습이라 webkitSR
+    // 수준 이상 정확도. 트레이드: 말하는 동안 실시간 미리보기 없음(종료 후 몇
+    // 초~수십초 기다림), API 호출 비용 발생.
+    var CLOVA_PROXY_URL = SUPABASE_URL + '/functions/v1/clova-proxy';
+    var androidTranscribing = false;  // CLOVA 처리 중 — mic 다중 클릭 차단
 
     // 질문 영역 DOM
     var questionTextEl = document.querySelector('.question-text');
@@ -423,25 +419,19 @@
       var append = !!(opts && opts.append);
       console.log('[VDBG] startRecording append=' + append + ' hasMD=' + !!navigator.mediaDevices);
 
-      // ── 안드로이드 Chrome 우회: Vosk(WebAssembly 클라이언트 STT) + MediaRecorder
-      //    문제: webkitSR + MediaRecorder 동시 마이크 점유 불가 (사용자 진단 확인).
-      //    해결: getUserMedia 1회로 stream 받아 MediaRecorder 와 Vosk 둘 다 같은
-      //    stream 으로 처리. Vosk 는 마이크 access 안 잡고 우리가 AudioContext +
-      //    ScriptProcessor 로 추출한 AudioBuffer 만 받음 → 충돌 자체 없음.
-      //
-      //    첫 진입: vosk-browser CDN(~MB) + 한국어 모델(82MB) 다운로드. IndexedDB
-      //    캐싱(라이브러리 자체)으로 두 번째부터 즉시 시작. 로드 실패 시 SR-only
-      //    fallback 으로 그래도 텍스트는 보장.
+      // ── 안드로이드 Chrome 우회: MediaRecorder 만 + 종료 시 CLOVA STT
+      //    문제: webkitSR + MediaRecorder 동시 마이크 점유 불가.
+      //    Vosk 시도(2026-05-23)는 정확도 부족(~90% 부정확)으로 폐기.
+      //    신 전략: 녹음만 → mic 종료 누르면 audioChunks → clova-proxy POST →
+      //    Naver CLOVA long-form 결과 fullText 를 baseFinal 로 채워 표시.
+      //    한국어 특화 학습이라 webkitSR 이상 정확도. 트레이드: 실시간 미리보기
+      //    없음 (종료 후 몇 초~수십초 처리), API 호출 비용.
       if (_isAndroid()){
-        console.log('[VDBG] Android — Vosk + MediaRecorder mode start');
+        console.log('[VDBG] Android — MediaRecorder-only mode (STT via CLOVA on stop)');
         if (speechRec){ try { speechRec.stop(); } catch(e){} speechRec = null; }
-        androidStartInFlight = true;
-        _startAndroidVosk(append).then(function(){
-          androidStartInFlight = false;
-        }).catch(function(err){
-          androidStartInFlight = false;
-          console.log('[VDBG] Android Vosk start FAIL ' + (err && err.message || err) + ' — SR-only fallback');
-          _startAndroidSROnlyFallback(append);
+        _startAndroidMRecOnly(append).catch(function(err){
+          console.log('[VDBG] Android MR start FAIL ' + (err && err.message || err));
+          toast('마이크를 켤 수 없어요. 잠시 후 다시 시도해 주세요 🙏');
         });
         return;
       }
@@ -530,14 +520,22 @@
       // _startSRWithBackoff 안의 `if(speechRec) return` 가드에 걸려 새 SR 안
       // 시작됨 (iPhone 보고된 증상). startRecording 도 진입 시 또 정리.
       speechRec = null;
-      // Vosk 파이프라인 정리 (안드로이드 Vosk 경로). recognizer/processor 가 없으면 no-op.
-      _teardownAndroidVosk();
       try { if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop(); } catch(e){}
       if (mediaRec && mediaRec.stream){
         try { mediaRec.stream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
       }
       body.classList.remove('is-recording');
       body.classList.add('is-reviewing');
+
+      // 안드로이드 — 종료 직후 CLOVA STT 호출하여 baseFinal/transcriptBody 채움.
+      // (iOS / 데스크탑은 webkitSR 가 실시간으로 이미 baseFinal 누적했음.)
+      if (_isAndroid()){
+        // MediaRecorder.stop() 직후엔 마지막 ondataavailable 이 비동기로 한 번 더
+        // 와 audioChunks 채워질 수 있어 짧은 지연 후 호출. 100ms 면 보통 충분.
+        setTimeout(function(){
+          _androidTranscribeViaClova();
+        }, 150);
+      }
     }
 
     function uploadAudio(){
@@ -574,45 +572,10 @@
       });
     }
 
-    // ── Vosk 로드 헬퍼 ─────────────────────────────────────────────────────
-    // CDN 스크립트 동적 로드 → window.Vosk 노출. 한 번만 수행, in-flight 캐싱.
-    function _loadVoskScript(){
-      if (window.Vosk) return Promise.resolve();
-      if (voskLoadInFlight) return voskLoadInFlight;
-      voskLoadInFlight = new Promise(function(resolve, reject){
-        var s = document.createElement('script');
-        s.src = VOSK_LIB_URL;
-        s.async = true;
-        s.onload = function(){ console.log('[VDBG] Vosk lib loaded'); resolve(); };
-        s.onerror = function(){ voskLoadInFlight = null; reject(new Error('vosk-browser CDN load failed')); };
-        document.head.appendChild(s);
-      });
-      return voskLoadInFlight;
-    }
-
-    // 모델 로드 — 한 페이지 세션 동안 voskModel 캐싱. vosk-browser 가 IndexedDB
-    // 내부 캐싱도 함께 수행해 두 번째 페이지 진입에서도 모델 다운로드 안 함.
-    // ★ 사용자가 로딩 중 다시 누르면 같은 in-flight Promise 재사용 (중복 createModel 차단).
-    function _ensureVoskModel(){
-      if (voskModel) return Promise.resolve(voskModel);
-      if (voskModelInFlight) return voskModelInFlight;
-      voskModelInFlight = _loadVoskScript().then(function(){
-        console.log('[VDBG] Vosk createModel start url=' + VOSK_MODEL_URL);
-        return window.Vosk.createModel(VOSK_MODEL_URL).then(function(m){
-          voskModel = m;
-          voskModelInFlight = null;
-          console.log('[VDBG] Vosk model ready');
-          return m;
-        }).catch(function(err){
-          voskModelInFlight = null;
-          throw err;
-        });
-      });
-      return voskModelInFlight;
-    }
-
-    // 안드로이드 Vosk 시작 흐름. async-await 안 쓰고 Promise 체인 (ES5 친화).
-    function _startAndroidVosk(append){
+    // ── 안드로이드 — MediaRecorder 단독 시작 ───────────────────────────────
+    // 녹음만 하고 SR 은 시작 안 함. STT 는 mic 종료 시 _androidTranscribeViaClova 가
+    // audioChunks → clova-proxy → 텍스트.
+    function _startAndroidMRecOnly(append){
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
         return Promise.reject(new Error('no mediaDevices'));
       }
@@ -633,156 +596,88 @@
           if (baseFinal) transcriptBody.textContent = baseFinal;
         }
       }
+      console.log('[VDBG] Android getUserMedia (MR-only path)');
+      return navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true }
+      }).then(function(stream){
+        console.log('[VDBG] Android stream OK tracks=' + stream.getAudioTracks().length);
+        mimeType = pickMime();
+        try {
+          mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
+                              : new MediaRecorder(stream);
+        } catch(e){
+          console.log('[VDBG] MR ctor FAIL ' + e + ' — fallback no-mime');
+          mediaRec = new MediaRecorder(stream);
+        }
+        mediaRec.ondataavailable = function(e){
+          if (e.data && e.data.size > 0) audioChunks.push(e.data);
+        };
+        mediaRec.start(1000);
+        console.log('[VDBG] Android MR.start() OK');
 
-      // 첫 진입(또는 모델 미로딩)이면 안내 토스트 + UI 잠금. 다중 클릭은
-      // androidStartInFlight 가드로 micBtn 핸들러에서 차단되지만, 시각적
-      // 피드백도 함께 — 마이크 버튼에 .is-loading 표시 + 라벨 변경.
-      var modelAlreadyReady = !!voskModel;
-      if (!modelAlreadyReady){
-        toast('음성 인식 준비 중이에요… 처음 한 번만 약 1분 걸려요. 잠시만 기다려 주세요 🙏');
-        try { micBtn.classList.add('is-loading'); } catch(_){}
+        body.classList.remove('is-reviewing');
+        body.classList.add('is-recording');
+        clearInterval(secTimer);
+        secTimer = setInterval(function(){
+          seconds++;
+          if (timerText) timerText.textContent = fmtTime(seconds);
+        }, 1000);
+      });
+    }
+
+    // 안드로이드 — mic 종료 후 호출. audioChunks → clova-proxy → fullText
+    // → baseFinal/transcriptBody. 처리 중 토스트 + UI 잠금.
+    function _androidTranscribeViaClova(){
+      if (!audioChunks.length){
+        console.log('[VDBG] Android transcribe SKIP (no audio chunks)');
+        return Promise.resolve(null);
       }
-
-      return _ensureVoskModel().then(function(model){
-        try { micBtn.classList.remove('is-loading'); } catch(_){}
-        console.log('[VDBG] Android getUserMedia (Vosk path)');
-        return navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 }
-        }).then(function(stream){
-          voskStream = stream;
-          console.log('[VDBG] Android stream OK tracks=' + stream.getAudioTracks().length);
-
-          // 1) MediaRecorder — 녹음 파일 생성 (Supabase 업로드)
-          mimeType = pickMime();
-          try {
-            mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
-                                : new MediaRecorder(stream);
-          } catch(e){
-            console.log('[VDBG] MR ctor FAIL ' + e + ' — fallback no-mime');
-            mediaRec = new MediaRecorder(stream);
-          }
-          mediaRec.ondataavailable = function(e){
-            if (e.data && e.data.size > 0) audioChunks.push(e.data);
-          };
-          mediaRec.start(1000);
-          console.log('[VDBG] Android MR.start() OK');
-
-          // 3) AudioContext + ScriptProcessor 로 stream → AudioBuffer → recognizer
-          // ★ AudioContext sampleRate 를 명시적으로 audioCtx.sampleRate 로 잡아
-          //   KaldiRecognizer 에 같은 값 전달. 안 그러면 디바이스 default(48000Hz)
-          //   audio 가 16000Hz 로 trained 된 모델에 들어가서 인식이 거의 안 됨
-          //   (사용자 보고: small 모델 95% 부정확). vosk-browser worker 가 내부에서
-          //   16000Hz 로 리샘플링 처리.
-          voskAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          console.log('[VDBG] AudioContext sampleRate=' + voskAudioCtx.sampleRate);
-
-          // 2) Vosk Recognizer — 실제 audio sample rate 로 생성
-          var recognizer = new model.KaldiRecognizer(voskAudioCtx.sampleRate);
-          recognizer.setWords(false);
-
-          recognizer.on('partialresult', function(msg){
-            var partial = (msg && msg.result && msg.result.partial) || '';
-            // partial 은 매번 누적 전체 partial — 우리 baseFinal 뒤에 붙여 표시만, 누적은 안 함.
-            if (transcriptBody){
-              var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
-              if (ph) ph.remove();
-              transcriptBody.textContent = (baseFinal + (baseFinal && partial ? ' ' : '') + partial).trim();
-            }
-          });
-
-          recognizer.on('result', function(msg){
-            var text = (msg && msg.result && msg.result.text) || '';
-            if (!text) return;
-            console.log('[VDBG] Vosk result: ' + text.slice(0, 40));
-            baseFinal = (baseFinal + (baseFinal ? ' ' : '') + text).trim();
+      androidTranscribing = true;
+      toast('동동이가 말씀을 잘 정리하고 있어요…');
+      var type = (mediaRec && mediaRec.mimeType) || mimeType || 'audio/webm';
+      var blob = new Blob(audioChunks, { type: type });
+      var ext = type.indexOf('mp4') >= 0 ? 'm4a' :
+                type.indexOf('ogg') >= 0 ? 'ogg' : 'webm';
+      console.log('[VDBG] Android clova-proxy POST size=' + blob.size + ' type=' + type);
+      var form = new FormData();
+      form.append('media', blob, 'voice.' + ext);
+      return fetch(CLOVA_PROXY_URL, { method: 'POST', body: form })
+        .then(function(res){
+          return res.json().catch(function(){ return { ok: false, error: 'JSON parse error ' + res.status }; });
+        })
+        .then(function(data){
+          androidTranscribing = false;
+          if (data && data.ok && typeof data.text === 'string' && data.text.trim()){
+            var t = data.text.trim();
+            console.log('[VDBG] Android CLOVA result len=' + t.length);
+            baseFinal = (baseFinal + (baseFinal ? ' ' : '') + t).trim();
             if (transcriptBody){
               var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
               if (ph) ph.remove();
               transcriptBody.textContent = baseFinal;
             }
-          });
-
-          voskRecognizer = recognizer;
-
-          // 4) ScriptProcessor 로 stream → AudioBuffer → recognizer
-          // (AudioWorklet 가 더 신식이지만 vosk-browser 공식 패턴이 ScriptProcessor.)
-          voskSource = voskAudioCtx.createMediaStreamSource(stream);
-          voskProcessor = voskAudioCtx.createScriptProcessor(4096, 1, 1);
-          voskProcessor.onaudioprocess = function(ev){
-            try { voskRecognizer && voskRecognizer.acceptWaveform(ev.inputBuffer); }
-            catch(e){ /* recognizer 가 cleanup 직후 호출되는 race — 무시 */ }
-          };
-          voskSource.connect(voskProcessor);
-          voskProcessor.connect(voskAudioCtx.destination);
-          console.log('[VDBG] Android Vosk pipeline wired');
-
-          // 4) UI 상태 전환 + 초 타이머
-          body.classList.remove('is-reviewing');
-          body.classList.add('is-recording');
-          clearInterval(secTimer);
-          secTimer = setInterval(function(){
-            seconds++;
-            if (timerText) timerText.textContent = fmtTime(seconds);
-          }, 1000);
-
-          if (!modelAlreadyReady){
-            toast('이제 말씀하셔도 됩니다 🎙');
+            return t;
           }
+          console.warn('[voice-runtime] clova-proxy fail', data);
+          toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
+          return null;
+        })
+        .catch(function(err){
+          androidTranscribing = false;
+          console.warn('[voice-runtime] clova-proxy err', err);
+          toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
+          return null;
         });
-      });
-    }
-
-    // Vosk 로드/모델 실패 시 fallback — 기존 SR-only 흐름 (텍스트만 보장, 녹음 없음)
-    function _startAndroidSROnlyFallback(append){
-      console.log('[VDBG] Android SR-only fallback engage');
-      try { micBtn.classList.remove('is-loading'); } catch(_){}
-      toast('음성 인식 모델을 불러오지 못해 텍스트만 변환합니다 🙏');
-      if (!append){
-        audioChunks = [];
-        baseFinal = '';
-        seconds = 0;
-        if (timerText) timerText.textContent = fmtTime(0);
-        if (transcriptBody){
-          var phF = transcriptBody.querySelector('.ph');
-          if (phF) phF.remove();
-          transcriptBody.textContent = '';
-        }
-      }
-      lastFullFinal = '';
-      srRestarts = [];
-      srIntent = true;
-      _startSRWithBackoff(0, baseFinal);
-      body.classList.remove('is-reviewing');
-      body.classList.add('is-recording');
-      clearInterval(secTimer);
-      secTimer = setInterval(function(){
-        seconds++;
-        if (timerText) timerText.textContent = fmtTime(seconds);
-      }, 1000);
-    }
-
-    // Vosk 파이프라인 정리 — stopRecording 에서 호출.
-    function _teardownAndroidVosk(){
-      try { if (voskProcessor) voskProcessor.disconnect(); } catch(e){}
-      try { if (voskSource) voskSource.disconnect(); } catch(e){}
-      try { if (voskAudioCtx && voskAudioCtx.state !== 'closed') voskAudioCtx.close(); } catch(e){}
-      try { if (voskRecognizer && voskRecognizer.remove) voskRecognizer.remove(); } catch(e){}
-      voskProcessor = null;
-      voskSource = null;
-      voskAudioCtx = null;
-      voskRecognizer = null;
-      // voskStream tracks 는 stopRecording 의 mediaRec.stream.getTracks().stop() 에서 해제.
-      voskStream = null;
     }
 
     // ── mic 버튼 토글: 녹음 중이면 정지(검토 진입), 아니면 새로 시작
     //    검토 상태에서 mic 다시 누르면 "이어서" 가 아니라 "새로 시작" — 사용자 의도가
     //    명확한 mic 아이콘 클릭은 fresh start 로 처리. 이어서 말하려면 continueBtn 사용.
     micBtn.addEventListener('click', function(){
-      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid() + ' androidStartInFlight=' + androidStartInFlight);
-      // 안드로이드 Vosk 로딩 중 다중 클릭 차단 — createModel race 방지
-      if (androidStartInFlight){
-        toast('음성 인식 준비 중이에요… 잠시만 기다려 주세요 🙏');
+      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid() + ' transcribing=' + androidTranscribing);
+      // 안드로이드 CLOVA 처리 중 다중 클릭 차단 — 음성 누적 결과 분실 방지
+      if (androidTranscribing){
+        toast('동동이가 말씀을 정리하고 있어요… 잠시만요 🙏');
         return;
       }
       if (body.classList.contains('is-recording')) stopRecording();

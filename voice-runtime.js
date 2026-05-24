@@ -629,13 +629,15 @@
           console.log('[VDBG] AudioContext sampleRate=' + sampleRate);
 
           // 4) WebSocket 연결
-          //    Sec-WebSocket-Protocol: ['token', jwt] — 두 element. RFC 6455
-          //    token 문법(공백 금지) 만족. 브라우저는 두 protocol 후보로 보내고
-          //    Deepgram 이 첫 번째('token')를 protocol 로 응답하고 두 번째 element
-          //    (JWT)를 인증 token 으로 처리. 'Bearer <jwt>' 단일 element 는 공백
-          //    때문에 브라우저가 invalid subprotocol 거부.
-          //    Query 는 최소만 — 부가 옵션은 추후 1006 원인 좁혀 추가. model=
-          //    nova-2 (nova-3 가능성 회피).
+          //    Sec-WebSocket-Protocol: ['bearer', jwt] — 두 element.
+          //    Deepgram 인증 scheme:
+          //      - 영구 API key  → 'token' subprotocol
+          //      - 단명 JWT (auth/grant)  → 'bearer' subprotocol  ← 우리
+          //    HTTP 헤더 검증으로 확인: 'Authorization: Token <JWT>' 는 401
+          //    Invalid credentials, 'Authorization: Bearer <JWT>' 는 통과.
+          //    WebSocket 직접 테스트로 확인: ['token', jwt] → 1006 close,
+          //    ['bearer', jwt] → open 성공, ws.protocol === 'bearer'.
+          //    (2026-05-24 chrome-devtools 직접 검증 결과)
           var wsUrl = 'wss://api.deepgram.com/v1/listen' +
             '?model=nova-2' +
             '&language=ko' +
@@ -644,7 +646,7 @@
             '&sample_rate=' + sampleRate +
             '&channels=1';
           console.log('[VDBG] Deepgram WS connecting url=' + wsUrl);
-          dgWs = new WebSocket(wsUrl, ['token', tokenData.access_token]);
+          dgWs = new WebSocket(wsUrl, ['bearer', tokenData.access_token]);
           dgWs.binaryType = 'arraybuffer';
 
           dgWs.onopen = function(){

@@ -9,7 +9,9 @@
 <meta property="og:description" content="고르시는 대로, 한 편의 작품이 됩니다.">
 <meta property="og:url" content="https://aitogether.co.kr/builder.html">
 <meta property="og:type" content="website">
-<link rel="icon" href="/favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon_32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="images/favicon.png">
 <link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -484,14 +486,14 @@
     border-top: 1px solid var(--hair);
     display: none;
     grid-template-columns: repeat(5, 1fr);
-    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    padding: 2px 0 max(2px, env(safe-area-inset-bottom));
   }
   .bottom-nav a{
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 52px;
-    padding: 8px 4px;
+    min-height: 44px;
+    padding: 4px 4px;
     font-size: 13px;
     font-weight: 500;
     color: var(--ink-soft);
@@ -506,7 +508,7 @@
   }
   @media (max-width: 768px){
     .bottom-nav{ display: grid; }
-    body{ padding-bottom: 64px; }
+    body{ padding-bottom: 52px; }
   }
 </style>
 </head>

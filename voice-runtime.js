@@ -239,17 +239,25 @@
     var messages = loadMessages();       // 누적 대화 이력 (Claude messages 형식)
     var interviewEnded = false;          // [INTERVIEW_END] 토큰 도달 후 잠금
 
-    // ── 안드로이드 STT 전략 (2026-05-24 Groq Whisper Large V3) ────────────
+    // ── 안드로이드 STT 전략 (2026-05-24 Deepgram WebSocket streaming) ─────
     // 배경: 안드로이드 Chrome 은 webkitSR + MediaRecorder 동시 마이크 점유 불가.
-    // Vosk(클라이언트 WASM) 정확도 ~90% 부정확 → 폐기. CLOVA 도 종량과금 부담.
-    // 최종 선택: Groq 의 whisper-large-v3 — 무료 tier 가 자서전 사용에 충분,
-    // Whisper Large 정확도 (~10% WER, 한국어 안정), 초고속 추론.
-    //
-    // 흐름 (안드로이드만): MediaRecorder 로 녹음 → 사용자가 mic 종료 누르면
-    // audioChunks 를 groq-whisper(Supabase Edge Function) 로 보내 텍스트 받음.
-    // 트레이드: 말하는 동안 실시간 미리보기 없음 (종료 후 몇 초 기다림).
-    var GROQ_PROXY_URL = SUPABASE_URL + '/functions/v1/groq-whisper';
-    var androidTranscribing = false;  // 처리 중 — mic 다중 클릭 차단
+    // 이전 시도: Vosk(부정확) → CLOVA(유료) → Groq(file-based, 실시간 미리보기 X).
+    // 사용자 요구 명확: 실시간 미리보기 + 녹음 둘 다.
+    // 최종 선택: Deepgram Nova-3 WebSocket streaming —
+    //   - 마이크 access 1회로 stream 공유 (MediaRecorder + AudioContext/ScriptProcessor)
+    //   - WebSocket 으로 PCM 청크 push → interim/final 결과 push 받음 (~300ms 지연)
+    //   - $200 무료 크레딧 (≈770시간) — 카드 등록 X
+    //   - 한국어 정확도 webkitSR/Whisper 수준
+    //   - access_token 은 deepgram-token Edge Function 이 60초 단명 token 발급
+    //     (API 키 클라이언트 노출 X)
+    var DEEPGRAM_TOKEN_URL = SUPABASE_URL + '/functions/v1/deepgram-token';
+    var dgWs = null;
+    var dgAudioCtx = null;
+    var dgSource = null;
+    var dgProcessor = null;
+    var dgStream = null;
+    var dgInterim = '';            // 직전 interim — final 도착 시 화면 갱신용
+    var androidStarting = false;   // mic 다중 클릭 차단
 
     // 질문 영역 DOM
     var questionTextEl = document.querySelector('.question-text');
@@ -418,19 +426,19 @@
       var append = !!(opts && opts.append);
       console.log('[VDBG] startRecording append=' + append + ' hasMD=' + !!navigator.mediaDevices);
 
-      // ── 안드로이드 Chrome 우회: MediaRecorder 만 + 종료 시 CLOVA STT
-      //    문제: webkitSR + MediaRecorder 동시 마이크 점유 불가.
-      //    Vosk 시도(2026-05-23)는 정확도 부족(~90% 부정확)으로 폐기.
-      //    신 전략: 녹음만 → mic 종료 누르면 audioChunks → clova-proxy POST →
-      //    Naver CLOVA long-form 결과 fullText 를 baseFinal 로 채워 표시.
-      //    한국어 특화 학습이라 webkitSR 이상 정확도. 트레이드: 실시간 미리보기
-      //    없음 (종료 후 몇 초~수십초 처리), API 호출 비용.
+      // ── 안드로이드 Chrome 우회: Deepgram WebSocket 실시간 streaming
+      //    같은 stream 으로 MediaRecorder(녹음) + AudioContext/ScriptProcessor(PCM
+      //    추출 → ws.send) 공존. Deepgram interim/final push → 실시간 미리보기.
       if (_isAndroid()){
-        console.log('[VDBG] Android — MediaRecorder-only mode (STT via CLOVA on stop)');
+        console.log('[VDBG] Android — Deepgram WebSocket streaming mode');
         if (speechRec){ try { speechRec.stop(); } catch(e){} speechRec = null; }
-        _startAndroidMRecOnly(append).catch(function(err){
-          console.log('[VDBG] Android MR start FAIL ' + (err && err.message || err));
-          toast('마이크를 켤 수 없어요. 잠시 후 다시 시도해 주세요 🙏');
+        androidStarting = true;
+        _startAndroidDeepgram(append).then(function(){
+          androidStarting = false;
+        }).catch(function(err){
+          androidStarting = false;
+          console.log('[VDBG] Android Deepgram start FAIL ' + (err && err.message || err));
+          toast('음성 인식을 시작할 수 없어요. 잠시 후 다시 시도해 주세요 🙏');
         });
         return;
       }
@@ -526,14 +534,11 @@
       body.classList.remove('is-recording');
       body.classList.add('is-reviewing');
 
-      // 안드로이드 — 종료 직후 Groq Whisper STT 호출하여 baseFinal/transcriptBody 채움.
+      // 안드로이드 — Deepgram WebSocket 파이프라인 정리 (CloseStream + 자원 해제).
+      // baseFinal/transcriptBody 는 streaming 중 이미 누적됐음.
       // (iOS / 데스크탑은 webkitSR 가 실시간으로 이미 baseFinal 누적했음.)
       if (_isAndroid()){
-        // MediaRecorder.stop() 직후엔 마지막 ondataavailable 이 비동기로 한 번 더
-        // 와 audioChunks 채워질 수 있어 짧은 지연 후 호출. 100ms 면 보통 충분.
-        setTimeout(function(){
-          _androidTranscribeViaGroq();
-        }, 150);
+        _teardownAndroidDeepgram();
       }
     }
 
@@ -571,10 +576,14 @@
       });
     }
 
-    // ── 안드로이드 — MediaRecorder 단독 시작 ───────────────────────────────
-    // 녹음만 하고 SR 은 시작 안 함. STT 는 mic 종료 시 _androidTranscribeViaClova 가
-    // audioChunks → clova-proxy → 텍스트.
-    function _startAndroidMRecOnly(append){
+    // ── 안드로이드 Deepgram WebSocket streaming 시작 ───────────────────────
+    // 흐름:
+    //   1) deepgram-token 호출해 60초 단명 access_token 받기
+    //   2) getUserMedia → stream 1개
+    //   3) AudioContext + ScriptProcessor 로 PCM 추출 → ws.send
+    //   4) MediaRecorder 로 같은 stream 녹음 → audioChunks
+    //   5) ws.onmessage 로 interim/final 받아 transcriptBody/baseFinal 갱신
+    function _startAndroidDeepgram(append){
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
         return Promise.reject(new Error('no mediaDevices'));
       }
@@ -595,88 +604,157 @@
           if (baseFinal) transcriptBody.textContent = baseFinal;
         }
       }
-      console.log('[VDBG] Android getUserMedia (MR-only path)');
-      return navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true }
-      }).then(function(stream){
-        console.log('[VDBG] Android stream OK tracks=' + stream.getAudioTracks().length);
-        mimeType = pickMime();
-        try {
-          mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
-                              : new MediaRecorder(stream);
-        } catch(e){
-          console.log('[VDBG] MR ctor FAIL ' + e + ' — fallback no-mime');
-          mediaRec = new MediaRecorder(stream);
-        }
-        mediaRec.ondataavailable = function(e){
-          if (e.data && e.data.size > 0) audioChunks.push(e.data);
-        };
-        mediaRec.start(1000);
-        console.log('[VDBG] Android MR.start() OK');
+      dgInterim = '';
 
-        body.classList.remove('is-reviewing');
-        body.classList.add('is-recording');
-        clearInterval(secTimer);
-        secTimer = setInterval(function(){
-          seconds++;
-          if (timerText) timerText.textContent = fmtTime(seconds);
-        }, 1000);
+      // 1) 단명 access_token 받기
+      console.log('[VDBG] Android Deepgram — fetching token');
+      return fetch(DEEPGRAM_TOKEN_URL).then(function(res){
+        return res.json();
+      }).then(function(tokenData){
+        if (!tokenData || !tokenData.ok || !tokenData.access_token){
+          throw new Error('token fail: ' + JSON.stringify(tokenData).slice(0, 200));
+        }
+        console.log('[VDBG] Deepgram token OK expires_in=' + tokenData.expires_in);
+
+        // 2) getUserMedia
+        return navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true }
+        }).then(function(stream){
+          dgStream = stream;
+          console.log('[VDBG] Android stream OK tracks=' + stream.getAudioTracks().length);
+
+          // 3) AudioContext + ScriptProcessor — PCM 캡처
+          dgAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          var sampleRate = dgAudioCtx.sampleRate;
+          console.log('[VDBG] AudioContext sampleRate=' + sampleRate);
+
+          // 4) WebSocket 연결 — encoding=linear16 + 실제 sample_rate 전달
+          //    Sec-WebSocket-Protocol 로 인증 (브라우저는 custom header 못 보냄)
+          var wsUrl = 'wss://api.deepgram.com/v1/listen' +
+            '?model=nova-3' +
+            '&language=ko' +
+            '&interim_results=true' +
+            '&smart_format=true' +
+            '&encoding=linear16' +
+            '&sample_rate=' + sampleRate +
+            '&channels=1' +
+            '&endpointing=300';
+          dgWs = new WebSocket(wsUrl, ['token', tokenData.access_token]);
+          dgWs.binaryType = 'arraybuffer';
+
+          dgWs.onopen = function(){
+            console.log('[VDBG] Deepgram WS open');
+          };
+          dgWs.onerror = function(e){
+            console.warn('[voice-runtime] Deepgram WS error', e);
+          };
+          dgWs.onclose = function(e){
+            console.log('[VDBG] Deepgram WS close code=' + e.code);
+          };
+
+          dgWs.onmessage = function(ev){
+            var msg;
+            try { msg = JSON.parse(ev.data); } catch(e){ return; }
+            if (!msg || msg.type !== 'Results') return;
+            var alt = msg.channel && msg.channel.alternatives && msg.channel.alternatives[0];
+            if (!alt) return;
+            var transcript = (alt.transcript || '').trim();
+            if (msg.is_final){
+              if (transcript){
+                baseFinal = (baseFinal + (baseFinal ? ' ' : '') + transcript).trim();
+                console.log('[VDBG] Deepgram final + "' + transcript + '"');
+              }
+              dgInterim = '';
+              if (transcriptBody){
+                var phF = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
+                if (phF) phF.remove();
+                transcriptBody.textContent = baseFinal;
+              }
+            } else {
+              dgInterim = transcript;
+              if (transcriptBody){
+                var phI = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
+                if (phI) phI.remove();
+                transcriptBody.textContent = (baseFinal + (baseFinal && transcript ? ' ' : '') + transcript).trim();
+              }
+            }
+          };
+
+          // 5) ScriptProcessor — Float32 → Int16 PCM → ws.send
+          dgSource = dgAudioCtx.createMediaStreamSource(stream);
+          dgProcessor = dgAudioCtx.createScriptProcessor(4096, 1, 1);
+          dgProcessor.onaudioprocess = function(ev){
+            if (!dgWs || dgWs.readyState !== WebSocket.OPEN) return;
+            var input = ev.inputBuffer.getChannelData(0);
+            var pcm = new Int16Array(input.length);
+            for (var i = 0; i < input.length; i++){
+              var s = input[i];
+              if (s > 1) s = 1; else if (s < -1) s = -1;
+              pcm[i] = s < 0 ? (s * 0x8000) | 0 : (s * 0x7FFF) | 0;
+            }
+            try { dgWs.send(pcm.buffer); } catch(e){}
+          };
+          dgSource.connect(dgProcessor);
+          dgProcessor.connect(dgAudioCtx.destination);
+          console.log('[VDBG] Deepgram pipeline wired');
+
+          // 6) MediaRecorder — 같은 stream 으로 녹음 파일 생성
+          mimeType = pickMime();
+          try {
+            mediaRec = mimeType ? new MediaRecorder(stream, { mimeType: mimeType })
+                                : new MediaRecorder(stream);
+          } catch(e){
+            console.log('[VDBG] MR ctor FAIL ' + e + ' — fallback no-mime');
+            mediaRec = new MediaRecorder(stream);
+          }
+          mediaRec.ondataavailable = function(e){
+            if (e.data && e.data.size > 0) audioChunks.push(e.data);
+          };
+          mediaRec.start(1000);
+          console.log('[VDBG] Android MR.start() OK');
+
+          // 7) UI
+          body.classList.remove('is-reviewing');
+          body.classList.add('is-recording');
+          clearInterval(secTimer);
+          secTimer = setInterval(function(){
+            seconds++;
+            if (timerText) timerText.textContent = fmtTime(seconds);
+          }, 1000);
+        });
       });
     }
 
-    // 안드로이드 — mic 종료 후 호출. audioChunks → groq-whisper → text
-    // → baseFinal/transcriptBody. 처리 중 토스트 + UI 잠금.
-    function _androidTranscribeViaGroq(){
-      if (!audioChunks.length){
-        console.log('[VDBG] Android transcribe SKIP (no audio chunks)');
-        return Promise.resolve(null);
+    // Deepgram 파이프라인 정리 — stopRecording 에서 호출
+    function _teardownAndroidDeepgram(){
+      // CloseStream 메시지 보내 마지막 final 결과 받기
+      if (dgWs && dgWs.readyState === WebSocket.OPEN){
+        try { dgWs.send(JSON.stringify({ type: 'CloseStream' })); } catch(e){}
       }
-      androidTranscribing = true;
-      toast('동동이가 말씀을 잘 정리하고 있어요…');
-      var type = (mediaRec && mediaRec.mimeType) || mimeType || 'audio/webm';
-      var blob = new Blob(audioChunks, { type: type });
-      var ext = type.indexOf('mp4') >= 0 ? 'm4a' :
-                type.indexOf('ogg') >= 0 ? 'ogg' : 'webm';
-      console.log('[VDBG] Android groq-whisper POST size=' + blob.size + ' type=' + type);
-      var form = new FormData();
-      form.append('media', blob, 'voice.' + ext);
-      return fetch(GROQ_PROXY_URL, { method: 'POST', body: form })
-        .then(function(res){
-          return res.json().catch(function(){ return { ok: false, error: 'JSON parse error ' + res.status }; });
-        })
-        .then(function(data){
-          androidTranscribing = false;
-          if (data && data.ok && typeof data.text === 'string' && data.text.trim()){
-            var t = data.text.trim();
-            console.log('[VDBG] Android Groq result len=' + t.length);
-            baseFinal = (baseFinal + (baseFinal ? ' ' : '') + t).trim();
-            if (transcriptBody){
-              var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
-              if (ph) ph.remove();
-              transcriptBody.textContent = baseFinal;
-            }
-            return t;
-          }
-          console.warn('[voice-runtime] groq-whisper fail', data);
-          toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
-          return null;
-        })
-        .catch(function(err){
-          androidTranscribing = false;
-          console.warn('[voice-runtime] groq-whisper err', err);
-          toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
-          return null;
-        });
+      try { if (dgProcessor) dgProcessor.disconnect(); } catch(e){}
+      try { if (dgSource) dgSource.disconnect(); } catch(e){}
+      try { if (dgAudioCtx && dgAudioCtx.state !== 'closed') dgAudioCtx.close(); } catch(e){}
+      // ws.close 는 약간 지연 — CloseStream 처리 시간 확보
+      var wsToClose = dgWs;
+      if (wsToClose){
+        setTimeout(function(){ try { wsToClose.close(); } catch(e){} }, 500);
+      }
+      dgWs = null;
+      dgProcessor = null;
+      dgSource = null;
+      dgAudioCtx = null;
+      dgStream = null;
+      dgInterim = '';
     }
 
     // ── mic 버튼 토글: 녹음 중이면 정지(검토 진입), 아니면 새로 시작
     //    검토 상태에서 mic 다시 누르면 "이어서" 가 아니라 "새로 시작" — 사용자 의도가
     //    명확한 mic 아이콘 클릭은 fresh start 로 처리. 이어서 말하려면 continueBtn 사용.
     micBtn.addEventListener('click', function(){
-      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid() + ' transcribing=' + androidTranscribing);
-      // 안드로이드 CLOVA 처리 중 다중 클릭 차단 — 음성 누적 결과 분실 방지
-      if (androidTranscribing){
-        toast('동동이가 말씀을 정리하고 있어요… 잠시만요 🙏');
+      console.log('[VDBG] mic-click recording=' + body.classList.contains('is-recording') + ' isAndroid=' + _isAndroid() + ' starting=' + androidStarting);
+      // 안드로이드 Deepgram 시작 중 다중 클릭 차단
+      if (androidStarting){
+        toast('음성 인식 준비 중이에요… 잠시만요 🙏');
         return;
       }
       if (body.classList.contains('is-recording')) stopRecording();

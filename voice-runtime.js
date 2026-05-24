@@ -239,18 +239,17 @@
     var messages = loadMessages();       // 누적 대화 이력 (Claude messages 형식)
     var interviewEnded = false;          // [INTERVIEW_END] 토큰 도달 후 잠금
 
-    // ── 안드로이드 STT 전략 (2026-05-24 Naver CLOVA 전환) ─────────────────
+    // ── 안드로이드 STT 전략 (2026-05-24 Groq Whisper Large V3) ────────────
     // 배경: 안드로이드 Chrome 은 webkitSR + MediaRecorder 동시 마이크 점유 불가.
-    // Vosk(클라이언트 WebAssembly) 시도했으나 small 모델 정확도 ~90% 부정확
-    // (사용자 보고). 한국어 시니어 발음에 안정적인 인식 필요.
+    // Vosk(클라이언트 WASM) 정확도 ~90% 부정확 → 폐기. CLOVA 도 종량과금 부담.
+    // 최종 선택: Groq 의 whisper-large-v3 — 무료 tier 가 자서전 사용에 충분,
+    // Whisper Large 정확도 (~10% WER, 한국어 안정), 초고속 추론.
     //
-    // 신 전략: 안드로이드는 MediaRecorder 로 녹음만 → 사용자가 마이크 종료
-    // 누르면 audioChunks 를 clova-proxy(Supabase Edge Function)로 보내 Naver
-    // CLOVA Speech long-form 결과 텍스트를 받음. 한국어 특화 학습이라 webkitSR
-    // 수준 이상 정확도. 트레이드: 말하는 동안 실시간 미리보기 없음(종료 후 몇
-    // 초~수십초 기다림), API 호출 비용 발생.
-    var CLOVA_PROXY_URL = SUPABASE_URL + '/functions/v1/clova-proxy';
-    var androidTranscribing = false;  // CLOVA 처리 중 — mic 다중 클릭 차단
+    // 흐름 (안드로이드만): MediaRecorder 로 녹음 → 사용자가 mic 종료 누르면
+    // audioChunks 를 groq-whisper(Supabase Edge Function) 로 보내 텍스트 받음.
+    // 트레이드: 말하는 동안 실시간 미리보기 없음 (종료 후 몇 초 기다림).
+    var GROQ_PROXY_URL = SUPABASE_URL + '/functions/v1/groq-whisper';
+    var androidTranscribing = false;  // 처리 중 — mic 다중 클릭 차단
 
     // 질문 영역 DOM
     var questionTextEl = document.querySelector('.question-text');
@@ -527,13 +526,13 @@
       body.classList.remove('is-recording');
       body.classList.add('is-reviewing');
 
-      // 안드로이드 — 종료 직후 CLOVA STT 호출하여 baseFinal/transcriptBody 채움.
+      // 안드로이드 — 종료 직후 Groq Whisper STT 호출하여 baseFinal/transcriptBody 채움.
       // (iOS / 데스크탑은 webkitSR 가 실시간으로 이미 baseFinal 누적했음.)
       if (_isAndroid()){
         // MediaRecorder.stop() 직후엔 마지막 ondataavailable 이 비동기로 한 번 더
         // 와 audioChunks 채워질 수 있어 짧은 지연 후 호출. 100ms 면 보통 충분.
         setTimeout(function(){
-          _androidTranscribeViaClova();
+          _androidTranscribeViaGroq();
         }, 150);
       }
     }
@@ -625,9 +624,9 @@
       });
     }
 
-    // 안드로이드 — mic 종료 후 호출. audioChunks → clova-proxy → fullText
+    // 안드로이드 — mic 종료 후 호출. audioChunks → groq-whisper → text
     // → baseFinal/transcriptBody. 처리 중 토스트 + UI 잠금.
-    function _androidTranscribeViaClova(){
+    function _androidTranscribeViaGroq(){
       if (!audioChunks.length){
         console.log('[VDBG] Android transcribe SKIP (no audio chunks)');
         return Promise.resolve(null);
@@ -638,10 +637,10 @@
       var blob = new Blob(audioChunks, { type: type });
       var ext = type.indexOf('mp4') >= 0 ? 'm4a' :
                 type.indexOf('ogg') >= 0 ? 'ogg' : 'webm';
-      console.log('[VDBG] Android clova-proxy POST size=' + blob.size + ' type=' + type);
+      console.log('[VDBG] Android groq-whisper POST size=' + blob.size + ' type=' + type);
       var form = new FormData();
       form.append('media', blob, 'voice.' + ext);
-      return fetch(CLOVA_PROXY_URL, { method: 'POST', body: form })
+      return fetch(GROQ_PROXY_URL, { method: 'POST', body: form })
         .then(function(res){
           return res.json().catch(function(){ return { ok: false, error: 'JSON parse error ' + res.status }; });
         })
@@ -649,7 +648,7 @@
           androidTranscribing = false;
           if (data && data.ok && typeof data.text === 'string' && data.text.trim()){
             var t = data.text.trim();
-            console.log('[VDBG] Android CLOVA result len=' + t.length);
+            console.log('[VDBG] Android Groq result len=' + t.length);
             baseFinal = (baseFinal + (baseFinal ? ' ' : '') + t).trim();
             if (transcriptBody){
               var ph = transcriptBody.querySelector && transcriptBody.querySelector('.ph');
@@ -658,13 +657,13 @@
             }
             return t;
           }
-          console.warn('[voice-runtime] clova-proxy fail', data);
+          console.warn('[voice-runtime] groq-whisper fail', data);
           toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
           return null;
         })
         .catch(function(err){
           androidTranscribing = false;
-          console.warn('[voice-runtime] clova-proxy err', err);
+          console.warn('[voice-runtime] groq-whisper err', err);
           toast('음성 정리에 실패했어요. 한 번 더 시도해 주세요 🙏');
           return null;
         });

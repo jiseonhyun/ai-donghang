@@ -639,7 +639,10 @@
             '&sample_rate=' + sampleRate +
             '&channels=1' +
             '&endpointing=300';
-          dgWs = new WebSocket(wsUrl, ['token', tokenData.access_token]);
+          // Sec-WebSocket-Protocol 인증 — Deepgram 패턴은 단일 element 안에
+          // 'Token <key>' 또는 'Bearer <jwt>' 로 prefix + 값.
+          // access_token 은 JWT 라 Bearer scheme. 안 되면 Token 로 fallback.
+          dgWs = new WebSocket(wsUrl, ['Bearer ' + tokenData.access_token, 'Token ' + tokenData.access_token]);
           dgWs.binaryType = 'arraybuffer';
 
           dgWs.onopen = function(){

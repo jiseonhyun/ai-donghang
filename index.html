@@ -75,6 +75,11 @@
     gap: clamp(24px, 4vw, 48px);
     padding: 14px clamp(20px, 5vw, 64px);
     border-bottom: 1px solid var(--hair);
+    /* 모든 페이지 topbar 두께 통일 — topbar-spacer 와 동일 64px 보장.
+       index.html 에 nav-icon-btn(36px) 같이 키 큰 요소가 있어도, 다른 페이지
+       (brand 텍스트만 들어간) 도 동일 두께. */
+    min-height: 64px;
+    box-sizing: border-box;
   }
   /* topbar는 fixed이므로 본문이 가려지지 않도록 동일 높이의 spacer */
   .topbar-spacer{ height: 64px; }

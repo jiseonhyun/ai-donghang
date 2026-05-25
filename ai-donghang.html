@@ -190,7 +190,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .nav-spacer{height:64px;}
 
 /* ── TOPBAR (홈페이지 통일 네비, fixed) ── */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(251,248,243,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:clamp(24px,4vw,48px);padding:14px clamp(20px,5vw,64px);border-bottom:1px solid rgba(28,26,23,.09);}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(251,248,243,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:clamp(24px,4vw,48px);padding:14px clamp(20px,5vw,64px);border-bottom:1px solid rgba(28,26,23,.09);min-height:64px;box-sizing:border-box;}
 .topbar .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:22px;letter-spacing:-.01em;color:var(--ink);text-decoration:none;}
 .topbar .brand-logo{display:block;height:28px;width:auto;}
 .topbar nav{display:flex;gap:28px;font-size:16px;color:var(--i3);}
@@ -5043,8 +5043,10 @@ function showView(view, _skipHash){
     location.href = '/builder.html';
     return;
   }
-  // 홈뷰 제거됨 — home/memoir 호출은 자서전 v3(autobiography)로 자동 우회
-  if(view === 'home') view = 'autobiography';
+  // 홈 — 랜딩(/) 으로 이동. 이전엔 autobiography로 우회됐으나 시니어가 하단탭 '홈'을
+  // 눌렀을 때 자서전 만들기로 가는 게 부자연스러워 진짜 홈으로 보냄.
+  if(view === 'home'){ location.href = '/'; return; }
+  // memoir는 그대로 자서전 v3(autobiography)로 alias
   if(view === 'memoir') view = 'autobiography';
   // 마지막 방문 페이지 저장 (auth/admin/mypage 제외)
   var skipSave = ['auth','admin','mypage','login'];

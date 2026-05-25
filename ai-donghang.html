@@ -726,14 +726,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .btn-cta-o{padding:13px 28px;background:transparent;color:rgba(255,255,255,.88);border:2px solid rgba(255,255,255,.4);border-radius:100px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;text-align:center;min-height:52px;}
 .btn-cta-o:hover{border-color:#fff;color:#fff;}
 
-/* ── FOOTER ── */
-.footer{background:#fff;border-top:1px solid var(--bd);padding:24px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.footer-logo{font-family:var(--serif,serif);font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--ink);}
-.footer-logo b{color:var(--ac);}
-.footer-links{display:flex;gap:20px;}
-.footer-link{font-size:13px;color:var(--i3);cursor:pointer;}
-.footer-link:hover{color:var(--ac);}
-
 /* ── PORTFOLIO ── */
 .portfolio-wrap{max-width:900px;margin:0 auto;padding:40px 40px 100px;}
 
@@ -940,7 +932,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   .review-grid{grid-template-columns:1fr;}
   .partner-grid{grid-template-columns:1fr;gap:28px;}
   .cta-sec{flex-direction:column;}
-  .footer{flex-direction:column;gap:16px;text-align:center;}
   .sec,.portfolio-wrap,.mypage-wrap{padding-left:20px;padding-right:20px;}
   .dojo-tools-grid{grid-template-columns:1fr;}
   .wizard-wrap,.dojo-content,.dojo-mission-wrap{padding-left:20px;padding-right:20px;}
@@ -1730,10 +1721,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
   transition:none !important;
 }
 
-@media(max-width:600px){
-  .footer{padding:20px 16px;flex-direction:column;align-items:flex-start;gap:10px;}
-  .footer-links{flex-wrap:wrap;gap:8px;}
-}
 
 /* 업로드 모달 칩 */
 .upload-chip{
@@ -2124,11 +2111,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <div id="quizContent"></div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <div class="pv" id="dojoListView">
@@ -2606,11 +2589,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
   </div>
 </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div><!-- /builderView -->
 
 <!-- ══ 내 작품함 ══ -->
@@ -2620,11 +2599,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
   <div id="portfolioList"></div>
   <div id="portfolioEmpty" style="text-align:center;padding:80px 20px;display:none;"><div style="font-size:60px;margin-bottom:18px;">📭</div><div style="font-family:var(--serif,serif);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px;">아직 작품이 없어요</div><div style="font-size:15px;color:var(--i3);margin-bottom:30px;line-height:1.7;">프롬프트를 만들고 결과를 저장하면<br>여기에 모아져요</div><button onclick="showView('builder')" class="btn-p">첫 작품 만들러 가기 →</button></div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ 요금제 ══ -->
@@ -2716,11 +2691,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     </div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ 회원가입/로그인 ══ -->
@@ -2804,11 +2775,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <button class="auth-back" id="authBackBtn" onclick="showView('home')" style="margin-top:16px;">← 홈으로 돌아가기</button>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ 마이페이지 ══ -->
@@ -2864,11 +2831,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 <div class="modal-overlay" id="editModal" style="display:none;" onclick="closeEditModal(event)">
   <div class="modal-box"><div class="modal-title">✏️ 프로필 수정</div><div class="modal-input-label">성함</div><input class="modal-input" id="edit-name" type="text" placeholder="성함을 입력해주세요"><div class="modal-input-label">전화번호</div><input class="modal-input" id="edit-phone" type="tel" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13"><div class="modal-btns"><button class="modal-btn-cancel" onclick="closeEditModal()">취소</button><button class="modal-btn-save" onclick="saveProfile()">저장하기</button></div></div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ FAQ ══ -->
@@ -2952,11 +2915,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <div id="csVoiceStatus" style="display:none;padding:8px 16px;background:#fff7e6;border-top:1px solid var(--bd);font-size:13px;color:var(--i2);text-align:center;"></div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ AI 알아보기 ══ -->
@@ -3116,11 +3075,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     </div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ 동행 마당 (커뮤니티) ══ -->
@@ -3222,11 +3177,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
   </div>
 </div>
 
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 <div class="view" id="aboutView">
 <div class="nav-spacer"></div>
@@ -3328,11 +3279,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     </div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ B2G 기관 서비스 ══ -->
@@ -3614,11 +3561,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     </div>
   </div>
 </div>
-<div class="footer">
-  <div class="footer-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26"><rect width="512" height="512" fill="none"/><rect x="136" y="256" width="100" height="160" rx="50" fill="#1E4840"/><rect x="276" y="176" width="100" height="240" rx="50" fill="#2A5F52"/><circle cx="326" cy="126" r="30" fill="#A07C30"/></svg>AI&nbsp;<b>동행</b></div>
-  <div class="footer-links"><span class="footer-link" onclick="showView('about')">AI 동행 소개</span><span class="footer-link" onclick="showView('b2g')">기관 도입</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/terms.html','_blank')">이용약관</span><span class="footer-link" onclick="window.open('https://aitogether.co.kr/privacy.html','_blank')">개인정보처리방침</span><span class="footer-link" onclick="showView('faq')">고객센터</span></div>
-  <div style="font-size:12px;color:var(--i3);">© 2026 AI 동행 &nbsp;<button onclick="adminLogin()" style="background:none;border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--i3);cursor:pointer;font-family:inherit;">🔐 관리자</button></div>
-</div>
+
 </div>
 
 <!-- ══ 관리자 ══ -->

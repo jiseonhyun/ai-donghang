@@ -919,7 +919,6 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 @media(max-width:768px){
   #globalNav{padding:0 16px;}
   #globalNav .nav-links{display:none!important;}
-  #helpFloat{bottom:72px;right:12px;width:44px;height:44px;}
   .hero{grid-template-columns:1fr;padding:44px 20px 36px;gap:28px;}
   .hero-title{font-size:36px;}
   .photo-grid{grid-template-columns:1fr 1fr;}
@@ -951,13 +950,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 
 .bnav-active svg{stroke:var(--ac)!important;}
 .bnav-active span{color:var(--ac)!important;font-weight:700!important;}
-#helpFloat{position:fixed;bottom:28px;right:16px;z-index:180;width:48px;height:48px;padding:0;border-radius:50%;background:var(--ac);box-shadow:0 4px 18px rgba(42,95,82,.38);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,box-shadow .15s;}
-#helpFloat:hover{transform:scale(1.07);box-shadow:0 6px 26px rgba(42,95,82,.48);}
-#helpFloat::after{content:"";display:none;}
-#helpFloat:hover + #helpTooltip{opacity:1;}
-@media(min-width:641px){
-  #helpFloat{bottom:28px;right:28px;width:56px;height:56px;}
-}
+/* 우측 하단 floating ? 버튼 (builder.html .help-float 패턴 통일) */
+.help-float{position:fixed;bottom:76px;right:16px;z-index:198;width:44px;height:44px;border-radius:50%;background:var(--ac);color:#fff;display:none;align-items:center;justify-content:center;font-family:var(--serif,serif);font-size:22px;font-weight:500;border:0;cursor:pointer;box-shadow:0 4px 16px rgba(31,27,23,.18);text-decoration:none;transition:transform .2s,box-shadow .2s,background-color .2s;}
+.help-float:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(31,27,23,.24);}
+@media(max-width:880px){.help-float{display:inline-flex;}}
 
 /* ── 챕터 탭 ── */
 .chapter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
@@ -4417,11 +4413,8 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 </div>
 
 
-<!-- 도움말 -->
-<div id="helpFloat" onclick="showView('faq')" title="도움말 · 사용법 보기">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="white"/></svg>
-</div>
-<div id="helpTooltip" style="position:fixed;bottom:96px;right:28px;z-index:299;background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;">사용법 보기 · 막히면 누르세요!</div>
+<!-- 우측 하단 floating ? 버튼 (고객센터) -->
+<a href="#faq" onclick="event.preventDefault();showView('faq');" class="help-float" aria-label="고객센터">?</a>
 
 <!-- 하단 탭바 (에버랜드 패턴: 6탭, 아이콘+텍스트 세로) -->
 <style>

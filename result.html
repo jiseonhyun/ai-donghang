@@ -68,7 +68,7 @@
   .menu-toggle[aria-expanded="true"] .bars::before{top:50%;transform:translateY(-50%) rotate(45deg);}
   .menu-toggle[aria-expanded="true"] .bars::after{bottom:50%;transform:translateY(50%) rotate(-45deg);}
   .menu-toggle[aria-expanded="true"] .bars span{opacity:0;}
-  @media (max-width:880px){.topbar nav{display:none;}.menu-toggle{display:inline-flex;}}
+  @media (max-width:880px){.topbar nav{display:none;}}
   @media (max-width:540px){.topbar-actions .login{display:none;}}
   @media (max-width:430px){.topbar-actions .gift-link{display:none;}}
   .nav-drawer{position:fixed;inset:0;z-index:300;visibility:hidden;pointer-events:none;}
@@ -494,31 +494,71 @@
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--hair);
     display: none;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 2px 0 max(2px, env(safe-area-inset-bottom));
+    grid-template-columns: repeat(6, 1fr);
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom));
   }
-  .bottom-nav a{
+  .bottom-nav a,
+  .bottom-nav button{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
-    padding: 4px 4px;
-    font-size: 13px;
+    gap: 3px;
+    min-height: 52px;
+    padding: 4px 2px;
+    background: transparent;
+    border: 0;
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 500;
     color: var(--ink-soft);
     text-decoration: none;
     letter-spacing: -0.01em;
+    cursor: pointer;
     transition: color .2s;
   }
-  .bottom-nav a:hover{ color: var(--ink); }
+  .bottom-nav a:hover,
+  .bottom-nav button:hover{ color: var(--ink); }
   .bottom-nav a[aria-current="page"]{
     color: var(--teal);
     font-weight: 600;
   }
-  @media (max-width: 768px){
-    .bottom-nav{ display: grid; }
-    body{ padding-bottom: 52px; }
+  .bottom-nav svg{
+    width: 22px; height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
+  @media (max-width: 880px){
+    .bottom-nav{ display: grid; }
+    body{ padding-bottom: 60px; }
+  }
+
+  /* ── 우측 하단 floating ? 버튼 (모바일 전용) ── */
+  .help-float{
+    position: fixed;
+    bottom: 76px; right: 16px;
+    z-index: 198;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--paper);
+    display: none;
+    align-items: center; justify-content: center;
+    font-family: "Noto Serif KR", serif;
+    font-size: 22px; font-weight: 500;
+    border: 0; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(31,27,23,.18);
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s, background-color .2s;
+  }
+  .help-float:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(31,27,23,.24);
+  }
+  @media (max-width: 880px){ .help-float{ display: inline-flex; } }
 </style>
 </head>
 <body>
@@ -539,9 +579,6 @@
   <div class="topbar-actions">
     <a href="/#auth" class="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
-    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
-      <span class="bars" aria-hidden="true"><span></span></span>
-    </button>
   </div>
 </header>
 
@@ -1113,13 +1150,12 @@
 <!-- 모바일 햄버거 메뉴 토글 (홈페이지 통일 네비) -->
 <script>
 (function(){
-  var toggle=document.querySelector('.menu-toggle');
   var drawer=document.getElementById('site-nav-drawer');
-  if(!toggle||!drawer) return;
+  if(!drawer) return;
   var closeEls=drawer.querySelectorAll('[data-nav-close]');
   var links=drawer.querySelectorAll('a');
-  function setOpen(open){drawer.setAttribute('aria-hidden',open?'false':'true');toggle.setAttribute('aria-expanded',open?'true':'false');document.body.classList.toggle('nav-open',open);if(open){setTimeout(function(){if(links[0])links[0].focus();},50);}else{toggle.focus();}}
-  toggle.addEventListener('click',function(){setOpen(drawer.getAttribute('aria-hidden')==='true');});
+  function setOpen(open){drawer.setAttribute('aria-hidden',open?'false':'true');document.body.classList.toggle('nav-open',open);if(open){setTimeout(function(){if(links[0])links[0].focus();},50);}}
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.bottom-nav-menu'))setOpen(true);});
   closeEls.forEach(function(el){el.addEventListener('click',function(){setOpen(false);});});
   links.forEach(function(a){a.addEventListener('click',function(){setOpen(false);});});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&drawer.getAttribute('aria-hidden')==='false')setOpen(false);});
@@ -1128,13 +1164,35 @@
 })();
 </script>
 
-<!-- 모바일 하단 탭바 (768px 이하에서만 노출) -->
+<!-- 우측 하단 floating ? 버튼 (고객센터) -->
+<a href="/#faq" class="help-float" aria-label="고객센터">?</a>
+
+<!-- 모바일 하단 탭바 (에버랜드 패턴: 6탭, 768px 이하 노출) -->
 <nav class="bottom-nav" aria-label="모바일 하단 메뉴">
-  <a href="/builder.html" aria-current="page">만들기</a>
-  <a href="/#dojo">도장깨기</a>
-  <a href="/#community">커뮤니티</a>
-  <a href="/#portfolio">내작품함</a>
-  <a href="/#faq">고객센터</a>
+  <a href="/">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h4v-7h4v7h4a1 1 0 001-1V10"/></svg>
+    <span>홈</span>
+  </a>
+  <a href="/builder.html" aria-current="page">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>만들기</span>
+  </a>
+  <a href="/#dojo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M5 4h14v5a7 7 0 11-14 0V4z"/></svg>
+    <span>도장깨기</span>
+  </a>
+  <a href="/#community">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    <span>커뮤니티</span>
+  </a>
+  <a href="/#portfolio">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <span>내작품함</span>
+  </a>
+  <button type="button" class="bottom-nav-menu" aria-label="전체 메뉴 열기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span>전체메뉴</span>
+  </button>
 </nav>
 
 </body></html>

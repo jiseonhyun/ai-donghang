@@ -211,7 +211,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .menu-toggle[aria-expanded="true"] .bars::before{top:50%;transform:translateY(-50%) rotate(45deg);}
 .menu-toggle[aria-expanded="true"] .bars::after{bottom:50%;transform:translateY(50%) rotate(-45deg);}
 .menu-toggle[aria-expanded="true"] .bars span{opacity:0;}
-@media (max-width:880px){.topbar nav{display:none;}.menu-toggle{display:inline-flex;}}
+@media (max-width:880px){.topbar nav{display:none;}}
 @media (max-width:540px){.topbar-actions .login:not(.nav-user-link){display:none;}}
 /* 로그인된 사용자 이름 — 회색 "로그인" 링크보다 또렷하게 (모바일에서 로그인 상태 가시화) */
 .topbar-actions .nav-user-link{color:var(--ink);font-weight:700;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -921,8 +921,10 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .save-login-modal{background:#fff;border-radius:24px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 20px 64px rgba(0,0,0,.22);text-align:center;}
 
 /* ── 모바일 ── */
-@media(max-width:768px){
+@media(max-width:880px){
   #bottomNav{display:grid!important;}
+}
+@media(max-width:768px){
   #globalNav{padding:0 16px;}
   #globalNav .nav-links{display:none!important;}
   #helpFloat{bottom:72px;right:12px;width:44px;height:44px;}
@@ -1974,6 +1976,8 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 .autobio-iv-voice:hover{background:var(--al);}
 .autobio-iv-voice.recording{background:#FEE;border:2px solid #E05050;color:#C03030;animation:autobioRecPulse 1.2s ease-in-out infinite;}
 @keyframes autobioRecPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,80,80,.4);}50%{box-shadow:0 0 0 8px rgba(224,80,80,0);}}
+#csVoiceBtn.recording{background:#E05050;animation:autobioRecPulse 1.2s ease-in-out infinite;}
+#csVoiceBtn.speaking{background:#1976d2;}
 
 /* ── 시니어 음성 입력 마이크 버튼 (A안 — 96px 원형) ── */
 /* 패턴 F: 자서전 본문 다듬기 음성 입력 표준 — 재사용 가능 */
@@ -2074,9 +2078,6 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>
     <a href="/#auth" class="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
-    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
-      <span class="bars" aria-hidden="true"><span></span></span>
-    </button>
   </div>
 </header>
 
@@ -2894,8 +2895,8 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     </div>
   </div>
 
-  <!-- ── 동동이 CS 채팅 (동행+ 전용) ── -->
-  <div id="csChatSection" style="display:none;margin-top:32px;background:#fff;border:2px solid var(--ac);border-radius:20px;overflow:hidden;">
+  <!-- ── 동동이 CS 도우미 (음성 문의 — 모두 이용 가능) ── -->
+  <div id="csChatSection" style="margin-top:32px;background:#fff;border:2px solid var(--ac);border-radius:20px;overflow:hidden;">
     <!-- 헤더 -->
     <div style="background:var(--ac);padding:16px 20px;display:flex;align-items:center;gap:12px;">
       <svg width="36" height="44" viewBox="0 0 200 240" style="flex-shrink:0;">
@@ -2916,9 +2917,8 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
       </svg>
       <div>
         <div style="font-size:16px;font-weight:800;color:#fff;">동동이 CS 도우미</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.8);">동행+ 전용 · 24시간 언제든지 물어보세요 🙂</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.8);">마이크 버튼을 누르고 말씀하세요 🎤 음성으로 답해드려요</div>
       </div>
-      <div style="margin-left:auto;background:rgba(255,255,255,.2);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;">동행+ 전용</div>
     </div>
     <!-- 채팅 메시지 영역 -->
     <div id="csChatMessages" style="height:320px;overflow-y:auto;padding:16px;background:#f9f9f7;display:flex;flex-direction:column;gap:12px;">
@@ -2926,7 +2926,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
       <div style="display:flex;align-items:flex-start;gap:8px;">
         <div style="width:32px;height:32px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
         <div style="background:#fff;border:1.5px solid var(--bd);border-radius:0 14px 14px 14px;padding:12px 14px;max-width:80%;font-size:14px;color:var(--i2);line-height:1.7;">
-          안녕하세요! 저는 동동이예요 😊<br>AI 동행 사용 중에 궁금한 점이 있으시면 무엇이든 물어보세요!<br><br>
+          안녕하세요! 저는 동동이예요 😊<br>아래 🎤 버튼을 누르고 궁금한 점을 말씀해 주세요. 제가 음성으로 답해드릴게요!<br><br>
           예를 들어:<br>
           · "프롬프트를 어떻게 복사해요?"<br>
           · "작품함에 저장이 안 돼요"<br>
@@ -2935,24 +2935,21 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
       </div>
     </div>
     <!-- 입력창 -->
-    <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--bd);display:flex;gap:10px;">
-      <input id="csInput" type="text" placeholder="궁금한 점을 입력해주세요..." 
-        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:100px;font-size:15px;font-family:inherit;outline:none;"
+    <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--bd);display:flex;gap:8px;align-items:center;">
+      <button id="csVoiceBtn" type="button" onclick="csVoiceToggle()" aria-label="음성으로 질문하기"
+        style="flex-shrink:0;width:48px;height:48px;border-radius:50%;background:var(--ac);color:#fff;border:none;font-size:20px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;">
+        🎤
+      </button>
+      <input id="csInput" type="text" placeholder="또는 직접 입력하세요..."
+        style="flex:1;padding:12px 14px;border:1.5px solid var(--bd);border-radius:100px;font-size:15px;font-family:inherit;outline:none;min-width:0;"
         onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--bd)'"
         onkeydown="if(event.key==='Enter')sendCsMessage()"/>
-      <button onclick="sendCsMessage()" 
-        style="padding:12px 20px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;min-height:48px;">
+      <button onclick="sendCsMessage()"
+        style="flex-shrink:0;padding:12px 18px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;min-height:48px;">
         전송
       </button>
     </div>
-  </div>
-
-  <!-- 동행+ 아닌 경우 CS 섹션 안내 -->
-  <div id="csChatLock" style="margin-top:32px;background:#fff;border:2px solid var(--bd);border-radius:20px;padding:28px 24px;text-align:center;">
-    <div style="font-size:36px;margin-bottom:12px;">🤖</div>
-    <div style="font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">동동이 CS 도우미</div>
-    <div style="font-size:14px;color:var(--i3);line-height:1.7;margin-bottom:18px;">동행+ 멤버에게 제공되는 24시간 AI 상담 서비스예요.<br>궁금한 점을 바로바로 해결해드려요 🙂</div>
-    <button onclick="showView('pricing')" style="padding:12px 24px;background:var(--ac);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;">동행+ 시작하기</button>
+    <div id="csVoiceStatus" style="display:none;padding:8px 16px;background:#fff7e6;border-top:1px solid var(--bd);font-size:13px;color:var(--i2);text-align:center;"></div>
   </div>
 </div>
 <div class="footer">
@@ -4483,13 +4480,39 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 </div>
 <div id="helpTooltip" style="position:fixed;bottom:96px;right:28px;z-index:299;background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;">사용법 보기 · 막히면 누르세요!</div>
 
-<!-- 하단 탭바 (시니어 가독성: 라벨 13px, 텍스트만) -->
-<nav id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:199;background:#fff;border-top:1px solid var(--bd);padding:2px 0 max(2px,env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr);">
-  <button onclick="showView('builder')" id="bnav-builder" style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;min-height:44px;"><span style="font-size:13px;color:var(--i3);font-weight:600;">만들기</span></button>
-  <button onclick="showView('dojo')" id="bnav-dojo" style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;min-height:44px;"><span style="font-size:13px;color:var(--i3);font-weight:600;">도장깨기</span></button>
-  <button onclick="showView('community')" id="bnav-community" style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;min-height:44px;"><span style="font-size:13px;color:var(--i3);font-weight:600;">커뮤니티</span></button>
-  <button onclick="showView('portfolio')" id="bnav-portfolio" style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;min-height:44px;"><span style="font-size:13px;color:var(--i3);font-weight:600;">내작품함</span></button>
-  <button onclick="showView('faq')" id="bnav-faq" style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;min-height:44px;"><span style="font-size:13px;color:var(--i3);font-weight:600;">고객센터</span></button>
+<!-- 하단 탭바 (에버랜드 패턴: 6탭, 아이콘+텍스트 세로) -->
+<style>
+#bottomNav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 2px;min-height:52px;color:var(--i3);transition:color .2s;}
+#bottomNav button:hover{color:var(--ink);}
+#bottomNav button.bnav-active{color:var(--ac);}
+#bottomNav button span{font-size:11px;font-weight:600;letter-spacing:-.01em;}
+#bottomNav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+<nav id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:199;background:#fff;border-top:1px solid var(--bd);padding:4px 0 max(4px,env(safe-area-inset-bottom));grid-template-columns:repeat(6,1fr);">
+  <button onclick="showView('home')" id="bnav-home" aria-label="홈">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h4v-7h4v7h4a1 1 0 001-1V10"/></svg>
+    <span>홈</span>
+  </button>
+  <button onclick="showView('builder')" id="bnav-builder" aria-label="만들기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>만들기</span>
+  </button>
+  <button onclick="showView('dojo')" id="bnav-dojo" aria-label="도장깨기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M5 4h14v5a7 7 0 11-14 0V4z"/></svg>
+    <span>도장깨기</span>
+  </button>
+  <button onclick="showView('community')" id="bnav-community" aria-label="커뮤니티">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    <span>커뮤니티</span>
+  </button>
+  <button onclick="showView('portfolio')" id="bnav-portfolio" aria-label="내작품함">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <span>내작품함</span>
+  </button>
+  <button type="button" id="bnav-menu" class="bottom-nav-menu" aria-label="전체 메뉴 열기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span>전체메뉴</span>
+  </button>
 </nav>
 
 <script>
@@ -5110,8 +5133,8 @@ function showView(view, _skipHash){
   var allViews=['homeView','dojoView','builderView','portfolioView','pricingView','authView','mypageView','faqView','learnView','communityView','aboutView','b2gView','adminView','memoirView','autobiographyView'];
   allViews.forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
   window.scrollTo(0,0);
-  var bMap={builder:'bnav-builder',dojo:'bnav-dojo',community:'bnav-community',portfolio:'bnav-portfolio',faq:'bnav-faq'};
-  ['bnav-builder','bnav-dojo','bnav-community','bnav-portfolio','bnav-faq'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
+  var bMap={home:'bnav-home',builder:'bnav-builder',dojo:'bnav-dojo',community:'bnav-community',portfolio:'bnav-portfolio'};
+  ['bnav-home','bnav-builder','bnav-dojo','bnav-community','bnav-portfolio'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
   if(bMap[view]){var el=g(bMap[view]);if(el)el.classList.add('bnav-active');}
   var nMap={dojo:'nav-dojo',builder:'nav-builder',learn:'nav-learn',pricing:'nav-pricing',faq:'nav-faq',about:'nav-about',b2g:'nav-b2g'};
   ['nav-dojo','nav-builder','nav-learn','nav-community','nav-pricing','nav-faq','nav-about','nav-b2g'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
@@ -10359,15 +10382,17 @@ function retryGeneration(){
   }
 }
 
-// ── 동동이 CS 채팅 (동행+ 전용) ──
+// ── 동동이 CS 도우미 (음성 문의 — 모두 이용 가능) ──
 var _csChatHistory = [];
+var _csVoiceRec = null;
+var _csVoiceActive = false;
+var _csVoiceIntent = false;
+var _csVoiceFinalText = '';
+var _csVoiceInterimText = '';
 
 function initCsChat(){
-  var isPlusMember = userProfile && (userProfile.plan === 'plus');
   var chatSection = g('csChatSection');
-  var chatLock = g('csChatLock');
-  if(chatSection) chatSection.style.display = isPlusMember ? 'block' : 'none';
-  if(chatLock) chatLock.style.display = isPlusMember ? 'none' : 'block';
+  if(chatSection) chatSection.style.display = 'block';
 }
 
 async function sendCsMessage(){
@@ -10400,7 +10425,7 @@ async function sendCsMessage(){
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 600,
-        system: 'AI 동행 서비스의 CS 상담사 동동이입니다. 시니어 사용자를 대상으로 하는 AI 학습 플랫폼입니다. 사용자의 질문에 친절하고 쉽게 답변해주세요. 주요 기능: 도장깨기(게임형 학습), 만들기(AI 글쓰기/이미지/음악), 커뮤니티, 작품함, 카카오 로그인, 카카오톡 공유. 반드시 한국어로, 짧고 따뜻하게 답변하세요. 이모지를 적절히 사용하세요.',
+        system: 'AI 동행 서비스의 CS 상담사 동동이입니다. 시니어 사용자를 대상으로 하는 AI 학습 플랫폼입니다. 사용자의 질문에 친절하고 쉽게 답변해주세요. 주요 기능: 도장깨기(게임형 학습), 만들기(AI 글쓰기/이미지/음악), 커뮤니티, 작품함, 카카오 로그인, 카카오톡 공유. 반드시 한국어로, 짧고 따뜻하게 답변하세요. 음성으로 읽어드릴 응답이니 이모지/마크다운 기호(*, #, -)는 쓰지 말고 자연스러운 구어체 문장으로만 답변하세요.',
         messages: _csChatHistory.slice(-10)
       })
     });
@@ -10409,10 +10434,155 @@ async function sendCsMessage(){
     removeCsTyping(typingId);
     appendCsMessage(reply, 'bot');
     _csChatHistory.push({role:'assistant', content: reply});
+    csSpeakReply(reply);
   } catch(e){
     removeCsTyping(typingId);
-    appendCsMessage('죄송해요, 잠시 문제가 생겼어요. 다시 시도해주세요 🙏', 'bot');
+    var errMsg = '죄송해요, 잠시 문제가 생겼어요. 다시 시도해주세요 🙏';
+    appendCsMessage(errMsg, 'bot');
+    csSpeakReply(errMsg);
   }
+}
+
+// ── 음성 입력 (STT) — webkitSpeechRecognition 기반 ──
+function csVoiceToggle(){
+  if(_csVoiceActive){ csVoiceStop(); return; }
+  csVoiceStart();
+}
+
+function _csIsAndroid(){ return /Android/i.test(navigator.userAgent || ''); }
+
+function _csSetVoiceStatus(text){
+  var s = g('csVoiceStatus');
+  if(!s) return;
+  if(text){ s.style.display='block'; s.textContent = text; }
+  else { s.style.display='none'; s.textContent=''; }
+}
+
+function csVoiceStart(){
+  // TTS 진행 중이면 중단 (사용자가 다시 말하려는 의도)
+  try { if(window.speechSynthesis) window.speechSynthesis.cancel(); } catch(e){}
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    if(typeof showToast==='function') showToast('이 브라우저는 음성 입력을 지원하지 않아요. 텍스트로 입력해주세요 🙏');
+    return;
+  }
+  _csVoiceIntent = true;
+  _csVoiceFinalText = '';
+  _csVoiceInterimText = '';
+  var input = g('csInput');
+  if(input) input.value = '';
+
+  var rec;
+  try { rec = new SR(); } catch(e){ console.warn('[csVoice new SR]', e); return; }
+  rec.lang = 'ko-KR';
+  rec.continuous = !_csIsAndroid();
+  rec.interimResults = true;
+
+  rec.onresult = function(ev){
+    var interim = '', finalChunk = '';
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      var t = ev.results[i][0].transcript || '';
+      if(ev.results[i].isFinal) finalChunk += t + ' ';
+      else interim += t;
+    }
+    if(finalChunk) _csVoiceFinalText = (_csVoiceFinalText + ' ' + finalChunk).trim();
+    _csVoiceInterimText = interim;
+    var combined = (_csVoiceFinalText + ' ' + interim).trim();
+    if(input) input.value = combined;
+    _csSetVoiceStatus(combined ? '듣는 중... "' + combined + '"' : '듣는 중...');
+  };
+
+  rec.onerror = function(e){
+    var errType = e && e.error;
+    console.warn('[csVoice]', errType);
+    if(errType === 'not-allowed' || errType === 'service-not-allowed'){
+      if(typeof showToast==='function') showToast('마이크 권한이 거부됐어요. 브라우저 설정에서 허용해주세요 🙏');
+      csVoiceStop();
+    }
+  };
+
+  rec.onend = function(){
+    // 안드로이드: continuous=false 라 발화마다 onend → 재시작
+    if(_csVoiceIntent && _csVoiceRec === rec){
+      try {
+        var fresh;
+        try { fresh = new SR(); } catch(err){ csVoiceFinish(); return; }
+        fresh.lang = 'ko-KR';
+        fresh.continuous = !_csIsAndroid();
+        fresh.interimResults = true;
+        fresh.onresult = rec.onresult;
+        fresh.onerror = rec.onerror;
+        fresh.onend = rec.onend;
+        _csVoiceRec = fresh;
+        fresh.start();
+      } catch(e){ csVoiceFinish(); }
+    } else if(!_csVoiceIntent){
+      csVoiceFinish();
+    }
+  };
+
+  try {
+    rec.start();
+    _csVoiceRec = rec;
+    _csVoiceActive = true;
+    var btn = g('csVoiceBtn');
+    if(btn) btn.classList.add('recording');
+    _csSetVoiceStatus('듣는 중... 다 말씀하셨으면 🎤 버튼을 한 번 더 눌러주세요');
+  } catch(e){
+    console.warn('[csVoice start]', e);
+    _csVoiceIntent = false;
+    if(typeof showToast==='function') showToast('음성 입력을 시작할 수 없어요');
+  }
+}
+
+function csVoiceStop(){
+  _csVoiceIntent = false;
+  try { if(_csVoiceRec){ _csVoiceRec.stop(); } } catch(e){}
+  // onend가 _csVoiceIntent=false 보고 csVoiceFinish() 호출 → 거기서 자동 전송
+}
+
+function csVoiceFinish(){
+  _csVoiceRec = null;
+  _csVoiceActive = false;
+  var btn = g('csVoiceBtn');
+  if(btn) btn.classList.remove('recording');
+  _csSetVoiceStatus('');
+  var input = g('csInput');
+  var finalText = (input && input.value || '').trim();
+  if(finalText){
+    // 자동 전송
+    sendCsMessage();
+  }
+}
+
+// ── 음성 출력 (TTS) — 브라우저 speechSynthesis ──
+function csSpeakReply(text){
+  if(!window.speechSynthesis || !text) return;
+  // 마크다운/이모지 잡음 제거
+  var clean = String(text)
+    .replace(/[*_#`~>]/g, '')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if(!clean) return;
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(clean);
+    u.lang = 'ko-KR';
+    u.rate = 0.95;
+    u.pitch = 1.0;
+    // 가능하면 한국어 음성 선택
+    var voices = window.speechSynthesis.getVoices() || [];
+    var koVoice = voices.find(function(v){ return v.lang && v.lang.indexOf('ko') === 0; });
+    if(koVoice) u.voice = koVoice;
+    var btn = g('csVoiceBtn');
+    u.onstart = function(){ if(btn) btn.classList.add('speaking'); };
+    u.onend = function(){ if(btn) btn.classList.remove('speaking'); };
+    u.onerror = function(){ if(btn) btn.classList.remove('speaking'); };
+    window.speechSynthesis.speak(u);
+  } catch(e){ console.warn('[csSpeak]', e); }
 }
 
 function appendCsMessage(text, role){
@@ -11066,19 +11236,18 @@ function loadFalApiKeyToInput(){
 <!-- topbar 모바일 햄버거 드로어 토글 -->
 <script>
 (function(){
-  var toggle = document.querySelector('.menu-toggle');
   var drawer = document.getElementById('site-nav-drawer');
-  if(!toggle || !drawer) return;
+  if(!drawer) return;
   var closeEls = drawer.querySelectorAll('[data-nav-close]');
   var links = drawer.querySelectorAll('a');
   function setOpen(open){
     drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.classList.toggle('nav-open', open);
     if(open){ setTimeout(function(){ if(links[0]) links[0].focus(); }, 50); }
-    else { toggle.focus(); }
   }
-  toggle.addEventListener('click', function(){ setOpen(drawer.getAttribute('aria-hidden') === 'true'); });
+  document.addEventListener('click', function(e){
+    if(e.target.closest && (e.target.closest('.bottom-nav-menu') || e.target.closest('#bnav-menu'))) setOpen(true);
+  });
   closeEls.forEach(function(el){ el.addEventListener('click', function(){ setOpen(false); }); });
   links.forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
   document.addEventListener('keydown', function(e){

@@ -130,6 +130,52 @@
   }
   .topbar-actions .gift-link:hover{ background: var(--teal-hover); }
 
+  /* ── 데스크탑(880+) 우측 아이콘 셋 — 검색·알림·마이 (에버랜드 패턴) ────── */
+  .topbar-actions .nav-icon-btn{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: transparent; border: none;
+    color: var(--ink-soft);
+    cursor: pointer; padding: 0;
+    border-radius: 50%;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .topbar-actions .nav-icon-btn:hover{
+    background: rgba(0,0,0,.05);
+    color: var(--ink);
+  }
+  .topbar-actions .nav-my-link{
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px 6px 8px;
+    border-radius: 18px;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .topbar-actions .nav-my-link:hover{
+    background: rgba(0,0,0,.05);
+    color: var(--ink);
+  }
+  .topbar-actions .nav-my-icon{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+  }
+  .topbar-actions .nav-my-label{
+    font-family: "Noto Serif KR", serif;
+    font-weight: 500;
+    letter-spacing: .02em;
+    max-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* 로그인 상태일 때 이름 표시 — 또렷한 색상 강조 */
+  .topbar-actions .nav-my-link.is-logged-in{
+    color: var(--ink);
+    font-weight: 600;
+  }
+
   /* 햄버거 버튼 — 데스크탑에서는 숨김, nav 숨긴 폭부터 표시 */
   .menu-toggle{
     display: none;
@@ -166,11 +212,19 @@
   .menu-toggle[aria-expanded="true"] .bars span{ opacity: 0; }
   @media (max-width: 880px){
     .topbar nav{ display:none; }
-    .menu-toggle{ display: inline-flex; }
   }
   @media (max-width: 540px){
     /* 로그인된 사용자 이름(.is-logged-in)은 모바일에서도 계속 노출 — 로그인 상태 가시화 */
     .topbar-actions .login:not(.is-logged-in){ display:none; }
+  }
+  /* 모바일(880↓) — MY 라벨/이름 숨김(아이콘만), 좁아져도 핵심 액션은 유지 */
+  @media (max-width: 880px){
+    .topbar-actions .nav-my-label{ display: none; }
+    .topbar-actions .nav-my-link{ padding: 0; border-radius: 50%; width: 36px; height: 36px; justify-content: center; }
+  }
+  @media (max-width: 430px){
+    /* 매우 좁은 폰에서 검색 아이콘 우선 숨김 — 핵심은 마이/알림 */
+    .topbar-actions .nav-search-btn{ display: none; }
   }
   /* 로그인된 사용자 이름 — 회색 "로그인" 링크보다 또렷하게 */
   .topbar-actions .login.is-logged-in{
@@ -1834,7 +1888,7 @@
     .final h2{ font-size: 22px; }
   }
 
-  /* ── 모바일 하단 탭바 (시니어 가독성) ── */
+  /* ── 모바일 하단 탭바 (에버랜드 패턴: 6탭, 아이콘+텍스트 세로) ── */
   .bottom-nav{
     position: fixed;
     bottom: 0; left: 0; right: 0;
@@ -1844,31 +1898,71 @@
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--hair);
     display: none;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 2px 0 max(2px, env(safe-area-inset-bottom));
+    grid-template-columns: repeat(6, 1fr);
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom));
   }
-  .bottom-nav a{
+  .bottom-nav a,
+  .bottom-nav button{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
-    padding: 4px 4px;
-    font-size: 13px;
+    gap: 3px;
+    min-height: 52px;
+    padding: 4px 2px;
+    background: transparent;
+    border: 0;
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 500;
     color: var(--ink-soft);
     text-decoration: none;
     letter-spacing: -0.01em;
+    cursor: pointer;
     transition: color .2s;
   }
-  .bottom-nav a:hover{ color: var(--ink); }
+  .bottom-nav a:hover,
+  .bottom-nav button:hover{ color: var(--ink); }
   .bottom-nav a[aria-current="page"]{
     color: var(--teal);
     font-weight: 600;
   }
-  @media (max-width: 768px){
-    .bottom-nav{ display: grid; }
-    body{ padding-bottom: 52px; }
+  .bottom-nav svg{
+    width: 22px; height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
+  @media (max-width: 880px){
+    .bottom-nav{ display: grid; }
+    body{ padding-bottom: 60px; }
+  }
+
+  /* ── 우측 하단 floating ? 버튼 (모바일 전용) ── */
+  .help-float{
+    position: fixed;
+    bottom: 76px; right: 16px;
+    z-index: 198;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--paper);
+    display: none;
+    align-items: center; justify-content: center;
+    font-family: "Noto Serif KR", serif;
+    font-size: 22px; font-weight: 500;
+    border: 0; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(31,27,23,.18);
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s, background-color .2s;
+  }
+  .help-float:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(31,27,23,.24);
+  }
+  @media (max-width: 880px){ .help-float{ display: inline-flex; } }
 
 </style>
 <script>
@@ -1974,12 +2068,32 @@ window.addEventListener('storage', function(e){
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
+    <!-- 데스크탑(880px+) 아이콘 셋 — 검색·알림·마이. 햄버거가 사라진 영역에 채움.
+         에버랜드 메인 패턴 참조. 모바일은 햄버거 안 드로어로 통합. -->
+    <button type="button" class="nav-icon-btn nav-search-btn" aria-label="검색" data-nav-action="search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </svg>
+    </button>
+    <button type="button" class="nav-icon-btn nav-bell-btn" aria-label="알림" data-nav-action="bell">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5 2 6H4c.5-1 2-2 2-6Z"></path>
+        <path d="M10 19a2 2 0 0 0 4 0"></path>
+      </svg>
+    </button>
+    <a href="/ai-donghang.html#mypage" class="nav-my-link" data-auth-cta="my" aria-label="마이페이지">
+      <span class="nav-my-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21a8 8 0 0 1 16 0"></path>
+        </svg>
+      </span>
+      <span class="nav-my-label">MY</span>
+    </a>
     <a href="/ai-donghang.html#auth" class="login" data-auth-cta="login">로그인</a>
     <a href="/ai-donghang.html#auth" class="login signup" data-auth-cta="signup">회원가입</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
-    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav-drawer" aria-label="메뉴 열기">
-      <span class="bars" aria-hidden="true"><span></span></span>
-    </button>
   </div>
 </header>
 
@@ -2777,25 +2891,20 @@ window.addEventListener('storage', function(e){
 <!-- 모바일 햄버거 메뉴 토글 -->
 <script>
   (function(){
-    const toggle = document.querySelector('.menu-toggle');
     const drawer = document.getElementById('site-nav-drawer');
-    if (!toggle || !drawer) return;
+    if (!drawer) return;
     const closeEls = drawer.querySelectorAll('[data-nav-close]');
     const links = drawer.querySelectorAll('a');
 
     const setOpen = (open) => {
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       document.body.classList.toggle('nav-open', open);
-      if (open) {
-        // 첫 링크에 포커스 (접근성)
-        setTimeout(() => links[0]?.focus(), 50);
-      } else {
-        toggle.focus();
-      }
+      if (open) setTimeout(() => links[0]?.focus(), 50);
     };
 
-    toggle.addEventListener('click', () => setOpen(drawer.getAttribute('aria-hidden') === 'true'));
+    document.addEventListener('click', (e) => {
+      if (e.target.closest && e.target.closest('.bottom-nav-menu')) setOpen(true);
+    });
     closeEls.forEach((el) => el.addEventListener('click', () => setOpen(false)));
     // 내비 링크 클릭 시 자동 닫힘 (앵커 이동 후)
     links.forEach((a) => a.addEventListener('click', () => setOpen(false)));
@@ -2862,13 +2971,35 @@ window.addEventListener('storage', function(e){
   })();
 </script>
 
-<!-- 모바일 하단 탭바 (768px 이하에서만 노출) -->
+<!-- 우측 하단 floating ? 버튼 (고객센터) -->
+<a href="/#faq" class="help-float" aria-label="고객센터">?</a>
+
+<!-- 모바일 하단 탭바 (에버랜드 패턴: 6탭, 768px 이하 노출) -->
 <nav class="bottom-nav" aria-label="모바일 하단 메뉴">
-  <a href="/builder.html">만들기</a>
-  <a href="/#dojo">도장깨기</a>
-  <a href="/#community">커뮤니티</a>
-  <a href="/#portfolio">내작품함</a>
-  <a href="/#faq">고객센터</a>
+  <a href="/" aria-current="page">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h4v-7h4v7h4a1 1 0 001-1V10"/></svg>
+    <span>홈</span>
+  </a>
+  <a href="/builder.html">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>만들기</span>
+  </a>
+  <a href="/#dojo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M5 4h14v5a7 7 0 11-14 0V4z"/></svg>
+    <span>도장깨기</span>
+  </a>
+  <a href="/#community">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    <span>커뮤니티</span>
+  </a>
+  <a href="/#portfolio">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <span>내작품함</span>
+  </a>
+  <button type="button" class="bottom-nav-menu" aria-label="전체 메뉴 열기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span>전체메뉴</span>
+  </button>
 </nav>
 
 </body></html>

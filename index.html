@@ -2032,12 +2032,49 @@ function updateNavAuthState(){
     if(loggedIn){
       if(role === 'login'){ el.textContent = profile.name + '님'; el.setAttribute('href','/ai-donghang.html#mypage'); el.classList.add('is-logged-in'); }
       if(role === 'signup'){ el.style.display = 'none'; }
+      if(role === 'my'){
+        var lbl = el.querySelector('.nav-my-label');
+        if(lbl) lbl.textContent = profile.name + '님';
+        el.setAttribute('href','/ai-donghang.html#mypage');
+        el.classList.add('is-logged-in');
+      }
     } else {
       if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#auth'); el.classList.remove('is-logged-in'); }
       if(role === 'signup'){ el.textContent = '회원가입'; el.setAttribute('href','/ai-donghang.html#auth'); el.style.display = ''; }
+      if(role === 'my'){
+        var lbl2 = el.querySelector('.nav-my-label');
+        if(lbl2) lbl2.textContent = 'MY';
+        el.setAttribute('href','/ai-donghang.html#auth');
+        el.classList.remove('is-logged-in');
+      }
     }
   });
 }
+
+// 검색·알림 아이콘 — 기능 미준비라 안내 토스트만
+(function(){
+  function bindNavIcons(){
+    document.querySelectorAll('[data-nav-action]').forEach(function(btn){
+      if(btn._navBound) return;
+      btn._navBound = true;
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var act = btn.getAttribute('data-nav-action');
+        var msg = act === 'search' ? '검색은 곧 준비할게요 🙏' :
+                  act === 'bell'   ? '알림은 곧 준비할게요 🙏' :
+                  '곧 준비할게요 🙏';
+        var t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;top:78px;left:50%;transform:translateX(-50%);background:rgba(31,27,23,.92);color:#FBF8F3;padding:10px 18px;border-radius:24px;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.18);';
+        document.body.appendChild(t);
+        setTimeout(function(){ t.style.transition='opacity .4s ease'; t.style.opacity='0'; }, 1600);
+        setTimeout(function(){ t.remove(); }, 2100);
+      });
+    });
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', bindNavIcons); }
+  else bindNavIcons();
+})();
 // DOM 준비되면 즉시 1회 실행
 if(document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', updateNavAuthState);

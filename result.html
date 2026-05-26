@@ -1135,25 +1135,35 @@
     const title = document.getElementById('text-title').textContent.trim();
     const body  = document.getElementById('text-body').innerText.trim();
     const text  = (title ? title + '\n\n' : '') + body + '\n\n— AI 동행으로 만든 작품';
+    // 이슈 1.1 fix: SDK sendDefault 실패 시 kakaotalk:// URI scheme 으로 폴백하면
+    // iOS Safari 에서 카카오톡 앱이 결제 mode 로 백그라운드 활성 시 결제 흐름
+    // (kakaopay)으로 가로채는 사례 발생. 폴백을 클립보드 복사 + 안내로만.
+    const showCopiedToast = (msg) => {
+      if (btn){
+        const old = btn.textContent;
+        btn.textContent = msg || '복사했어요 (카톡에 붙여넣기)';
+        setTimeout(() => btn.textContent = old, 2400);
+      }
+    };
+    const copyToClipboard = () => {
+      try { navigator.clipboard?.writeText(text).catch(()=>{}); } catch(e){}
+    };
     if (initKakaoSdk()){
-      Kakao.Share.sendDefault({
-        objectType: 'text',
-        text: text.slice(0, 200),
-        link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' },
-        buttons: [{ title: 'AI 동행에서 만들기', link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' } }],
-      });
-      return;
+      try {
+        Kakao.Share.sendDefault({
+          objectType: 'text',
+          text: text.slice(0, 200),
+          link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' },
+          buttons: [{ title: 'AI 동행에서 만들기', link: { mobileWebUrl: 'https://aitogether.co.kr/', webUrl: 'https://aitogether.co.kr/' } }],
+        });
+        return;
+      } catch(e){
+        console.warn('[share] Kakao.Share.sendDefault failed:', e);
+      }
     }
-    // SDK 로드 실패 폴백: 모바일 카카오 앱 링크 시도 + 클립보드 복사
-    navigator.clipboard?.writeText(text).catch(() => {});
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if (isMobile){
-      window.location.href = 'kakaotalk://msg/send?text=' + encodeURIComponent(text.slice(0, 1000));
-    } else if (btn) {
-      const old = btn.textContent;
-      btn.textContent = '복사했어요 (카톡에 붙여넣기)';
-      setTimeout(() => btn.textContent = old, 2000);
-    }
+    // SDK 미로드/호출 실패 시: 클립보드 복사 + 카카오톡 직접 붙여넣기 유도
+    copyToClipboard();
+    showCopiedToast('복사했어요. 카카오톡에서 붙여넣기 하세요');
   }
 
   // ─── 시작 ───

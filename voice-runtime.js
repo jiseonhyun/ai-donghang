@@ -200,6 +200,27 @@
     if (!micBtn) { console.warn('[voice-runtime] mic-btn not found — bundle DOM may differ'); console.log('[VDBG] mic-btn NOT FOUND'); return; }
     console.log('[VDBG] mic-btn found');
 
+    // ── 이슈 1.3 fix: 상단 < (이전 질문) / X (닫기) 버튼 활성화 ──
+    // voice.html L209 마크업에 두 버튼이 있으나 onclick 핸들러 누락 — "막다른 길" UX 해결.
+    // 이전 질문은 향후 자서전 진행 상태 기반으로 정밀 후퇴 가능, 일단은 history.back() 또는 builder 복귀.
+    // 닫기는 확인 후 builder 메인으로 — 진행 답변은 autobiography_episodes 에 이미 저장됨.
+    document.addEventListener('click', function(ev){
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var prev = t.closest('button[aria-label="이전 질문"]');
+      var close = t.closest('button[aria-label="닫기"]');
+      if (prev){
+        ev.preventDefault();
+        if (window.history && history.length > 1) history.back();
+        else location.href = '/builder.html';
+      } else if (close){
+        ev.preventDefault();
+        if (window.confirm('작성하신 내용은 저장돼 있어요. 만들기 메인으로 돌아가시겠어요?')){
+          location.href = '/builder.html';
+        }
+      }
+    }, false);
+
     // 데모 핸들러 제거 — clone으로 listener 분리
     var fresh = micBtn.cloneNode(true);
     micBtn.parentNode.replaceChild(fresh, micBtn);

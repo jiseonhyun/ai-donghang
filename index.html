@@ -136,9 +136,11 @@
   .topbar-actions .gift-link:hover{ background: var(--teal-hover); }
 
   /* ── 데스크탑(880+) 우측 아이콘 셋 — 검색·알림·마이 (에버랜드 패턴) ────── */
+  /* 32px — 다른 페이지(brand-logo 28px)와 topbar 시각 높이 정렬용.
+     아이콘 크기가 36px 면 홈 topbar 가 다른 페이지보다 4px 두꺼워짐. */
   .topbar-actions .nav-icon-btn{
     display: inline-flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px;
+    width: 32px; height: 32px;
     background: transparent; border: none;
     color: var(--ink-soft);
     cursor: pointer; padding: 0;
@@ -225,7 +227,7 @@
   /* 모바일(880↓) — MY 라벨/이름 숨김(아이콘만), 좁아져도 핵심 액션은 유지 */
   @media (max-width: 880px){
     .topbar-actions .nav-my-label{ display: none; }
-    .topbar-actions .nav-my-link{ padding: 0; border-radius: 50%; width: 36px; height: 36px; justify-content: center; }
+    .topbar-actions .nav-my-link{ padding: 0; border-radius: 50%; width: 32px; height: 32px; justify-content: center; }
   }
   @media (max-width: 430px){
     /* 매우 좁은 폰에서 검색 아이콘 우선 숨김 — 핵심은 마이/알림 */
@@ -277,6 +279,10 @@
     padding-bottom: 18px;
     border-bottom: 1px solid var(--hair);
   }
+  .nav-drawer-head .brand{ outline: none; min-width: 0; flex-shrink: 1; }
+  .nav-drawer-head .brand:focus,
+  .nav-drawer-head .brand:focus-visible{ outline: none; }
+  .nav-drawer-head .brand-logo{ height: 28px; width: auto; max-width: 120px; object-fit: contain; }
   .nav-drawer-close{
     width: 40px; height: 40px;
     background: transparent; border: 1px solid var(--hair);
@@ -2937,11 +2943,12 @@ window.addEventListener('storage', function(e){
     if (!drawer) return;
     const closeEls = drawer.querySelectorAll('[data-nav-close]');
     const links = drawer.querySelectorAll('a');
+    const firstFocusable = drawer.querySelector('.nav-drawer-list a') || links[0];
 
     const setOpen = (open) => {
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
       document.body.classList.toggle('nav-open', open);
-      if (open) setTimeout(() => links[0]?.focus(), 50);
+      if (open) setTimeout(() => firstFocusable?.focus(), 50);
     };
 
     document.addEventListener('click', (e) => {

@@ -224,7 +224,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .nav-drawer[aria-hidden="false"]{visibility:visible;pointer-events:auto;}
 .nav-drawer-scrim{position:absolute;inset:0;background:rgba(31,27,23,.42);opacity:0;transition:opacity .35s ease;}
 .nav-drawer[aria-hidden="false"] .nav-drawer-scrim{opacity:1;}
-.nav-drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(86vw,360px);background:var(--bg);border-left:1px solid rgba(28,26,23,.09);box-shadow:-20px 0 48px -28px rgba(31,27,23,.3);transform:translateX(100%);transition:transform .42s cubic-bezier(.2,.6,.2,1);display:flex;flex-direction:column;padding:22px 24px 28px;}
+.nav-drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(80vw,340px);background:var(--bg);border-left:1px solid rgba(28,26,23,.09);box-shadow:-20px 0 48px -28px rgba(31,27,23,.3);transform:translateX(100%);transition:transform .42s cubic-bezier(.2,.6,.2,1);display:flex;flex-direction:column;padding:22px 24px 28px;}
 .nav-drawer[aria-hidden="false"] .nav-drawer-panel{transform:translateX(0);}
 .nav-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid rgba(28,26,23,.09);}
 .nav-drawer-head .brand{outline:none;min-width:0;flex-shrink:1;}
@@ -2081,12 +2081,12 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
       <button type="button" class="nav-drawer-close" data-nav-close="" aria-label="메뉴 닫기"></button>
     </div>
     <ul class="nav-drawer-list">
-      <li><a href="/#builder">만들기</a></li>
-      <li><a href="/#dojo">도장깨기</a></li>
-      <li><a href="/#community">커뮤니티</a></li>
-      <li><a href="/#portfolio">내 작품함</a></li>
       <li><a href="/#pricing">요금제</a></li>
+      <li><a href="/#about">AI동행 소개</a></li>
+      <li><a href="/#b2g">기관 도입</a></li>
       <li><a href="/#faq">고객센터</a></li>
+      <li><a href="terms.html">이용약관</a></li>
+      <li><a href="privacy.html">개인정보처리방침</a></li>
     </ul>
     <div class="nav-drawer-foot">
       <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>

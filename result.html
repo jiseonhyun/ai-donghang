@@ -50,6 +50,8 @@
   .topbar-spacer{height:64px;}
   .brand{display:inline-flex;align-items:center;gap:10px;font-family:"Noto Serif KR",serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;color:var(--ink);text-decoration:none;}
   .brand-logo{display:block;height:28px;width:auto;}
+  .brand-title{display:none;font-family:"Noto Serif KR",serif;font-weight:500;font-size:20px;color:var(--ink);letter-spacing:-0.01em;}
+  @media (max-width:880px){.brand-logo{display:none;}.brand-title{display:inline-block;}}
   .topbar nav{display:flex;gap:28px;font-size:16px;color:var(--ink-soft);}
   .topbar nav a{color:inherit;text-decoration:none;}
   .topbar nav a:hover{color:var(--ink);}
@@ -568,8 +570,9 @@
 
 <!-- TOPBAR (홈페이지 통일 네비) -->
 <header class="topbar">
-  <a href="/" class="brand" aria-label="AI동행">
+  <a href="/" class="brand" aria-label="만들기">
     <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
+    <span class="brand-title" id="brand-title">만들기</span>
   </a>
   <nav aria-label="주요 메뉴">
     <a href="/#builder">만들기</a>
@@ -771,6 +774,14 @@
     if (isMemoir && localStorage.getItem('aiDonghang_memoirActive') === '1'
         && params.get('skip') !== '1'){
       location.replace('/voice.html');
+    }
+  } catch(e){}
+
+  // 이슈 4.1 헤더 타이틀: 자서전 분기 시 모바일 brand-title 을 "자서전 쓰기" 로
+  try {
+    if (isMemoir){
+      const bt = document.getElementById('brand-title');
+      if (bt) bt.textContent = '자서전 쓰기';
     }
   } catch(e){}
 

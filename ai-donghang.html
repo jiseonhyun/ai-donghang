@@ -193,6 +193,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(251,248,243,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:clamp(24px,4vw,48px);padding:14px clamp(20px,5vw,64px);border-bottom:1px solid rgba(28,26,23,.09);min-height:64px;box-sizing:border-box;}
 .topbar .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Noto Serif KR',serif;font-weight:500;font-size:22px;letter-spacing:-.01em;color:var(--ink);text-decoration:none;}
 .topbar .brand-logo{display:block;height:28px;width:auto;}
+.topbar .brand-title{display:none;font-family:'Noto Serif KR',serif;font-weight:500;font-size:20px;color:var(--ink);letter-spacing:-.01em;}
+@media (max-width:880px){.topbar .brand-logo{display:none;}.topbar .brand-title{display:inline-block;}}
 .topbar nav{display:flex;gap:28px;font-size:16px;color:var(--i3);}
 .topbar nav a{color:inherit;text-decoration:none;cursor:pointer;}
 .topbar nav a:hover{color:var(--ink);}
@@ -2051,6 +2053,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 <header class="topbar" id="globalNav">
   <a href="/" class="brand" aria-label="AI동행">
     <img class="brand-logo" src="images/landing/fc0427d1.png" alt="AI동행">
+    <span class="brand-title" id="brand-title">AI동행</span>
   </a>
   <nav aria-label="주요 메뉴">
     <a href="/#builder">만들기</a>
@@ -5077,6 +5080,10 @@ function showView(view, _skipHash){
   var bMap={home:'bnav-home',builder:'bnav-builder',dojo:'bnav-dojo',community:'bnav-community',portfolio:'bnav-portfolio'};
   ['bnav-home','bnav-builder','bnav-dojo','bnav-community','bnav-portfolio'].forEach(function(id){var el=g(id);if(el)el.classList.remove('bnav-active');});
   if(bMap[view]){var el=g(bMap[view]);if(el)el.classList.add('bnav-active');}
+  // 이슈 4.1: 모바일 brand-title 을 view 에 맞게 갱신 (홈만 'AI동행', 나머지는 메뉴명)
+  var titleMap={home:'AI동행',builder:'만들기',dojo:'도장깨기',community:'커뮤니티',portfolio:'내 작품함',faq:'고객센터',learn:'AI 알아보기',pricing:'요금제',about:'AI동행 소개',b2g:'기관 도입',mypage:'마이페이지',memoir:'자서전 쓰기',autobiography:'자서전 쓰기'};
+  var bt=g('brand-title');
+  if(bt && titleMap[view]) bt.textContent=titleMap[view];
   var nMap={dojo:'nav-dojo',builder:'nav-builder',learn:'nav-learn',pricing:'nav-pricing',faq:'nav-faq',about:'nav-about',b2g:'nav-b2g'};
   ['nav-dojo','nav-builder','nav-learn','nav-community','nav-pricing','nav-faq','nav-about','nav-b2g'].forEach(function(id){var el=g(id);if(el)el.classList.remove('active');});
   if(nMap[view]){var el=g(nMap[view]);if(el)el.classList.add('active');}

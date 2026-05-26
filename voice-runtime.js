@@ -200,6 +200,10 @@
     if (!micBtn) { console.warn('[voice-runtime] mic-btn not found — bundle DOM may differ'); console.log('[VDBG] mic-btn NOT FOUND'); return; }
     console.log('[VDBG] mic-btn found');
 
+    // ── 이슈 2.1 재진입 마커 — voice.html 진입 사실을 localStorage에 기록.
+    // result.html 의 자서전 분기(sub=memoir)가 이걸 확인해서 안내 화면 스킵.
+    try { localStorage.setItem('aiDonghang_memoirActive', '1'); } catch(e){}
+
     // ── 이슈 1.3 fix: 상단 < (이전 질문) / X (닫기) 버튼 활성화 ──
     // voice.html L209 마크업에 두 버튼이 있으나 onclick 핸들러 누락 — "막다른 길" UX 해결.
     // 이전 질문은 향후 자서전 진행 상태 기반으로 정밀 후퇴 가능, 일단은 history.back() 또는 builder 복귀.

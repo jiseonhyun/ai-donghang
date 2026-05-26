@@ -1209,7 +1209,14 @@
   subGrid.addEventListener('click', (e) => {
     const card = e.target.closest('.sub-card');
     if (!card) return;
-    state.sub = card.dataset.sub;
+    const subId = card.dataset.sub;
+    // 이슈 2.1: 자서전은 step ii (결 고르기)·step iii (이야기) 안 거치고,
+    // result.html 의 자서전 분기 화면(vii. 8주 위저드 안내)으로 직접 이동.
+    if (subId === 'memoir'){
+      location.href = 'result.html?cat=memoir&sub=memoir';
+      return;
+    }
+    state.sub = subId;
     state.story = '';
     state.photoName = '';
     applyDefaults();

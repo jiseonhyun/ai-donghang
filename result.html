@@ -764,6 +764,16 @@
   // memoir는 cat 또는 sub 어느 쪽으로 와도 자서전 위저드로 분기
   const isMemoir = (cat === 'memoir' || sub === 'memoir');
 
+  // 이슈 2.1 재진입 분기: 한 번이라도 voice.html에 진입한 사용자는 안내 스킵.
+  // 마커는 voice-runtime.js __voiceInit 에서 'aiDonghang_memoirActive'='1' 로 세팅.
+  // 'skip=1' 쿼리로 명시적 초기화도 가능 (안내 화면을 한 번 더 보고 싶을 때).
+  try {
+    if (isMemoir && localStorage.getItem('aiDonghang_memoirActive') === '1'
+        && params.get('skip') !== '1'){
+      location.replace('/voice.html');
+    }
+  } catch(e){}
+
   // ─── 카테고리별 부제 — 로딩 화면용 ───
   const LOADING_SUB = {
     write: '한 줄, 한 줄 정리해 한 편의 글로 다듬는 중입니다.',

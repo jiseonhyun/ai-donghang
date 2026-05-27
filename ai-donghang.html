@@ -758,10 +758,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 /* ── AUTH ── */
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:var(--wm);}
 .auth-card{background:#fff;border-radius:24px;padding:46px 42px;width:100%;max-width:460px;box-shadow:0 8px 52px rgba(28,26,23,.1);}
-.auth-logo{display:flex;align-items:center;gap:11px;justify-content:center;margin-bottom:6px;}
-.auth-logo-icon{width:44px;height:44px;background:var(--ac);border-radius:12px;display:flex;align-items:center;justify-content:center;}
-.auth-logo-text{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;color:var(--ink);}
-.auth-logo-text span{color:var(--ac);}
+.auth-logo{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.auth-logo img{display:block;height:40px;width:auto;}
 .auth-tabs{display:flex;border-bottom:2px solid var(--bd);margin:18px 0 26px;}
 .auth-tab-btn{flex:1;padding:12px;background:none;border:none;font-size:16px;font-family:inherit;cursor:pointer;color:var(--i3);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px;min-height:48px;}
 .auth-tab-btn.active{color:var(--ac);border-bottom-color:var(--ac);font-weight:700;}
@@ -2700,7 +2698,7 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
 <div class="view" id="authView">
 <div class="auth-wrap">
   <div class="auth-card">
-    <div class="auth-logo"><div class="auth-logo-icon"><svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 2C6.68 2 4 4.68 4 8C4 10.1 5.02 11.96 6.59 13.07C7.12 13.44 7.44 14.04 7.44 14.68V16C7.44 16.55 7.89 17 8.44 17H11.56C12.11 17 12.56 16.55 12.56 16V14.68C12.56 14.04 12.88 13.44 13.41 13.07C14.98 11.96 16 10.1 16 8C16 4.68 13.32 2 10 2Z" fill="white"/><rect x="7.5" y="17.5" width="5" height="1.2" rx="0.6" fill="white" opacity="0.8"/><rect x="8.2" y="19" width="3.6" height="1.2" rx="0.6" fill="white" opacity="0.65"/><path d="M10 21C10 21 8.2 22.5 8.2 23.2C8.2 23.65 9.0 24 10 24C11.0 24 11.8 23.65 11.8 23.2C11.8 22.5 10 21 10 21Z" fill="white" opacity="0.55"/></svg></div><div class="auth-logo-text">AI<span>동행</span></div></div>
+    <div class="auth-logo"><a href="/" aria-label="AI동행"><img src="images/landing/fc0427d1.png" alt="AI동행"></a></div>
     <div class="auth-tabs"><button id="tabSignup" class="auth-tab-btn active" onclick="switchAuthTab('signup')">회원가입</button><button id="tabLogin" class="auth-tab-btn" onclick="switchAuthTab('login')">로그인</button></div>
     <div id="authSignup">
       <div class="auth-sub">비밀번호 없이! 전화번호 또는 카카오로 10초 가입</div>

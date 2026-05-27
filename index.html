@@ -2122,8 +2122,9 @@ window.addEventListener('storage', function(e){
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <!-- 데스크탑(880px+) 아이콘 셋 — 검색·알림·마이. 햄버거가 사라진 영역에 채움.
-         에버랜드 메인 패턴 참조. 모바일은 햄버거 안 드로어로 통합. -->
+    <a href="/ai-donghang.html#login" class="login" data-auth-cta="login">로그인</a>
+    <a href="/ai-donghang.html#auth" class="login signup" data-auth-cta="signup">회원가입</a>
+    <!-- 검색·알림 아이콘은 로그인/회원가입 뒤(오른쪽)로 배치 -->
     <button type="button" class="nav-icon-btn nav-search-btn" aria-label="검색" data-nav-action="search">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="7"></circle>
@@ -2136,17 +2137,6 @@ window.addEventListener('storage', function(e){
         <path d="M10 19a2 2 0 0 0 4 0"></path>
       </svg>
     </button>
-    <a href="/ai-donghang.html#mypage" class="nav-my-link" data-auth-cta="my" aria-label="마이페이지">
-      <span class="nav-my-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="4"></circle>
-          <path d="M4 21a8 8 0 0 1 16 0"></path>
-        </svg>
-      </span>
-      <span class="nav-my-label">MY</span>
-    </a>
-    <a href="/ai-donghang.html#auth" class="login" data-auth-cta="login">로그인</a>
-    <a href="/ai-donghang.html#auth" class="login signup" data-auth-cta="signup">회원가입</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
   </div>
 </header>
@@ -2170,7 +2160,7 @@ window.addEventListener('storage', function(e){
       <li><a href="privacy.html">개인정보처리방침</a></li>
     </ul>
     <div class="nav-drawer-foot">
-      <a href="/ai-donghang.html#auth" class="login" data-auth-cta="login">로그인</a>
+      <a href="/ai-donghang.html#login" class="login" data-auth-cta="login">로그인</a>
       <a href="/ai-donghang.html#auth" class="login signup" data-auth-cta="signup">회원가입</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>

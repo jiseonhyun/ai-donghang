@@ -575,10 +575,27 @@
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <a href="/#auth" class="login">로그인</a>
+    <a href="/ai-donghang.html#login" class="login" data-auth-cta="login">로그인</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
   </div>
 </header>
+<script>
+// 로그인 상태면 .login 텍스트를 'OOO님' 으로 변경. 카카오 로그인 후 이 페이지로
+// 돌아왔을 때 nav 가 갱신되도록 — 다른 페이지에서 로그인 했어도 같은 localStorage
+// 를 읽어 즉시 반영.
+(function(){
+  try{
+    var p = JSON.parse(localStorage.getItem('aiDonghang_profile')||'{}');
+    if(p && p.name){
+      document.querySelectorAll('.topbar-actions .login, .nav-drawer-foot .login').forEach(function(el){
+        el.textContent = p.name + '님';
+        el.setAttribute('href','/ai-donghang.html#mypage');
+        el.classList.add('is-logged-in');
+      });
+    }
+  }catch(e){}
+})();
+</script>
 
 <div class="nav-drawer" id="site-nav-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="메뉴">
   <div class="nav-drawer-scrim" data-nav-close=""></div>
@@ -598,7 +615,7 @@
       <li><a href="privacy.html">개인정보처리방침</a></li>
     </ul>
     <div class="nav-drawer-foot">
-      <a href="/#auth" class="login">로그인</a>
+      <a href="/ai-donghang.html#login" class="login">로그인</a>
       <a href="gift.html" class="gift-link">부모님께 선물하기</a>
     </div>
   </aside>

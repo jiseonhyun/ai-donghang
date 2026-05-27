@@ -2055,7 +2055,7 @@ function updateNavAuthState(){
         el.classList.add('is-logged-in');
       }
     } else {
-      if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#auth'); el.classList.remove('is-logged-in'); }
+      if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#login'); el.classList.remove('is-logged-in'); }
       if(role === 'signup'){ el.textContent = '회원가입'; el.setAttribute('href','/ai-donghang.html#auth'); el.style.display = ''; }
       if(role === 'my'){
         // 비로그인 시: 'MY' 라벨 표시 + 클릭 시 #auth

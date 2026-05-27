@@ -202,6 +202,8 @@ body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:var(--bg)
 .topbar nav a{color:inherit;text-decoration:none;cursor:pointer;}
 .topbar nav a:hover{color:var(--ink);}
 .topbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.topbar-actions .nav-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:transparent;border:none;color:var(--i3);cursor:pointer;padding:0;border-radius:50%;transition:background-color .2s ease,color .2s ease;}
+.topbar-actions .nav-icon-btn:hover{background:rgba(0,0,0,.05);color:var(--ink);}
 .topbar-actions .login{font-size:14px;color:var(--i3);text-decoration:none;padding:6px 4px;cursor:pointer;}
 .topbar-actions .login:hover{color:var(--ink);}
 .topbar-actions .gift-link{display:inline-flex;align-items:center;font-size:14px;color:#FBF8F3;background:var(--ac);padding:8px 14px;border-radius:2px;text-decoration:none;transition:background-color .25s ease;}
@@ -2065,8 +2067,15 @@ body.auth-mode-supabase [data-auth-mode-hide-on="supabase"]{display:none !import
     <a href="/#faq">고객센터</a>
   </nav>
   <div class="topbar-actions">
-    <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>
+    <!-- 순서: 알림 → 로그인/회원가입(or 이름님) → 부모님께 선물하기 -->
+    <button type="button" class="nav-icon-btn nav-bell-btn" aria-label="알림" data-nav-action="bell">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5 2 6H4c.5-1 2-2 2-6Z"></path>
+        <path d="M10 19a2 2 0 0 0 4 0"></path>
+      </svg>
+    </button>
     <a href="/#login" class="login">로그인</a>
+    <a href="#" class="login" onclick="event.preventDefault();showView('auth');if(typeof switchAuthTab==='function')switchAuthTab('signup');">회원가입</a>
     <a href="gift.html" class="gift-link">부모님께 선물하기</a>
   </div>
 </header>
@@ -5170,7 +5179,9 @@ function setNavLoggedIn(name){
     userLink.className = 'login nav-user-link';
     userLink.textContent = display;
     userLink.onclick = function(e){ e.preventDefault(); if(typeof showView==='function') showView('mypage'); };
-    parent.insertBefore(userLink, parent.firstChild);
+    // 알림 아이콘이 있으면 그 뒤(첫 .login 자리) 에 삽입 — 순서: 알림 → 이름님 → ...
+    var firstLogin = parent.querySelector('a.login:not(.nav-user-link)');
+    parent.insertBefore(userLink, firstLogin || parent.firstChild);
   });
 }
 function setNavLoggedOut(){
@@ -5194,6 +5205,22 @@ function syncNavAuthState(){
 }
 window.addEventListener('pageshow', syncNavAuthState);
 window.addEventListener('storage', function(e){ if(e.key === 'aiDonghang_profile') syncNavAuthState(); });
+// 알림 아이콘 — 기능 미준비라 안내 토스트만
+(function(){
+  function bindNavIcons(){
+    document.querySelectorAll('[data-nav-action]').forEach(function(btn){
+      if(btn._navBound) return; btn._navBound = true;
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var act = btn.getAttribute('data-nav-action');
+        var msg = act === 'bell' ? '알림은 곧 준비할게요 🙏' : '곧 준비할게요 🙏';
+        if(typeof showToast === 'function') showToast(msg);
+      });
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindNavIcons);
+  else bindNavIcons();
+})();
 
 // ── 현재 챕터 ──
 var quizAnswers = {};

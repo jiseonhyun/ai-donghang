@@ -2043,11 +2043,14 @@ function updateNavAuthState(){
   document.querySelectorAll('[data-auth-cta]').forEach(function(el){
     var role = el.getAttribute('data-auth-cta');
     if(loggedIn){
+      // 로그인 시: 오른쪽 .login 자리에만 이름 표시 (기존 폰트). 왼쪽 nav-my-link 는
+      // 사람 아이콘 정체성 유지하지만 라벨은 숨김 — 이름 중복 방지.
       if(role === 'login'){ el.textContent = profile.name + '님'; el.setAttribute('href','/ai-donghang.html#mypage'); el.classList.add('is-logged-in'); }
       if(role === 'signup'){ el.style.display = 'none'; }
       if(role === 'my'){
+        // 로그인 시: 아이콘만(라벨 숨김), 클릭 시 mypage
         var lbl = el.querySelector('.nav-my-label');
-        if(lbl) lbl.textContent = profile.name + '님';
+        if(lbl) lbl.style.display = 'none';
         el.setAttribute('href','/ai-donghang.html#mypage');
         el.classList.add('is-logged-in');
       }
@@ -2055,8 +2058,9 @@ function updateNavAuthState(){
       if(role === 'login'){ el.textContent = '로그인'; el.setAttribute('href','/ai-donghang.html#auth'); el.classList.remove('is-logged-in'); }
       if(role === 'signup'){ el.textContent = '회원가입'; el.setAttribute('href','/ai-donghang.html#auth'); el.style.display = ''; }
       if(role === 'my'){
+        // 비로그인 시: 'MY' 라벨 표시 + 클릭 시 #auth
         var lbl2 = el.querySelector('.nav-my-label');
-        if(lbl2) lbl2.textContent = 'MY';
+        if(lbl2){ lbl2.textContent = 'MY'; lbl2.style.display = ''; }
         el.setAttribute('href','/ai-donghang.html#auth');
         el.classList.remove('is-logged-in');
       }

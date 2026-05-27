@@ -5157,7 +5157,8 @@ function showView(view, _skipHash){
 // 1) topbar-actions / nav-drawer-foot 안의 회원가입·로그인 링크를 숨김
 // 2) 이름 클릭 시 마이페이지로 가는 사용자 링크를 동적으로 삽입
 function setNavLoggedIn(name){
-  var display = name || '마이페이지';
+  // 사이트 전체 톤 통일 — index.html/builder.html 처럼 '○○○님' 으로 표기.
+  var display = name ? (name + '님') : '마이페이지';
   ['.topbar-actions', '.nav-drawer-foot'].forEach(function(sel){
     var parent = document.querySelector(sel);
     if(!parent) return;

@@ -849,9 +849,78 @@
       var label = confirmBtn.querySelector('span');
       if (label) label.textContent = on ? '다음 질문을 만들고 있어요…' : '좋습니다, 다음으로';
     }
+    function _saveInterviewToPortfolio(closingText){
+      // 한 회차 인터뷰를 작품함의 자서전 챕터 한 항목으로 저장.
+      // 포맷은 ai-donghang.html saveToPortfolio 와 동일하게 맞춰야 portfolioList 가 인식.
+      try{
+        var qa = messages.filter(function(m){ return m.role === 'user' || m.role === 'assistant'; });
+        if (qa.length < 2) return; // 빈 회차 저장 방지
+        // result: Q/A 한 회차 전체를 챕터 본문으로 직렬화 (사람이 읽을 수 있게)
+        var lines = [];
+        var qIdx = 1;
+        qa.forEach(function(m){
+          if (m.role === 'assistant'){
+            var t = (m.content || '').replace(/\[INTERVIEW_END\]\s*$/,'').trim();
+            if (t) lines.push('Q' + qIdx + '. ' + t);
+            qIdx++;
+          } else {
+            lines.push('A. ' + (m.content || '').trim());
+            lines.push('');
+          }
+        });
+        var resultText = lines.join('\n').trim();
+        var prof = {};
+        try { prof = JSON.parse(localStorage.getItem('aiDonghang_profile') || '{}'); }catch(_){}
+        var sessionN = 1;
+        try {
+          var prevSessions = JSON.parse(localStorage.getItem('aiDonghang_portfolio') || '[]')
+            .filter(function(p){ return p && p.course && p.course.indexOf('자서전 쓰기') === 0; }).length;
+          sessionN = prevSessions + 1;
+        } catch(_){}
+        var courseName = '자서전 쓰기 ' + sessionN + '회차';
+        var dateLabel = new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+        var item = {
+          id: Date.now(),
+          course: courseName,
+          emoji: '📖',
+          prompt: '동동이 음성 인터뷰 ' + sessionN + '회차',
+          result: resultText,
+          date: dateLabel
+        };
+        var portfolio = [];
+        try { portfolio = JSON.parse(localStorage.getItem('aiDonghang_portfolio') || '[]'); } catch(_){}
+        portfolio.unshift(item);
+        if (portfolio.length > 50) portfolio = portfolio.slice(0, 50);
+        localStorage.setItem('aiDonghang_portfolio', JSON.stringify(portfolio));
+        // Supabase works 테이블에도 동기화 (로그인 사용자만)
+        try {
+          if (prof && prof.id && typeof prof.id === 'string' && window.supabase){
+            var SUPABASE_URL = 'https://gaibakqhdfdpnsdgpmya.supabase.co';
+            var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhaWJha3FoZGZkcG5zZGdwbXlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQyMzEsImV4cCI6MjA4OTk4MDIzMX0.diMKgPDIcM8PsHFiq4hcVkTak5ehp57uNc4Uke1SPg8';
+            var _db = window.__voiceSupa || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            window.__voiceSupa = _db;
+            _db.from('works').insert([{
+              user_id: prof.id,
+              course: courseName,
+              final_prompt: item.prompt,
+              result: resultText.slice(0, 5000),
+              date_label: dateLabel,
+              is_saved: true
+            }]).then(function(){ console.log('[autobio] works 저장 완료'); })
+              .catch(function(e){ console.warn('[autobio] works 저장 실패', e); });
+          }
+        } catch(e){ console.warn('[autobio] supabase 저장 예외', e); }
+        console.log('[autobio] 작품함 저장 완료 — ' + courseName);
+      } catch(e){ console.warn('[autobio] 작품함 저장 실패', e); }
+    }
     function showInterviewEnd(closingWord){
+      if (interviewEnded) return; // 중복 호출 방지 (저장 1회만)
       interviewEnded = true;
       var cleaned = (closingWord || '').replace(/\[INTERVIEW_END\]\s*$/,'').trim();
+      // ⭐ 작품함 저장 — 종료 시점에 한 회차를 portfolio 항목으로 적재
+      _saveInterviewToPortfolio(cleaned);
+      // 종료 후 다음 회차에서 새 대화로 시작하도록 messages 초기화
+      try { localStorage.removeItem(MSG_KEY); } catch(_){}
       if (questionEyebrowEl) questionEyebrowEl.textContent = '오늘은 여기까지';
       if (questionTextEl){
         questionTextEl.innerHTML = (cleaned || '오늘 들려주신 이야기, 정성껏 잘 담아 두었어요.')
@@ -859,14 +928,14 @@
             return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
           }).join('<br>');
       }
-      // 다음 단계 안내 — 작품함/홈으로 돌아가기
+      // 다음 단계 안내 — 작품함으로 바로 가기
       if (confirmBtn){
         confirmBtn.disabled = false;
         var span = confirmBtn.querySelector('span');
-        if (span) span.textContent = '홈으로 돌아가기';
-        confirmBtn.onclick = function(){ location.href = '/'; };
+        if (span) span.textContent = '내 작품함 보기 →';
+        confirmBtn.onclick = function(){ location.href = '/#portfolio'; };
       }
-      toast('오늘의 이야기 한 회차가 완성됐어요 🌿');
+      toast('오늘의 이야기가 작품함에 저장됐어요 🌿');
     }
     // 짧은 STT 결과 한 번 더 확인 — "다음" 두 번 누르면 통과
     var _shortConfirmShown = false;

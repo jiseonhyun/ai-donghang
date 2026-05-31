@@ -9006,7 +9006,13 @@ function showMemoirComplete(){
 
   var m = g('memoirCompleteModal');
   if(m) m.style.display = 'flex';
-  closeMemoirChapterModal();
+  // memoirView 안에서 호출됐을 때만 그 뷰를 닫는다. 작품함 배너에서 직접
+  // 누르면 memoirView 가 활성 상태가 아니라 closeMemoirChapterModal 이
+  // builder 로 강제 이동시켜 사용자가 만들기 페이지로 튕기던 버그.
+  var memoirViewEl = g('memoirView');
+  if(memoirViewEl && memoirViewEl.classList.contains('active')){
+    closeMemoirChapterModal();
+  }
 }
 
 async function generateMemoirTitles(){

@@ -316,6 +316,14 @@
       var userTurns = messages.filter(function(m){ return m.role === 'user'; }).length;
       var qN = userTurns + 1;
       if (progressTextEl) progressTextEl.textContent = '질문 ' + qN;
+      // 진척 점 갱신 — voice.html 템플릿엔 정적으로 깔려있어 이전 코드가 안 건드리고 있었음.
+      // 답변한 질문 수만큼 is-done, 현재 질문은 is-active, 나머지는 미완성.
+      var dots = document.querySelectorAll('.progress-dots .dot');
+      dots.forEach(function(d, i){
+        d.classList.remove('is-done','is-active');
+        if (i < userTurns) d.classList.add('is-done');
+        else if (i === userTurns) d.classList.add('is-active');
+      });
     }
     renderCurrentQuestion();
 

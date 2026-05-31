@@ -105,8 +105,9 @@
       '1. 한 번에 한 가지 질문만 (절대 2개 이상 X)',
       '2. ' + name + '님 답변에서 가장 인상적인 한 가지를 더 깊이 파고드세요',
       '3. 6단계 점진 심화: 장면(어떤 모습) → 감각(소리·냄새) → 사람(누가 함께) → 사건(어떤 일) → 감정(어떤 마음) → 의미(지금 돌아보면)',
-      '4. 5-7번 질문 후 자연스럽게 "오늘은 여기까지 어떠세요?" 같이 마무리 제안',
-      '5. ' + name + '님이 마무리에 동의하면 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰을 출력하세요',
+      '4. ⚠️ 한 회차는 최대 7~8개 질문으로 제한. 6번째 답변 후에는 반드시 "오늘은 여기까지 어떠세요?" 같이 마무리 제안',
+      '5. ' + name + '님이 마무리에 동의하면 (혹은 답변 8개째에 도달하면) 무조건 따뜻한 마지막 말 + 마지막 줄에 [INTERVIEW_END] 토큰 출력',
+      '6. ⚠️ ' + name + '님이 "더 묻고 싶어요" 같이 더 원해도 한 회차는 짧게 끊고 다음 회차로 미루기 — 시니어 피로 방지가 최우선',
       '',
       '【어르신 친화 언어】',
       '- 존댓말, ' + name + '님 호칭 사용',
@@ -931,9 +932,25 @@
           messages.push({ role: 'assistant', content: nextQ, at: new Date().toISOString() });
           saveMessages(messages);
 
-          // 5) [INTERVIEW_END] 토큰 감지
+          // 5) [INTERVIEW_END] 토큰 감지 + 하드 캡 backstop
+          // 시스템 프롬프트가 7~8개 후 마무리하라 했어도 모델이 무시하고 계속 질문하는
+          // 경우가 있어 10개째 답변에서 강제 종료. 시니어 피로 방지 + 점 12개 UI 와도
+          // 호환 (마지막 2개 점은 다음 회차 예고용으로 비워둠).
+          var _userCount = messages.filter(function(m){ return m.role === 'user'; }).length;
+          var HARD_CAP = 10;
           if (/\[INTERVIEW_END\]/.test(nextQ)){
             showInterviewEnd(nextQ);
+            return;
+          }
+          if (_userCount >= HARD_CAP){
+            console.log('[autobio] 하드 캡 ' + HARD_CAP + ' 도달 — 강제 종료');
+            var forcedClose = nextQ.replace(/\[INTERVIEW_END\]\s*$/,'').trim() +
+              '\n\n오늘은 여기까지 들려주신 것만으로도 정말 귀한 시간이었어요. ' +
+              '다음 회차에 또 만나뵐게요. [INTERVIEW_END]';
+            // 마지막 assistant 메시지를 forcedClose 로 교체 (이미 push 됨)
+            messages[messages.length - 1].content = forcedClose;
+            saveMessages(messages);
+            showInterviewEnd(forcedClose);
             return;
           }
 

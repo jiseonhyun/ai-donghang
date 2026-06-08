@@ -10,8 +10,57 @@
 <meta property="og:title" content="AI 동행 — 어르신도 AI를 직접 써보는 날">
 <meta property="og:description" content="뤼튼, ChatGPT, Suno AI... 요즘 사람들이 쓰는 AI를 직접 배우고 내 이야기로 작품을 만들어요">
 <meta property="og:image" content="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&q=80">
-<meta property="og:url" content="https://aidonghang.kr">
+<meta property="og:url" content="https://aitogether.co.kr/ai-donghang.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI 동행">
+<meta property="og:locale" content="ko_KR">
+<meta name="description" content="AI 동행은 어르신이 AI를 직접 써보며 내 이야기로 자서전·블로그·사진·트로트 작품을 만드는 서비스입니다. 도장깨기로 배우고, 프롬프트 빌더로 작품을 완성하세요.">
+<link rel="canonical" href="https://aitogether.co.kr/ai-donghang.html">
 <title>AI 동행 — 어르신도 AI를 직접 써보는 날</title>
+<!-- 구조화 데이터: FAQPage (GEO — AI 검색이 답변에 인용하도록) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "AI 동행이 뭔가요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "AI 동행은 뤼튼, ChatGPT 같은 AI 툴을 어르신도 직접 써볼 수 있도록 도와드리는 서비스예요. 도장깨기로 하나씩 배우고, 프롬프트 빌더로 내 이야기를 AI에게 부탁하는 문장을 만들어요." }
+    },
+    {
+      "@type": "Question",
+      "name": "프롬프트가 뭔가요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "AI에게 '이런 글 써줘'라고 부탁하는 문장이에요. AI 동행이 자동으로 만들어드리니 걱정하지 않으셔도 돼요. 만들어진 프롬프트를 복사해서 붙여넣기만 하면 결과물이 나와요." }
+    },
+    {
+      "@type": "Question",
+      "name": "타이핑을 잘 못해도 괜찮나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "물론이에요! 버튼 선택만으로도 프롬프트가 완성돼요. 글자를 잘 못 치셔도 괜찮아요. 도장깨기부터 시작하시면 차근차근 안내해드려요." }
+    },
+    {
+      "@type": "Question",
+      "name": "복사·붙여넣기를 어떻게 하나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "컴퓨터에서는 AI 동행의 '복사' 버튼을 누른 후, 입력창을 클릭하고 Ctrl+V를 눌러요. 스마트폰에서는 복사 버튼을 누른 뒤 입력창을 꾹 눌러서 붙여넣기를 선택하면 돼요." }
+    },
+    {
+      "@type": "Question",
+      "name": "완성된 작품을 가족에게 어떻게 보내나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "AI가 써준 글을 복사해서 카카오톡 채팅창에 붙여넣기 하시면 돼요. '작품 완성하기' 버튼을 누르면 카카오톡으로 전달하는 방법을 안내해드려요." }
+    },
+    {
+      "@type": "Question",
+      "name": "AI 동행은 왜 만들어졌나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "60대 이상 어르신의 AI 이용률은 고작 12%예요. AI를 못 쓰는 게 아니라 아무도 제대로 가르쳐주지 않았기 때문이에요. AI 동행은 그 격차를 좁히기 위해 만들어졌어요." }
+    },
+    {
+      "@type": "Question",
+      "name": "복지관·지자체에 AI 동행을 도입하고 싶어요",
+      "acceptedAnswer": { "@type": "Answer", "text": "AI 동행은 복지관, 지자체, 실버타운, 경로당 등 기관에 맞춤 커리큘럼을 제공해요. 6주 과정, 수료증 발급, 성과 리포트까지 함께해요. 소규모(30명·월 29.9만원)부터 대규모(협의)까지 플랜이 있어요." }
+    }
+  ]
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -4661,7 +4710,7 @@ var DOJO_CONFIG = [
     mission:'오늘 하루 일기 완성하기',
     promptDesc:'뤼튼에게 일기를 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 예: "나의 어린 시절 이야기를 따뜻하게 써줘" 또는 "오늘 있었던 일을 일기로 써줘"',
-    shareText:'나 AI로 일기 썼어! 뤼튼으로 오늘 하루를 기록했어요 📔\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 일기 썼어! 뤼튼으로 오늘 하루를 기록했어요 📔\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:1, cat:'writing', icon:'💌', name:'편지 쓰기', recommend:false,
@@ -4673,7 +4722,7 @@ var DOJO_CONFIG = [
     mission:'가족에게 편지 한 통 완성하기',
     promptDesc:'뤼튼에게 편지를 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 예: "지금 내 감정을 시로 써줘" 또는 "내가 살아온 이야기를 한 단락으로 써줘"',
-    shareText:'나 AI로 편지 썼어! 뤼튼으로 감동적인 편지를 완성했어요 💌\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 편지 썼어! 뤼튼으로 감동적인 편지를 완성했어요 💌\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:2, cat:'writing', icon:'📖', name:'자서전 쓰기', recommend:false,
@@ -4685,7 +4734,7 @@ var DOJO_CONFIG = [
     mission:'자서전 첫 챕터 300자 완성하기',
     promptDesc:'뤼튼에게 자서전을 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 예: "내가 가장 행복했던 순간을 짧은 글로 써줘"',
-    shareText:'나 AI로 자서전 썼어! 뤼튼으로 인생 첫 챕터를 완성했어요 📖\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 자서전 썼어! 뤼튼으로 인생 첫 챕터를 완성했어요 📖\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:3, cat:'writing', icon:'✍️', name:'자유 글쓰기 4', recommend:false,
@@ -4696,7 +4745,7 @@ var DOJO_CONFIG = [
     mission:'감정을 담은 짧은 시 완성하기',
     promptDesc:'Claude에게 시를 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 예: "내 삶에서 가장 소중한 것에 대한 짧은 글을 써줘"',
-    shareText:'나 AI로 시 썼어! Claude로 감동적인 시를 완성했어요 ✨\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 시 썼어! Claude로 감동적인 시를 완성했어요 ✨\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:4, cat:'writing', icon:'✍️', name:'자유 글쓰기 5', recommend:false,
@@ -4707,7 +4756,7 @@ var DOJO_CONFIG = [
     mission:'감사한 사람에게 편지 완성하기',
     promptDesc:'뤼튼에게 감사 편지를 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 가장 쓰고 싶은 것을 AI에게 부탁해보세요. 완성하면 글쓰기 마스터!',
-    shareText:'나 AI로 감사 편지 썼어! 소중한 분께 마음을 전했어요 🙏\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 감사 편지 썼어! 소중한 분께 마음을 전했어요 🙏\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:5, cat:'writing', icon:'✍️', name:'자유 글쓰기 6', recommend:false,
@@ -4718,7 +4767,7 @@ var DOJO_CONFIG = [
     mission:'손자에게 응원 메시지 완성하기',
     promptDesc:'Gemini에게 응원 메시지를 부탁하는 프롬프트예요',
     promptEx:'[직접 입력하세요] 원하는 것은 뭐든 써봐요!',
-    shareText:'나 AI로 손자 응원 메시지 썼어! Gemini로 마음을 전했어요 🌟\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 손자 응원 메시지 썼어! Gemini로 마음을 전했어요 🌟\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
 
   // ── 이미지 (id 6~11) ──
@@ -4732,7 +4781,7 @@ var DOJO_CONFIG = [
     mission:'자연 풍경 그림 완성하기',
     promptDesc:'뤼튼에게 풍경 그림을 부탁하는 프롬프트예요',
     promptEx:'봄날 벚꽃이 흐드러진 산길을 수채화로 그려줘. 따뜻하고 포근한 느낌으로.',
-    shareText:'나 AI로 풍경 그림 만들었어! 🏞️\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 풍경 그림 만들었어! 🏞️\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:7, cat:'image', icon:'🎴', name:'카드·엽서 만들기', recommend:false,
@@ -4744,7 +4793,7 @@ var DOJO_CONFIG = [
     mission:'기념일 카드 완성하기',
     promptDesc:'뤼튼에게 카드 그림을 부탁하는 프롬프트예요',
     promptEx:'손녀 생일 카드. 따뜻하고 화사한 꽃 그림. 귀엽고 사랑스럽게.',
-    shareText:'나 AI로 카드 만들었어! 🎴\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 카드 만들었어! 🎴\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:8, cat:'image', icon:'🏡', name:'고향 마을 그림', recommend:false,
@@ -4756,7 +4805,7 @@ var DOJO_CONFIG = [
     mission:'고향 마을 수채화 완성하기',
     promptDesc:'뤼튼에게 고향 그림을 부탁하는 프롬프트예요',
     promptEx:'경상도 가을 시골 마을. 빨간 감이 달린 감나무, 초가집, 흙길, 아침 안개를 수채화로 그려줘.',
-    shareText:'나 AI로 고향 그림 만들었어! 🏡\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 고향 그림 만들었어! 🏡\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:9, cat:'image', icon:'👨‍👩‍👧‍👦', name:'가족 카드 만들기', recommend:false,
@@ -4767,7 +4816,7 @@ var DOJO_CONFIG = [
     mission:'기념일 카드 완성하기',
     promptDesc:'뤼튼 이미지에 카드 만들기를 부탁하는 프롬프트예요',
     promptEx:'Korean family celebration card, warm illustration, flowers and hearts, grandmother and grandchildren, soft pastel colors, greeting card style',
-    shareText:'나 AI로 가족 카드 만들었어! 뤼튼으로 특별한 카드를 완성했어요 👨‍👩‍👧‍👦\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 가족 카드 만들었어! 뤼튼으로 특별한 카드를 완성했어요 👨‍👩‍👧‍👦\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:10, cat:'image', icon:'🖼️', name:'사진 보정·복원', recommend:true,
@@ -4780,7 +4829,7 @@ var DOJO_CONFIG = [
     mission:'소중한 사진 보정하기',
     promptDesc:'어떻게 바꾸고 싶은지 선택만 해주세요',
     promptEx:'',
-    shareText:'나 AI로 옛날 사진 복원했어! 흑백이 컬러로 바뀌었어요 🖼️\nAI 동행에서 나도 해봐 → aidonghang.kr'
+    shareText:'나 AI로 옛날 사진 복원했어! 흑백이 컬러로 바뀌었어요 🖼️\nAI 동행에서 나도 해봐 → aitogether.co.kr'
   },
   {
     id:11, cat:'image', icon:'🌸', name:'지브리 스타일 변환', recommend:true,
@@ -4793,7 +4842,7 @@ var DOJO_CONFIG = [
     mission:'지브리 스타일 사진 만들기',
     promptDesc:'사진을 올리고 스타일만 선택하면 끝!',
     promptEx:'',
-    shareText:'나 AI로 지브리 스타일 사진 만들었어! 너무 예쁘게 나왔어 🌸\nAI 동행에서 나도 해봐 → aidonghang.kr'
+    shareText:'나 AI로 지브리 스타일 사진 만들었어! 너무 예쁘게 나왔어 🌸\nAI 동행에서 나도 해봐 → aitogether.co.kr'
   },
 
   // ── 음악 (id 12~17) ──
@@ -4806,7 +4855,7 @@ var DOJO_CONFIG = [
     mission:'나만의 트로트 한 곡 완성하기',
     promptDesc:'Suno AI에게 트로트를 만들어달라는 프롬프트예요',
     promptEx:'Style: Korean trot, emotional, female vocalist\nLyrics:\n[Verse]\n어머니 생각이 나는 날에\n보리밥 냄새가 그리워요\n\n[Chorus]\n어머니~ 어머니~ 보고 싶어요',
-    shareText:'나 AI로 트로트 만들었어! Suno AI로 진짜 노래를 완성했어요 🎵\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 트로트 만들었어! Suno AI로 진짜 노래를 완성했어요 🎵\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:13, cat:'music', icon:'🎶', name:'발라드 만들기', recommend:false,
@@ -4817,7 +4866,7 @@ var DOJO_CONFIG = [
     mission:'감성 발라드 한 곡 완성하기',
     promptDesc:'Suno AI에게 발라드를 만들어달라는 프롬프트예요',
     promptEx:'Style: Korean ballad, emotional, soft piano, female vocal\nLyrics:\n[Verse]\n봄비가 내리는 창가에서\n당신 생각이 나요\n\n[Chorus]\n보고 싶어요~ 그리워요~',
-    shareText:'나 AI로 발라드 만들었어! Suno AI로 감성 노래를 완성했어요 🎶\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 발라드 만들었어! Suno AI로 감성 노래를 완성했어요 🎶\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:14, cat:'music', icon:'🎠', name:'동요 만들기', recommend:false,
@@ -4828,7 +4877,7 @@ var DOJO_CONFIG = [
     mission:'손주를 위한 동요 한 곡 완성하기',
     promptDesc:'Suno AI에게 동요를 만들어달라는 프롬프트예요',
     promptEx:'Style: Korean children song, cheerful, fun, simple melody\nLyrics:\n[Verse]\n토끼야 토끼야 어디 가니\n냇가에 물 마시러 가요\n\n[Chorus]\n깡충 깡충 뛰어가요',
-    shareText:'나 AI로 동요 만들었어! 손주한테 들려줄 노래를 완성했어요 🎠\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 동요 만들었어! 손주한테 들려줄 노래를 완성했어요 🎠\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:15, cat:'music', icon:'🎂', name:'기념일 축하 노래', recommend:false,
@@ -4839,7 +4888,7 @@ var DOJO_CONFIG = [
     mission:'기념일 축하 노래 한 곡 완성하기',
     promptDesc:'Udio에게 축하 노래를 부탁하는 프롬프트예요',
     promptEx:'Upbeat Korean birthday celebration song, joyful and warm, simple lyrics, acoustic guitar, suitable for 70 year old grandmother birthday party',
-    shareText:'나 AI로 생일 축하 노래 만들었어! Udio로 특별한 노래를 완성했어요 🎂\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 생일 축하 노래 만들었어! Udio로 특별한 노래를 완성했어요 🎂\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:16, cat:'music', icon:'🪘', name:'민요풍 노래', recommend:false,
@@ -4850,7 +4899,7 @@ var DOJO_CONFIG = [
     mission:'민요풍 노래 한 곡 완성하기',
     promptDesc:'Mureka에게 민요풍 노래를 부탁하는 프롬프트예요',
     promptEx:'Korean folk song style, traditional rhythm, about hometown and family, female vocal, haegeum instrument, nostalgic mood',
-    shareText:'나 AI로 민요 만들었어! Mureka로 한국 감성 노래를 완성했어요 🪘\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 민요 만들었어! Mureka로 한국 감성 노래를 완성했어요 🪘\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:17, cat:'music', icon:'🕊️', name:'찬송·신앙 노래', recommend:false,
@@ -4861,7 +4910,7 @@ var DOJO_CONFIG = [
     mission:'신앙 노래 한 곡 완성하기',
     promptDesc:'Suno AI에게 신앙 노래를 부탁하는 프롬프트예요',
     promptEx:'Style: Korean Christian hymn, peaceful, grateful, soft choir, piano accompaniment. Lyrics: 감사해요 이 아침에 / 새로운 하루를 주셔서',
-    shareText:'나 AI로 찬송 노래 만들었어! Suno AI로 감사의 노래를 완성했어요 🕊️\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 찬송 노래 만들었어! Suno AI로 감사의 노래를 완성했어요 🕊️\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
 
   // ── 일상 (id 18~23) ──
@@ -4874,7 +4923,7 @@ var DOJO_CONFIG = [
     mission:'AI에게 건강 정보 물어보기',
     promptDesc:'AI에게 건강 정보를 물어보는 프롬프트예요 (참고용)',
     promptEx:'무릎이 계단 내려올 때마다 아파요. 67세 여성이에요. 어떤 원인일 수 있고 어떻게 관리하면 좋을지 쉽게 알려주세요. (참고용)',
-    shareText:'나 AI한테 건강 정보 물어봤어! AI 건강 상담 도장을 받았어요 🏥\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI한테 건강 정보 물어봤어! AI 건강 상담 도장을 받았어요 🏥\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:19, cat:'daily', icon:'🎓', name:'손자 숙제 도우미', recommend:false,
@@ -4885,7 +4934,7 @@ var DOJO_CONFIG = [
     mission:'AI로 어려운 질문 쉽게 답하기',
     promptDesc:'ChatGPT에게 쉬운 설명을 부탁하는 프롬프트예요',
     promptEx:'초등학생 손자가 블랙홀이 뭐냐고 물었어요. 10살 어린이도 이해할 수 있게 재미있고 쉽게 설명해주세요.',
-    shareText:'나 AI로 손자 숙제 도와줬어! AI 공부 도우미 도장을 받았어요 🎓\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI로 손자 숙제 도와줬어! AI 공부 도우미 도장을 받았어요 🎓\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:20, cat:'daily', icon:'🛒', name:'AI 쇼핑 추천', recommend:false,
@@ -4896,7 +4945,7 @@ var DOJO_CONFIG = [
     mission:'AI에게 선물 추천받기',
     promptDesc:'AI에게 선물 추천을 부탁하는 프롬프트예요',
     promptEx:'일흔 살 어머니 생일 선물로 좋은 것 추천해줘. 예산은 5만원이고 건강에 관심이 많으세요. 실용적인 걸로.',
-    shareText:'나 AI한테 쇼핑 추천 받았어! AI 쇼핑 도우미 도장을 받았어요 🛒\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 AI한테 쇼핑 추천 받았어! AI 쇼핑 도우미 도장을 받았어요 🛒\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:21, cat:'daily', icon:'🗣️', name:'말→글 변환', recommend:false,
@@ -4907,7 +4956,7 @@ var DOJO_CONFIG = [
     mission:'말해서 글로 변환하기',
     promptDesc:'클로바 노트는 말하면 자동으로 글이 돼요',
     promptEx:'클로바 노트는 말만 하면 됩니다. 앱 열고 녹음 버튼 → 오늘 날씨가 참 좋았어요 공원에서 산책을 했는데 오리 가족을 봤어요 라고 말해보세요.',
-    shareText:'나 말만 했는데 글이 됐어! 클로바 노트 도장을 받았어요 🗣️\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 말만 했는데 글이 됐어! 클로바 노트 도장을 받았어요 🗣️\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:22, cat:'daily', icon:'📱', name:'사진 자동 정리', recommend:false,
@@ -4918,7 +4967,7 @@ var DOJO_CONFIG = [
     mission:'구글 포토로 사진 찾아보기',
     promptDesc:'구글 포토 AI는 검색어만 입력하면 사진을 찾아줘요',
     promptEx:'구글 포토 앱 열고 검색창에 강아지 또는 가족 이름을 입력하세요. AI가 관련 사진을 모두 모아줘요.',
-    shareText:'나 구글 포토 AI 써봤어! 오래된 손자 사진을 다 찾았어요 📱\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 구글 포토 AI 써봤어! 오래된 손자 사진을 다 찾았어요 📱\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   },
   {
     id:23, cat:'daily', icon:'🌐', name:'번역 도우미', recommend:false,
@@ -4929,7 +4978,7 @@ var DOJO_CONFIG = [
     mission:'파파고로 외국어 번역하기',
     promptDesc:'파파고는 카메라로 찍으면 바로 번역돼요',
     promptEx:'파파고 앱 열고 카메라 버튼을 누른 다음 외국어 글자에 대면 자동으로 한국어로 번역돼요.',
-    shareText:'나 파파고로 번역했어! AI 번역 도우미 도장을 받았어요 🌐\nAI 동행에서 나도 해봤어 → aidonghang.kr'
+    shareText:'나 파파고로 번역했어! AI 번역 도우미 도장을 받았어요 🌐\nAI 동행에서 나도 해봤어 → aitogether.co.kr'
   }
 ];
 // ── 카테고리 기반 해금 로직 ──

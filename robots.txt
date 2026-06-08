@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 결제 결과 페이지는 색인 불필요
+Disallow: /payment-success.html
+Disallow: /payment-fail.html
+
+Sitemap: https://aitogether.co.kr/sitemap.xml
